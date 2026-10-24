@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------------- DEMODB-ROUTES-A-01
+-- ------------------------------------------------------------------------------------------------- DEMODB_ROUTES_A_01
 -- the longest route from each airport.
 --  departure_airport | route_no | arrival_airport | duration 
 -- -------------------+----------+-----------------+----------
@@ -48,7 +48,7 @@ ORDER BY departure_airport, duration DESC, route_no, validity
     LIMIT 10
 ;
 
--- ------------------------------------------------------------------------------------------------- DEMODB-ROUTES-A-02
+-- ------------------------------------------------------------------------------------------------- DEMODB_ROUTES_A_02
 -- the routes with a return route in the same period.
 --  route_no | return_route_no | departure_airport | arrival_airport 
 -- ----------+-----------------+-------------------+-----------------

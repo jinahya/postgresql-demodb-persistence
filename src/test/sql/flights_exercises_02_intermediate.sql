@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------------ DEMODB-FLIGHTS-I-01
+-- ------------------------------------------------------------------------------------------------ DEMODB_FLIGHTS_I_01
 -- how many flights each month.
 --   month  | flights 
 -- ---------+---------
@@ -41,7 +41,7 @@ GROUP BY month
 ORDER BY month
 ;
 
--- ------------------------------------------------------------------------------------------------ DEMODB-FLIGHTS-I-02
+-- ------------------------------------------------------------------------------------------------ DEMODB_FLIGHTS_I_02
 -- the ten routes whose flights depart the latest.
 --  route_no | delay_minutes | flights 
 -- ----------+---------------+---------
@@ -66,7 +66,7 @@ GROUP BY route_no
 ORDER BY delay_minutes DESC, route_no LIMIT 10
 ;
 
--- ------------------------------------------------------------------------------------------------ DEMODB-FLIGHTS-I-03
+-- ------------------------------------------------------------------------------------------------ DEMODB_FLIGHTS_I_03
 -- how many flights departed more than an hour late.
 --  late 
 -- ------
@@ -77,7 +77,7 @@ FROM flights
 WHERE actual_departure > scheduled_departure + INTERVAL '1 hour'
 ;
 
--- ------------------------------------------------------------------------------------------------ DEMODB-FLIGHTS-I-04
+-- ------------------------------------------------------------------------------------------------ DEMODB_FLIGHTS_I_04
 -- today's flights, with their airports.
 --  flight_id | route_no | departure_airport | arrival_airport |  scheduled_departure   |  status  
 -- -----------+----------+-------------------+-----------------+------------------------+----------

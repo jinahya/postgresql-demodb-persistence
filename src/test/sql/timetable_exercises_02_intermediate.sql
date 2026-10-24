@@ -26,7 +26,7 @@
 --
 
 
--- ---------------------------------------------------------------------------------------------- DEMODB-TIMETABLE-I-01
+-- ---------------------------------------------------------------------------------------------- DEMODB_TIMETABLE_I_01
 -- how many flights depart on another local day than the UTC one.
 --  flights 
 -- ---------
@@ -37,7 +37,7 @@ FROM timetable
 WHERE scheduled_departure_local::date <> (scheduled_departure AT TIME ZONE 'UTC')::date
 ;
 
--- ---------------------------------------------------------------------------------------------- DEMODB-TIMETABLE-I-02
+-- ---------------------------------------------------------------------------------------------- DEMODB_TIMETABLE_I_02
 -- the five airport pairs with the most flights.
 --  departure_airport | arrival_airport | flights 
 -- -------------------+-----------------+---------
@@ -53,7 +53,7 @@ GROUP BY departure_airport, arrival_airport
 ORDER BY flights DESC, departure_airport, arrival_airport LIMIT 5
 ;
 
--- ---------------------------------------------------------------------------------------------- DEMODB-TIMETABLE-I-03
+-- ---------------------------------------------------------------------------------------------- DEMODB_TIMETABLE_I_03
 -- the flights that arrived late, by month.
 --   month  | arrived | late 
 -- ---------+---------+------

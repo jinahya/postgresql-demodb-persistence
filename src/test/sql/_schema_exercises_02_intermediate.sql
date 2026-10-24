@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------------- DEMODB-SCHEMA-I-01
+-- ------------------------------------------------------------------------------------------------- DEMODB_SCHEMA_I_01
 -- the segments sold and the money taken, by month of flight.
 --   month  | segments |    revenue    
 -- ---------+----------+---------------
@@ -43,7 +43,7 @@ GROUP BY month
 ORDER BY month
 ;
 
--- ------------------------------------------------------------------------------------------------- DEMODB-SCHEMA-I-02
+-- ------------------------------------------------------------------------------------------------- DEMODB_SCHEMA_I_02
 -- the ten airports with the most passengers boarded in the first week.
 --  airport_code |    airport_name     | boarded 
 -- --------------+---------------------+---------
@@ -69,7 +69,7 @@ GROUP BY a.airport_code, a.airport_name
 ORDER BY boarded DESC, a.airport_code LIMIT 10
 ;
 
--- ------------------------------------------------------------------------------------------------- DEMODB-SCHEMA-I-03
+-- ------------------------------------------------------------------------------------------------- DEMODB_SCHEMA_I_03
 -- the money each airplane model took.
 --  airplane_code |          model          |    revenue    
 -- ---------------+-------------------------+---------------
@@ -91,7 +91,7 @@ GROUP BY a.airplane_code, a.model
 ORDER BY revenue DESC, a.airplane_code
 ;
 
--- ------------------------------------------------------------------------------------------------- DEMODB-SCHEMA-I-04
+-- ------------------------------------------------------------------------------------------------- DEMODB_SCHEMA_I_04
 -- the ten countries flown to the most.
 --     country     | arrivals 
 -- ----------------+----------

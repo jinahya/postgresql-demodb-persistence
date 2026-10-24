@@ -26,7 +26,7 @@
 --
 
 
--- ----------------------------------------------------------------------------------------------- DEMODB-SEGMENTS-A-01
+-- ----------------------------------------------------------------------------------------------- DEMODB_SEGMENTS_A_01
 -- the five flights where Business costs the most over Economy.
 --  flight_id | economy  | business | ratio 
 -- -----------+----------+----------+-------
@@ -46,7 +46,7 @@ ORDER BY ratio DESC, flight_id
     LIMIT 5
 ;
 
--- ----------------------------------------------------------------------------------------------- DEMODB-SEGMENTS-A-02
+-- ----------------------------------------------------------------------------------------------- DEMODB_SEGMENTS_A_02
 -- how many segments of the first day were sold in fare conditions the airplane has not.
 --  segments 
 -- ----------

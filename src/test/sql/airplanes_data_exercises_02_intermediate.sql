@@ -26,7 +26,7 @@
 --
 
 
--- ----------------------------------------------------------------------------------------- DEMODB-AIRPLANES_DATA-I-01
+-- ----------------------------------------------------------------------------------------- DEMODB_AIRPLANES_DATA_I_01
 -- the English name of each airplane.
 --  airplane_code |          model          | range 
 -- ---------------+-------------------------+-------
@@ -46,7 +46,7 @@ FROM airplanes_data
 ORDER BY airplane_code
 ;
 
--- ----------------------------------------------------------------------------------------- DEMODB-AIRPLANES_DATA-I-02
+-- ----------------------------------------------------------------------------------------- DEMODB_AIRPLANES_DATA_I_02
 -- the hours each airplane flies at its full range.
 --  airplane_code |          model          | hours 
 -- ---------------+-------------------------+-------
@@ -66,7 +66,7 @@ FROM airplanes_data
 ORDER BY hours DESC, airplane_code
 ;
 
--- ----------------------------------------------------------------------------------------- DEMODB-AIRPLANES_DATA-I-03
+-- ----------------------------------------------------------------------------------------- DEMODB_AIRPLANES_DATA_I_03
 -- the languages the models are named in.
 --  lang 
 -- ------

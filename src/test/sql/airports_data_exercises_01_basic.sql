@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------ DEMODB-AIRPORTS_DATA-B-01
+-- ------------------------------------------------------------------------------------------ DEMODB_AIRPORTS_DATA_B_01
 -- the airports in the Europe/Moscow time zone.
 --  airport_code |                    airport_name                     |                           city                           
 -- --------------+-----------------------------------------------------+----------------------------------------------------------
@@ -47,7 +47,7 @@ WHERE timezone = 'Europe/Moscow'
 ORDER BY airport_code
 ;
 
--- ------------------------------------------------------------------------------------------ DEMODB-AIRPORTS_DATA-B-02
+-- ------------------------------------------------------------------------------------------ DEMODB_AIRPORTS_DATA_B_02
 -- how many airports, and how many time zones.
 --  airports | timezones 
 -- ----------+-----------
@@ -57,7 +57,7 @@ SELECT COUNT(*) AS airports, COUNT(DISTINCT timezone) AS timezones
 FROM airports_data
 ;
 
--- ------------------------------------------------------------------------------------------ DEMODB-AIRPORTS_DATA-B-03
+-- ------------------------------------------------------------------------------------------ DEMODB_AIRPORTS_DATA_B_03
 -- the airports whose code starts with SV.
 --  airport_code |                         airport_name                         |      timezone       
 -- --------------+--------------------------------------------------------------+---------------------

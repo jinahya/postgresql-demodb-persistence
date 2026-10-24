@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------------ DEMODB-TICKETS-I-01
+-- ------------------------------------------------------------------------------------------------ DEMODB_TICKETS_I_01
 -- the five passengers with the most tickets.
 --    passenger_id   |  passenger_name  | tickets 
 -- ------------------+------------------+---------
@@ -42,7 +42,7 @@ GROUP BY passenger_id, passenger_name
 ORDER BY tickets DESC, passenger_id LIMIT 5
 ;
 
--- ------------------------------------------------------------------------------------------------ DEMODB-TICKETS-I-02
+-- ------------------------------------------------------------------------------------------------ DEMODB_TICKETS_I_02
 -- the ten countries whose passengers hold the most tickets.
 --  country | tickets 
 -- ---------+---------
@@ -64,7 +64,7 @@ ORDER BY tickets DESC, country
     LIMIT 10
 ;
 
--- ------------------------------------------------------------------------------------------------ DEMODB-TICKETS-I-03
+-- ------------------------------------------------------------------------------------------------ DEMODB_TICKETS_I_03
 -- how many tickets have no segment.
 --  tickets 
 -- ---------

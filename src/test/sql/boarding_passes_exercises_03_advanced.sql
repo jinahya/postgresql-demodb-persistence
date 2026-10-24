@@ -26,7 +26,7 @@
 --
 
 
--- ---------------------------------------------------------------------------------------- DEMODB-BOARDING_PASSES-A-01
+-- ---------------------------------------------------------------------------------------- DEMODB_BOARDING_PASSES_A_01
 -- the passengers of the first day seated in other fare conditions than they paid.
 --  passes | upgraded | downgraded 
 -- --------+----------+------------
@@ -48,7 +48,7 @@ WHERE f.scheduled_departure >= '2025-10-01'
   AND st.fare_conditions <> s.fare_conditions
 ;
 
--- ---------------------------------------------------------------------------------------- DEMODB-BOARDING_PASSES-A-02
+-- ---------------------------------------------------------------------------------------- DEMODB_BOARDING_PASSES_A_02
 -- the boarding numbers the flight 1 skipped.
 --  missing 
 -- ---------

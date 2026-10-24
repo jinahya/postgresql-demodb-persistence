@@ -625,6 +625,8 @@
                 <include>**/*_Randomizer$*.class</include>
                 <include>**/*_Persister.class</include>
                 <include>**/*_Persister$*.class</include>
+                <!-- The randomizers draw their codes, dates and literals from this helper; it goes with them. -->
+                <include>**/__Random_TestUtils.class</include>
               </includes>
             </configuration>
           </execution>

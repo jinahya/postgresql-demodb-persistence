@@ -1,6 +1,6 @@
 # Registry of the exercises in EXERCISES.asciidoc and src/test/sql/*_exercises_*.sql.
 #
-# An id is DEMODB-<SECTION>-<TIER>-<NN>: the table or view the exercise reads alone, or SCHEMA for one that reads more
+# An id is DEMODB_<SECTION>_<TIER>_<NN>: the table or view the exercise reads alone, or SCHEMA for one that reads more
 # than one, the tier (B for Basic, I for Intermediate, A for Advanced), and a number within that section and tier.
 #
 # Ids are permanent. A new exercise takes the next unused number of its section and tier; an exercise that moves or
@@ -14,576 +14,576 @@
 
 # ---- airplanes_data
 
-- id: DEMODB-AIRPLANES_DATA-B-01
+- id: DEMODB_AIRPLANES_DATA_B_01
   section: "AIRPLANES_DATA"
   tier: Basic
   title: "every airplane, by code"
   sql: src/test/sql/airplanes_data_exercises_01_basic.sql
-- id: DEMODB-AIRPLANES_DATA-B-02
+- id: DEMODB_AIRPLANES_DATA_B_02
   section: "AIRPLANES_DATA"
   tier: Basic
   title: "the airplanes with a range of 10000 km or more, the longest first"
   sql: src/test/sql/airplanes_data_exercises_01_basic.sql
-- id: DEMODB-AIRPLANES_DATA-B-03
+- id: DEMODB_AIRPLANES_DATA_B_03
   section: "AIRPLANES_DATA"
   tier: Basic
   title: "how many airplanes, and the shortest and the longest range"
   sql: src/test/sql/airplanes_data_exercises_01_basic.sql
-- id: DEMODB-AIRPLANES_DATA-I-01
+- id: DEMODB_AIRPLANES_DATA_I_01
   section: "AIRPLANES_DATA"
   tier: Intermediate
   title: "the English name of each airplane"
   sql: src/test/sql/airplanes_data_exercises_02_intermediate.sql
-- id: DEMODB-AIRPLANES_DATA-I-02
+- id: DEMODB_AIRPLANES_DATA_I_02
   section: "AIRPLANES_DATA"
   tier: Intermediate
   title: "the hours each airplane flies at its full range"
   sql: src/test/sql/airplanes_data_exercises_02_intermediate.sql
-- id: DEMODB-AIRPLANES_DATA-I-03
+- id: DEMODB_AIRPLANES_DATA_I_03
   section: "AIRPLANES_DATA"
   tier: Intermediate
   title: "the languages the models are named in"
   sql: src/test/sql/airplanes_data_exercises_02_intermediate.sql
-- id: DEMODB-AIRPLANES_DATA-A-01
+- id: DEMODB_AIRPLANES_DATA_A_01
   section: "AIRPLANES_DATA"
   tier: Advanced
   title: "the airplanes that fly no route"
   sql: src/test/sql/airplanes_data_exercises_03_advanced.sql
-- id: DEMODB-AIRPLANES_DATA-A-02
+- id: DEMODB_AIRPLANES_DATA_A_02
   section: "AIRPLANES_DATA"
   tier: Advanced
   title: "the airplanes by the flights they fly"
   sql: src/test/sql/airplanes_data_exercises_03_advanced.sql
 # ---- airplanes
 
-- id: DEMODB-AIRPLANES-B-01
+- id: DEMODB_AIRPLANES_B_01
   section: "AIRPLANES"
   tier: Basic
   title: "every airplane of the view, by code"
   sql: src/test/sql/airplanes_exercises_01_basic.sql
-- id: DEMODB-AIRPLANES-B-02
+- id: DEMODB_AIRPLANES_B_02
   section: "AIRPLANES"
   tier: Basic
   title: "the Boeings"
   sql: src/test/sql/airplanes_exercises_01_basic.sql
-- id: DEMODB-AIRPLANES-I-01
+- id: DEMODB_AIRPLANES_I_01
   section: "AIRPLANES"
   tier: Intermediate
   title: "how many airplanes each maker has"
   sql: src/test/sql/airplanes_exercises_02_intermediate.sql
-- id: DEMODB-AIRPLANES-I-02
+- id: DEMODB_AIRPLANES_I_02
   section: "AIRPLANES"
   tier: Intermediate
   title: "whether the view agrees with the table"
   sql: src/test/sql/airplanes_exercises_02_intermediate.sql
-- id: DEMODB-AIRPLANES-A-01
+- id: DEMODB_AIRPLANES_A_01
   section: "AIRPLANES"
   tier: Advanced
   title: "the three airplanes with the most routes"
   sql: src/test/sql/airplanes_exercises_03_advanced.sql
 # ---- airports_data
 
-- id: DEMODB-AIRPORTS_DATA-B-01
+- id: DEMODB_AIRPORTS_DATA_B_01
   section: "AIRPORTS_DATA"
   tier: Basic
   title: "the airports in the Europe/Moscow time zone"
   sql: src/test/sql/airports_data_exercises_01_basic.sql
-- id: DEMODB-AIRPORTS_DATA-B-02
+- id: DEMODB_AIRPORTS_DATA_B_02
   section: "AIRPORTS_DATA"
   tier: Basic
   title: "how many airports, and how many time zones"
   sql: src/test/sql/airports_data_exercises_01_basic.sql
-- id: DEMODB-AIRPORTS_DATA-B-03
+- id: DEMODB_AIRPORTS_DATA_B_03
   section: "AIRPORTS_DATA"
   tier: Basic
   title: "the airports whose code starts with SV"
   sql: src/test/sql/airports_data_exercises_01_basic.sql
-- id: DEMODB-AIRPORTS_DATA-I-01
+- id: DEMODB_AIRPORTS_DATA_I_01
   section: "AIRPORTS_DATA"
   tier: Intermediate
   title: "the airports of Finland, in English"
   sql: src/test/sql/airports_data_exercises_02_intermediate.sql
-- id: DEMODB-AIRPORTS_DATA-I-02
+- id: DEMODB_AIRPORTS_DATA_I_02
   section: "AIRPORTS_DATA"
   tier: Intermediate
   title: "the ten time zones with the most airports"
   sql: src/test/sql/airports_data_exercises_02_intermediate.sql
-- id: DEMODB-AIRPORTS_DATA-I-03
+- id: DEMODB_AIRPORTS_DATA_I_03
   section: "AIRPORTS_DATA"
   tier: Intermediate
   title: "the five countries with the most airports south of the equator"
   sql: src/test/sql/airports_data_exercises_02_intermediate.sql
-- id: DEMODB-AIRPORTS_DATA-A-01
+- id: DEMODB_AIRPORTS_DATA_A_01
   section: "AIRPORTS_DATA"
   tier: Advanced
   title: "the cities with more than one airport"
   sql: src/test/sql/airports_data_exercises_03_advanced.sql
-- id: DEMODB-AIRPORTS_DATA-A-02
+- id: DEMODB_AIRPORTS_DATA_A_02
   section: "AIRPORTS_DATA"
   tier: Advanced
   title: "how many airports no route touches"
   sql: src/test/sql/airports_data_exercises_03_advanced.sql
 # ---- airports
 
-- id: DEMODB-AIRPORTS-B-01
+- id: DEMODB_AIRPORTS_B_01
   section: "AIRPORTS"
   tier: Basic
   title: "the airports of Norway"
   sql: src/test/sql/airports_exercises_01_basic.sql
-- id: DEMODB-AIRPORTS-B-02
+- id: DEMODB_AIRPORTS_B_02
   section: "AIRPORTS"
   tier: Basic
   title: "the airports of Moscow"
   sql: src/test/sql/airports_exercises_01_basic.sql
-- id: DEMODB-AIRPORTS-B-03
+- id: DEMODB_AIRPORTS_B_03
   section: "AIRPORTS"
   tier: Basic
   title: "how many airports are called International"
   sql: src/test/sql/airports_exercises_01_basic.sql
-- id: DEMODB-AIRPORTS-I-01
+- id: DEMODB_AIRPORTS_I_01
   section: "AIRPORTS"
   tier: Intermediate
   title: "the ten countries with the most airports"
   sql: src/test/sql/airports_exercises_02_intermediate.sql
-- id: DEMODB-AIRPORTS-I-02
+- id: DEMODB_AIRPORTS_I_02
   section: "AIRPORTS"
   tier: Intermediate
   title: "how many countries have exactly one airport"
   sql: src/test/sql/airports_exercises_02_intermediate.sql
-- id: DEMODB-AIRPORTS-I-03
+- id: DEMODB_AIRPORTS_I_03
   section: "AIRPORTS"
   tier: Intermediate
   title: "the westernmost and the easternmost airport"
   sql: src/test/sql/airports_exercises_02_intermediate.sql
-- id: DEMODB-AIRPORTS-A-01
+- id: DEMODB_AIRPORTS_A_01
   section: "AIRPORTS"
   tier: Advanced
   title: "the airports flown from but never to"
   sql: src/test/sql/airports_exercises_03_advanced.sql
-- id: DEMODB-AIRPORTS-A-02
+- id: DEMODB_AIRPORTS_A_02
   section: "AIRPORTS"
   tier: Advanced
   title: "the ten airports with the most departures"
   sql: src/test/sql/airports_exercises_03_advanced.sql
 # ---- routes
 
-- id: DEMODB-ROUTES-B-01
+- id: DEMODB_ROUTES_B_01
   section: "ROUTES"
   tier: Basic
   title: "the routes from Sheremetyevo"
   sql: src/test/sql/routes_exercises_01_basic.sql
-- id: DEMODB-ROUTES-B-02
+- id: DEMODB_ROUTES_B_02
   section: "ROUTES"
   tier: Basic
   title: "how many rows, and how many route numbers"
   sql: src/test/sql/routes_exercises_01_basic.sql
-- id: DEMODB-ROUTES-B-03
+- id: DEMODB_ROUTES_B_03
   section: "ROUTES"
   tier: Basic
   title: "the routes flown every day of the week"
   sql: src/test/sql/routes_exercises_01_basic.sql
-- id: DEMODB-ROUTES-B-04
+- id: DEMODB_ROUTES_B_04
   section: "ROUTES"
   tier: Basic
   title: "the routes longer than ten hours"
   sql: src/test/sql/routes_exercises_01_basic.sql
-- id: DEMODB-ROUTES-I-01
+- id: DEMODB_ROUTES_I_01
   section: "ROUTES"
   tier: Intermediate
   title: "the periods of the route PG0001"
   sql: src/test/sql/routes_exercises_02_intermediate.sql
-- id: DEMODB-ROUTES-I-02
+- id: DEMODB_ROUTES_I_02
   section: "ROUTES"
   tier: Intermediate
   title: "the five route numbers with the most periods"
   sql: src/test/sql/routes_exercises_02_intermediate.sql
-- id: DEMODB-ROUTES-I-03
+- id: DEMODB_ROUTES_I_03
   section: "ROUTES"
   tier: Intermediate
   title: "how many routes each airplane flies"
   sql: src/test/sql/routes_exercises_02_intermediate.sql
-- id: DEMODB-ROUTES-I-04
+- id: DEMODB_ROUTES_I_04
   section: "ROUTES"
   tier: Intermediate
   title: "how many routes are valid today"
   sql: src/test/sql/routes_exercises_02_intermediate.sql
-- id: DEMODB-ROUTES-A-01
+- id: DEMODB_ROUTES_A_01
   section: "ROUTES"
   tier: Advanced
   title: "the longest route from each airport"
   sql: src/test/sql/routes_exercises_03_advanced.sql
-- id: DEMODB-ROUTES-A-02
+- id: DEMODB_ROUTES_A_02
   section: "ROUTES"
   tier: Advanced
   title: "the routes with a return route in the same period"
   sql: src/test/sql/routes_exercises_03_advanced.sql
 # ---- flights
 
-- id: DEMODB-FLIGHTS-B-01
+- id: DEMODB_FLIGHTS_B_01
   section: "FLIGHTS"
   tier: Basic
   title: "the flights of the route PG0001 in October 2025"
   sql: src/test/sql/flights_exercises_01_basic.sql
-- id: DEMODB-FLIGHTS-B-02
+- id: DEMODB_FLIGHTS_B_02
   section: "FLIGHTS"
   tier: Basic
   title: "how many flights of each status"
   sql: src/test/sql/flights_exercises_01_basic.sql
-- id: DEMODB-FLIGHTS-B-03
+- id: DEMODB_FLIGHTS_B_03
   section: "FLIGHTS"
   tier: Basic
   title: "the cancelled flights"
   sql: src/test/sql/flights_exercises_01_basic.sql
-- id: DEMODB-FLIGHTS-B-04
+- id: DEMODB_FLIGHTS_B_04
   section: "FLIGHTS"
   tier: Basic
   title: "the flights scheduled to take more than twelve hours"
   sql: src/test/sql/flights_exercises_01_basic.sql
-- id: DEMODB-FLIGHTS-I-01
+- id: DEMODB_FLIGHTS_I_01
   section: "FLIGHTS"
   tier: Intermediate
   title: "how many flights each month"
   sql: src/test/sql/flights_exercises_02_intermediate.sql
-- id: DEMODB-FLIGHTS-I-02
+- id: DEMODB_FLIGHTS_I_02
   section: "FLIGHTS"
   tier: Intermediate
   title: "the ten routes whose flights depart the latest"
   sql: src/test/sql/flights_exercises_02_intermediate.sql
-- id: DEMODB-FLIGHTS-I-03
+- id: DEMODB_FLIGHTS_I_03
   section: "FLIGHTS"
   tier: Intermediate
   title: "how many flights departed more than an hour late"
   sql: src/test/sql/flights_exercises_02_intermediate.sql
-- id: DEMODB-FLIGHTS-I-04
+- id: DEMODB_FLIGHTS_I_04
   section: "FLIGHTS"
   tier: Intermediate
   title: "today's flights, with their airports"
   sql: src/test/sql/flights_exercises_02_intermediate.sql
-- id: DEMODB-FLIGHTS-A-01
+- id: DEMODB_FLIGHTS_A_01
   section: "FLIGHTS"
   tier: Advanced
   title: "the five longest flights flown"
   sql: src/test/sql/flights_exercises_03_advanced.sql
-- id: DEMODB-FLIGHTS-A-02
+- id: DEMODB_FLIGHTS_A_02
   section: "FLIGHTS"
   tier: Advanced
   title: "the flights of each day of the first week, and their running total"
   sql: src/test/sql/flights_exercises_03_advanced.sql
-- id: DEMODB-FLIGHTS-A-03
+- id: DEMODB_FLIGHTS_A_03
   section: "FLIGHTS"
   tier: Advanced
   title: "the five fullest flights of the first day"
   sql: src/test/sql/flights_exercises_03_advanced.sql
 # ---- timetable
 
-- id: DEMODB-TIMETABLE-B-01
+- id: DEMODB_TIMETABLE_B_01
   section: "TIMETABLE"
   tier: Basic
   title: "the flights from Sheremetyevo in the next 24 hours"
   sql: src/test/sql/timetable_exercises_01_basic.sql
-- id: DEMODB-TIMETABLE-B-02
+- id: DEMODB_TIMETABLE_B_02
   section: "TIMETABLE"
   tier: Basic
   title: "the flights of the route PG0078 on the first day, in local time"
   sql: src/test/sql/timetable_exercises_01_basic.sql
-- id: DEMODB-TIMETABLE-I-01
+- id: DEMODB_TIMETABLE_I_01
   section: "TIMETABLE"
   tier: Intermediate
   title: "how many flights depart on another local day than the UTC one"
   sql: src/test/sql/timetable_exercises_02_intermediate.sql
-- id: DEMODB-TIMETABLE-I-02
+- id: DEMODB_TIMETABLE_I_02
   section: "TIMETABLE"
   tier: Intermediate
   title: "the five airport pairs with the most flights"
   sql: src/test/sql/timetable_exercises_02_intermediate.sql
-- id: DEMODB-TIMETABLE-I-03
+- id: DEMODB_TIMETABLE_I_03
   section: "TIMETABLE"
   tier: Intermediate
   title: "the flights that arrived late, by month"
   sql: src/test/sql/timetable_exercises_02_intermediate.sql
-- id: DEMODB-TIMETABLE-A-01
+- id: DEMODB_TIMETABLE_A_01
   section: "TIMETABLE"
   tier: Advanced
   title: "whether the view has a row for every flight"
   sql: src/test/sql/timetable_exercises_03_advanced.sql
-- id: DEMODB-TIMETABLE-A-02
+- id: DEMODB_TIMETABLE_A_02
   section: "TIMETABLE"
   tier: Advanced
   title: "the connections at Sheremetyevo on the first day"
   sql: src/test/sql/timetable_exercises_03_advanced.sql
 # ---- seats
 
-- id: DEMODB-SEATS-B-01
+- id: DEMODB_SEATS_B_01
   section: "SEATS"
   tier: Basic
   title: "the Business seats of the Airbus A320neo"
   sql: src/test/sql/seats_exercises_01_basic.sql
-- id: DEMODB-SEATS-B-02
+- id: DEMODB_SEATS_B_02
   section: "SEATS"
   tier: Basic
   title: "how many seats each airplane has"
   sql: src/test/sql/seats_exercises_01_basic.sql
-- id: DEMODB-SEATS-B-03
+- id: DEMODB_SEATS_B_03
   section: "SEATS"
   tier: Basic
   title: "how many seats of each fare conditions"
   sql: src/test/sql/seats_exercises_01_basic.sql
-- id: DEMODB-SEATS-I-01
+- id: DEMODB_SEATS_I_01
   section: "SEATS"
   tier: Intermediate
   title: "the seats of each airplane, by fare conditions"
   sql: src/test/sql/seats_exercises_02_intermediate.sql
-- id: DEMODB-SEATS-I-02
+- id: DEMODB_SEATS_I_02
   section: "SEATS"
   tier: Intermediate
   title: "the rows and the letters of each airplane"
   sql: src/test/sql/seats_exercises_02_intermediate.sql
-- id: DEMODB-SEATS-I-03
+- id: DEMODB_SEATS_I_03
   section: "SEATS"
   tier: Intermediate
   title: "the seat numbers found in the most airplanes"
   sql: src/test/sql/seats_exercises_02_intermediate.sql
-- id: DEMODB-SEATS-A-01
+- id: DEMODB_SEATS_A_01
   section: "SEATS"
   tier: Advanced
   title: "the empty seats of the flight 1"
   sql: src/test/sql/seats_exercises_03_advanced.sql
-- id: DEMODB-SEATS-A-02
+- id: DEMODB_SEATS_A_02
   section: "SEATS"
   tier: Advanced
   title: "the share of Business seats of each airplane"
   sql: src/test/sql/seats_exercises_03_advanced.sql
 # ---- bookings
 
-- id: DEMODB-BOOKINGS-B-01
+- id: DEMODB_BOOKINGS_B_01
   section: "BOOKINGS"
   tier: Basic
   title: "the bookings of the first minute"
   sql: src/test/sql/bookings_exercises_01_basic.sql
-- id: DEMODB-BOOKINGS-B-02
+- id: DEMODB_BOOKINGS_B_02
   section: "BOOKINGS"
   tier: Basic
   title: "how many bookings, and how much in all"
   sql: src/test/sql/bookings_exercises_01_basic.sql
-- id: DEMODB-BOOKINGS-B-03
+- id: DEMODB_BOOKINGS_B_03
   section: "BOOKINGS"
   tier: Basic
   title: "the bookings of 700000 or more"
   sql: src/test/sql/bookings_exercises_01_basic.sql
-- id: DEMODB-BOOKINGS-I-01
+- id: DEMODB_BOOKINGS_I_01
   section: "BOOKINGS"
   tier: Intermediate
   title: "the bookings and the money of each month"
   sql: src/test/sql/bookings_exercises_02_intermediate.sql
-- id: DEMODB-BOOKINGS-I-02
+- id: DEMODB_BOOKINGS_I_02
   section: "BOOKINGS"
   tier: Intermediate
   title: "the ten most expensive bookings"
   sql: src/test/sql/bookings_exercises_02_intermediate.sql
-- id: DEMODB-BOOKINGS-I-03
+- id: DEMODB_BOOKINGS_I_03
   section: "BOOKINGS"
   tier: Intermediate
   title: "the smallest, the average and the largest booking"
   sql: src/test/sql/bookings_exercises_02_intermediate.sql
-- id: DEMODB-BOOKINGS-I-04
+- id: DEMODB_BOOKINGS_I_04
   section: "BOOKINGS"
   tier: Intermediate
   title: "how many bookings on each day of the week"
   sql: src/test/sql/bookings_exercises_02_intermediate.sql
-- id: DEMODB-BOOKINGS-A-01
+- id: DEMODB_BOOKINGS_A_01
   section: "BOOKINGS"
   tier: Advanced
   title: "how many bookings do not add up"
   sql: src/test/sql/bookings_exercises_03_advanced.sql
-- id: DEMODB-BOOKINGS-A-02
+- id: DEMODB_BOOKINGS_A_02
   section: "BOOKINGS"
   tier: Advanced
   title: "the five bookings with the most tickets"
   sql: src/test/sql/bookings_exercises_03_advanced.sql
 # ---- tickets
 
-- id: DEMODB-TICKETS-B-01
+- id: DEMODB_TICKETS_B_01
   section: "TICKETS"
   tier: Basic
   title: "the tickets of the booking 0000EG"
   sql: src/test/sql/tickets_exercises_01_basic.sql
-- id: DEMODB-TICKETS-B-02
+- id: DEMODB_TICKETS_B_02
   section: "TICKETS"
   tier: Basic
   title: "how many tickets, outbound and return"
   sql: src/test/sql/tickets_exercises_01_basic.sql
-- id: DEMODB-TICKETS-B-03
+- id: DEMODB_TICKETS_B_03
   section: "TICKETS"
   tier: Basic
   title: "the tickets of one passenger"
   sql: src/test/sql/tickets_exercises_01_basic.sql
-- id: DEMODB-TICKETS-I-01
+- id: DEMODB_TICKETS_I_01
   section: "TICKETS"
   tier: Intermediate
   title: "the five passengers with the most tickets"
   sql: src/test/sql/tickets_exercises_02_intermediate.sql
-- id: DEMODB-TICKETS-I-02
+- id: DEMODB_TICKETS_I_02
   section: "TICKETS"
   tier: Intermediate
   title: "the ten countries whose passengers hold the most tickets"
   sql: src/test/sql/tickets_exercises_02_intermediate.sql
-- id: DEMODB-TICKETS-I-03
+- id: DEMODB_TICKETS_I_03
   section: "TICKETS"
   tier: Intermediate
   title: "how many tickets have no segment"
   sql: src/test/sql/tickets_exercises_02_intermediate.sql
-- id: DEMODB-TICKETS-A-01
+- id: DEMODB_TICKETS_A_01
   section: "TICKETS"
   tier: Advanced
   title: "how many passengers booked a return"
   sql: src/test/sql/tickets_exercises_03_advanced.sql
-- id: DEMODB-TICKETS-A-02
+- id: DEMODB_TICKETS_A_02
   section: "TICKETS"
   tier: Advanced
   title: "the share of return tickets, by booking month"
   sql: src/test/sql/tickets_exercises_03_advanced.sql
 # ---- segments
 
-- id: DEMODB-SEGMENTS-B-01
+- id: DEMODB_SEGMENTS_B_01
   section: "SEGMENTS"
   tier: Basic
   title: "the segments of the ticket 0005432000000"
   sql: src/test/sql/segments_exercises_01_basic.sql
-- id: DEMODB-SEGMENTS-B-02
+- id: DEMODB_SEGMENTS_B_02
   section: "SEGMENTS"
   tier: Basic
   title: "how many segments of each fare conditions"
   sql: src/test/sql/segments_exercises_01_basic.sql
-- id: DEMODB-SEGMENTS-B-03
+- id: DEMODB_SEGMENTS_B_03
   section: "SEGMENTS"
   tier: Basic
   title: "the segments of the flight 1"
   sql: src/test/sql/segments_exercises_01_basic.sql
-- id: DEMODB-SEGMENTS-I-01
+- id: DEMODB_SEGMENTS_I_01
   section: "SEGMENTS"
   tier: Intermediate
   title: "the prices of each fare conditions"
   sql: src/test/sql/segments_exercises_02_intermediate.sql
-- id: DEMODB-SEGMENTS-I-02
+- id: DEMODB_SEGMENTS_I_02
   section: "SEGMENTS"
   tier: Intermediate
   title: "the five flights that earned the most"
   sql: src/test/sql/segments_exercises_02_intermediate.sql
-- id: DEMODB-SEGMENTS-I-03
+- id: DEMODB_SEGMENTS_I_03
   section: "SEGMENTS"
   tier: Intermediate
   title: "how many tickets have more than two segments"
   sql: src/test/sql/segments_exercises_02_intermediate.sql
-- id: DEMODB-SEGMENTS-A-01
+- id: DEMODB_SEGMENTS_A_01
   section: "SEGMENTS"
   tier: Advanced
   title: "the five flights where Business costs the most over Economy"
   sql: src/test/sql/segments_exercises_03_advanced.sql
-- id: DEMODB-SEGMENTS-A-02
+- id: DEMODB_SEGMENTS_A_02
   section: "SEGMENTS"
   tier: Advanced
   title: "how many segments of the first day were sold in fare conditions the airplane has not"
   sql: src/test/sql/segments_exercises_03_advanced.sql
 # ---- boarding_passes
 
-- id: DEMODB-BOARDING_PASSES-B-01
+- id: DEMODB_BOARDING_PASSES_B_01
   section: "BOARDING_PASSES"
   tier: Basic
   title: "the boarding passes of the flight 1, in boarding order"
   sql: src/test/sql/boarding_passes_exercises_01_basic.sql
-- id: DEMODB-BOARDING_PASSES-B-02
+- id: DEMODB_BOARDING_PASSES_B_02
   section: "BOARDING_PASSES"
   tier: Basic
   title: "how many boarding passes, and how many not boarded"
   sql: src/test/sql/boarding_passes_exercises_01_basic.sql
-- id: DEMODB-BOARDING_PASSES-B-03
+- id: DEMODB_BOARDING_PASSES_B_03
   section: "BOARDING_PASSES"
   tier: Basic
   title: "the boarding passes of the ticket 0005432000000"
   sql: src/test/sql/boarding_passes_exercises_01_basic.sql
-- id: DEMODB-BOARDING_PASSES-I-01
+- id: DEMODB_BOARDING_PASSES_I_01
   section: "BOARDING_PASSES"
   tier: Intermediate
   title: "the five seats boarded the most"
   sql: src/test/sql/boarding_passes_exercises_02_intermediate.sql
-- id: DEMODB-BOARDING_PASSES-I-02
+- id: DEMODB_BOARDING_PASSES_I_02
   section: "BOARDING_PASSES"
   tier: Intermediate
   title: "how many segments have no boarding pass"
   sql: src/test/sql/boarding_passes_exercises_02_intermediate.sql
-- id: DEMODB-BOARDING_PASSES-I-03
+- id: DEMODB_BOARDING_PASSES_I_03
   section: "BOARDING_PASSES"
   tier: Intermediate
   title: "how long before departure the passengers of the first day boarded"
   sql: src/test/sql/boarding_passes_exercises_02_intermediate.sql
-- id: DEMODB-BOARDING_PASSES-A-01
+- id: DEMODB_BOARDING_PASSES_A_01
   section: "BOARDING_PASSES"
   tier: Advanced
   title: "the passengers of the first day seated in other fare conditions than they paid"
   sql: src/test/sql/boarding_passes_exercises_03_advanced.sql
-- id: DEMODB-BOARDING_PASSES-A-02
+- id: DEMODB_BOARDING_PASSES_A_02
   section: "BOARDING_PASSES"
   tier: Advanced
   title: "the boarding numbers the flight 1 skipped"
   sql: src/test/sql/boarding_passes_exercises_03_advanced.sql
 # ---- the schema
 
-- id: DEMODB-SCHEMA-B-01
+- id: DEMODB_SCHEMA_B_01
   section: "SCHEMA"
   tier: Basic
   title: "the tables and the views of the schema"
   sql: src/test/sql/_schema_exercises_01_basic.sql
-- id: DEMODB-SCHEMA-B-02
+- id: DEMODB_SCHEMA_B_02
   section: "SCHEMA"
   tier: Basic
   title: "the columns of tickets"
   sql: src/test/sql/_schema_exercises_01_basic.sql
-- id: DEMODB-SCHEMA-B-03
+- id: DEMODB_SCHEMA_B_03
   section: "SCHEMA"
   tier: Basic
   title: "the foreign keys, and what they reference"
   sql: src/test/sql/_schema_exercises_01_basic.sql
-- id: DEMODB-SCHEMA-B-04
+- id: DEMODB_SCHEMA_B_04
   section: "SCHEMA"
   tier: Basic
   title: "the functions of the schema"
   sql: src/test/sql/_schema_exercises_01_basic.sql
-- id: DEMODB-SCHEMA-B-05
+- id: DEMODB_SCHEMA_B_05
   section: "SCHEMA"
   tier: Basic
   title: "how many rows each table has"
   sql: src/test/sql/_schema_exercises_01_basic.sql
-- id: DEMODB-SCHEMA-I-01
+- id: DEMODB_SCHEMA_I_01
   section: "SCHEMA"
   tier: Intermediate
   title: "the segments sold and the money taken, by month of flight"
   sql: src/test/sql/_schema_exercises_02_intermediate.sql
-- id: DEMODB-SCHEMA-I-02
+- id: DEMODB_SCHEMA_I_02
   section: "SCHEMA"
   tier: Intermediate
   title: "the ten airports with the most passengers boarded in the first week"
   sql: src/test/sql/_schema_exercises_02_intermediate.sql
-- id: DEMODB-SCHEMA-I-03
+- id: DEMODB_SCHEMA_I_03
   section: "SCHEMA"
   tier: Intermediate
   title: "the money each airplane model took"
   sql: src/test/sql/_schema_exercises_02_intermediate.sql
-- id: DEMODB-SCHEMA-I-04
+- id: DEMODB_SCHEMA_I_04
   section: "SCHEMA"
   tier: Intermediate
   title: "the ten countries flown to the most"
   sql: src/test/sql/_schema_exercises_02_intermediate.sql
-- id: DEMODB-SCHEMA-A-01
+- id: DEMODB_SCHEMA_A_01
   section: "SCHEMA"
   tier: Advanced
   title: "the five tickets with the most segments, and their itineraries"
   sql: src/test/sql/_schema_exercises_03_advanced.sql
-- id: DEMODB-SCHEMA-A-02
+- id: DEMODB_SCHEMA_A_02
   section: "SCHEMA"
   tier: Advanced
   title: "the busiest airport of each country"
   sql: src/test/sql/_schema_exercises_03_advanced.sql
-- id: DEMODB-SCHEMA-A-03
+- id: DEMODB_SCHEMA_A_03
   section: "SCHEMA"
   tier: Advanced
   title: "how many airports are one and two routes away from Sheremetyevo"

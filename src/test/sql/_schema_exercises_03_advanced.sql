@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------------- DEMODB-SCHEMA-A-01
+-- ------------------------------------------------------------------------------------------------- DEMODB_SCHEMA_A_01
 -- the five tickets with the most segments, and their itineraries.
 --    ticket_no   | segments |               itinerary                
 -- ---------------+----------+----------------------------------------
@@ -47,7 +47,7 @@ GROUP BY s.ticket_no
 ORDER BY segments DESC, s.ticket_no LIMIT 5
 ;
 
--- ------------------------------------------------------------------------------------------------- DEMODB-SCHEMA-A-02
+-- ------------------------------------------------------------------------------------------------- DEMODB_SCHEMA_A_02
 -- the busiest airport of each country.
 --     country     | airport_code | departures 
 -- ----------------+--------------+------------
@@ -74,7 +74,7 @@ WHERE rank = 1
 ORDER BY departures DESC, country LIMIT 10
 ;
 
--- ------------------------------------------------------------------------------------------------- DEMODB-SCHEMA-A-03
+-- ------------------------------------------------------------------------------------------------- DEMODB_SCHEMA_A_03
 -- how many airports are one and two routes away from Sheremetyevo.
 --  flights | airports 
 -- ---------+----------

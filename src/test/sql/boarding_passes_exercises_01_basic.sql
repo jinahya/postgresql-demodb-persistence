@@ -26,7 +26,7 @@
 --
 
 
--- ---------------------------------------------------------------------------------------- DEMODB-BOARDING_PASSES-B-01
+-- ---------------------------------------------------------------------------------------- DEMODB_BOARDING_PASSES_B_01
 -- the boarding passes of the flight 1, in boarding order.
 --    ticket_no   | flight_id | seat_no | boarding_no |         boarding_time         
 -- ---------------+-----------+---------+-------------+-------------------------------
@@ -47,7 +47,7 @@ WHERE flight_id = 1
 ORDER BY boarding_no NULLS LAST, ticket_no
 ;
 
--- ---------------------------------------------------------------------------------------- DEMODB-BOARDING_PASSES-B-02
+-- ---------------------------------------------------------------------------------------- DEMODB_BOARDING_PASSES_B_02
 -- how many boarding passes, and how many not boarded.
 --  passes  | not_boarded 
 -- ---------+-------------
@@ -57,7 +57,7 @@ SELECT COUNT(*) AS passes, COUNT(*) FILTER (WHERE boarding_no IS NULL) AS not_bo
 FROM boarding_passes
 ;
 
--- ---------------------------------------------------------------------------------------- DEMODB-BOARDING_PASSES-B-03
+-- ---------------------------------------------------------------------------------------- DEMODB_BOARDING_PASSES_B_03
 -- the boarding passes of the ticket 0005432000000.
 --    ticket_no   | flight_id | seat_no | boarding_no |         boarding_time         
 -- ---------------+-----------+---------+-------------+-------------------------------

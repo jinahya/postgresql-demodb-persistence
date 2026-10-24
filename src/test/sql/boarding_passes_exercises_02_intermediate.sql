@@ -26,7 +26,7 @@
 --
 
 
--- ---------------------------------------------------------------------------------------- DEMODB-BOARDING_PASSES-I-01
+-- ---------------------------------------------------------------------------------------- DEMODB_BOARDING_PASSES_I_01
 -- the five seats boarded the most.
 --  seat_no | boarded 
 -- ---------+---------
@@ -42,7 +42,7 @@ GROUP BY seat_no
 ORDER BY boarded DESC, seat_no LIMIT 5
 ;
 
--- ---------------------------------------------------------------------------------------- DEMODB-BOARDING_PASSES-I-02
+-- ---------------------------------------------------------------------------------------- DEMODB_BOARDING_PASSES_I_02
 -- how many segments have no boarding pass.
 --  segments 
 -- ----------
@@ -54,7 +54,7 @@ FROM segments s
 WHERE bp.ticket_no IS NULL
 ;
 
--- ---------------------------------------------------------------------------------------- DEMODB-BOARDING_PASSES-I-03
+-- ---------------------------------------------------------------------------------------- DEMODB_BOARDING_PASSES_I_03
 -- how long before departure the passengers of the first day boarded.
 --  minutes_before 
 -- ----------------

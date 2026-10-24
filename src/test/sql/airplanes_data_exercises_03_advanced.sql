@@ -26,7 +26,7 @@
 --
 
 
--- ----------------------------------------------------------------------------------------- DEMODB-AIRPLANES_DATA-A-01
+-- ----------------------------------------------------------------------------------------- DEMODB_AIRPLANES_DATA_A_01
 -- the airplanes that fly no route.
 --  airplane_code |                       model                       | range | speed 
 -- ---------------+---------------------------------------------------+-------+-------
@@ -39,7 +39,7 @@ WHERE NOT EXISTS (SELECT 1 FROM routes r WHERE r.airplane_code = a.airplane_code
 ORDER BY a.airplane_code
 ;
 
--- ----------------------------------------------------------------------------------------- DEMODB-AIRPLANES_DATA-A-02
+-- ----------------------------------------------------------------------------------------- DEMODB_AIRPLANES_DATA_A_02
 -- the airplanes by the flights they fly.
 --  airplane_code |          model          | flights 
 -- ---------------+-------------------------+---------

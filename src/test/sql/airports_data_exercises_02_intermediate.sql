@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------ DEMODB-AIRPORTS_DATA-I-01
+-- ------------------------------------------------------------------------------------------ DEMODB_AIRPORTS_DATA_I_01
 -- the airports of Finland, in English.
 --  airport_code |   airport_name   |     city     
 -- --------------+------------------+--------------
@@ -47,7 +47,7 @@ WHERE country ->> 'en' = 'Finland'
 ORDER BY airport_code
 ;
 
--- ------------------------------------------------------------------------------------------ DEMODB-AIRPORTS_DATA-I-02
+-- ------------------------------------------------------------------------------------------ DEMODB_AIRPORTS_DATA_I_02
 -- the ten time zones with the most airports.
 --       timezone       | airports 
 -- ---------------------+----------
@@ -68,7 +68,7 @@ GROUP BY timezone
 ORDER BY airports DESC, timezone LIMIT 10
 ;
 
--- ------------------------------------------------------------------------------------------ DEMODB-AIRPORTS_DATA-I-03
+-- ------------------------------------------------------------------------------------------ DEMODB_AIRPORTS_DATA_I_03
 -- the five countries with the most airports south of the equator.
 --    country    | airports 
 -- --------------+----------

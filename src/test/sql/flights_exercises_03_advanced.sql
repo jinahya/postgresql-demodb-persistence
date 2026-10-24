@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------------ DEMODB-FLIGHTS-A-01
+-- ------------------------------------------------------------------------------------------------ DEMODB_FLIGHTS_A_01
 -- the five longest flights flown.
 --  flight_id | route_no | departure_airport | arrival_airport |      flown      
 -- -----------+----------+-------------------+-----------------+-----------------
@@ -47,7 +47,7 @@ WHERE f.status = 'Arrived'
 ORDER BY flown DESC, f.flight_id LIMIT 5
 ;
 
--- ------------------------------------------------------------------------------------------------ DEMODB-FLIGHTS-A-02
+-- ------------------------------------------------------------------------------------------------ DEMODB_FLIGHTS_A_02
 -- the flights of each day of the first week, and their running total.
 --     day     | flights | running_total 
 -- ------------+---------+---------------
@@ -68,7 +68,7 @@ GROUP BY scheduled_departure:: date
 ORDER BY day
 ;
 
--- ------------------------------------------------------------------------------------------------ DEMODB-FLIGHTS-A-03
+-- ------------------------------------------------------------------------------------------------ DEMODB_FLIGHTS_A_03
 -- the five fullest flights of the first day.
 --  flight_id | route_no | airplane_code | boarded | seats | boarded_pct 
 -- -----------+----------+---------------+---------+-------+-------------

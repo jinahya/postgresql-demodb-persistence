@@ -26,7 +26,7 @@
 --
 
 
--- ----------------------------------------------------------------------------------------------- DEMODB-SEGMENTS-I-01
+-- ----------------------------------------------------------------------------------------------- DEMODB_SEGMENTS_I_01
 -- the prices of each fare conditions.
 --  fare_conditions | cheapest | average  |  dearest  
 -- -----------------+----------+----------+-----------
@@ -43,7 +43,7 @@ GROUP BY fare_conditions
 ORDER BY fare_conditions
 ;
 
--- ----------------------------------------------------------------------------------------------- DEMODB-SEGMENTS-I-02
+-- ----------------------------------------------------------------------------------------------- DEMODB_SEGMENTS_I_02
 -- the five flights that earned the most.
 --  flight_id |   revenue   | passengers 
 -- -----------+-------------+------------
@@ -59,7 +59,7 @@ GROUP BY flight_id
 ORDER BY revenue DESC, flight_id LIMIT 5
 ;
 
--- ----------------------------------------------------------------------------------------------- DEMODB-SEGMENTS-I-03
+-- ----------------------------------------------------------------------------------------------- DEMODB_SEGMENTS_I_03
 -- how many tickets have more than two segments.
 --  tickets 
 -- ---------

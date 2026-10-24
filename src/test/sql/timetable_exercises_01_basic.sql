@@ -26,7 +26,7 @@
 --
 
 
--- ---------------------------------------------------------------------------------------------- DEMODB-TIMETABLE-B-01
+-- ---------------------------------------------------------------------------------------------- DEMODB_TIMETABLE_B_01
 -- the flights from Sheremetyevo in the next 24 hours.
 --  flight_id | route_no | arrival_airport | scheduled_departure_local | status  
 -- -----------+----------+-----------------+---------------------------+---------
@@ -44,7 +44,7 @@ WHERE departure_airport = 'SVO'
 ORDER BY scheduled_departure
 ;
 
--- ---------------------------------------------------------------------------------------------- DEMODB-TIMETABLE-B-02
+-- ---------------------------------------------------------------------------------------------- DEMODB_TIMETABLE_B_02
 -- the flights of the route PG0078 on the first day, in local time.
 --  flight_id | departure_airport | arrival_airport |  scheduled_departure   | scheduled_departure_local | scheduled_arrival_local 
 -- -----------+-------------------+-----------------+------------------------+---------------------------+-------------------------

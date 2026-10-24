@@ -26,7 +26,7 @@
 --
 
 
--- ----------------------------------------------------------------------------------------------- DEMODB-AIRPORTS-A-01
+-- ----------------------------------------------------------------------------------------------- DEMODB_AIRPORTS_A_01
 -- the airports flown from but never to.
 --  airport_code | airport_name | country 
 -- --------------+--------------+---------
@@ -38,7 +38,7 @@ WHERE EXISTS (SELECT 1 FROM routes r WHERE r.departure_airport = a.airport_code)
 ORDER BY a.airport_code
 ;
 
--- ----------------------------------------------------------------------------------------------- DEMODB-AIRPORTS-A-02
+-- ----------------------------------------------------------------------------------------------- DEMODB_AIRPORTS_A_02
 -- the ten airports with the most departures.
 --  airport_code |    airport_name     |       city        | departures 
 -- --------------+---------------------+-------------------+------------
