@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the basic level on the schema as a whole, not on a single table: a filter, a sort, a count or an
 -- aggregate. Each poses a question, answers it, and shows what the installed data gives back.

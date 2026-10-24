@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on tickets: a subquery, a window, a self join or a recursion. Each poses a
 -- question, answers it, and shows what the installed data gives back.
@@ -47,11 +47,11 @@ WHERE o.outbound
 --  2025-10 |       39.2
 --  2025-11 |       37.0
 -- (3 rows)
-SELECT TO_CHAR(b.book_date, 'YYYY-MM') AS month,
-       ROUND(100.0 * COUNT(*) FILTER (WHERE NOT t.outbound) / COUNT(*), 1)   AS return_pct
+SELECT TO_CHAR(b.book_date, 'YYYY-MM')                                     AS month,
+       ROUND(100.0 * COUNT(*) FILTER (WHERE NOT t.outbound) / COUNT(*), 1) AS return_pct
 FROM tickets t
-    JOIN bookings b
-ON b.book_ref = t.book_ref
+         JOIN bookings b
+              ON b.book_ref = t.book_ref
 GROUP BY month
 ORDER BY month
 ;

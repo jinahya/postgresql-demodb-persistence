@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Profiling queries on segments, a section per column. Each says what it looks for and what the result should be;
 -- 'no rows' marks a check that passes when nothing comes back.

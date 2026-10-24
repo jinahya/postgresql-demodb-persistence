@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Profiling queries on airports, a view, a section per column. Each says what it looks for and what the result
 -- should be; 'no rows' marks a check that passes when nothing comes back.
@@ -49,16 +49,13 @@ FROM airports
 -- ------------------------------------------------------------------ airport_name, city, country, coordinates, timezone
 -- a row whose name, city or country is not its airport's en one, or whose coordinates or timezone differ.
 -- no rows: the view copies the five.
-SELECT v.airport_code, v.airport_name, d.airport_name ->>'en' AS en
+SELECT v.airport_code, v.airport_name, d.airport_name ->> 'en' AS en
 FROM airports v
-    JOIN airports_data d
-ON d.airport_code = v.airport_code
-WHERE v.airport_name IS DISTINCT
-FROM d.airport_name->>'en'
-    OR v.city IS DISTINCT
-FROM d.city->>'en'
-    OR v.country IS DISTINCT
-FROM d.country->>'en'
-    OR v.coordinates::text <> d.coordinates::text
-    OR v.timezone <> d.timezone
+         JOIN airports_data d
+              ON d.airport_code = v.airport_code
+WHERE v.airport_name IS DISTINCT FROM d.airport_name ->> 'en'
+   OR v.city IS DISTINCT FROM d.city ->> 'en'
+   OR v.country IS DISTINCT FROM d.country ->> 'en'
+   OR v.coordinates::text <> d.coordinates::text
+   OR v.timezone <> d.timezone
 ;

@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on flights: a subquery, a window, a self join or a recursion. Each poses a
 -- question, answers it, and shows what the installed data gives back.
@@ -44,7 +44,8 @@ SELECT f.flight_id,
 FROM flights f
          JOIN routes r ON r.route_no = f.route_no AND r.validity @ > f.scheduled_departure
 WHERE f.status = 'Arrived'
-ORDER BY flown DESC, f.flight_id LIMIT 5
+ORDER BY flown DESC, f.flight_id
+LIMIT 5
 ;
 
 -- ------------------------------------------------------------------------------------------------ DEMODB_FLIGHTS_A_02
@@ -59,9 +60,9 @@ ORDER BY flown DESC, f.flight_id LIMIT 5
 --  2025-10-06 |     175 |          1075
 --  2025-10-07 |     187 |          1262
 -- (7 rows)
-SELECT scheduled_departure::date AS day,
-       COUNT(*)                                                    AS flights,
-       SUM(COUNT(*)) OVER (ORDER BY scheduled_departure::date)     AS running_total
+SELECT scheduled_departure::date                               AS day,
+       COUNT(*)                                                AS flights,
+       SUM(COUNT(*)) OVER (ORDER BY scheduled_departure::date) AS running_total
 FROM flights
 WHERE scheduled_departure < '2025-10-08'
 GROUP BY scheduled_departure:: date
@@ -93,5 +94,6 @@ WHERE f.status = 'Arrived'
   AND f.scheduled_departure >= '2025-10-01'
   AND f.scheduled_departure < '2025-10-02'
 GROUP BY f.flight_id, f.route_no, r.airplane_code, s.seats
-ORDER BY boarded_pct DESC, f.flight_id LIMIT 5
+ORDER BY boarded_pct DESC, f.flight_id
+LIMIT 5
 ;

@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the intermediate level on segments: a join to a neighbour, a group, a jsonb field or a range. Each
 -- poses a question, answers it, and shows what the installed data gives back.
@@ -56,7 +56,8 @@ ORDER BY fare_conditions
 SELECT flight_id, SUM(price) AS revenue, COUNT(*) AS passengers
 FROM segments
 GROUP BY flight_id
-ORDER BY revenue DESC, flight_id LIMIT 5
+ORDER BY revenue DESC, flight_id
+LIMIT 5
 ;
 
 -- ----------------------------------------------------------------------------------------------- DEMODB_SEGMENTS_I_03

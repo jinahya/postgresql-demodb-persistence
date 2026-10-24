@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Profiling queries on airplanes, a view, a section per column. Each says what it looks for and what the result
 -- should be; 'no rows' marks a check that passes when nothing comes back.
@@ -53,12 +53,11 @@ FROM airplanes
 -- ------------------------------------------------------------------------------------------------- model, range, speed
 -- a row whose model is not its airplane's en name, or whose range or speed differs.
 -- no rows: the view copies the three.
-SELECT v.airplane_code, v.model, d.model ->>'en' AS en
+SELECT v.airplane_code, v.model, d.model ->> 'en' AS en
 FROM airplanes v
-    JOIN airplanes_data d
-ON d.airplane_code = v.airplane_code
-WHERE v.model IS DISTINCT
-FROM d.model->>'en'
-    OR v.range <> d.range
-    OR v.speed <> d.speed
+         JOIN airplanes_data d
+              ON d.airplane_code = v.airplane_code
+WHERE v.model IS DISTINCT FROM d.model ->> 'en'
+   OR v.range <> d.range
+   OR v.speed <> d.speed
 ;

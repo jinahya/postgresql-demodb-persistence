@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the intermediate level on airports_data: a join to a neighbour, a group, a jsonb field or a range.
 -- Each poses a question, answers it, and shows what the installed data gives back.
@@ -65,7 +65,8 @@ ORDER BY airport_code
 SELECT timezone, COUNT(*) AS airports
 FROM airports_data
 GROUP BY timezone
-ORDER BY airports DESC, timezone LIMIT 10
+ORDER BY airports DESC, timezone
+LIMIT 10
 ;
 
 -- ------------------------------------------------------------------------------------------ DEMODB_AIRPORTS_DATA_I_03
@@ -78,10 +79,10 @@ ORDER BY airports DESC, timezone LIMIT 10
 --  Indonesia    |       75
 --  South Africa |       56
 -- (5 rows)
-SELECT country ->> 'en' AS country, COUNT (*) AS airports
+SELECT country ->> 'en' AS country, COUNT(*) AS airports
 FROM airports_data
 WHERE coordinates[1] < 0
 GROUP BY country ->> 'en'
 ORDER BY airports DESC, country
-    LIMIT 5
+LIMIT 5
 ;

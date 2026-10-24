@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the intermediate level on flights: a join to a neighbour, a group, a jsonb field or a range. Each
 -- poses a question, answers it, and shows what the installed data gives back.
@@ -63,7 +63,8 @@ SELECT route_no,
 FROM flights
 WHERE status = 'Arrived'
 GROUP BY route_no
-ORDER BY delay_minutes DESC, route_no LIMIT 10
+ORDER BY delay_minutes DESC, route_no
+LIMIT 10
 ;
 
 -- ------------------------------------------------------------------------------------------------ DEMODB_FLIGHTS_I_03

@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the intermediate level on seats: a join to a neighbour, a group, a jsonb field or a range. Each poses
 -- a question, answers it, and shows what the installed data gives back.
@@ -42,10 +42,14 @@
 --  E70           | Embraer E170            |      72 |       0 |        6 |    78
 -- (10 rows)
 SELECT a.airplane_code,
-       a.model ->> 'en' AS model, COUNT (*) FILTER (WHERE s.fare_conditions = 'Economy') AS economy, COUNT (*) FILTER (WHERE s.fare_conditions = 'Comfort') AS comfort, COUNT (*) FILTER (WHERE s.fare_conditions = 'Business') AS business, COUNT (s.seat_no) AS seats
+       a.model ->> 'en'                                       AS model,
+       COUNT(*) FILTER (WHERE s.fare_conditions = 'Economy')  AS economy,
+       COUNT(*) FILTER (WHERE s.fare_conditions = 'Comfort')  AS comfort,
+       COUNT(*) FILTER (WHERE s.fare_conditions = 'Business') AS business,
+       COUNT(s.seat_no)                                       AS seats
 FROM airplanes_data a
-    LEFT JOIN seats s
-ON s.airplane_code = a.airplane_code
+         LEFT JOIN seats s
+                   ON s.airplane_code = a.airplane_code
 GROUP BY a.airplane_code, a.model
 ORDER BY a.airplane_code
 ;
@@ -64,8 +68,8 @@ ORDER BY a.airplane_code
 --  E70           |   24 | ABCD
 -- (8 rows)
 SELECT airplane_code,
-       MAX(LEFT (seat_no, -1)::int) AS rows,
-       STRING_AGG(DISTINCT RIGHT(seat_no, 1), '' ORDER BY RIGHT(seat_no, 1))      AS letters
+       MAX(LEFT(seat_no, -1)::int)                                           AS rows,
+       STRING_AGG(DISTINCT RIGHT(seat_no, 1), '' ORDER BY RIGHT(seat_no, 1)) AS letters
 FROM seats
 GROUP BY airplane_code
 ORDER BY airplane_code

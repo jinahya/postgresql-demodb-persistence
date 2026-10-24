@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Profiling queries on boarding_passes, a section per column. Each says what it looks for and what the result
 -- should be; 'no rows' marks a check that passes when nothing comes back.
@@ -77,7 +77,9 @@ WHERE NOT EXISTS (SELECT 1
 -- ------------------------------------------------------------------------------------------ boarding_no, boarding_time
 -- the two are nullable, and go together; how many passes have neither, and how many one without the other.
 -- 30360 have neither, none has one of the two.
-SELECT COUNT(*) FILTER (WHERE boarding_no IS NULL)                         AS no_number, COUNT(*) FILTER (WHERE boarding_time IS NULL)                       AS no_time, COUNT(*) FILTER (WHERE (boarding_no IS NULL) <> (boarding_time IS NULL)) AS one_of_two
+SELECT COUNT(*) FILTER (WHERE boarding_no IS NULL)                              AS no_number,
+       COUNT(*) FILTER (WHERE boarding_time IS NULL)                            AS no_time,
+       COUNT(*) FILTER (WHERE (boarding_no IS NULL) <> (boarding_time IS NULL)) AS one_of_two
 FROM boarding_passes
 ;
 

@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on airplanes_data: a subquery, a window, a self join or a recursion. Each poses a
 -- question, answers it, and shows what the installed data gives back.
@@ -52,11 +52,11 @@ ORDER BY a.airplane_code
 --  339           | Airbus A330-900neo      |    1428
 --  32N           | Airbus A320neo          |     845
 -- (8 rows)
-SELECT a.airplane_code, a.model ->> 'en' AS model, COUNT (f.flight_id) AS flights
+SELECT a.airplane_code, a.model ->> 'en' AS model, COUNT(f.flight_id) AS flights
 FROM airplanes_data a
-    JOIN routes r
-ON r.airplane_code = a.airplane_code
-    JOIN flights f ON f.route_no = r.route_no AND r.validity @> f.scheduled_departure
+         JOIN routes r
+              ON r.airplane_code = a.airplane_code
+         JOIN flights f ON f.route_no = r.route_no AND r.validity @> f.scheduled_departure
 GROUP BY a.airplane_code, a.model
 ORDER BY flights DESC, a.airplane_code
 ;

@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on airports: a subquery, a window, a self join or a recursion. Each poses a
 -- question, answers it, and shows what the installed data gives back.
@@ -58,5 +58,6 @@ FROM airports a
          JOIN routes r ON r.departure_airport = a.airport_code
          JOIN flights f ON f.route_no = r.route_no AND r.validity @ > f.scheduled_departure
 GROUP BY a.airport_code, a.airport_name, a.city
-ORDER BY departures DESC, a.airport_code LIMIT 10
+ORDER BY departures DESC, a.airport_code
+LIMIT 10
 ;

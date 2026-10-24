@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on airports_data: a subquery, a window, a self join or a recursion. Each poses a
 -- question, answers it, and shows what the installed data gives back.
@@ -41,12 +41,15 @@
 --  Cleveland    | United States  | BKL, CGF, CLE, HDI                |     4
 --  Dallas       | United States  | ADS, DAL, DFW, RBD                |     4
 -- (10 rows)
-SELECT city ->> 'en' AS city, country ->> 'en' AS country, STRING_AGG(airport_code, ', ' ORDER BY airport_code) AS airports, COUNT (*) AS count
+SELECT city ->> 'en'                                        AS city,
+       country ->> 'en'                                     AS country,
+       STRING_AGG(airport_code, ', ' ORDER BY airport_code) AS airports,
+       COUNT(*)                                             AS count
 FROM airports_data
 GROUP BY city ->> 'en', country ->> 'en'
-HAVING COUNT (*) > 1
+HAVING COUNT(*) > 1
 ORDER BY count DESC, city
-    LIMIT 10
+LIMIT 10
 ;
 
 -- ------------------------------------------------------------------------------------------ DEMODB_AIRPORTS_DATA_A_02

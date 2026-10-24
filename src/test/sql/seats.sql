@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Profiling queries on seats, a section per column. Each says what it looks for and what the result should be;
 -- 'no rows' marks a check that passes when nothing comes back.
@@ -58,7 +58,7 @@ WHERE seat_no !~ '^[0-9]{1,2}[A-HJ-L]$'
 ;
 
 -- the letters in use; A to L without I, eleven.
-SELECT DISTINCT RIGHT (seat_no, 1) AS letter
+SELECT DISTINCT RIGHT(seat_no, 1) AS letter
 FROM seats
 ORDER BY letter
 ;

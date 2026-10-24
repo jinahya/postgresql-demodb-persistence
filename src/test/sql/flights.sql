@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Profiling queries on flights, a section per column. Each says what it looks for and what the result should be;
 -- 'no rows' marks a check that passes when nothing comes back.
@@ -71,7 +71,8 @@ WHERE NOT EXISTS (SELECT 1
 SELECT route_no, COUNT(*) AS flights
 FROM flights
 GROUP BY route_no
-ORDER BY flights DESC, route_no ASC LIMIT 5
+ORDER BY flights DESC, route_no ASC
+LIMIT 5
 ;
 
 
@@ -119,7 +120,9 @@ HAVING COUNT(*) > 1
 -- ------------------------------------------------------------------------------------ actual_departure, actual_arrival
 -- which statuses have the two; Arrived has both, Departed the departure only, every other status neither.
 SELECT status,
-       COUNT(*) FILTER (WHERE actual_departure IS NULL) AS no_departure, COUNT(*) FILTER (WHERE actual_arrival IS NULL)   AS no_arrival, COUNT(*) AS flights
+       COUNT(*) FILTER (WHERE actual_departure IS NULL) AS no_departure,
+       COUNT(*) FILTER (WHERE actual_arrival IS NULL)   AS no_arrival,
+       COUNT(*)                                         AS flights
 FROM flights
 GROUP BY status
 ORDER BY status

@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the intermediate level on routes: a join to a neighbour, a group, a jsonb field or a range. Each
 -- poses a question, answers it, and shows what the installed data gives back.
@@ -58,7 +58,8 @@ ORDER BY validity
 SELECT route_no, COUNT(*) AS periods
 FROM routes
 GROUP BY route_no
-ORDER BY periods DESC, route_no LIMIT 5
+ORDER BY periods DESC, route_no
+LIMIT 5
 ;
 
 -- ------------------------------------------------------------------------------------------------- DEMODB_ROUTES_I_03
@@ -74,10 +75,10 @@ ORDER BY periods DESC, route_no LIMIT 5
 --  339           | Airbus A330-900neo      |     80
 --  32N           | Airbus A320neo          |     40
 -- (8 rows)
-SELECT r.airplane_code, a.model ->> 'en' AS model, COUNT (*) AS routes
+SELECT r.airplane_code, a.model ->> 'en' AS model, COUNT(*) AS routes
 FROM routes r
-    JOIN airplanes_data a
-ON a.airplane_code = r.airplane_code
+         JOIN airplanes_data a
+              ON a.airplane_code = r.airplane_code
 GROUP BY r.airplane_code, a.model
 ORDER BY routes DESC, r.airplane_code
 ;

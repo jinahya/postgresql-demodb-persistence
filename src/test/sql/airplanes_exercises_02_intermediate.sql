@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the intermediate level on airplanes: a join to a neighbour, a group, a jsonb field or a range. Each
 -- poses a question, answers it, and shows what the installed data gives back.
@@ -48,9 +48,8 @@ ORDER BY airplanes DESC, maker
 -- (0 rows)
 SELECT v.airplane_code, v.model AS view_model, d.model ->> lang() AS data_model
 FROM airplanes v
-    JOIN airplanes_data d
-ON d.airplane_code = v.airplane_code
-WHERE v.model IS DISTINCT
-FROM d.model ->> lang()
+         JOIN airplanes_data d
+              ON d.airplane_code = v.airplane_code
+WHERE v.model IS DISTINCT FROM d.model ->> lang()
 ORDER BY v.airplane_code
 ;

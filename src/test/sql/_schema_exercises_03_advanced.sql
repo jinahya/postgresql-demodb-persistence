@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on the schema as a whole, not on a single table: a subquery, a window, a self join
 -- or a recursion. Each poses a question, answers it, and shows what the installed data gives back.
@@ -44,7 +44,8 @@ FROM segments s
          JOIN flights f ON f.flight_id = s.flight_id
          JOIN routes r ON r.route_no = f.route_no AND r.validity @ > f.scheduled_departure
 GROUP BY s.ticket_no
-ORDER BY segments DESC, s.ticket_no LIMIT 5
+ORDER BY segments DESC, s.ticket_no
+LIMIT 5
 ;
 
 -- ------------------------------------------------------------------------------------------------- DEMODB_SCHEMA_A_02
@@ -65,13 +66,15 @@ ORDER BY segments DESC, s.ticket_no LIMIT 5
 SELECT country, airport_code, departures
 FROM (SELECT a.country,
              a.airport_code,
-             COUNT(*) AS  departures,
-             ROW_NUMBER() OVER (PARTITION BY a.country ORDER BY COUNT(*) DESC, a.airport_code) AS rank
+             COUNT(*)                                                             AS departures,
+             ROW_NUMBER()
+             OVER (PARTITION BY a.country ORDER BY COUNT(*) DESC, a.airport_code) AS rank
       FROM timetable t
                JOIN airports a ON a.airport_code = t.departure_airport
       GROUP BY a.country, a.airport_code) x
 WHERE rank = 1
-ORDER BY departures DESC, country LIMIT 10
+ORDER BY departures DESC, country
+LIMIT 10
 ;
 
 -- ------------------------------------------------------------------------------------------------- DEMODB_SCHEMA_A_03

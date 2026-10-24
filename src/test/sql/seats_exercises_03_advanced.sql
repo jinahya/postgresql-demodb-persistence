@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on seats: a subquery, a window, a self join or a recursion. Each poses a question,
 -- answers it, and shows what the installed data gives back.
@@ -63,7 +63,8 @@ ORDER BY s.seat_no
 --  77W           |          7.4
 -- (8 rows)
 SELECT airplane_code,
-       ROUND(100.0 * COUNT(*) FILTER (WHERE fare_conditions = 'Business') / COUNT(*), 1) AS business_pct
+       ROUND(100.0 * COUNT(*) FILTER (WHERE fare_conditions = 'Business') / COUNT(*),
+             1) AS business_pct
 FROM seats
 GROUP BY airplane_code
 ORDER BY business_pct DESC, airplane_code

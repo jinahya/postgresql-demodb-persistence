@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the intermediate level on airplanes_data: a join to a neighbour, a group, a jsonb field or a range.
 -- Each poses a question, answers it, and shows what the installed data gives back.

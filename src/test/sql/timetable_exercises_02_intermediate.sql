@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the intermediate level on timetable: a join to a neighbour, a group, a jsonb field or a range. Each
 -- poses a question, answers it, and shows what the installed data gives back.
@@ -50,7 +50,8 @@ WHERE scheduled_departure_local::date <> (scheduled_departure AT TIME ZONE 'UTC'
 SELECT departure_airport, arrival_airport, COUNT(*) AS flights
 FROM timetable
 GROUP BY departure_airport, arrival_airport
-ORDER BY flights DESC, departure_airport, arrival_airport LIMIT 5
+ORDER BY flights DESC, departure_airport, arrival_airport
+LIMIT 5
 ;
 
 -- ---------------------------------------------------------------------------------------------- DEMODB_TIMETABLE_I_03
@@ -62,9 +63,9 @@ ORDER BY flights DESC, departure_airport, arrival_airport LIMIT 5
 --  2025-12 |       0 |    0
 --  2026-01 |       0 |    0
 -- (4 rows)
-SELECT TO_CHAR(scheduled_arrival, 'YYYY-MM') AS month,
-       COUNT(*) FILTER (WHERE status = 'Arrived')                                          AS arrived,
-       COUNT(*) FILTER (WHERE actual_arrival > scheduled_arrival + INTERVAL '1 hour')      AS late
+SELECT TO_CHAR(scheduled_arrival, 'YYYY-MM')                                          AS month,
+       COUNT(*) FILTER (WHERE status = 'Arrived')                                     AS arrived,
+       COUNT(*) FILTER (WHERE actual_arrival > scheduled_arrival + INTERVAL '1 hour') AS late
 FROM timetable
 GROUP BY month
 ORDER BY month

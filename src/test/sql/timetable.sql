@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Profiling queries on timetable, a view, a section per column. Each says what it looks for and what the result
 -- should be; 'no rows' marks a check that passes when nothing comes back.
@@ -74,7 +74,7 @@ WHERE t.departure_airport <> r.departure_airport
    OR t.arrival_airport <> r.arrival_airport
    OR t.airplane_code <> r.airplane_code
    OR t.scheduled_departure_local <> f.scheduled_departure AT TIME ZONE dep.timezone
-    OR t.scheduled_arrival_local <> f.scheduled_arrival AT TIME ZONE arr.timezone
+   OR t.scheduled_arrival_local <> f.scheduled_arrival AT TIME ZONE arr.timezone
 ;
 
 -- the earliest and the latest local departure of the day; 00:00 to 23:55, the routes' scheduled times.

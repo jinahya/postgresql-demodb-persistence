@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Profiling queries on tickets, a section per column. Each says what it looks for and what the result should be;
 -- 'no rows' marks a check that passes when nothing comes back.
@@ -63,7 +63,8 @@ WHERE passenger_id !~ '^[A-Z]{2} [0-9]+$'
 SELECT SUBSTR(passenger_id, 1, 2) AS country, COUNT(*) AS tickets
 FROM tickets
 GROUP BY SUBSTR(passenger_id, 1, 2)
-ORDER BY tickets DESC, country ASC LIMIT 5
+ORDER BY tickets DESC, country ASC
+LIMIT 5
 ;
 
 -- how many distinct passengers; 1797400, so many fly more than once.
@@ -91,7 +92,7 @@ WHERE TRIM(passenger_name) = ''
 SELECT passenger_id, COUNT(DISTINCT passenger_name) AS names
 FROM tickets
 GROUP BY passenger_id
-HAVING COUNT (DISTINCT passenger_name) > 1
+HAVING COUNT(DISTINCT passenger_name) > 1
 ;
 
 

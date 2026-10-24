@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on boarding_passes: a subquery, a window, a self join or a recursion. Each poses a
 -- question, answers it, and shows what the installed data gives back.
@@ -32,16 +32,17 @@
 -- --------+----------+------------
 --       0 |        0 |          0
 -- (1 row)
-SELECT COUNT(*) AS passes,
-       COUNT(*)    FILTER (WHERE rank.seat > rank.paid)                                            AS upgraded, COUNT(*) FILTER (WHERE rank.seat < rank.paid)                                            AS downgraded
+SELECT COUNT(*)                                      AS passes,
+       COUNT(*) FILTER (WHERE rank.seat > rank.paid) AS upgraded,
+       COUNT(*) FILTER (WHERE rank.seat < rank.paid) AS downgraded
 FROM boarding_passes bp
          JOIN segments s ON s.ticket_no = bp.ticket_no AND s.flight_id = bp.flight_id
          JOIN flights f ON f.flight_id = bp.flight_id
          JOIN routes r ON r.route_no = f.route_no AND r.validity @ > f.scheduled_departure
          JOIN seats st ON st.airplane_code = r.airplane_code AND st.seat_no = bp.seat_no
-         CROSS JOIN LATERAL (SELECT ARRAY_POSITION(ARRAY['Economy', 'Comfort', 'Business'],
+         CROSS JOIN LATERAL (SELECT ARRAY_POSITION(ARRAY ['Economy', 'Comfort', 'Business'],
                                                    st.fare_conditions) AS seat,
-                                    ARRAY_POSITION(ARRAY['Economy', 'Comfort', 'Business'],
+                                    ARRAY_POSITION(ARRAY ['Economy', 'Comfort', 'Business'],
                                                    s.fare_conditions)  AS paid) rank
 WHERE f.scheduled_departure >= '2025-10-01'
   AND f.scheduled_departure < '2025-10-02'

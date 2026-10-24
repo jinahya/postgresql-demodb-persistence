@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Profiling queries on airports_data, a section per column. Each says what it looks for and what the result should be;
 -- 'no rows' marks a check that passes when nothing comes back.
@@ -43,7 +43,8 @@ WHERE airport_code !~ '^[A-Z]{3}$'
 -- ----------------------------------------------------------------------------------------- airport_name, city, country
 -- the three are jsonb; in which languages. Every row an object, with an en and a ru name.
 SELECT k AS language, COUNT(*) AS airports
-FROM airports_data, jsonb_object_keys(airport_name) k
+FROM airports_data,
+     jsonb_object_keys(airport_name) k
 GROUP BY k
 ORDER BY k
 ;
@@ -52,38 +53,38 @@ ORDER BY k
 -- no rows: every airport has all three in English.
 SELECT airport_code, airport_name, city, country
 FROM airports_data
-WHERE COALESCE(TRIM(airport_name ->>'en'), '') = ''
-   OR COALESCE(TRIM(city ->>'en'), '') = ''
-   OR COALESCE(TRIM(country ->>'en'), '') = ''
+WHERE COALESCE(TRIM(airport_name ->> 'en'), '') = ''
+   OR COALESCE(TRIM(city ->> 'en'), '') = ''
+   OR COALESCE(TRIM(country ->> 'en'), '') = ''
 ;
 
 -- the shortest and the longest en name and city; names 2 to 35 characters, cities 2 to 26.
-SELECT MIN(LENGTH(airport_name ->>'en')),
-       MAX(LENGTH(airport_name ->>'en')),
-       MIN(LENGTH(city ->>'en')),
-       MAX(LENGTH(city ->>'en'))
+SELECT MIN(LENGTH(airport_name ->> 'en')),
+       MAX(LENGTH(airport_name ->> 'en')),
+       MIN(LENGTH(city ->> 'en')),
+       MAX(LENGTH(city ->> 'en'))
 FROM airports_data
 ;
 
 -- how many countries and cities, in English; 230 countries, 5075 cities.
-SELECT COUNT(DISTINCT country ->>'en') AS countries, COUNT(DISTINCT city ->>'en') AS cities
+SELECT COUNT(DISTINCT country ->> 'en') AS countries, COUNT(DISTINCT city ->> 'en') AS cities
 FROM airports_data
 ;
 
 -- the countries with the most airports; the United States has 1129.
-SELECT country ->>'en' AS country, COUNT (*) AS airports
+SELECT country ->> 'en' AS country, COUNT(*) AS airports
 FROM airports_data
-GROUP BY country->>'en'
+GROUP BY country ->> 'en'
 ORDER BY airports DESC, country ASC
-    LIMIT 5
+LIMIT 5
 ;
 
 -- the cities with the most airports; London has 8.
-SELECT city ->>'en' AS city, COUNT (*) AS airports
+SELECT city ->> 'en' AS city, COUNT(*) AS airports
 FROM airports_data
-GROUP BY city->>'en'
+GROUP BY city ->> 'en'
 ORDER BY airports DESC, city ASC
-    LIMIT 5
+LIMIT 5
 ;
 
 
@@ -124,7 +125,8 @@ WHERE NOT EXISTS (SELECT 1
 SELECT timezone, COUNT(*) AS airports
 FROM airports_data
 GROUP BY timezone
-ORDER BY airports DESC, timezone ASC LIMIT 5
+ORDER BY airports DESC, timezone ASC
+LIMIT 5
 ;
 
 

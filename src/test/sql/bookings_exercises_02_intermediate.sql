@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the intermediate level on bookings: a join to a neighbour, a group, a jsonb field or a range. Each
 -- poses a question, answers it, and shows what the installed data gives back.
@@ -57,7 +57,8 @@ ORDER BY month
 -- (10 rows)
 SELECT *
 FROM bookings
-ORDER BY total_amount DESC, book_ref LIMIT 10
+ORDER BY total_amount DESC, book_ref
+LIMIT 10
 ;
 
 -- ----------------------------------------------------------------------------------------------- DEMODB_BOOKINGS_I_03

@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on bookings: a subquery, a window, a self join or a recursion. Each poses a
 -- question, answers it, and shows what the installed data gives back.
@@ -55,5 +55,6 @@ SELECT b.book_ref, b.book_date, b.total_amount, COUNT(*) AS tickets
 FROM bookings b
          JOIN tickets t ON t.book_ref = b.book_ref
 GROUP BY b.book_ref, b.book_date, b.total_amount
-ORDER BY tickets DESC, b.book_ref LIMIT 5
+ORDER BY tickets DESC, b.book_ref
+LIMIT 5
 ;

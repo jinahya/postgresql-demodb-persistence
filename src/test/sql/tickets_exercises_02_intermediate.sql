@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the intermediate level on tickets: a join to a neighbour, a group, a jsonb field or a range. Each
 -- poses a question, answers it, and shows what the installed data gives back.
@@ -39,7 +39,8 @@
 SELECT passenger_id, passenger_name, COUNT(*) AS tickets
 FROM tickets
 GROUP BY passenger_id, passenger_name
-ORDER BY tickets DESC, passenger_id LIMIT 5
+ORDER BY tickets DESC, passenger_id
+LIMIT 5
 ;
 
 -- ------------------------------------------------------------------------------------------------ DEMODB_TICKETS_I_02
@@ -57,11 +58,11 @@ ORDER BY tickets DESC, passenger_id LIMIT 5
 --  GB      |  144743
 --  FR      |  125518
 -- (10 rows)
-SELECT LEFT (passenger_id, 2) AS country, COUNT (*) AS tickets
+SELECT LEFT(passenger_id, 2) AS country, COUNT(*) AS tickets
 FROM tickets
 GROUP BY country
 ORDER BY tickets DESC, country
-    LIMIT 10
+LIMIT 10
 ;
 
 -- ------------------------------------------------------------------------------------------------ DEMODB_TICKETS_I_03

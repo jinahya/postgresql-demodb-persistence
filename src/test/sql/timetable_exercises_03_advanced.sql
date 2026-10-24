@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on timetable: a subquery, a window, a self join or a recursion. Each poses a
 -- question, answers it, and shows what the installed data gives back.
@@ -58,5 +58,5 @@ WHERE a.arrival_airport = 'SVO'
   AND a.scheduled_arrival
     < '2025-10-02'
 ORDER BY a.flight_id, d.flight_id
-    LIMIT 10
+LIMIT 10
 ;

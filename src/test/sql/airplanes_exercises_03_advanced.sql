@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on airplanes: a subquery, a window, a self join or a recursion. Each poses a
 -- question, answers it, and shows what the installed data gives back.
@@ -38,5 +38,6 @@ SELECT a.airplane_code, a.model, COUNT(*) AS routes
 FROM airplanes a
          JOIN routes r ON r.airplane_code = a.airplane_code
 GROUP BY a.airplane_code, a.model
-ORDER BY routes DESC, a.airplane_code LIMIT 3
+ORDER BY routes DESC, a.airplane_code
+LIMIT 3
 ;

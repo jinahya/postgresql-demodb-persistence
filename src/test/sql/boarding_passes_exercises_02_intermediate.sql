@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the intermediate level on boarding_passes: a join to a neighbour, a group, a jsonb field or a range.
 -- Each poses a question, answers it, and shows what the installed data gives back.
@@ -39,7 +39,8 @@
 SELECT seat_no, COUNT(*) AS boarded
 FROM boarding_passes
 GROUP BY seat_no
-ORDER BY boarded DESC, seat_no LIMIT 5
+ORDER BY boarded DESC, seat_no
+LIMIT 5
 ;
 
 -- ---------------------------------------------------------------------------------------- DEMODB_BOARDING_PASSES_I_02

@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on routes: a subquery, a window, a self join or a recursion. Each poses a
 -- question, answers it, and shows what the installed data gives back.
@@ -42,10 +42,13 @@
 --  CAN               | PG0492   | AKL             | 11:50:00
 -- (10 rows)
 SELECT DISTINCT
-ON (departure_airport) departure_airport, route_no, arrival_airport, duration
+    ON (departure_airport) departure_airport,
+                           route_no,
+                           arrival_airport,
+                           duration
 FROM routes
 ORDER BY departure_airport, duration DESC, route_no, validity
-    LIMIT 10
+LIMIT 10
 ;
 
 -- ------------------------------------------------------------------------------------------------- DEMODB_ROUTES_A_02
@@ -73,5 +76,5 @@ FROM routes r1
     AND r2.validity && r1.validity
 WHERE r1.departure_airport < r1.arrival_airport
 ORDER BY r1.route_no, r2.route_no
-    LIMIT 10
+LIMIT 10
 ;

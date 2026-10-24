@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Profiling queries on routes, a section per column. Each says what it looks for and what the result should be;
 -- 'no rows' marks a check that passes when nothing comes back.
@@ -105,7 +105,8 @@ FROM routes
 SELECT departure_airport, COUNT(DISTINCT route_no) AS routes
 FROM routes
 GROUP BY departure_airport
-ORDER BY routes DESC, departure_airport ASC LIMIT 5
+ORDER BY routes DESC, departure_airport ASC
+LIMIT 5
 ;
 
 -- a pair of airports flown one way only.
@@ -134,7 +135,8 @@ WHERE NOT EXISTS (SELECT 1
 SELECT airplane_code, COUNT(DISTINCT route_no) AS routes
 FROM routes
 GROUP BY airplane_code
-ORDER BY routes DESC, airplane_code ASC LIMIT 5
+ORDER BY routes DESC, airplane_code ASC
+LIMIT 5
 ;
 
 
@@ -189,5 +191,5 @@ FROM routes
 SELECT route_no, validity, duration
 FROM routes
 WHERE duration <= INTERVAL '0'
-   OR EXTRACT (SECOND FROM duration) <> 0
+   OR EXTRACT(SECOND FROM duration) <> 0
 ;

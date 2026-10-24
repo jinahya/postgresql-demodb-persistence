@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the intermediate level on the schema as a whole, not on a single table: a join to a neighbour, a
 -- group, a jsonb field or a range. Each poses a question, answers it, and shows what the installed data gives back.
@@ -35,10 +35,12 @@
 --  2025-12 |   996024 | 6209347975.00
 --  2026-01 |   510201 | 3396277075.00
 -- (4 rows)
-SELECT TO_CHAR(f.scheduled_departure, 'YYYY-MM') AS month, COUNT(*) AS segments, SUM(s.price) AS revenue
+SELECT TO_CHAR(f.scheduled_departure, 'YYYY-MM') AS month,
+       COUNT(*)                                  AS segments,
+       SUM(s.price)                              AS revenue
 FROM segments s
-    JOIN flights f
-ON f.flight_id = s.flight_id
+         JOIN flights f
+              ON f.flight_id = s.flight_id
 GROUP BY month
 ORDER BY month
 ;
@@ -66,7 +68,8 @@ FROM boarding_passes bp
 WHERE f.scheduled_departure >= '2025-10-01'
   AND f.scheduled_departure < '2025-10-08'
 GROUP BY a.airport_code, a.airport_name
-ORDER BY boarded DESC, a.airport_code LIMIT 10
+ORDER BY boarded DESC, a.airport_code
+LIMIT 10
 ;
 
 -- ------------------------------------------------------------------------------------------------- DEMODB_SCHEMA_I_03
@@ -110,5 +113,6 @@ SELECT a.country, COUNT(*) AS arrivals
 FROM timetable t
          JOIN airports a ON a.airport_code = t.arrival_airport
 GROUP BY a.country
-ORDER BY arrivals DESC, a.country LIMIT 10
+ORDER BY arrivals DESC, a.country
+LIMIT 10
 ;

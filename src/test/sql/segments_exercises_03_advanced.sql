@@ -1,4 +1,4 @@
--- -
+---
 -- #%L
 -- postgres-demonstration-persistence
 -- %%
@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 -- #L%
--- -
+---
 --
 -- Exercises at the advanced level on segments: a subquery, a window, a self join or a recursion. Each poses a
 -- question, answers it, and shows what the installed data gives back.
@@ -37,13 +37,16 @@
 --          5 |  5250.00 | 10500.00 |  2.00
 -- (5 rows)
 SELECT flight_id,
-       MIN(price) FILTER (WHERE fare_conditions = 'Economy')                                                          AS economy, MIN(price) FILTER (WHERE fare_conditions = 'Business')                                                         AS business, ROUND(MIN(price) FILTER (WHERE fare_conditions = 'Business') / MIN(price) FILTER (WHERE fare_conditions = 'Economy'), 2) AS ratio
+       MIN(price) FILTER (WHERE fare_conditions = 'Economy')           AS economy,
+       MIN(price) FILTER (WHERE fare_conditions = 'Business')          AS business,
+       ROUND(MIN(price) FILTER (WHERE fare_conditions = 'Business') /
+             MIN(price) FILTER (WHERE fare_conditions = 'Economy'), 2) AS ratio
 FROM segments
 GROUP BY flight_id
 HAVING COUNT(*) FILTER (WHERE fare_conditions = 'Economy') > 0
    AND COUNT(*) FILTER (WHERE fare_conditions = 'Business') > 0
 ORDER BY ratio DESC, flight_id
-    LIMIT 5
+LIMIT 5
 ;
 
 -- ----------------------------------------------------------------------------------------------- DEMODB_SEGMENTS_A_02
