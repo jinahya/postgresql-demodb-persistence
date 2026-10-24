@@ -20,6 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence.converter;
  * #L%
  */
 
+import jakarta.enterprise.context.Dependent;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
@@ -30,10 +31,12 @@ import jakarta.persistence.Converter;
  * {@link IntegerListArrayConverter} it maps each element of an {@code integer[]}.
  * <p>
  * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
- * {@link jakarta.persistence.Convert @Convert}.
+ * {@link jakarta.persistence.Convert @Convert}. It is a CDI bean as well, {@link Dependent @Dependent},
+ * so that {@link IntegerListArrayConverter} can take it by injection.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Dependent
 @Converter(autoApply = false)
 public class IntegerConverter
         implements AttributeConverter<Integer, String> {

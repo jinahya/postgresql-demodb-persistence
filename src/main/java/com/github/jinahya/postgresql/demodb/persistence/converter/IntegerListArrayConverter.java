@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence.converter;
  * #L%
  */
 
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 import jakarta.persistence.Converter;
 
 /**
@@ -30,11 +32,18 @@ import jakarta.persistence.Converter;
  * <p>
  * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
  * {@link jakarta.persistence.Convert @Convert}.
+ * <p>
+ * It is also a CDI bean, {@link Dependent @Dependent}, with an {@link Inject @Inject} constructor
+ * which takes the element converter: a provider handed a {@code BeanManager}
+ * ({@code jakarta.persistence.bean.manager}) obtains its instances from CDI, which resolves the
+ * {@link IntegerConverter} bean for it; one without uses the no-arg constructor, which builds the
+ * element converter itself. Both end in the same place.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see _ListArrayConverter
  * @see com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute#ATTRIBUTE_NAME_DAYS_OF_WEEK
  */
+@Dependent
 @Converter(autoApply = false)
 public class IntegerListArrayConverter
         extends _ListArrayConverter<Integer, String> {
@@ -42,9 +51,19 @@ public class IntegerListArrayConverter
     // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
-     * Creates a new instance.
+     * Creates a new instance, with an element converter of its own.
      */
     public IntegerListArrayConverter() {
-        super(new IntegerConverter());
+        this(new IntegerConverter());
+    }
+
+    /**
+     * Creates a new instance with the specified element converter; the constructor CDI uses.
+     *
+     * @param elementConverter the converter between one element and its text.
+     */
+    @Inject
+    public IntegerListArrayConverter(final IntegerConverter elementConverter) {
+        super(elementConverter);
     }
 }
