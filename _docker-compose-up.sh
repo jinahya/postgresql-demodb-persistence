@@ -5,11 +5,8 @@
 #
 # The data directory is not mounted, so it lives in the container's anonymous volume, which
 # `down -v` removes. Every run therefore starts from an empty cluster, and the image's entrypoint
-# runs ./docker-entrypoint-initdb.d in name order -- 00-create-database-demo.sql, then the fetched
-# demo-*.sql.gz -- before it accepts connections from outside. The dump is about 1.3 GB once
-# loaded, so that takes a few minutes; the healthcheck in compose.yaml waits for it.
-#
-# The dump is not in git. ./_fetch-demo.sh is run first and downloads it if it is not here yet.
+# loads the demonstration database dump it carries before it accepts connections from outside.
+# That takes about a minute for the 3m edition; the healthcheck in compose.yaml waits for it.
 #
 set -eu
 
@@ -43,8 +40,6 @@ trap on_interrupt INT TERM
 # firing would otherwise be reused by `up -d`
 echo "==> down -v (cleaning up any previous run) ..."
 compose down -v
-
-./_fetch-demo.sh
 
 echo "==> up -d ..."
 compose up -d

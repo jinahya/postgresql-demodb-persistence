@@ -11,22 +11,16 @@ Sibling of [mysql-sakila-persistence](https://github.com/jinahya/mysql-sakila-pe
 $ ./_docker-compose-up.sh
 ```
 
-Brings up `postgres:18` on `localhost:5432`, as `postgres` / `password`, and follows its log; Ctrl-C takes it down
-again. Every run starts from an empty cluster: the image loads
-[`docker-entrypoint-initdb.d`](docker-entrypoint-initdb.d) in name order,
+Brings up [`onacit/postgresql-demodb:18-alpine-3m`](https://hub.docker.com/r/onacit/postgresql-demodb) on
+`localhost:5432`, as `postgres` / `password`, and follows its log; Ctrl-C takes it down again. That is the official
+`postgres:18-alpine` image with the demonstration database dump baked in, loaded on first start; the smallest tag,
+about 260 MB to pull. Every run starts from an empty cluster, so loading happens every time, about a minute; the
+container is `healthy` once `demo` is there.
 
-| file                           | from                                                                                         |
-|--------------------------------|----------------------------------------------------------------------------------------------|
-| `00-create-database-demo.sql`  | here; gives the dump's leading `DROP DATABASE demo` something to drop                        |
-| `demo-20250901-3m.sql.gz`      | https://edu.postgrespro.ru/demo-20250901-3m.sql.gz, unchanged; fetched by [`_fetch-demo.sh`](_fetch-demo.sh) |
-
-The dump is not committed: 139 MB compressed, about 1.3 GB loaded. `_docker-compose-up.sh` runs `_fetch-demo.sh`
-first, which downloads it once (about 20 minutes from Korea) and leaves it alone after that; a copy downloaded by
-hand into the directory, under that same name, does as well. `DEMO_EDITION=6m`, `1y` or `2y` picks a bigger one. Loading takes a few minutes; the container is `healthy` once `demo` is there.
-
-```shell
-$ ./_fetch-demo.sh                 # on its own, e.g. ahead of time
-```
+The tag is `<postgres>-<base>-<edition>`: `3m` is three months of flights, the smallest edition; `6m`, `1y` and `2y`
+are the bigger ones, and leaving out `alpine` gives the Debian-based image. The dump itself is
+https://edu.postgrespro.ru/demo-20250901-3m.sql.gz, unchanged (see
+[postgresql-demodb-docker](https://github.com/jinahya/postgresql-demodb-docker)).
 
 ```shell
 $ docker exec -it postgres-demonstration psql -U postgres -d demo

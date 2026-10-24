@@ -215,8 +215,3 @@ __pycache__/
 
 # End of https://www.toptal.com/developers/gitignore/api/jenv
 # ----------------------------------------------------------------------------------------------------------------------
-
-# ----------------------------------------------------------------------------------------------------------------------
-# the demonstration database dump, fetched by ./_fetch-demo.sh; 139 MB compressed at the smallest, so never committed
-docker-entrypoint-initdb.d/demo-*.sql.gz
-docker-entrypoint-initdb.d/*.part
