@@ -66,7 +66,7 @@ WHERE seat_no !~ '^[0-9]{1,2}[A-HJ-L]$'
 SELECT b.ticket_no, b.flight_id, b.seat_no, r.airplane_code
 FROM boarding_passes b
          JOIN flights f ON f.flight_id = b.flight_id
-         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @ > f.scheduled_departure
 WHERE NOT EXISTS (SELECT 1
                   FROM seats s
                   WHERE s.airplane_code = r.airplane_code
@@ -77,9 +77,7 @@ WHERE NOT EXISTS (SELECT 1
 -- ------------------------------------------------------------------------------------------ boarding_no, boarding_time
 -- the two are nullable, and go together; how many passes have neither, and how many one without the other.
 -- 30360 have neither, none has one of the two.
-SELECT COUNT(*) FILTER (WHERE boarding_no IS NULL)                         AS no_number,
-       COUNT(*) FILTER (WHERE boarding_time IS NULL)                       AS no_time,
-       COUNT(*) FILTER (WHERE (boarding_no IS NULL) <> (boarding_time IS NULL)) AS one_of_two
+SELECT COUNT(*) FILTER (WHERE boarding_no IS NULL)                         AS no_number, COUNT(*) FILTER (WHERE boarding_time IS NULL)                       AS no_time, COUNT(*) FILTER (WHERE (boarding_no IS NULL) <> (boarding_time IS NULL)) AS one_of_two
 FROM boarding_passes
 ;
 

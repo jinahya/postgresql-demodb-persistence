@@ -67,14 +67,14 @@ WHERE NOT EXISTS (SELECT 1
 SELECT t.flight_id, t.scheduled_departure, t.scheduled_departure_local, dep.timezone
 FROM timetable t
          JOIN flights f ON f.flight_id = t.flight_id
-         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @ > f.scheduled_departure
          JOIN airports_data dep ON dep.airport_code = r.departure_airport
          JOIN airports_data arr ON arr.airport_code = r.arrival_airport
 WHERE t.departure_airport <> r.departure_airport
    OR t.arrival_airport <> r.arrival_airport
    OR t.airplane_code <> r.airplane_code
    OR t.scheduled_departure_local <> f.scheduled_departure AT TIME ZONE dep.timezone
-   OR t.scheduled_arrival_local <> f.scheduled_arrival AT TIME ZONE arr.timezone
+    OR t.scheduled_arrival_local <> f.scheduled_arrival AT TIME ZONE arr.timezone
 ;
 
 -- the earliest and the latest local departure of the day; 00:00 to 23:55, the routes' scheduled times.

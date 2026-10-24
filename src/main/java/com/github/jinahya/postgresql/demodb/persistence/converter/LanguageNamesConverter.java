@@ -30,10 +30,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Converts between a {@link Map} of names, keyed by language, and a PostgreSQL {@code jsonb}
- * column holding them as a JSON object, {@code {"en": "...", "ru": "..."}}, through Jakarta JSON
- * Binding. The database side is bound to {@link String} here, and the methods are inherited as
- * they are; see {@link _TextConverter} for why that is what keeps it portable.
+ * Converts between a {@link Map} of names, keyed by language, and a PostgreSQL {@code jsonb} column
+ * holding them as a JSON object, {@code {"en": "...", "ru": "..."}}, through Jakarta JSON Binding.
+ * The database side is bound to {@link String} here, and the methods are inherited as they are; see
+ * {@link _TextConverter} for why that is what keeps it portable.
  * <p>
  * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
  * {@link jakarta.persistence.Convert @Convert}.

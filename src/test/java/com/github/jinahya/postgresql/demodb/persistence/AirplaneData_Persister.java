@@ -47,7 +47,7 @@ class AirplaneData_Persister
                               final AirplaneData entityInstance) {
         final var instance = AirplaneData.of(
                 __Random_TestUtils.code(MappedAirplaneData.COLUMN_LENGTH_AIRPLANE_CODE));
-        for (final var locale : new Locale[] {Locale.ENGLISH, Locale.of("ru")}) {
+        for (final var locale : new Locale[]{Locale.ENGLISH, Locale.of("ru")}) {
             instance.setModelName(locale, entityInstance.getModelName(locale));
         }
         instance.setRange(entityInstance.getRange());

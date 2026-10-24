@@ -61,7 +61,8 @@ ORDER BY validity
 -- no rows: a route's periods are apart.
 SELECT a.route_no, a.validity, b.validity
 FROM routes a
-         JOIN routes b ON b.route_no = a.route_no AND b.validity <> a.validity AND b.validity && a.validity
+         JOIN routes b
+              ON b.route_no = a.route_no AND b.validity <> a.validity AND b.validity && a.validity
 ;
 
 -- a period which is not closed at its start and open at its end, or unbounded.
@@ -104,8 +105,7 @@ FROM routes
 SELECT departure_airport, COUNT(DISTINCT route_no) AS routes
 FROM routes
 GROUP BY departure_airport
-ORDER BY routes DESC, departure_airport ASC
-LIMIT 5
+ORDER BY routes DESC, departure_airport ASC LIMIT 5
 ;
 
 -- a pair of airports flown one way only.
@@ -134,8 +134,7 @@ WHERE NOT EXISTS (SELECT 1
 SELECT airplane_code, COUNT(DISTINCT route_no) AS routes
 FROM routes
 GROUP BY airplane_code
-ORDER BY routes DESC, airplane_code ASC
-LIMIT 5
+ORDER BY routes DESC, airplane_code ASC LIMIT 5
 ;
 
 
@@ -190,5 +189,5 @@ FROM routes
 SELECT route_no, validity, duration
 FROM routes
 WHERE duration <= INTERVAL '0'
-   OR EXTRACT(SECOND FROM duration) <> 0
+   OR EXTRACT (SECOND FROM duration) <> 0
 ;

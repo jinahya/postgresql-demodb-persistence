@@ -58,7 +58,7 @@ WHERE seat_no !~ '^[0-9]{1,2}[A-HJ-L]$'
 ;
 
 -- the letters in use; A to L without I, eleven.
-SELECT DISTINCT RIGHT(seat_no, 1) AS letter
+SELECT DISTINCT RIGHT (seat_no, 1) AS letter
 FROM seats
 ORDER BY letter
 ;

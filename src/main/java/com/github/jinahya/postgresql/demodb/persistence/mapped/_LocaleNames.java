@@ -30,9 +30,9 @@ import java.util.Optional;
  * Utilities for names kept in a {@code jsonb} column as a JSON object keyed by language,
  * {@code {"en": "...", "ru": "..."}}, and mapped as a {@link Map} of {@link String}s.
  * <p>
- * A name is looked up by the {@link Locale#getLanguage() language} of a {@link Locale}. The
- * methods which change names never change the map in place; they return a new one, which the
- * attribute is replaced with, so that the change is seen as a change of the attribute.
+ * A name is looked up by the {@link Locale#getLanguage() language} of a {@link Locale}. The methods
+ * which change names never change the map in place; they return a new one, which the attribute is
+ * replaced with, so that the change is seen as a change of the attribute.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

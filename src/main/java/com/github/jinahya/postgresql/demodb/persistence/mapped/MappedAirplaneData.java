@@ -40,11 +40,11 @@ import java.util.function.Supplier;
  * table,
  * <q>Airplanes (internal multilingual data)</q>.
  * <p>
- * The {@value MappedAirplaneData#COLUMN_NAME_MODEL} column is {@code jsonb}, an object of one
- * name per language, keyed {@code en}, {@code ru}, ...; it is mapped as a {@link Map} of names
- * keyed by language, through a {@link LanguageNamesConverter}, with package-private accessors, and
- * is read and written a name at a time, by the language of a {@link Locale}. Writing it back needs
- * the driver to leave its type to the server, {@code stringtype=unspecified} on the JDBC URL. The
+ * The {@value MappedAirplaneData#COLUMN_NAME_MODEL} column is {@code jsonb}, an object of one name
+ * per language, keyed {@code en}, {@code ru}, ...; it is mapped as a {@link Map} of names keyed by
+ * language, through a {@link LanguageNamesConverter}, with package-private accessors, and is read
+ * and written a name at a time, by the language of a {@link Locale}. Writing it back needs the
+ * driver to leave its type to the server, {@code stringtype=unspecified} on the JDBC URL. The
  * {@code airplanes} view, see {@link MappedAirplane}, picks the session's language out of it.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -225,8 +225,8 @@ public abstract class MappedAirplaneData {
     // ----------------------------------------------------------------------------------------------------------- model
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_MODEL} attribute -- a {@code jsonb}
-     * column, mapped as the names it holds, keyed by language.
+     * Returns current value of {@value #ATTRIBUTE_NAME_MODEL} attribute -- a {@code jsonb} column,
+     * mapped as the names it holds, keyed by language.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_MODEL} attribute.
      * @see #getModelName(Locale)
@@ -236,8 +236,7 @@ public abstract class MappedAirplaneData {
     }
 
     /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_MODEL} attribute with the specified
-     * value.
+     * Replaces current value of {@value #ATTRIBUTE_NAME_MODEL} attribute with the specified value.
      *
      * @param model new value for {@value #ATTRIBUTE_NAME_MODEL} attribute.
      * @see #setModelName(Locale, String)

@@ -344,8 +344,8 @@ public abstract class MappedAirportData {
     // ---------------------------------------------------------------------------------------- city
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_CITY} attribute -- a {@code jsonb}
-     * column, mapped as the names it holds, keyed by language.
+     * Returns current value of {@value #ATTRIBUTE_NAME_CITY} attribute -- a {@code jsonb} column,
+     * mapped as the names it holds, keyed by language.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_CITY} attribute.
      * @see #getCityName(Locale)
@@ -355,8 +355,7 @@ public abstract class MappedAirportData {
     }
 
     /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_CITY} attribute with the specified
-     * value.
+     * Replaces current value of {@value #ATTRIBUTE_NAME_CITY} attribute with the specified value.
      *
      * @param city new value for {@value #ATTRIBUTE_NAME_CITY} attribute.
      * @see #setCityName(Locale, String)

@@ -35,12 +35,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies that CDI builds an {@link IntegerListArrayConverter} through its {@code @Inject} constructor, with the
- * element converter resolved as a bean.
+ * Verifies that CDI builds an {@link IntegerListArrayConverter} through its {@code @Inject}
+ * constructor, with the element converter resolved as a bean.
  * <p>
- * The proof is an alternative: {@link CountingIntegerConverter}, enabled for the container, is what CDI resolves
- * for an {@code IntegerConverter}, so a converter CDI built holds one, and a converter built with {@code new} holds
- * a plain {@link IntegerConverter}.
+ * The proof is an alternative: {@link CountingIntegerConverter}, enabled for the container, is what
+ * CDI resolves for an {@code IntegerConverter}, so a converter CDI built holds one, and a converter
+ * built with {@code new} holds a plain {@link IntegerConverter}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -52,11 +52,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class IntegerListArrayConverter_Weld_Test {
 
     /**
-     * An {@link IntegerConverter} which counts what it converts; the alternative the container resolves.
+     * An {@link IntegerConverter} which counts what it converts; the alternative the container
+     * resolves.
      */
     @Alternative
     @Dependent
-    public static class CountingIntegerConverter extends IntegerConverter {
+    public static class CountingIntegerConverter
+            extends IntegerConverter {
 
         static final AtomicInteger CONVERTED = new AtomicInteger();
 

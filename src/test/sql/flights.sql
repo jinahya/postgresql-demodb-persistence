@@ -64,15 +64,14 @@ FROM flights f
 WHERE NOT EXISTS (SELECT 1
                   FROM routes r
                   WHERE r.route_no = f.route_no
-                    AND r.validity @> f.scheduled_departure)
+                    AND r.validity @ > f.scheduled_departure)
 ;
 
 -- the routes with the most flights; 121, a flight a day over the four months, on several.
 SELECT route_no, COUNT(*) AS flights
 FROM flights
 GROUP BY route_no
-ORDER BY flights DESC, route_no ASC
-LIMIT 5
+ORDER BY flights DESC, route_no ASC LIMIT 5
 ;
 
 
@@ -89,7 +88,10 @@ ORDER BY flights DESC, status ASC
 -- ------------------------------------------------------------------------------ scheduled_departure, scheduled_arrival
 -- the earliest and the latest of each; departures from 2025-10-01 00:00 to 2026-01-29 23:55, arrivals from
 -- 2025-10-01 01:40 to 2026-01-30 11:50, four months of flights.
-SELECT MIN(scheduled_departure), MAX(scheduled_departure), MIN(scheduled_arrival), MAX(scheduled_arrival)
+SELECT MIN(scheduled_departure),
+       MAX(scheduled_departure),
+       MIN(scheduled_arrival),
+       MAX(scheduled_arrival)
 FROM flights
 ;
 
@@ -117,9 +119,7 @@ HAVING COUNT(*) > 1
 -- ------------------------------------------------------------------------------------ actual_departure, actual_arrival
 -- which statuses have the two; Arrived has both, Departed the departure only, every other status neither.
 SELECT status,
-       COUNT(*) FILTER (WHERE actual_departure IS NULL) AS no_departure,
-       COUNT(*) FILTER (WHERE actual_arrival IS NULL)   AS no_arrival,
-       COUNT(*)                                         AS flights
+       COUNT(*) FILTER (WHERE actual_departure IS NULL) AS no_departure, COUNT(*) FILTER (WHERE actual_arrival IS NULL)   AS no_arrival, COUNT(*) AS flights
 FROM flights
 GROUP BY status
 ORDER BY status

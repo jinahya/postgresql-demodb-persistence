@@ -38,7 +38,10 @@ WHERE table_schema = 'bookings'
 
 -- -------------------------------------------------------------------------------------------------------- airport_code
 -- how many rows, and the smallest and the largest airport_code; 5501 rows, AAA to ZZU, as many as airports_data has.
-SELECT COUNT(*), MIN(airport_code), MAX(airport_code), (SELECT COUNT(*) FROM airports_data) AS airports
+SELECT COUNT(*),
+       MIN(airport_code),
+       MAX(airport_code),
+       (SELECT COUNT(*) FROM airports_data) AS airports
 FROM airports
 ;
 
@@ -46,12 +49,16 @@ FROM airports
 -- ------------------------------------------------------------------ airport_name, city, country, coordinates, timezone
 -- a row whose name, city or country is not its airport's en one, or whose coordinates or timezone differ.
 -- no rows: the view copies the five.
-SELECT v.airport_code, v.airport_name, d.airport_name->>'en' AS en
+SELECT v.airport_code, v.airport_name, d.airport_name ->>'en' AS en
 FROM airports v
-         JOIN airports_data d ON d.airport_code = v.airport_code
-WHERE v.airport_name IS DISTINCT FROM d.airport_name->>'en'
-   OR v.city IS DISTINCT FROM d.city->>'en'
-   OR v.country IS DISTINCT FROM d.country->>'en'
-   OR v.coordinates::text <> d.coordinates::text
-   OR v.timezone <> d.timezone
+    JOIN airports_data d
+ON d.airport_code = v.airport_code
+WHERE v.airport_name IS DISTINCT
+FROM d.airport_name->>'en'
+    OR v.city IS DISTINCT
+FROM d.city->>'en'
+    OR v.country IS DISTINCT
+FROM d.country->>'en'
+    OR v.coordinates::text <> d.coordinates::text
+    OR v.timezone <> d.timezone
 ;

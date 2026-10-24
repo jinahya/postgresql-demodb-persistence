@@ -31,8 +31,9 @@ import jakarta.persistence.Converter;
  * {@link IntegerListArrayConverter} it maps each element of an {@code integer[]}.
  * <p>
  * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
- * {@link jakarta.persistence.Convert @Convert}. It is a CDI bean as well, {@link Dependent @Dependent},
- * so that {@link IntegerListArrayConverter} can take it by injection.
+ * {@link jakarta.persistence.Convert @Convert}. It is a CDI bean as well,
+ * {@link Dependent @Dependent}, so that {@link IntegerListArrayConverter} can take it by
+ * injection.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

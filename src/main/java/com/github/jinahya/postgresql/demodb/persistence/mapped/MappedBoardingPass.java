@@ -30,7 +30,8 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /**
- * A mapped superclass which holds the mappings of the {@value MappedBoardingPass#TABLE_NAME} table,
+ * A mapped superclass which holds the mappings of the {@value MappedBoardingPass#TABLE_NAME}
+ * table,
  * <q>Boarding passes</q>, including the {@link Id @Id} attributes of its composite primary key.
  * <p>
  * The identifier is mapped with an {@link jakarta.persistence.IdClass @IdClass}: an extending

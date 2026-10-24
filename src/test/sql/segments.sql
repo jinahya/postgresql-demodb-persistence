@@ -66,7 +66,7 @@ ORDER BY segments DESC
 SELECT s.ticket_no, s.flight_id, s.fare_conditions, r.airplane_code
 FROM segments s
          JOIN flights f ON f.flight_id = s.flight_id
-         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @ > f.scheduled_departure
 WHERE NOT EXISTS (SELECT 1
                   FROM seats st
                   WHERE st.airplane_code = r.airplane_code

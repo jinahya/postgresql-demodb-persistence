@@ -40,9 +40,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies that a persistence provider handed a {@link BeanManager}, through
- * {@code jakarta.persistence.bean.manager}, takes its {@link IntegerListArrayConverter} from CDI: a {@link Route}
- * persisted and read back through the in-memory unit has its {@code daysOfWeek} converted by the element converter
- * the container resolved, an alternative which counts.
+ * {@code jakarta.persistence.bean.manager}, takes its {@link IntegerListArrayConverter} from CDI: a
+ * {@link Route} persisted and read back through the in-memory unit has its {@code daysOfWeek}
+ * converted by the element converter the container resolved, an alternative which counts.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -59,11 +59,13 @@ class IntegerListArrayConverter_Provider_Weld_Test {
     static final String PERSISTENCE_UNIT_NAME = "demonstration-test";
 
     /**
-     * An {@link IntegerConverter} which counts what it converts; the alternative the container resolves.
+     * An {@link IntegerConverter} which counts what it converts; the alternative the container
+     * resolves.
      */
     @Alternative
     @Dependent
-    public static class CountingIntegerConverter extends IntegerConverter {
+    public static class CountingIntegerConverter
+            extends IntegerConverter {
 
         static final AtomicInteger CONVERTED = new AtomicInteger();
 
