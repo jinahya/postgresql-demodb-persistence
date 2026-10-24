@@ -21,6 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.object.randomizer.PodamObjectRandomizer;
+import com.github.jinahya.postgresql.demodb.persistence.converter.FareConditions;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSegment;
 
 import uk.co.jemos.podam.api.ClassInfoStrategy;
@@ -67,10 +68,7 @@ class Segment_Randomizer
     @Override
     public Segment get() {
         final var instance = super.get();
-        instance.setFareConditions(
-                __Random_TestUtils.pick(MappedSegment.COLUMN_VALUE_FARE_CONDITIONS_ECONOMY,
-                                        MappedSegment.COLUMN_VALUE_FARE_CONDITIONS_COMFORT,
-                                        MappedSegment.COLUMN_VALUE_FARE_CONDITIONS_BUSINESS));
+        instance.setFareConditions(__Random_TestUtils.pick(FareConditions.values()));
         instance.setPrice(__Random_TestUtils.amount(MappedSegment.COLUMN_PRECISION_PRICE,
                                                     MappedSegment.COLUMN_SCALE_PRICE));
         return instance;

@@ -112,7 +112,7 @@ What follows from it, and what this module does:
   arrives in, a `java.sql.Array` or a Java array included, and applies an element converter, here
   `IntegerConverter`, to each element; any other one-dimensional array type is a subclass with its own element
   converter.
-- The two converters are CDI beans as well, `@Dependent`, and `IntegerListArrayConverter` has an `@Inject`
+- `IntegerConverter` and `IntegerListArrayConverter` are CDI beans as well, `@Dependent`, and `IntegerListArrayConverter` has an `@Inject`
   constructor which takes its element converter. A provider handed a `BeanManager` through
   `jakarta.persistence.bean.manager` obtains its converter instances from CDI, as the specification has required
   since Jakarta Persistence 2.2 in a container and both providers do in Java SE too; one without uses the no-arg
@@ -129,9 +129,20 @@ What follows from it, and what this module does:
   `CALL IDENTITY()`, neither of which the mode accepts, so the `flights` table was never created. The PostgreSQL
   platform's `SERIAL` and `select lastval()` are. A column definition cannot reach the read-back query, so the
   platform is the switch that has to flip.
-- `tstzrange`, `point` and `jsonb` stay `String`, the text both providers read alike.
+- `point` and `jsonb` go through `_TextConverter`s of the same kind. `PointConverter` maps a `point` as a `Point`, a
+  record of two `double`s, written `(x,y)`. `LanguageNamesConverter` maps each `jsonb` column, an object of one name
+  per language, as a `Map<String, String>` through Jakarta JSON Binding; the attributes have package-private
+  accessors, and are read and written a name at a time, by the language of a `Locale`.
+- Three `text` columns go through `_TextConverter`s too, for a type the text has no room for:
+  `flights.status`, and the `timetable` view's, as a `FlightStatus` (`On Time` is no Java identifier, which is why
+  `@Enumerated` cannot map it), `seats.fare_conditions` and `segments.fare_conditions` as a `FareConditions`, both
+  enums of the values the check constraints allow, and `airports_data.timezone`, and the `airports` view's, as a
+  `ZoneId`, through `FlightStatusConverter`, `FareConditionsConverter` and `ZoneIdConverter`.
+- `tstzrange` stays `String`, the text both providers read alike: the test entity over `routes` writes the column
+  through its embedded identifier, and the specification has no conversion applied to an identifier's attributes,
+  so a converted `validity` would leave the entity the same value twice, once converted and once as text.
 - Writing any of the five needs `stringtype=unspecified` on the JDBC URL. Reading needs nothing.
-- A persistence unit with `exclude-unlisted-classes` has to list the two converters; EclipseLink does not find them
+- A persistence unit with `exclude-unlisted-classes` has to list the converters; EclipseLink does not find them
   otherwise.
 - The in-memory unit generates its schema, and a converter with an `Object` database side gives Hibernate no column
   type to generate; the test entity over `routes` overrides the two columns with `columnDefinition = "varchar"`.

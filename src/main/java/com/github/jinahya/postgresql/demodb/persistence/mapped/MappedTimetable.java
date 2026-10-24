@@ -20,11 +20,13 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatus;
+import com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatusConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
@@ -192,7 +194,6 @@ public abstract class MappedTimetable {
      * {@value}.
      */
     public static final String COLUMN_VALUE_STATUS_CANCELLED = "Cancelled";
-
     /**
      * The regular expression which the {@value #ATTRIBUTE_NAME_STATUS} attribute matches: one of
      * the values of the {@code flights} table's {@code flight_status_check} constraint. The value
@@ -457,7 +458,7 @@ public abstract class MappedTimetable {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_STATUS} attribute.
      */
-    public String getStatus() {
+    public FlightStatus getStatus() {
         return status;
     }
 
@@ -597,10 +598,10 @@ public abstract class MappedTimetable {
     private String arrivalAirport;
 
     // -----------------------------------------------------------------------------------------------------------------
-    @Pattern(regexp = PATTERN_REGEXP_STATUS)
+    @Convert(converter = FlightStatusConverter.class)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_STATUS, nullable = true, insertable = false, updatable = false)
-    private String status;
+    private FlightStatus status;
 
     // -----------------------------------------------------------------------------------------------------------------
     @Size(min = SIZE_MIN_AIRPLANE_CODE, max = SIZE_MAX_AIRPLANE_CODE)

@@ -81,7 +81,7 @@ public class AirportData
     @Transient
     @Override
     public TimeZone getTimezoneAsTimeZone() {
-        return Optional.ofNullable(getTimezoneAsZoneId())
+        return Optional.ofNullable(getTimezone())
                 .map(TimeZone::getTimeZone)
                 .orElse(null);
     }
@@ -89,7 +89,7 @@ public class AirportData
     @Transient
     @Override
     public void setTimezoneFromTimeZone(final TimeZone timezone) {
-        setTimezoneFromZoneId(
+        setTimezone(
                 Optional.ofNullable(timezone)
                         .map(TimeZone::toZoneId)
                         .orElse(null)

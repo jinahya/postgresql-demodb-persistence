@@ -51,7 +51,7 @@ public class Airport
     @Transient
     @Override
     public TimeZone getTimezoneAsTimeZone() {
-        return Optional.ofNullable(getTimezoneAsZoneId())
+        return Optional.ofNullable(getTimezone())
                 .map(TimeZone::getTimeZone)
                 .orElse(null);
     }

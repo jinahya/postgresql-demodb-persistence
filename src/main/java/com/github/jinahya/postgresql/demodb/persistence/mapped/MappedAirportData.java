@@ -21,6 +21,9 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter;
+import com.github.jinahya.postgresql.demodb.persistence.converter.Point;
+import com.github.jinahya.postgresql.demodb.persistence.converter.PointConverter;
+import com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -36,7 +39,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -51,8 +53,9 @@ import java.util.function.Supplier;
  * a time, by the language of a {@link Locale}. The {@code airports} view, see
  * {@link MappedAirport}, picks the session's language out of them.
  * <p>
- * The {@value MappedAirportData#COLUMN_NAME_COORDINATES} column has no type in Jakarta Persistence
- * ({@code point}), so it is mapped as {@link String}, the text form the driver reads it as.
+ * The {@value MappedAirportData#COLUMN_NAME_COORDINATES} column is a {@code point}, which has no type
+ * in Jakarta Persistence; it is mapped as a {@link Point}, the longitude as {@code x} and the
+ * latitude as {@code y}, through a {@link PointConverter}.
  * <p>
  * Writing a text back, the names' or the point's, needs the driver to leave its type to the server,
  * {@code stringtype=unspecified} on the JDBC URL.
@@ -490,11 +493,11 @@ public abstract class MappedAirportData {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute -- a {@code point}
-     * column, mapped as its text form, {@code (x,y)}.
+     * column, mapped as a {@link Point}, the longitude as {@code x} and the latitude as {@code y}.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute.
      */
-    public String getCoordinates() {
+    public Point getCoordinates() {
         return coordinates;
     }
 
@@ -504,18 +507,19 @@ public abstract class MappedAirportData {
      *
      * @param coordinates new value for {@value #ATTRIBUTE_NAME_COORDINATES} attribute.
      */
-    public void setCoordinates(final String coordinates) {
+    public void setCoordinates(final Point coordinates) {
         this.coordinates = coordinates;
     }
 
     // ------------------------------------------------------------------------------------ timezone
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_TIMEZONE} attribute.
+     * Returns current value of {@value #ATTRIBUTE_NAME_TIMEZONE} attribute -- a {@code text} column
+     * of a zone identifier, such as {@code Asia/Seoul}, mapped as a {@link ZoneId}.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_TIMEZONE} attribute.
      */
-    public String getTimezone() {
+    public ZoneId getTimezone() {
         return timezone;
     }
 
@@ -525,39 +529,31 @@ public abstract class MappedAirportData {
      *
      * @param timezone new value for {@value #ATTRIBUTE_NAME_TIMEZONE} attribute.
      */
-    public void setTimezone(final String timezone) {
+    public void setTimezone(final ZoneId timezone) {
         this.timezone = timezone;
     }
 
-    public <R> R getTimezoneAs(final Function<? super String, ? extends R> mapper) {
-        Objects.requireNonNull(mapper, "mapper is null");
-        return Optional.ofNullable(getTimezone()).map(mapper).orElse(null);
-    }
-
-    public <T> void setTimezoneFrom(final T timezone,
-                                    final Function<? super T, ? extends String> mapper) {
-        Objects.requireNonNull(mapper, "mapper is null");
-        setTimezone(Optional.ofNullable(timezone).map(mapper).orElse(null));
-    }
-
+    /**
+     * Returns current value of {@value #ATTRIBUTE_NAME_TIMEZONE} attribute as a {@link TimeZone}.
+     *
+     * @return current value of {@value #ATTRIBUTE_NAME_TIMEZONE} attribute as a {@link TimeZone};
+     *         {@code null} if it is {@code null}.
+     */
     @Transient
     public TimeZone getTimezoneAsTimeZone() {
-        return getTimezoneAs(TimeZone::getTimeZone);
+        return Optional.ofNullable(getTimezone()).map(TimeZone::getTimeZone).orElse(null);
     }
 
+    /**
+     * Replaces current value of {@value #ATTRIBUTE_NAME_TIMEZONE} attribute with the specified
+     * {@link TimeZone}.
+     *
+     * @param timezone new value for {@value #ATTRIBUTE_NAME_TIMEZONE} attribute, as a
+     *                 {@link TimeZone}; may be {@code null}.
+     */
     @Transient
     public void setTimezoneFromTimeZone(final TimeZone timezone) {
-        setTimezoneFrom(timezone, TimeZone::getID);
-    }
-
-    @Transient
-    public ZoneId getTimezoneAsZoneId() {
-        return getTimezoneAs(ZoneId::of);
-    }
-
-    @Transient
-    public void setTimezoneFromZoneId(final ZoneId zoneId) {
-        setTimezoneFrom(zoneId, ZoneId::getId);
+        setTimezone(Optional.ofNullable(timezone).map(TimeZone::toZoneId).orElse(null));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -596,13 +592,15 @@ public abstract class MappedAirportData {
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
+    @Convert(converter = PointConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_COORDINATES, nullable = false, insertable = true, updatable = true)
-    private String coordinates;
+    private Point coordinates;
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
+    @Convert(converter = ZoneIdConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_TIMEZONE, nullable = false, insertable = true, updatable = true)
-    private String timezone;
+    private ZoneId timezone;
 }

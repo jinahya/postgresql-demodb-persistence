@@ -20,15 +20,17 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatus;
+import com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatusConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -138,7 +140,6 @@ public abstract class MappedFlight {
      * {@value}.
      */
     public static final String COLUMN_VALUE_STATUS_CANCELLED = "Cancelled";
-
     /**
      * The regular expression which the {@value #ATTRIBUTE_NAME_STATUS} attribute matches: one of
      * the values the {@code flight_status_check} constraint allows. The value is {@value}.
@@ -352,7 +353,7 @@ public abstract class MappedFlight {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_STATUS} attribute.
      */
-    public String getStatus() {
+    public FlightStatus getStatus() {
         return status;
     }
 
@@ -362,7 +363,7 @@ public abstract class MappedFlight {
      *
      * @param status new value for {@value #ATTRIBUTE_NAME_STATUS} attribute.
      */
-    public void setStatus(final String status) {
+    public void setStatus(final FlightStatus status) {
         this.status = status;
     }
 
@@ -465,11 +466,11 @@ public abstract class MappedFlight {
     private String routeNo;
 
     // -----------------------------------------------------------------------------------------------------------------
-    @Pattern(regexp = PATTERN_REGEXP_STATUS)
+    @Convert(converter = FlightStatusConverter.class)
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_STATUS, nullable = false, insertable = true, updatable = true)
-    private String status;
+    private FlightStatus status;
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull

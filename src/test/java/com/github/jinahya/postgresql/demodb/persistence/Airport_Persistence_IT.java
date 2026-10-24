@@ -98,7 +98,7 @@ class Airport_Persistence_IT
             );
             for (final var entityInstance : list) {
                 try {
-                    final var zoneId = ZoneId.of(entityInstance.getTimezone());
+                    final var zoneId = entityInstance.getTimezone();
                     log.info("entity.timezone: {}, zoneId: {}", entityInstance.getTimezone(),
                              zoneId);
                 } catch (final DateTimeException dte) {
