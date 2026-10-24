@@ -30,6 +30,7 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -169,6 +170,10 @@ final class __Random_TestUtils {
      */
     static String jsonNames() {
         return "{\"en\": \"" + code(8) + "\", \"ru\": \"" + code(8) + "\"}";
+    }
+
+    static Map<String, String> names() {
+        return Map.of("en", code(8), "ru", code(8));
     }
 
     static String timezone() {
