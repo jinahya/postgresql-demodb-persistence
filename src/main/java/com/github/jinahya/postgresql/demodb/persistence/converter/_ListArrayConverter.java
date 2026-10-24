@@ -195,5 +195,14 @@ abstract class _ListArrayConverter<E, Y>
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Returns the element converter this converter applies to each element.
+     *
+     * @return the element converter.
+     */
+    AttributeConverter<E, String> elementConverter() {
+        return elementConverter;
+    }
+
     private final AttributeConverter<E, String> elementConverter;
 }

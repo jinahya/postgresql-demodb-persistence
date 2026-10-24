@@ -86,11 +86,18 @@ What follows from it, and what this module does:
   `String` without overriding the methods, which is what keeps the cast out. A database side declared as `Object`
   was tried first: reads work, but neither provider can write through it, Hibernate having no JDBC type to bind and
   EclipseLink guessing one from the attribute.
-- `IntegerListArrayConverter` is an `_ArrayConverter<E, Y>`, which owns the array literal -- braces, commas, quotes,
+- `IntegerListArrayConverter` is an `_ListArrayConverter<E, Y>`, which owns the array literal -- braces, commas, quotes,
   backslash escapes, `NULL`, matched strictly by a regular expression, one dimension only -- and the shapes an array
   arrives in, a `java.sql.Array` or a Java array included, and applies an element converter, here
   `IntegerConverter`, to each element; any other one-dimensional array type is a subclass with its own element
   converter.
+- The two converters are CDI beans as well, `@Dependent`, and `IntegerListArrayConverter` has an `@Inject`
+  constructor which takes its element converter. A provider handed a `BeanManager` through
+  `jakarta.persistence.bean.manager` obtains its converter instances from CDI, as the specification has required
+  since Jakarta Persistence 2.2 in a container and both providers do in Java SE too; one without uses the no-arg
+  constructor, which builds the element converter itself. Two Weld tests prove it, under each provider: the
+  container resolves an alternative element converter into the array converter, and a `Route` read back through
+  the in-memory unit, with Weld's `BeanManager` handed to the provider, is converted by that alternative.
 - `flights.flight_id` is `GENERATED ALWAYS AS IDENTITY`, which `information_schema.columns` shows as `is_identity`,
   not as a default; it is `@GeneratedValue(IDENTITY)`, and the only generated identifier in the schema.
 - A read-only foreign-key attribute, and the generated identifier, carry no `@NotNull`: the units validate on
