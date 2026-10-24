@@ -1,0 +1,3568 @@
+= Exercises
+:toc: left
+:toclevels: 3
+
+The exercises on the installed `demo` database, the PostgreSQL demonstration database (https://postgrespro.com/community/demodb[Airlines]), in its `bookings` schema: a section for each table and view, with a section for each level, and, at the end, a section for the schema as a whole.
+Each exercise poses a problem; its answer, and what the installed data gives back, are in the `.sql` file.
+The data is the `3m` edition, three months of flights from 2025-10-01, and the database's today, `bookings.now()`, is 2025-12-01; the views read the names in the language `bookings.lang()` returns, `en`.
+
+Run a file as a whole:
+
+[source,sh]
+----
+docker exec -i postgresql-demodb psql -U postgres -d demo < src/test/sql/<file>.sql
+----
+
+== airplanes_data
+
+The `airplanes_data` table, mapped by `MappedAirplaneData`: the ten airplane models, each with its name in several languages, as `jsonb`.
+
+=== Basic
+
+[[DEMODB-AIRPLANES_DATA-B-01]]
+==== DEMODB-AIRPLANES_DATA-B-01: every airplane, by code
+
+Show every row of `airplanes_data`, ordered by `airplane_code`.
+The model is a `jsonb` object, a name per language.
+A single table and a sort; no filter.
+
+.`airplanes_data_exercises_01_basic.sql`, DEMODB-AIRPLANES_DATA-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM airplanes_data
+ORDER BY airplane_code
+----
+
+....
+ airplane_code |                               model                               | range | speed 
+---------------+-------------------------------------------------------------------+-------+-------
+ 32N           | {"en": "Airbus A320neo", "ru": "Аэробус A320neo"}                 |  6500 |   830
+ 339           | {"en": "Airbus A330-900neo", "ru": "Аэробус A330-900neo"}         | 13300 |   870
+ 351           | {"en": "Airbus A350-1000", "ru": "Аэробус A350-1000"}             | 16700 |   913
+ 35X           | {"en": "Airbus A350F", "ru": "Аэробус A350F"}                     |  8700 |   903
+ 76F           | {"en": "Boeing 767-300F", "ru": "Боинг 767-300F"}                 |  6000 |   850
+ 77W           | {"en": "Boeing 777-300ER", "ru": "Боинг 777-300ER"}               | 14600 |   905
+ 789           | {"en": "Boeing 787-9 Dreamliner", "ru": "Боинг 787-9 Dreamliner"} | 14000 |   913
+ 7M7           | {"en": "Boeing 737 MAX 7", "ru": "Боинг 737 MAX 7"}               |  7000 |   840
+ CR7           | {"en": "Bombardier CRJ700", "ru": "Бомбардье CRJ700"}             |  3100 |   829
+ E70           | {"en": "Embraer E170", "ru": "Эмбраэр E170"}                      |  4000 |   800
+(10 rows)
+....
+====
+
+[[DEMODB-AIRPLANES_DATA-B-02]]
+==== DEMODB-AIRPLANES_DATA-B-02: the airplanes with a range of 10000 km or more, the longest first
+
+Find the airplanes whose `range` is 10000 or more.
+Show the whole rows, the longest range first; airplanes with the same range are ordered by `airplane_code`.
+A single table, a comparison and a sort on two columns.
+
+.`airplanes_data_exercises_01_basic.sql`, DEMODB-AIRPLANES_DATA-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM airplanes_data
+WHERE range >= 10000
+ORDER BY range DESC, airplane_code
+----
+
+....
+ airplane_code |                               model                               | range | speed 
+---------------+-------------------------------------------------------------------+-------+-------
+ 351           | {"en": "Airbus A350-1000", "ru": "Аэробус A350-1000"}             | 16700 |   913
+ 77W           | {"en": "Boeing 777-300ER", "ru": "Боинг 777-300ER"}               | 14600 |   905
+ 789           | {"en": "Boeing 787-9 Dreamliner", "ru": "Боинг 787-9 Dreamliner"} | 14000 |   913
+ 339           | {"en": "Airbus A330-900neo", "ru": "Аэробус A330-900neo"}         | 13300 |   870
+(4 rows)
+....
+====
+
+[[DEMODB-AIRPLANES_DATA-B-03]]
+==== DEMODB-AIRPLANES_DATA-B-03: how many airplanes, and the shortest and the longest range
+
+Count the airplanes, and find the smallest and the largest `range`.
+One row, three aggregates.
+
+.`airplanes_data_exercises_01_basic.sql`, DEMODB-AIRPLANES_DATA-B-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS airplanes, MIN(range) AS shortest, MAX(range) AS longest
+FROM airplanes_data
+----
+
+....
+ airplanes | shortest | longest 
+-----------+----------+---------
+        10 |     3100 |   16700
+(1 row)
+....
+====
+
+=== Intermediate
+
+[[DEMODB-AIRPLANES_DATA-I-01]]
+==== DEMODB-AIRPLANES_DATA-I-01: the English name of each airplane
+
+Show each airplane's code, its model's name in English, taken out of the `jsonb` with `->>`, and its range, ordered by `airplane_code`.
+A `jsonb` field read as text.
+
+.`airplanes_data_exercises_02_intermediate.sql`, DEMODB-AIRPLANES_DATA-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airplane_code, model ->> 'en' AS model, range
+FROM airplanes_data
+ORDER BY airplane_code
+----
+
+....
+ airplane_code |          model          | range 
+---------------+-------------------------+-------
+ 32N           | Airbus A320neo          |  6500
+ 339           | Airbus A330-900neo      | 13300
+ 351           | Airbus A350-1000        | 16700
+ 35X           | Airbus A350F            |  8700
+ 76F           | Boeing 767-300F         |  6000
+ 77W           | Boeing 777-300ER        | 14600
+ 789           | Boeing 787-9 Dreamliner | 14000
+ 7M7           | Boeing 737 MAX 7        |  7000
+ CR7           | Bombardier CRJ700       |  3100
+ E70           | Embraer E170            |  4000
+(10 rows)
+....
+====
+
+[[DEMODB-AIRPLANES_DATA-I-02]]
+==== DEMODB-AIRPLANES_DATA-I-02: the hours each airplane flies at its full range
+
+Divide each airplane's `range` by its `speed`, the hours it takes to fly its full range, rounded to two decimals.
+Show the code, the English name and the hours, the longest first; airplanes with the same hours are ordered by `airplane_code`.
+An expression over two columns, a cast to `numeric` so the division keeps its decimals, and a sort on it.
+
+.`airplanes_data_exercises_02_intermediate.sql`, DEMODB-AIRPLANES_DATA-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airplane_code, model ->> 'en' AS model, ROUND(range::numeric / speed, 2) AS hours
+FROM airplanes_data
+ORDER BY hours DESC, airplane_code
+----
+
+....
+ airplane_code |          model          | hours 
+---------------+-------------------------+-------
+ 351           | Airbus A350-1000        | 18.29
+ 77W           | Boeing 777-300ER        | 16.13
+ 789           | Boeing 787-9 Dreamliner | 15.33
+ 339           | Airbus A330-900neo      | 15.29
+ 35X           | Airbus A350F            |  9.63
+ 7M7           | Boeing 737 MAX 7        |  8.33
+ 32N           | Airbus A320neo          |  7.83
+ 76F           | Boeing 767-300F         |  7.06
+ E70           | Embraer E170            |  5.00
+ CR7           | Bombardier CRJ700       |  3.74
+(10 rows)
+....
+====
+
+[[DEMODB-AIRPLANES_DATA-I-03]]
+==== DEMODB-AIRPLANES_DATA-I-03: the languages the models are named in
+
+List the keys of the `model` objects, each once, ordered by name: the languages the names are written in.
+`jsonb_object_keys` returns a row per key, and `DISTINCT` folds the airplanes together.
+
+.`airplanes_data_exercises_02_intermediate.sql`, DEMODB-AIRPLANES_DATA-I-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT DISTINCT jsonb_object_keys(model) AS lang
+FROM airplanes_data
+ORDER BY lang
+----
+
+....
+ lang 
+------
+ en
+ ru
+(2 rows)
+....
+====
+
+=== Advanced
+
+[[DEMODB-AIRPLANES_DATA-A-01]]
+==== DEMODB-AIRPLANES_DATA-A-01: the airplanes that fly no route
+
+Find the airplanes no row of `routes` names.
+Show the whole rows, ordered by `airplane_code`.
+A `NOT EXISTS` against the table that references this one.
+
+.`airplanes_data_exercises_03_advanced.sql`, DEMODB-AIRPLANES_DATA-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.*
+FROM airplanes_data a
+WHERE NOT EXISTS (SELECT 1 FROM routes r WHERE r.airplane_code = a.airplane_code)
+ORDER BY a.airplane_code
+----
+
+....
+ airplane_code |                       model                       | range | speed 
+---------------+---------------------------------------------------+-------+-------
+ 35X           | {"en": "Airbus A350F", "ru": "Аэробус A350F"}     |  8700 |   903
+ 76F           | {"en": "Boeing 767-300F", "ru": "Боинг 767-300F"} |  6000 |   850
+(2 rows)
+....
+====
+
+[[DEMODB-AIRPLANES_DATA-A-02]]
+==== DEMODB-AIRPLANES_DATA-A-02: the airplanes by the flights they fly
+
+Count the flights each airplane flies: a flight's airplane is the one of the route's row valid at the flight's scheduled departure.
+Show the code, the English name and the count, the most first; airplanes with the same count are ordered by `airplane_code`.
+Two joins, the second on a range containment (`@>`), and a group.
+
+.`airplanes_data_exercises_03_advanced.sql`, DEMODB-AIRPLANES_DATA-A-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.airplane_code, a.model ->> 'en' AS model, COUNT(f.flight_id) AS flights
+FROM airplanes_data a
+         JOIN routes r ON r.airplane_code = a.airplane_code
+         JOIN flights f ON f.route_no = r.route_no AND r.validity @> f.scheduled_departure
+GROUP BY a.airplane_code, a.model
+ORDER BY flights DESC, a.airplane_code
+----
+
+....
+ airplane_code |          model          | flights 
+---------------+-------------------------+---------
+ 77W           | Boeing 777-300ER        |    6331
+ 7M7           | Boeing 737 MAX 7        |    3599
+ 789           | Boeing 787-9 Dreamliner |    3030
+ 351           | Airbus A350-1000        |    2548
+ E70           | Embraer E170            |    2413
+ CR7           | Bombardier CRJ700       |    1564
+ 339           | Airbus A330-900neo      |    1428
+ 32N           | Airbus A320neo          |     845
+(8 rows)
+....
+====
+
+== airplanes
+
+The `airplanes` view, mapped by `MappedAirplane`: `airplanes_data` with the model's name in the session's language, `lang()`.
+
+=== Basic
+
+[[DEMODB-AIRPLANES-B-01]]
+==== DEMODB-AIRPLANES-B-01: every airplane of the view, by code
+
+Show every row of the `airplanes` view, ordered by `airplane_code`.
+The view gives the model's name as text, in the language `lang()` returns.
+
+.`airplanes_exercises_01_basic.sql`, DEMODB-AIRPLANES-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM airplanes
+ORDER BY airplane_code
+----
+
+....
+ airplane_code |          model          | range | speed 
+---------------+-------------------------+-------+-------
+ 32N           | Airbus A320neo          |  6500 |   830
+ 339           | Airbus A330-900neo      | 13300 |   870
+ 351           | Airbus A350-1000        | 16700 |   913
+ 35X           | Airbus A350F            |  8700 |   903
+ 76F           | Boeing 767-300F         |  6000 |   850
+ 77W           | Boeing 777-300ER        | 14600 |   905
+ 789           | Boeing 787-9 Dreamliner | 14000 |   913
+ 7M7           | Boeing 737 MAX 7        |  7000 |   840
+ CR7           | Bombardier CRJ700       |  3100 |   829
+ E70           | Embraer E170            |  4000 |   800
+(10 rows)
+....
+====
+
+[[DEMODB-AIRPLANES-B-02]]
+==== DEMODB-AIRPLANES-B-02: the Boeings
+
+Find the airplanes whose model name starts with `Boeing`.
+Show the whole rows, ordered by `airplane_code`.
+A `LIKE` on the view's text column.
+
+.`airplanes_exercises_01_basic.sql`, DEMODB-AIRPLANES-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM airplanes
+WHERE model LIKE 'Boeing%'
+ORDER BY airplane_code
+----
+
+....
+ airplane_code |          model          | range | speed 
+---------------+-------------------------+-------+-------
+ 76F           | Boeing 767-300F         |  6000 |   850
+ 77W           | Boeing 777-300ER        | 14600 |   905
+ 789           | Boeing 787-9 Dreamliner | 14000 |   913
+ 7M7           | Boeing 737 MAX 7        |  7000 |   840
+(4 rows)
+....
+====
+
+=== Intermediate
+
+[[DEMODB-AIRPLANES-I-01]]
+==== DEMODB-AIRPLANES-I-01: how many airplanes each maker has
+
+Take the first word of the model name as the maker, and count the airplanes of each.
+Show the maker and the count, the most first; makers with the same count are ordered by name.
+`split_part` cuts the first word, and the group is on the expression.
+
+.`airplanes_exercises_02_intermediate.sql`, DEMODB-AIRPLANES-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT SPLIT_PART(model, ' ', 1) AS maker, COUNT(*) AS airplanes
+FROM airplanes
+GROUP BY maker
+ORDER BY airplanes DESC, maker
+----
+
+....
+   maker    | airplanes 
+------------+-----------
+ Airbus     |         4
+ Boeing     |         4
+ Bombardier |         1
+ Embraer    |         1
+(4 rows)
+....
+====
+
+[[DEMODB-AIRPLANES-I-02]]
+==== DEMODB-AIRPLANES-I-02: whether the view agrees with the table
+
+Join the view to `airplanes_data` and find the rows whose `model` differs from the table's name in the session's language, `model ->> lang()`.
+Show the code and both names; there should be none.
+`IS DISTINCT FROM` treats a `NULL` on either side as a difference.
+
+.`airplanes_exercises_02_intermediate.sql`, DEMODB-AIRPLANES-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT v.airplane_code, v.model AS view_model, d.model ->> lang() AS data_model
+FROM airplanes v
+         JOIN airplanes_data d ON d.airplane_code = v.airplane_code
+WHERE v.model IS DISTINCT FROM d.model ->> lang()
+ORDER BY v.airplane_code
+----
+
+....
+ airplane_code | view_model | data_model 
+---------------+------------+------------
+(0 rows)
+....
+====
+
+=== Advanced
+
+[[DEMODB-AIRPLANES-A-01]]
+==== DEMODB-AIRPLANES-A-01: the three airplanes with the most routes
+
+Count the rows of `routes` of each airplane, and keep the three with the most.
+Show the code, the model and the count, the most first; airplanes with the same count are ordered by `airplane_code`.
+A join, a group and a `LIMIT`.
+
+.`airplanes_exercises_03_advanced.sql`, DEMODB-AIRPLANES-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.airplane_code, a.model, COUNT(*) AS routes
+FROM airplanes a
+         JOIN routes r ON r.airplane_code = a.airplane_code
+GROUP BY a.airplane_code, a.model
+ORDER BY routes DESC, a.airplane_code
+LIMIT 3
+----
+
+....
+ airplane_code |          model          | routes 
+---------------+-------------------------+--------
+ 77W           | Boeing 777-300ER        |    250
+ 789           | Boeing 787-9 Dreamliner |    230
+ 7M7           | Boeing 737 MAX 7        |    192
+(3 rows)
+....
+====
+
+== airports_data
+
+The `airports_data` table, mapped by `MappedAirportData`: the airports, each with its name, city and country in several languages, as `jsonb`, and its coordinates as a `point`.
+
+=== Basic
+
+[[DEMODB-AIRPORTS_DATA-B-01]]
+==== DEMODB-AIRPORTS_DATA-B-01: the airports in the Europe/Moscow time zone
+
+Find the airports whose `timezone` is `Europe/Moscow`.
+Show the code, the name and the city, ordered by `airport_code`.
+A single table and an equality filter.
+
+.`airports_data_exercises_01_basic.sql`, DEMODB-AIRPORTS_DATA-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airport_code, airport_name, city
+FROM airports_data
+WHERE timezone = 'Europe/Moscow'
+ORDER BY airport_code
+----
+
+....
+ airport_code |                    airport_name                     |                           city                           
+--------------+-----------------------------------------------------+----------------------------------------------------------
+ AAQ          | {"en": "Vityazevo", "ru": "Витязево"}               | {"en": "Anapa", "ru": "Анапа"}
+ AER          | {"en": "Sochi", "ru": "Сочи"}                       | {"en": "Sochi", "ru": "Сочи"}
+ AMV          | {"en": "Amderma", "ru": "Амдерма"}                  | {"en": "Amderma", "ru": "Амдерма"}
+ ARH          | {"en": "Talagi", "ru": "Талаги"}                    | {"en": "Arkhangelsk", "ru": "Архангельск"}
+ BKA          | {"en": "Bykovo", "ru": "Быково"}                    | {"en": "Moscow", "ru": "Москва"}
+ BWO          | {"en": "Balakovo", "ru": "Балаково"}                | {"en": "Balakovo", "ru": "Балаково"}
+ BZK          | {"en": "Bryansk", "ru": "Брянск"}                   | {"en": "Bryansk", "ru": "Брянск"}
+ CEE          | {"en": "Cherepovets", "ru": "Череповец"}            | {"en": "Cherepovets", "ru": "Череповец"}
+ CKL          | {"en": "Chkalovskiy", "ru": "Чкаловский"}           | {"en": "Shchyolkovo", "ru": "Щёлково"}
+ CSH          | {"en": "Solovki", "ru": "Соловки"}                  | {"en": "Solovetsky Islands", "ru": "Соловецкие острова"}
+... 65 rows in all.
+....
+====
+
+[[DEMODB-AIRPORTS_DATA-B-02]]
+==== DEMODB-AIRPORTS_DATA-B-02: how many airports, and how many time zones
+
+Count the airports, and the distinct values of `timezone`.
+One row, two aggregates.
+
+.`airports_data_exercises_01_basic.sql`, DEMODB-AIRPORTS_DATA-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS airports, COUNT(DISTINCT timezone) AS timezones
+FROM airports_data
+----
+
+....
+ airports | timezones 
+----------+-----------
+     5501 |       311
+(1 row)
+....
+====
+
+[[DEMODB-AIRPORTS_DATA-B-03]]
+==== DEMODB-AIRPORTS_DATA-B-03: the airports whose code starts with SV
+
+Find the airports whose `airport_code` starts with `SV`.
+Show the code, the name and the time zone, ordered by `airport_code`.
+A `LIKE` on the key.
+
+.`airports_data_exercises_01_basic.sql`, DEMODB-AIRPORTS_DATA-B-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airport_code, airport_name, timezone
+FROM airports_data
+WHERE airport_code LIKE 'SV%'
+ORDER BY airport_code
+----
+
+....
+ airport_code |                         airport_name                         |      timezone       
+--------------+--------------------------------------------------------------+---------------------
+ SVA          | {"en": "Savoonga", "ru": "Савоонга"}                         | America/Anchorage
+ SVB          | {"en": "Sambava", "ru": "Самбава"}                           | Indian/Antananarivo
+ SVD          | {"en": "Argyle", "ru": "Аргайл"}                             | America/St_Vincent
+ SVG          | {"en": "Sola", "ru": "Сола"}                                 | Europe/Oslo
+ SVH          | {"en": "Statesville", "ru": "Стейтсвилл"}                    | America/New_York
+ SVI          | {"en": "Eduardo Falla Solano", "ru": "Эдуардо Фалья Солано"} | America/Bogota
+ SVJ          | {"en": "Svolvær", "ru": "Свольвер"}                          | Europe/Oslo
+ SVL          | {"en": "Savonlinna", "ru": "Савонлинна"}                     | Europe/Helsinki
+ SVN          | {"en": "Hunter", "ru": "Хантер"}                             | America/New_York
+ SVO          | {"en": "Sheremetyevo", "ru": "Шереметьево"}                  | Europe/Moscow
+... 16 rows in all.
+....
+====
+
+=== Intermediate
+
+[[DEMODB-AIRPORTS_DATA-I-01]]
+==== DEMODB-AIRPORTS_DATA-I-01: the airports of Finland, in English
+
+Find the airports whose country, in English, is `Finland`.
+Show the code and the English name and city, ordered by `airport_code`.
+Three `jsonb` fields read as text, one of them in the filter.
+
+.`airports_data_exercises_02_intermediate.sql`, DEMODB-AIRPORTS_DATA-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airport_code, airport_name ->> 'en' AS airport_name, city ->> 'en' AS city
+FROM airports_data
+WHERE country ->> 'en' = 'Finland'
+ORDER BY airport_code
+----
+
+....
+ airport_code |   airport_name   |     city     
+--------------+------------------+--------------
+ ENF          | Enontekio        | Enontekio
+ HEL          | Vantaa           | Helsinki
+ HEM          | Malmi            | Helsinki
+ HYV          | Hyvinkää         | Hyvinkää
+ IVL          | Ivalo            | Ivalo
+ JOE          | Joensuu          | Joensuu
+ JYV          | Jyvaskyla        | Jyvaskyla
+ KAJ          | Kajaani          | Kajaani
+ KAO          | Kuusamo          | Kuusamo
+ KAU          | Kauhava          | Kauhava
+... 33 rows in all.
+....
+====
+
+[[DEMODB-AIRPORTS_DATA-I-02]]
+==== DEMODB-AIRPORTS_DATA-I-02: the ten time zones with the most airports
+
+Count the airports of each `timezone`, and keep the ten with the most.
+Show the time zone and the count, the most first; time zones with the same count are ordered by name.
+
+.`airports_data_exercises_02_intermediate.sql`, DEMODB-AIRPORTS_DATA-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT timezone, COUNT(*) AS airports
+FROM airports_data
+GROUP BY timezone
+ORDER BY airports DESC, timezone
+LIMIT 10
+----
+
+....
+      timezone       | airports 
+---------------------+----------
+ America/New_York    |      366
+ America/Chicago     |      296
+ Asia/Shanghai       |      188
+ America/Anchorage   |      168
+ America/Los_Angeles |      143
+ Europe/Paris        |      123
+ America/Toronto     |      120
+ America/Denver      |      110
+ Asia/Kolkata        |      110
+ Europe/London       |      106
+(10 rows)
+....
+====
+
+[[DEMODB-AIRPORTS_DATA-I-03]]
+==== DEMODB-AIRPORTS_DATA-I-03: the five countries with the most airports south of the equator
+
+The `coordinates` are a `point`, longitude then latitude; an airport south of the equator has a negative latitude, `coordinates[1]`.
+Count such airports of each country, in English, and keep the five countries with the most, the most first; countries with the same count are ordered by name.
+
+.`airports_data_exercises_02_intermediate.sql`, DEMODB-AIRPORTS_DATA-I-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT country ->> 'en' AS country, COUNT(*) AS airports
+FROM airports_data
+WHERE coordinates[1] < 0
+GROUP BY country ->> 'en'
+ORDER BY airports DESC, country
+LIMIT 5
+----
+
+....
+   country    | airports 
+--------------+----------
+ Australia    |      217
+ Brazil       |      177
+ Argentina    |       83
+ Indonesia    |       75
+ South Africa |       56
+(5 rows)
+....
+====
+
+=== Advanced
+
+[[DEMODB-AIRPORTS_DATA-A-01]]
+==== DEMODB-AIRPORTS_DATA-A-01: the cities with more than one airport
+
+Group the airports by city and country, in English, and keep the cities with more than one.
+Show the city, the country, the codes joined into one string in order, and the count: the most airports first, then by city; the first ten.
+A group on two `jsonb` fields, `HAVING`, and `string_agg` with its own `ORDER BY`.
+
+.`airports_data_exercises_03_advanced.sql`, DEMODB-AIRPORTS_DATA-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT city ->> 'en'                                       AS city,
+       country ->> 'en'                                    AS country,
+       STRING_AGG(airport_code, ', ' ORDER BY airport_code) AS airports,
+       COUNT(*)                                            AS count
+FROM airports_data
+GROUP BY city ->> 'en', country ->> 'en'
+HAVING COUNT(*) > 1
+ORDER BY count DESC, city
+LIMIT 10
+----
+
+....
+     city     |    country     |             airports              | count 
+--------------+----------------+-----------------------------------+-------
+ Houston      | United States  | AAP, DWH, EFD, HOU, IAH, IWS, SGR |     7
+ Chicago      | United States  | LOT, MDW, ORD, PWK, RFD, UGN      |     6
+ London       | United Kingdom | BQH, LCY, LGW, LHR, LTN, STN      |     6
+ Berlin       | Germany        | BER, QXH, SXF, THF, TXL           |     5
+ Columbus     | United States  | CMH, CSG, GTR, LCK, OSU           |     5
+ Jacksonville | United States  | JAX, LRF, NIP, OAJ, VQQ           |     5
+ Las Vegas    | United States  | HSH, LAS, LSV, LVS, VGT           |     5
+ Moscow       | Russia         | BKA, DME, OSF, SVO, VKO           |     5
+ Cleveland    | United States  | BKL, CGF, CLE, HDI                |     4
+ Dallas       | United States  | ADS, DAL, DFW, RBD                |     4
+(10 rows)
+....
+====
+
+[[DEMODB-AIRPORTS_DATA-A-02]]
+==== DEMODB-AIRPORTS_DATA-A-02: how many airports no route touches
+
+Count the airports that are neither the departure nor the arrival airport of any row of `routes`.
+A `NOT EXISTS` whose subquery looks at two columns of the referencing table.
+
+.`airports_data_exercises_03_advanced.sql`, DEMODB-AIRPORTS_DATA-A-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS unused
+FROM airports_data a
+WHERE NOT EXISTS (SELECT 1
+                  FROM routes r
+                  WHERE a.airport_code IN (r.departure_airport, r.arrival_airport))
+----
+
+....
+ unused 
+--------
+   5428
+(1 row)
+....
+====
+
+== airports
+
+The `airports` view, mapped by `MappedAirport`: `airports_data` with the names in the session's language, `lang()`.
+
+=== Basic
+
+[[DEMODB-AIRPORTS-B-01]]
+==== DEMODB-AIRPORTS-B-01: the airports of Norway
+
+Find the rows of the `airports` view whose `country` is `Norway`.
+Show the whole rows, ordered by `airport_code`.
+The view gives the names as text, so the filter is a plain equality.
+
+.`airports_exercises_01_basic.sql`, DEMODB-AIRPORTS-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM airports
+WHERE country = 'Norway'
+ORDER BY airport_code
+----
+
+....
+ airport_code |  airport_name  |     city     | country |    coordinates    |      timezone       
+--------------+----------------+--------------+---------+-------------------+---------------------
+ AES          | Vigra          | Ålesund      | Norway  | (6.1197,62.5625)  | Europe/Oslo
+ ALF          | Alta           | Alta         | Norway  | (23.3717,69.9761) | Europe/Oslo
+ ANX          | Andøya         | Andenes      | Norway  | (16.1442,69.2925) | Europe/Oslo
+ BDU          | Bardufoss      | Bardufoss    | Norway  | (18.5404,69.0558) | Europe/Oslo
+ BGO          | Flesland       | Bergen       | Norway  | (5.2181,60.2934)  | Europe/Oslo
+ BJF          | Båtsfjord      | Båtsfjord    | Norway  | (29.6914,70.6005) | Europe/Oslo
+ BNN          | Brønnøysund    | Brønnøysund  | Norway  | (12.2175,65.4611) | Europe/Oslo
+ BOO          | Bodø           | Bodø         | Norway  | (14.3653,67.2692) | Europe/Oslo
+ BVG          | Berlevåg       | Berlevåg     | Norway  | (29.0342,70.8714) | Europe/Oslo
+ DLD          | Dagali         | Geilo        | Norway  | (8.5183,60.4173)  | Europe/Oslo
+... 55 rows in all.
+....
+====
+
+[[DEMODB-AIRPORTS-B-02]]
+==== DEMODB-AIRPORTS-B-02: the airports of Moscow
+
+Find the airports whose `city` is `Moscow`.
+Show the code, the name, the city and the country, ordered by `airport_code`.
+
+.`airports_exercises_01_basic.sql`, DEMODB-AIRPORTS-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airport_code, airport_name, city, country
+FROM airports
+WHERE city = 'Moscow'
+ORDER BY airport_code
+----
+
+....
+ airport_code | airport_name |  city  | country 
+--------------+--------------+--------+---------
+ BKA          | Bykovo       | Moscow | Russia
+ DME          | Domodedovo   | Moscow | Russia
+ OSF          | Ostafyevo    | Moscow | Russia
+ SVO          | Sheremetyevo | Moscow | Russia
+ VKO          | Vnukovo      | Moscow | Russia
+(5 rows)
+....
+====
+
+[[DEMODB-AIRPORTS-B-03]]
+==== DEMODB-AIRPORTS-B-03: how many airports are called International
+
+Count the airports whose name contains the word `International`.
+A `LIKE` with the pattern on both sides.
+
+.`airports_exercises_01_basic.sql`, DEMODB-AIRPORTS-B-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS international
+FROM airports
+WHERE airport_name LIKE '%International%'
+----
+
+....
+ international 
+---------------
+             0
+(1 row)
+....
+====
+
+=== Intermediate
+
+[[DEMODB-AIRPORTS-I-01]]
+==== DEMODB-AIRPORTS-I-01: the ten countries with the most airports
+
+Count the airports of each `country`, and keep the ten with the most.
+Show the country and the count, the most first; countries with the same count are ordered by name.
+
+.`airports_exercises_02_intermediate.sql`, DEMODB-AIRPORTS-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT country, COUNT(*) AS airports
+FROM airports
+GROUP BY country
+ORDER BY airports DESC, country
+LIMIT 10
+----
+
+....
+    country     | airports 
+----------------+----------
+ United States  |     1129
+ Canada         |      335
+ Australia      |      218
+ China          |      187
+ Brazil         |      180
+ Russia         |      158
+ France         |      122
+ India          |      110
+ Indonesia      |      105
+ United Kingdom |      105
+(10 rows)
+....
+====
+
+[[DEMODB-AIRPORTS-I-02]]
+==== DEMODB-AIRPORTS-I-02: how many countries have exactly one airport
+
+Group the airports by `country`, keep the countries with one airport, and count them.
+A `HAVING` in a subquery, counted outside.
+
+.`airports_exercises_02_intermediate.sql`, DEMODB-AIRPORTS-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS countries
+FROM (SELECT country
+      FROM airports
+      GROUP BY country
+      HAVING COUNT(*) = 1) t
+----
+
+....
+ countries 
+-----------
+        38
+(1 row)
+....
+====
+
+[[DEMODB-AIRPORTS-I-03]]
+==== DEMODB-AIRPORTS-I-03: the westernmost and the easternmost airport
+
+The longitude is `coordinates[0]`.
+Find the airport with the smallest and the one with the largest longitude.
+Show the code, the name, the country and the longitude, west first.
+Two subqueries for the two extremes, or one `ORDER BY` from each end.
+
+.`airports_exercises_02_intermediate.sql`, DEMODB-AIRPORTS-I-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airport_code, airport_name, country, coordinates[0] AS longitude
+FROM airports
+WHERE coordinates[0] = (SELECT MIN(coordinates[0]) FROM airports)
+   OR coordinates[0] = (SELECT MAX(coordinates[0]) FROM airports)
+ORDER BY longitude
+----
+
+....
+ airport_code | airport_name | country | longitude 
+--------------+--------------+---------+-----------
+ TVU          | Matei        | Fiji    |  -179.877
+ MFJ          | Moala        | Fiji    |   179.951
+(2 rows)
+....
+====
+
+=== Advanced
+
+[[DEMODB-AIRPORTS-A-01]]
+==== DEMODB-AIRPORTS-A-01: the airports flown from but never to
+
+Find the airports that are the departure airport of some route but the arrival airport of none.
+Show the code, the name and the country, ordered by `airport_code`; the installed data has none.
+An `EXISTS` and a `NOT EXISTS` on the same table.
+
+.`airports_exercises_03_advanced.sql`, DEMODB-AIRPORTS-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.airport_code, a.airport_name, a.country
+FROM airports a
+WHERE EXISTS (SELECT 1 FROM routes r WHERE r.departure_airport = a.airport_code)
+  AND NOT EXISTS (SELECT 1 FROM routes r WHERE r.arrival_airport = a.airport_code)
+ORDER BY a.airport_code
+----
+
+....
+ airport_code | airport_name | country 
+--------------+--------------+---------
+(0 rows)
+....
+====
+
+[[DEMODB-AIRPORTS-A-02]]
+==== DEMODB-AIRPORTS-A-02: the ten airports with the most departures
+
+Count the flights departing from each airport: a flight's airports are those of its route's row valid at the scheduled departure.
+Show the code, the name, the city and the count, the most first; airports with the same count are ordered by `airport_code`; the first ten.
+Two joins, one on a range containment, and a group.
+
+.`airports_exercises_03_advanced.sql`, DEMODB-AIRPORTS-A-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.airport_code, a.airport_name, a.city, COUNT(*) AS departures
+FROM airports a
+         JOIN routes r ON r.departure_airport = a.airport_code
+         JOIN flights f ON f.route_no = r.route_no AND r.validity @> f.scheduled_departure
+GROUP BY a.airport_code, a.airport_name, a.city
+ORDER BY departures DESC, a.airport_code
+LIMIT 10
+----
+
+....
+ airport_code |    airport_name     |       city        | departures 
+--------------+---------------------+-------------------+------------
+ FRA          | Frankfurt am Main   | Frankfurt am main |        714
+ BOM          | Chhatrapati Shivaji | Mumbai            |        600
+ DEL          | Indira Gandhi       | Delhi             |        592
+ ATL          | Hartsfield-Jackson  | Atlanta           |        576
+ SVO          | Sheremetyevo        | Moscow            |        569
+ TFU          | Tianfu              | Chengdu           |        533
+ PVG          | Pudong              | Shanghai          |        514
+ BLR          | Kempegowda          | Bangalore         |        497
+ DEN          | Denver              | Denver            |        475
+ FCO          | Fiumicino           | Rome              |        466
+(10 rows)
+....
+====
+
+== routes
+
+The `routes` table, mapped by `MappedRoute`: a route number, its two airports, its airplane, its days of the week and its departure time, each valid for a `tstzrange`; the same route number has a row per period of validity.
+
+=== Basic
+
+[[DEMODB-ROUTES-B-01]]
+==== DEMODB-ROUTES-B-01: the routes from Sheremetyevo
+
+Find the rows of `routes` whose `departure_airport` is `SVO`.
+Show the whole rows, ordered by `route_no` and then by `validity`.
+A route number appears once per period of validity.
+
+.`routes_exercises_01_basic.sql`, DEMODB-ROUTES-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM routes
+WHERE departure_airport = 'SVO'
+ORDER BY route_no, validity
+----
+
+....
+ route_no |                      validity                       | departure_airport | arrival_airport | airplane_code |  days_of_week   | scheduled_time | duration 
+----------+-----------------------------------------------------+-------------------+-----------------+---------------+-----------------+----------------+----------
+ PG0006   | ["2025-10-01 00:00:00+00","2025-11-01 00:00:00+00") | SVO               | KJA             | 789           | {6}             | 17:15:00       | 04:30:00
+ PG0006   | ["2025-11-01 00:00:00+00","2025-12-01 00:00:00+00") | SVO               | KJA             | E70           | {1,2,4,6}       | 17:15:00       | 05:05:00
+ PG0006   | ["2025-12-01 00:00:00+00","2026-01-01 00:00:00+00") | SVO               | KJA             | 339           | {3}             | 17:15:00       | 04:40:00
+ PG0006   | ["2026-01-01 00:00:00+00","2026-02-01 00:00:00+00") | SVO               | KJA             | 32N           | {4}             | 17:15:00       | 04:55:00
+ PG0012   | ["2025-10-01 00:00:00+00","2025-11-01 00:00:00+00") | SVO               | UFA             | 351           | {2}             | 13:55:00       | 01:55:00
+ PG0012   | ["2025-11-01 00:00:00+00","2025-12-01 00:00:00+00") | SVO               | UFA             | E70           | {2,3,5,6,7}     | 13:55:00       | 02:05:00
+ PG0012   | ["2025-12-01 00:00:00+00","2026-01-01 00:00:00+00") | SVO               | UFA             | E70           | {1,2,3,5,6,7}   | 13:55:00       | 02:05:00
+ PG0012   | ["2026-01-01 00:00:00+00","2026-02-01 00:00:00+00") | SVO               | UFA             | E70           | {1,2,3,4,5,6}   | 13:55:00       | 02:05:00
+ PG0018   | ["2025-10-01 00:00:00+00","2025-11-01 00:00:00+00") | SVO               | KZN             | 339           | {3,7}           | 02:05:00       | 01:25:00
+ PG0018   | ["2025-11-01 00:00:00+00","2025-12-01 00:00:00+00") | SVO               | KZN             | 7M7           | {2,4,6,7}       | 02:05:00       | 01:30:00
+... 34 rows in all.
+....
+====
+
+[[DEMODB-ROUTES-B-02]]
+==== DEMODB-ROUTES-B-02: how many rows, and how many route numbers
+
+Count the rows of `routes`, and the distinct values of `route_no`.
+The difference is the rows of a route number beyond its first.
+
+.`routes_exercises_01_basic.sql`, DEMODB-ROUTES-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS rows, COUNT(DISTINCT route_no) AS route_nos
+FROM routes
+----
+
+....
+ rows | route_nos 
+------+-----------
+ 1162 |       704
+(1 row)
+....
+====
+
+[[DEMODB-ROUTES-B-03]]
+==== DEMODB-ROUTES-B-03: the routes flown every day of the week
+
+Find the rows whose `days_of_week` holds all seven days.
+Show the route number, the airports, the departure time and the validity, ordered by `route_no` and then by `validity`.
+`cardinality` is the length of an array.
+
+.`routes_exercises_01_basic.sql`, DEMODB-ROUTES-B-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT route_no, departure_airport, arrival_airport, scheduled_time, validity
+FROM routes
+WHERE CARDINALITY(days_of_week) = 7
+ORDER BY route_no, validity
+----
+
+....
+ route_no | departure_airport | arrival_airport | scheduled_time |                      validity                       
+----------+-------------------+-----------------+----------------+-----------------------------------------------------
+ PG0017   | KZN               | SVO             | 06:30:00       | ["2025-12-01 00:00:00+00","2026-01-01 00:00:00+00")
+ PG0018   | SVO               | KZN             | 02:05:00       | ["2025-12-01 00:00:00+00","2026-01-01 00:00:00+00")
+ PG0019   | LKO               | DEL             | 13:20:00       | ["2025-10-01 00:00:00+00","2025-11-01 00:00:00+00")
+ PG0019   | LKO               | DEL             | 13:20:00       | ["2025-11-01 00:00:00+00","2025-12-01 00:00:00+00")
+ PG0019   | LKO               | DEL             | 13:20:00       | ["2026-01-01 00:00:00+00","2026-02-01 00:00:00+00")
+ PG0020   | DEL               | LKO             | 15:50:00       | ["2025-10-01 00:00:00+00","2025-11-01 00:00:00+00")
+ PG0020   | DEL               | LKO             | 15:50:00       | ["2025-11-01 00:00:00+00","2025-12-01 00:00:00+00")
+ PG0020   | DEL               | LKO             | 15:50:00       | ["2026-01-01 00:00:00+00","2026-02-01 00:00:00+00")
+ PG0035   | YEG               | YYC             | 00:15:00       | ["2026-01-01 00:00:00+00","2026-02-01 00:00:00+00")
+ PG0036   | YYC               | YEG             | 03:45:00       | ["2026-01-01 00:00:00+00","2026-02-01 00:00:00+00")
+... 288 rows in all.
+....
+====
+
+[[DEMODB-ROUTES-B-04]]
+==== DEMODB-ROUTES-B-04: the routes longer than ten hours
+
+Find the rows whose `duration` is more than ten hours.
+Show the route number, the airports and the duration, the longest first; rows with the same duration are ordered by `route_no` and then by `validity`.
+A comparison with an `interval`.
+
+.`routes_exercises_01_basic.sql`, DEMODB-ROUTES-B-04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT route_no, departure_airport, arrival_airport, duration
+FROM routes
+WHERE duration > INTERVAL '10 hours'
+ORDER BY duration DESC, route_no, validity
+----
+
+....
+ route_no | departure_airport | arrival_airport | duration 
+----------+-------------------+-----------------+----------
+ PG0129   | SCL               | BOM             | 19:55:00
+ PG0130   | BOM               | SCL             | 19:55:00
+ PG0143   | MCO               | MAA             | 18:35:00
+ PG0144   | MAA               | MCO             | 18:35:00
+ PG0569   | SZX               | MCO             | 17:30:00
+ PG0570   | MCO               | SZX             | 17:30:00
+ PG0615   | AKL               | CLT             | 16:45:00
+ PG0616   | CLT               | AKL             | 16:45:00
+ PG0635   | MIA               | DEL             | 16:45:00
+ PG0636   | DEL               | MIA             | 16:45:00
+... 80 rows in all.
+....
+====
+
+=== Intermediate
+
+[[DEMODB-ROUTES-I-01]]
+==== DEMODB-ROUTES-I-01: the periods of the route PG0001
+
+Show the rows of the route `PG0001`, one per period of validity, in order: the start and the end of the period, taken out of the range with `lower` and `upper`, the airplane and the days of the week.
+
+.`routes_exercises_02_intermediate.sql`, DEMODB-ROUTES-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT route_no, LOWER(validity) AS valid_from, UPPER(validity) AS valid_to, airplane_code, days_of_week
+FROM routes
+WHERE route_no = 'PG0001'
+ORDER BY validity
+----
+
+....
+ route_no |       valid_from       |        valid_to        | airplane_code | days_of_week  
+----------+------------------------+------------------------+---------------+---------------
+ PG0001   | 2025-10-01 00:00:00+00 | 2025-11-01 00:00:00+00 | 339           | {1,2,3,5,6,7}
+ PG0001   | 2025-11-01 00:00:00+00 | 2025-12-01 00:00:00+00 | 789           | {1,2,3,5,6,7}
+ PG0001   | 2025-12-01 00:00:00+00 | 2026-01-01 00:00:00+00 | 789           | {2,3,4,5,6,7}
+ PG0001   | 2026-01-01 00:00:00+00 | 2026-02-01 00:00:00+00 | 77W           | {2,4,6,7}
+(4 rows)
+....
+====
+
+[[DEMODB-ROUTES-I-02]]
+==== DEMODB-ROUTES-I-02: the five route numbers with the most periods
+
+Count the rows of each `route_no`, and keep the five with the most.
+Show the route number and the count, the most first; route numbers with the same count are ordered by name.
+
+.`routes_exercises_02_intermediate.sql`, DEMODB-ROUTES-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT route_no, COUNT(*) AS periods
+FROM routes
+GROUP BY route_no
+ORDER BY periods DESC, route_no
+LIMIT 5
+----
+
+....
+ route_no | periods 
+----------+---------
+ PG0001   |       4
+ PG0002   |       4
+ PG0005   |       4
+ PG0006   |       4
+ PG0007   |       4
+(5 rows)
+....
+====
+
+[[DEMODB-ROUTES-I-03]]
+==== DEMODB-ROUTES-I-03: how many routes each airplane flies
+
+Count the rows of `routes` of each airplane, with the airplane's English name.
+Show the code, the name and the count, the most first; airplanes with the same count are ordered by `airplane_code`.
+A join to `airplanes_data` and a group.
+
+.`routes_exercises_02_intermediate.sql`, DEMODB-ROUTES-I-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT r.airplane_code, a.model ->> 'en' AS model, COUNT(*) AS routes
+FROM routes r
+         JOIN airplanes_data a ON a.airplane_code = r.airplane_code
+GROUP BY r.airplane_code, a.model
+ORDER BY routes DESC, r.airplane_code
+----
+
+....
+ airplane_code |          model          | routes 
+---------------+-------------------------+--------
+ 77W           | Boeing 777-300ER        |    250
+ 789           | Boeing 787-9 Dreamliner |    230
+ 7M7           | Boeing 737 MAX 7        |    192
+ E70           | Embraer E170            |    142
+ CR7           | Bombardier CRJ700       |    118
+ 351           | Airbus A350-1000        |    110
+ 339           | Airbus A330-900neo      |     80
+ 32N           | Airbus A320neo          |     40
+(8 rows)
+....
+====
+
+[[DEMODB-ROUTES-I-04]]
+==== DEMODB-ROUTES-I-04: how many routes are valid today
+
+The database's today is `bookings.now()`, not the clock's.
+Count the rows whose `validity` contains that instant.
+A range containment, `@>`.
+
+.`routes_exercises_02_intermediate.sql`, DEMODB-ROUTES-I-04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS valid_today
+FROM routes
+WHERE validity @> bookings.now()
+----
+
+....
+ valid_today 
+-------------
+         292
+(1 row)
+....
+====
+
+=== Advanced
+
+[[DEMODB-ROUTES-A-01]]
+==== DEMODB-ROUTES-A-01: the longest route from each airport
+
+For each departure airport, find the row with the longest `duration`.
+Show the airport, the route number, the arrival airport and the duration, ordered by the departure airport; the first ten.
+`DISTINCT ON` keeps the first row of each group of the `ORDER BY`, so the sort puts the longest duration first within each airport, and a stable second key after it.
+
+.`routes_exercises_03_advanced.sql`, DEMODB-ROUTES-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT DISTINCT ON (departure_airport) departure_airport, route_no, arrival_airport, duration
+FROM routes
+ORDER BY departure_airport, duration DESC, route_no, validity
+LIMIT 10
+----
+
+....
+ departure_airport | route_no | arrival_airport | duration 
+-------------------+----------+-----------------+----------
+ AER               | PG0290   | KJA             | 05:55:00
+ AKL               | PG0615   | CLT             | 16:45:00
+ AMD               | PG0428   | SZX             | 06:00:00
+ ARN               | PG0499   | PKX             | 08:40:00
+ ATL               | PG0415   | MUC             | 09:45:00
+ BER               | PG0252   | BOM             | 08:45:00
+ BGY               | PG0087   | SZX             | 11:40:00
+ BLR               | PG0535   | PKX             | 06:45:00
+ BOM               | PG0130   | SCL             | 19:55:00
+ CAN               | PG0492   | AKL             | 11:50:00
+(10 rows)
+....
+====
+
+[[DEMODB-ROUTES-A-02]]
+==== DEMODB-ROUTES-A-02: the routes with a return route in the same period
+
+Pair each row with a row that flies the opposite direction while the two periods of validity overlap.
+Show the two route numbers and the two airports, once per pair of airports in each direction, ordered by the first route number; the first ten.
+A self join on swapped airports and overlapping ranges (`&&`); the `<` on the airports keeps each pair once.
+
+.`routes_exercises_03_advanced.sql`, DEMODB-ROUTES-A-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT DISTINCT r1.route_no, r2.route_no AS return_route_no, r1.departure_airport, r1.arrival_airport
+FROM routes r1
+         JOIN routes r2 ON r2.departure_airport = r1.arrival_airport
+    AND r2.arrival_airport = r1.departure_airport
+    AND r2.validity && r1.validity
+WHERE r1.departure_airport < r1.arrival_airport
+ORDER BY r1.route_no, r2.route_no
+LIMIT 10
+----
+
+....
+ route_no | return_route_no | departure_airport | arrival_airport 
+----------+-----------------+-------------------+-----------------
+ PG0001   | PG0002          | CJC               | SCL
+ PG0004   | PG0003          | DME               | KJA
+ PG0005   | PG0006          | KJA               | SVO
+ PG0007   | PG0008          | YOW               | YUL
+ PG0009   | PG0010          | YOW               | YYZ
+ PG0012   | PG0011          | SVO               | UFA
+ PG0014   | PG0013          | DME               | UFA
+ PG0016   | PG0015          | DME               | KZN
+ PG0017   | PG0018          | KZN               | SVO
+ PG0020   | PG0019          | DEL               | LKO
+(10 rows)
+....
+====
+
+== flights
+
+The `flights` table, mapped by `MappedFlight`: a flight of a route on a day, with its scheduled and actual times and its status; the route's row is the one whose validity holds the scheduled departure.
+
+=== Basic
+
+[[DEMODB-FLIGHTS-B-01]]
+==== DEMODB-FLIGHTS-B-01: the flights of the route PG0001 in October 2025
+
+Find the flights whose `route_no` is `PG0001` and whose `scheduled_departure` is in October 2025.
+Show the whole rows, ordered by `scheduled_departure`.
+A half-open range on a timestamp: from the first of the month, up to but not including the first of the next.
+
+.`flights_exercises_01_basic.sql`, DEMODB-FLIGHTS-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM flights
+WHERE route_no = 'PG0001'
+  AND scheduled_departure >= '2025-10-01'
+  AND scheduled_departure < '2025-11-01'
+ORDER BY scheduled_departure
+----
+
+....
+ flight_id | route_no | status  |  scheduled_departure   |   scheduled_arrival    |       actual_departure        |        actual_arrival         
+-----------+----------+---------+------------------------+------------------------+-------------------------------+-------------------------------
+        56 | PG0001   | Arrived | 2025-10-01 08:55:00+00 | 2025-10-01 11:00:00+00 | 2025-10-01 09:04:22.242543+00 | 2025-10-01 11:10:08.207796+00
+       420 | PG0001   | Arrived | 2025-10-03 08:55:00+00 | 2025-10-03 11:00:00+00 | 2025-10-03 09:01:01.503634+00 | 2025-10-03 11:06:26.993085+00
+       595 | PG0001   | Arrived | 2025-10-04 08:55:00+00 | 2025-10-04 11:00:00+00 | 2025-10-04 09:01:14.82653+00  | 2025-10-04 11:06:58.248499+00
+       786 | PG0001   | Arrived | 2025-10-05 08:55:00+00 | 2025-10-05 11:00:00+00 | 2025-10-05 09:00:29.243524+00 | 2025-10-05 11:03:09.767793+00
+       962 | PG0001   | Arrived | 2025-10-06 08:55:00+00 | 2025-10-06 11:00:00+00 | 2025-10-06 09:00:22.207094+00 | 2025-10-06 11:05:05.472695+00
+      1145 | PG0001   | Arrived | 2025-10-07 08:55:00+00 | 2025-10-07 11:00:00+00 | 2025-10-07 09:00:29.021862+00 | 2025-10-07 11:05:45.299731+00
+      1319 | PG0001   | Arrived | 2025-10-08 08:55:00+00 | 2025-10-08 11:00:00+00 | 2025-10-08 09:01:37.086295+00 | 2025-10-08 11:07:39.885001+00
+      1682 | PG0001   | Arrived | 2025-10-10 08:55:00+00 | 2025-10-10 11:00:00+00 | 2025-10-10 09:02:00.561019+00 | 2025-10-10 11:06:54.008201+00
+      1858 | PG0001   | Arrived | 2025-10-11 08:55:00+00 | 2025-10-11 11:00:00+00 | 2025-10-11 08:59:42.455704+00 | 2025-10-11 11:04:41.659585+00
+      2049 | PG0001   | Arrived | 2025-10-12 08:55:00+00 | 2025-10-12 11:00:00+00 | 2025-10-12 08:58:44.753122+00 | 2025-10-12 11:04:51.136787+00
+... 26 rows in all.
+....
+====
+
+[[DEMODB-FLIGHTS-B-02]]
+==== DEMODB-FLIGHTS-B-02: how many flights of each status
+
+Count the flights of each `status`.
+Show the status and the count, ordered by status.
+
+.`flights_exercises_01_basic.sql`, DEMODB-FLIGHTS-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT status, COUNT(*) AS flights
+FROM flights
+GROUP BY status
+ORDER BY status
+----
+
+....
+  status   | flights 
+-----------+---------
+ Arrived   |   10966
+ Boarding  |       4
+ Cancelled |     121
+ Delayed   |      10
+ Departed  |      20
+ On Time   |     157
+ Scheduled |   10480
+(7 rows)
+....
+====
+
+[[DEMODB-FLIGHTS-B-03]]
+==== DEMODB-FLIGHTS-B-03: the cancelled flights
+
+Find the flights whose `status` is `Cancelled`.
+Show the flight, the route and the scheduled departure, ordered by the scheduled departure and then by `flight_id`.
+
+.`flights_exercises_01_basic.sql`, DEMODB-FLIGHTS-B-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT flight_id, route_no, scheduled_departure
+FROM flights
+WHERE status = 'Cancelled'
+ORDER BY scheduled_departure, flight_id
+----
+
+....
+ flight_id | route_no |  scheduled_departure   
+-----------+----------+------------------------
+        84 | PG0029   | 2025-10-01 12:25:00+00
+       168 | PG0106   | 2025-10-01 23:40:00+00
+       846 | PG0231   | 2025-10-05 15:35:00+00
+      1143 | PG0284   | 2025-10-07 08:30:00+00
+      1209 | PG0204   | 2025-10-07 15:40:00+00
+      1425 | PG0037   | 2025-10-08 23:20:00+00
+      1492 | PG0113   | 2025-10-09 08:20:00+00
+      1563 | PG0204   | 2025-10-09 15:40:00+00
+      1592 | PG0200   | 2025-10-09 19:45:00+00
+      1596 | PG0202   | 2025-10-09 20:30:00+00
+... 121 rows in all.
+....
+====
+
+[[DEMODB-FLIGHTS-B-04]]
+==== DEMODB-FLIGHTS-B-04: the flights scheduled to take more than twelve hours
+
+Subtract the scheduled departure from the scheduled arrival, and keep the flights whose difference is over twelve hours.
+Show the flight, the route and the difference, the longest first; flights with the same difference are ordered by `flight_id`.
+The difference of two timestamps is an `interval`.
+
+.`flights_exercises_01_basic.sql`, DEMODB-FLIGHTS-B-04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT flight_id, route_no, scheduled_arrival - scheduled_departure AS scheduled
+FROM flights
+WHERE scheduled_arrival - scheduled_departure > INTERVAL '12 hours'
+ORDER BY scheduled DESC, flight_id
+----
+
+....
+ flight_id | route_no | scheduled 
+-----------+----------+-----------
+       196 | PG0130   | 19:55:00
+      1122 | PG0129   | 19:55:00
+      1459 | PG0130   | 19:55:00
+      2384 | PG0129   | 19:55:00
+      2721 | PG0130   | 19:55:00
+      3646 | PG0129   | 19:55:00
+      3983 | PG0130   | 19:55:00
+      4907 | PG0129   | 19:55:00
+      5244 | PG0130   | 19:55:00
+       342 | PG0144   | 18:35:00
+... 225 rows in all.
+....
+====
+
+=== Intermediate
+
+[[DEMODB-FLIGHTS-I-01]]
+==== DEMODB-FLIGHTS-I-01: how many flights each month
+
+Group the flights by the month of `scheduled_departure`, written as `YYYY-MM`, and count them.
+Show the month and the count, in order.
+`to_char` formats the timestamp.
+
+.`flights_exercises_02_intermediate.sql`, DEMODB-FLIGHTS-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT TO_CHAR(scheduled_departure, 'YYYY-MM') AS month, COUNT(*) AS flights
+FROM flights
+GROUP BY month
+ORDER BY month
+----
+
+....
+  month  | flights 
+---------+---------
+ 2025-10 |    5580
+ 2025-11 |    5467
+ 2025-12 |    5539
+ 2026-01 |    5172
+(4 rows)
+....
+====
+
+[[DEMODB-FLIGHTS-I-02]]
+==== DEMODB-FLIGHTS-I-02: the ten routes whose flights depart the latest
+
+For the flights that arrived, the delay is the actual departure minus the scheduled one.
+Average it per route, in minutes to one decimal, and keep the ten routes with the longest average; routes with the same average are ordered by `route_no`.
+Show the route, the average and how many flights it averages.
+`EXTRACT(EPOCH FROM ...)` turns an interval into seconds.
+
+.`flights_exercises_02_intermediate.sql`, DEMODB-FLIGHTS-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT route_no,
+       ROUND(AVG(EXTRACT(EPOCH FROM actual_departure - scheduled_departure)) / 60, 1) AS delay_minutes,
+       COUNT(*)                                                                      AS flights
+FROM flights
+WHERE status = 'Arrived'
+GROUP BY route_no
+ORDER BY delay_minutes DESC, route_no
+LIMIT 10
+----
+
+....
+ route_no | delay_minutes | flights 
+----------+---------------+---------
+ PG0290   |         188.2 |       4
+ PG0377   |         108.5 |       4
+ PG0428   |         104.7 |       4
+ PG0447   |          98.7 |       4
+ PG0235   |          62.7 |       4
+ PG0287   |          62.0 |       4
+ PG0313   |          57.4 |       4
+ PG0360   |          55.9 |       4
+ PG0425   |          50.8 |       4
+ PG0434   |          49.8 |       4
+(10 rows)
+....
+====
+
+[[DEMODB-FLIGHTS-I-03]]
+==== DEMODB-FLIGHTS-I-03: how many flights departed more than an hour late
+
+Count the flights whose `actual_departure` is more than an hour after the `scheduled_departure`.
+A comparison with a timestamp plus an `interval`; a flight with no actual departure does not count.
+
+.`flights_exercises_02_intermediate.sql`, DEMODB-FLIGHTS-I-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS late
+FROM flights
+WHERE actual_departure > scheduled_departure + INTERVAL '1 hour'
+----
+
+....
+ late 
+------
+  554
+(1 row)
+....
+====
+
+[[DEMODB-FLIGHTS-I-04]]
+==== DEMODB-FLIGHTS-I-04: today's flights, with their airports
+
+The database's today is the date of `bookings.now()`.
+Find the flights scheduled to depart today, and join each to the row of `routes` valid at its scheduled departure.
+Show the flight, the route, the two airports, the scheduled departure and the status, ordered by the scheduled departure and then by `flight_id`.
+
+.`flights_exercises_02_intermediate.sql`, DEMODB-FLIGHTS-I-04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT f.flight_id, f.route_no, r.departure_airport, r.arrival_airport, f.scheduled_departure, f.status
+FROM flights f
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+WHERE f.scheduled_departure::date = bookings.now()::date
+ORDER BY f.scheduled_departure, f.flight_id
+----
+
+....
+ flight_id | route_no | departure_airport | arrival_airport |  scheduled_departure   |  status  
+-----------+----------+-------------------+-----------------+------------------------+----------
+     11048 | PG0098   | DEL               | CCU             | 2025-12-01 00:10:00+00 | Boarding
+     11049 | PG0456   | KZN               | UFA             | 2025-12-01 00:15:00+00 | Boarding
+     11050 | PG0215   | XIY               | SHA             | 2025-12-01 00:25:00+00 | Boarding
+     11051 | PG0356   | XIY               | WUH             | 2025-12-01 00:30:00+00 | Delayed
+     11052 | PG0191   | LAX               | LAS             | 2025-12-01 00:35:00+00 | On Time
+     11053 | PG0350   | ATL               | CLT             | 2025-12-01 00:35:00+00 | On Time
+     11054 | PG0059   | OKA               | CTS             | 2025-12-01 00:45:00+00 | On Time
+     11055 | PG0526   | ORY               | VIE             | 2025-12-01 00:50:00+00 | On Time
+     11056 | PG0364   | CKG               | CTU             | 2025-12-01 00:55:00+00 | On Time
+     11057 | PG0247   | ATL               | DEN             | 2025-12-01 01:20:00+00 | On Time
+... 170 rows in all.
+....
+====
+
+=== Advanced
+
+[[DEMODB-FLIGHTS-A-01]]
+==== DEMODB-FLIGHTS-A-01: the five longest flights flown
+
+For the flights that arrived, the time flown is the actual arrival minus the actual departure.
+Keep the five longest, with their route's airports; flights with the same time are ordered by `flight_id`.
+
+.`flights_exercises_03_advanced.sql`, DEMODB-FLIGHTS-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT f.flight_id, f.route_no, r.departure_airport, r.arrival_airport, f.actual_arrival - f.actual_departure AS flown
+FROM flights f
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+WHERE f.status = 'Arrived'
+ORDER BY flown DESC, f.flight_id
+LIMIT 5
+----
+
+....
+ flight_id | route_no | departure_airport | arrival_airport |      flown      
+-----------+----------+-------------------+-----------------+-----------------
+      2721 | PG0130   | BOM               | SCL             | 20:24:04.083773
+      3646 | PG0129   | SCL               | BOM             | 20:04:01.490994
+      5244 | PG0130   | BOM               | SCL             | 19:59:43.766426
+      1122 | PG0129   | SCL               | BOM             | 19:59:40.677147
+       196 | PG0130   | BOM               | SCL             | 19:59:14.949474
+(5 rows)
+....
+====
+
+[[DEMODB-FLIGHTS-A-02]]
+==== DEMODB-FLIGHTS-A-02: the flights of each day of the first week, and their running total
+
+Count the flights scheduled on each of the first seven days of the data, from 2025-10-01, and add a running total, day by day.
+A group by the date, and a window `SUM` over the ordered days.
+
+.`flights_exercises_03_advanced.sql`, DEMODB-FLIGHTS-A-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT scheduled_departure::date                                   AS day,
+       COUNT(*)                                                    AS flights,
+       SUM(COUNT(*)) OVER (ORDER BY scheduled_departure::date)     AS running_total
+FROM flights
+WHERE scheduled_departure < '2025-10-08'
+GROUP BY scheduled_departure::date
+ORDER BY day
+----
+
+....
+    day     | flights | running_total 
+------------+---------+---------------
+ 2025-10-01 |     169 |           169
+ 2025-10-02 |     189 |           358
+ 2025-10-03 |     174 |           532
+ 2025-10-04 |     185 |           717
+ 2025-10-05 |     183 |           900
+ 2025-10-06 |     175 |          1075
+ 2025-10-07 |     187 |          1262
+(7 rows)
+....
+====
+
+[[DEMODB-FLIGHTS-A-03]]
+==== DEMODB-FLIGHTS-A-03: the five fullest flights of the first day
+
+For the flights scheduled on 2025-10-01 that arrived, count the boarding passes and the seats of the flight's airplane, and keep the five with the highest share of seats boarded; flights with the same share are ordered by `flight_id`.
+Show the flight, the route, the airplane, the two counts and the share as a percentage to one decimal.
+Three joins, one of them on a range containment, a group, and a subquery for the seats.
+
+.`flights_exercises_03_advanced.sql`, DEMODB-FLIGHTS-A-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT f.flight_id,
+       f.route_no,
+       r.airplane_code,
+       COUNT(bp.ticket_no)                                                AS boarded,
+       s.seats,
+       ROUND(100.0 * COUNT(bp.ticket_no) / s.seats, 1)                    AS boarded_pct
+FROM flights f
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+         JOIN (SELECT airplane_code, COUNT(*) AS seats FROM seats GROUP BY airplane_code) s
+              ON s.airplane_code = r.airplane_code
+         JOIN boarding_passes bp ON bp.flight_id = f.flight_id
+WHERE f.status = 'Arrived'
+  AND f.scheduled_departure >= '2025-10-01'
+  AND f.scheduled_departure < '2025-10-02'
+GROUP BY f.flight_id, f.route_no, r.airplane_code, s.seats
+ORDER BY boarded_pct DESC, f.flight_id
+LIMIT 5
+----
+
+....
+ flight_id | route_no | airplane_code | boarded | seats | boarded_pct 
+-----------+----------+---------------+---------+-------+-------------
+         2 | PG0247   | 32N           |     166 |   166 |       100.0
+         3 | PG0215   | 789           |     257 |   257 |       100.0
+         4 | PG0059   | CR7           |      70 |    70 |       100.0
+         5 | PG0220   | 351           |     325 |   325 |       100.0
+         6 | PG0009   | 789           |     257 |   257 |       100.0
+(5 rows)
+....
+====
+
+== timetable
+
+The `timetable` view, mapped by `MappedTimetable`: each flight with its route's airports and airplane, and every time also in the airport's local time.
+
+=== Basic
+
+[[DEMODB-TIMETABLE-B-01]]
+==== DEMODB-TIMETABLE-B-01: the flights from Sheremetyevo in the next 24 hours
+
+The database's now is `bookings.now()`.
+Find the rows of `timetable` whose `departure_airport` is `SVO` and whose scheduled departure is within the next 24 hours of it.
+Show the flight, the route, the arrival airport, the local departure time and the status, ordered by the scheduled departure.
+
+.`timetable_exercises_01_basic.sql`, DEMODB-TIMETABLE-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT flight_id, route_no, arrival_airport, scheduled_departure_local, status
+FROM timetable
+WHERE departure_airport = 'SVO'
+  AND scheduled_departure >= bookings.now()
+  AND scheduled_departure < bookings.now() + INTERVAL '24 hours'
+ORDER BY scheduled_departure
+----
+
+....
+ flight_id | route_no | arrival_airport | scheduled_departure_local | status  
+-----------+----------+-----------------+---------------------------+---------
+     11120 | PG0012   | UFA             | 2025-12-01 13:55:00       | On Time
+     11121 | PG0034   | SVX             | 2025-12-01 14:05:00       | On Time
+     11132 | PG0177   | AER             | 2025-12-01 15:05:00       | On Time
+     11211 | PG0018   | KZN             | 2025-12-02 02:05:00       | On Time
+     11216 | PG0106   | LED             | 2025-12-02 02:40:00       | On Time
+(5 rows)
+....
+====
+
+[[DEMODB-TIMETABLE-B-02]]
+==== DEMODB-TIMETABLE-B-02: the flights of the route PG0078 on the first day, in local time
+
+Find the rows of the route `PG0078` scheduled on 2025-10-01.
+Show the flight, the two airports, the scheduled departure in UTC and local time, and the scheduled arrival in local time, ordered by the scheduled departure.
+The view has already converted the times with each airport's time zone.
+
+.`timetable_exercises_01_basic.sql`, DEMODB-TIMETABLE-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT flight_id, departure_airport, arrival_airport, scheduled_departure, scheduled_departure_local, scheduled_arrival_local
+FROM timetable
+WHERE route_no = 'PG0078'
+  AND scheduled_departure >= '2025-10-01'
+  AND scheduled_departure < '2025-10-02'
+ORDER BY scheduled_departure
+----
+
+....
+ flight_id | departure_airport | arrival_airport |  scheduled_departure   | scheduled_departure_local | scheduled_arrival_local 
+-----------+-------------------+-----------------+------------------------+---------------------------+-------------------------
+         1 | SVO               | HEL             | 2025-10-01 00:00:00+00 | 2025-10-01 03:00:00       | 2025-10-01 04:40:00
+(1 row)
+....
+====
+
+=== Intermediate
+
+[[DEMODB-TIMETABLE-I-01]]
+==== DEMODB-TIMETABLE-I-01: how many flights depart on another local day than the UTC one
+
+Count the rows whose local scheduled departure falls on a different date than the UTC one.
+`AT TIME ZONE 'UTC'` turns a `timestamp with time zone` into the plain timestamp in UTC, which then has a date to compare.
+
+.`timetable_exercises_02_intermediate.sql`, DEMODB-TIMETABLE-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS flights
+FROM timetable
+WHERE scheduled_departure_local::date <> (scheduled_departure AT TIME ZONE 'UTC')::date
+----
+
+....
+ flights 
+---------
+    4597
+(1 row)
+....
+====
+
+[[DEMODB-TIMETABLE-I-02]]
+==== DEMODB-TIMETABLE-I-02: the five airport pairs with the most flights
+
+Count the flights of each pair of departure and arrival airport, and keep the five with the most.
+Show the two airports and the count, the most first; pairs with the same count are ordered by the two airports.
+
+.`timetable_exercises_02_intermediate.sql`, DEMODB-TIMETABLE-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT departure_airport, arrival_airport, COUNT(*) AS flights
+FROM timetable
+GROUP BY departure_airport, arrival_airport
+ORDER BY flights DESC, departure_airport, arrival_airport
+LIMIT 5
+----
+
+....
+ departure_airport | arrival_airport | flights 
+-------------------+-----------------+---------
+ BGY               | FCO             |     121
+ CAN               | SZX             |     121
+ CDG               | NCE             |     121
+ FCO               | BGY             |     121
+ FCO               | MXP             |     121
+(5 rows)
+....
+====
+
+[[DEMODB-TIMETABLE-I-03]]
+==== DEMODB-TIMETABLE-I-03: the flights that arrived late, by month
+
+Group the rows by the month of the scheduled arrival, and count, of the flights that arrived, those whose actual arrival was more than an hour after the scheduled one.
+Show the month, the flights that arrived and the late ones, in order.
+Two conditional counts with `FILTER`.
+
+.`timetable_exercises_02_intermediate.sql`, DEMODB-TIMETABLE-I-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT TO_CHAR(scheduled_arrival, 'YYYY-MM')                                               AS month,
+       COUNT(*) FILTER (WHERE status = 'Arrived')                                          AS arrived,
+       COUNT(*) FILTER (WHERE actual_arrival > scheduled_arrival + INTERVAL '1 hour')      AS late
+FROM timetable
+GROUP BY month
+ORDER BY month
+----
+
+....
+  month  | arrived | late 
+---------+---------+------
+ 2025-10 |    5526 |  261
+ 2025-11 |    5440 |  292
+ 2025-12 |       0 |    0
+ 2026-01 |       0 |    0
+(4 rows)
+....
+====
+
+=== Advanced
+
+[[DEMODB-TIMETABLE-A-01]]
+==== DEMODB-TIMETABLE-A-01: whether the view has a row for every flight
+
+Count the flights the view leaves out: a flight whose route has no row valid at the scheduled departure would be lost by the view's inner join.
+A `LEFT JOIN` from `flights` to the view, keeping the rows with no match; there should be none.
+
+.`timetable_exercises_03_advanced.sql`, DEMODB-TIMETABLE-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS missing
+FROM flights f
+         LEFT JOIN timetable t ON t.flight_id = f.flight_id
+WHERE t.flight_id IS NULL
+----
+
+....
+ missing 
+---------
+       0
+(1 row)
+....
+====
+
+[[DEMODB-TIMETABLE-A-02]]
+==== DEMODB-TIMETABLE-A-02: the connections at Sheremetyevo on the first day
+
+For each flight scheduled to arrive at `SVO` on 2025-10-01, find the flights departing from `SVO` between one and four hours after its scheduled arrival.
+Show the arriving flight, the departing flight, where it goes and the layover, ordered by the two flights; the first ten.
+A self join of the view on the airport and a window of time.
+
+.`timetable_exercises_03_advanced.sql`, DEMODB-TIMETABLE-A-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.flight_id                                 AS arriving,
+       d.flight_id                                 AS departing,
+       d.arrival_airport                           AS destination,
+       d.scheduled_departure - a.scheduled_arrival AS layover
+FROM timetable a
+         JOIN timetable d ON d.departure_airport = a.arrival_airport
+    AND d.scheduled_departure BETWEEN a.scheduled_arrival + INTERVAL '1 hour' AND a.scheduled_arrival + INTERVAL '4 hours'
+WHERE a.arrival_airport = 'SVO'
+  AND a.scheduled_arrival >= '2025-10-01'
+  AND a.scheduled_arrival < '2025-10-02'
+ORDER BY a.flight_id, d.flight_id
+LIMIT 10
+----
+
+....
+ arriving | departing | destination | layover  
+----------+-----------+-------------+----------
+       54 |        81 | AER         | 02:30:00
+      131 |       168 | LED         | 03:35:00
+(2 rows)
+....
+====
+
+== seats
+
+The `seats` table, mapped by `MappedSeat`: the seats of each airplane, each with its fare conditions.
+
+=== Basic
+
+[[DEMODB-SEATS-B-01]]
+==== DEMODB-SEATS-B-01: the Business seats of the Airbus A320neo
+
+Find the seats of the airplane `32N` whose `fare_conditions` is `Business`.
+Show the whole rows, ordered by `seat_no`.
+Two equality filters on one table.
+
+.`seats_exercises_01_basic.sql`, DEMODB-SEATS-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM seats
+WHERE airplane_code = '32N'
+  AND fare_conditions = 'Business'
+ORDER BY seat_no
+----
+
+....
+ airplane_code | seat_no | fare_conditions 
+---------------+---------+-----------------
+ 32N           | 1A      | Business
+ 32N           | 1C      | Business
+ 32N           | 1D      | Business
+ 32N           | 1F      | Business
+ 32N           | 2A      | Business
+ 32N           | 2C      | Business
+ 32N           | 2D      | Business
+ 32N           | 2F      | Business
+ 32N           | 3A      | Business
+ 32N           | 3C      | Business
+... 28 rows in all.
+....
+====
+
+[[DEMODB-SEATS-B-02]]
+==== DEMODB-SEATS-B-02: how many seats each airplane has
+
+Count the seats of each `airplane_code`.
+Show the code and the count, ordered by code.
+
+.`seats_exercises_01_basic.sql`, DEMODB-SEATS-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airplane_code, COUNT(*) AS seats
+FROM seats
+GROUP BY airplane_code
+ORDER BY airplane_code
+----
+
+....
+ airplane_code | seats 
+---------------+-------
+ 32N           |   166
+ 339           |   281
+ 351           |   325
+ 77W           |   404
+ 789           |   257
+ 7M7           |   160
+ CR7           |    70
+ E70           |    78
+(8 rows)
+....
+====
+
+[[DEMODB-SEATS-B-03]]
+==== DEMODB-SEATS-B-03: how many seats of each fare conditions
+
+Count the seats of each `fare_conditions`, over all airplanes.
+Show the fare conditions and the count, ordered by fare conditions.
+
+.`seats_exercises_01_basic.sql`, DEMODB-SEATS-B-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT fare_conditions, COUNT(*) AS seats
+FROM seats
+GROUP BY fare_conditions
+ORDER BY fare_conditions
+----
+
+....
+ fare_conditions | seats 
+-----------------+-------
+ Business        |   207
+ Comfort         |   109
+ Economy         |  1425
+(3 rows)
+....
+====
+
+=== Intermediate
+
+[[DEMODB-SEATS-I-01]]
+==== DEMODB-SEATS-I-01: the seats of each airplane, by fare conditions
+
+For each airplane, count its seats of each fare conditions in a column of its own, and all of them in a last column.
+Show the code, the English name and the four counts, ordered by code.
+A `LEFT JOIN` from `airplanes_data`, so an airplane with no seat still shows, and conditional counts with `FILTER`.
+
+.`seats_exercises_02_intermediate.sql`, DEMODB-SEATS-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.airplane_code,
+       a.model ->> 'en'                                           AS model,
+       COUNT(*) FILTER (WHERE s.fare_conditions = 'Economy')     AS economy,
+       COUNT(*) FILTER (WHERE s.fare_conditions = 'Comfort')     AS comfort,
+       COUNT(*) FILTER (WHERE s.fare_conditions = 'Business')    AS business,
+       COUNT(s.seat_no)                                          AS seats
+FROM airplanes_data a
+         LEFT JOIN seats s ON s.airplane_code = a.airplane_code
+GROUP BY a.airplane_code, a.model
+ORDER BY a.airplane_code
+----
+
+....
+ airplane_code |          model          | economy | comfort | business | seats 
+---------------+-------------------------+---------+---------+----------+-------
+ 32N           | Airbus A320neo          |     138 |       0 |       28 |   166
+ 339           | Airbus A330-900neo      |     224 |      28 |       29 |   281
+ 351           | Airbus A350-1000        |     281 |       0 |       44 |   325
+ 35X           | Airbus A350F            |       0 |       0 |        0 |     0
+ 76F           | Boeing 767-300F         |       0 |       0 |        0 |     0
+ 77W           | Boeing 777-300ER        |     326 |      48 |       30 |   404
+ 789           | Boeing 787-9 Dreamliner |     188 |      21 |       48 |   257
+ 7M7           | Boeing 737 MAX 7        |     144 |       0 |       16 |   160
+ CR7           | Bombardier CRJ700       |      52 |      12 |        6 |    70
+ E70           | Embraer E170            |      72 |       0 |        6 |    78
+(10 rows)
+....
+====
+
+[[DEMODB-SEATS-I-02]]
+==== DEMODB-SEATS-I-02: the rows and the letters of each airplane
+
+A `seat_no` is a row number followed by a letter.
+For each airplane, find the last row and the letters its seats use, as one string in order.
+Show the code, the rows and the letters, ordered by code.
+`LEFT(seat_no, -1)` is the number, `RIGHT(seat_no, 1)` the letter; `string_agg` with `DISTINCT` joins the letters.
+
+.`seats_exercises_02_intermediate.sql`, DEMODB-SEATS-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airplane_code,
+       MAX(LEFT(seat_no, -1)::int)                                                AS rows,
+       STRING_AGG(DISTINCT RIGHT(seat_no, 1), '' ORDER BY RIGHT(seat_no, 1))      AS letters
+FROM seats
+GROUP BY airplane_code
+ORDER BY airplane_code
+----
+
+....
+ airplane_code | rows |  letters   
+---------------+------+------------
+ 32N           |   30 | ABCDEF
+ 339           |   58 | ABCDFGHJ
+ 351           |   48 | ABCDEFGHJK
+ 77W           |   51 | ABCDEFGHJK
+ 789           |   57 | ABCDEFJKL
+ 7M7           |   29 | ABCDEF
+ CR7           |   22 | ABCD
+ E70           |   24 | ABCD
+(8 rows)
+....
+====
+
+[[DEMODB-SEATS-I-03]]
+==== DEMODB-SEATS-I-03: the seat numbers found in the most airplanes
+
+Count, for each value of `seat_no`, the airplanes that have it, and keep the seat numbers with the largest count.
+Show the seat number and the count, ordered by `seat_no`.
+A `HAVING` against a subquery that finds the largest count of the same grouping.
+
+.`seats_exercises_02_intermediate.sql`, DEMODB-SEATS-I-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT seat_no, COUNT(*) AS airplanes
+FROM seats
+GROUP BY seat_no
+HAVING COUNT(*) = (SELECT MAX(airplanes) FROM (SELECT COUNT(*) AS airplanes FROM seats GROUP BY seat_no) c)
+ORDER BY seat_no
+----
+
+....
+ seat_no | airplanes 
+---------+-----------
+ 1A      |         8
+ 20A     |         8
+ 20C     |         8
+ 20D     |         8
+ 21A     |         8
+ 21C     |         8
+ 21D     |         8
+ 22A     |         8
+ 22C     |         8
+ 22D     |         8
+(10 rows)
+....
+====
+
+=== Advanced
+
+[[DEMODB-SEATS-A-01]]
+==== DEMODB-SEATS-A-01: the empty seats of the flight 1
+
+The flight `1` flies the route `PG0078`, a Boeing 737 MAX 7, `7M7`.
+Find its seats nobody boarded: the seats of the airplane with no boarding pass of that flight.
+Show the seat and its fare conditions, ordered by `seat_no`.
+A `LEFT JOIN` to `boarding_passes` with the flight in the join condition, keeping the seats with no match.
+
+.`seats_exercises_03_advanced.sql`, DEMODB-SEATS-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT s.seat_no, s.fare_conditions
+FROM seats s
+         LEFT JOIN boarding_passes bp ON bp.flight_id = 1 AND bp.seat_no = s.seat_no
+WHERE s.airplane_code = '7M7'
+  AND bp.ticket_no IS NULL
+ORDER BY s.seat_no
+----
+
+....
+ seat_no | fare_conditions 
+---------+-----------------
+ 10A     | Economy
+ 10B     | Economy
+ 10C     | Economy
+ 10D     | Economy
+ 10E     | Economy
+ 10F     | Economy
+ 11A     | Economy
+ 11C     | Economy
+ 11D     | Economy
+ 11E     | Economy
+... 112 rows in all.
+....
+====
+
+[[DEMODB-SEATS-A-02]]
+==== DEMODB-SEATS-A-02: the share of Business seats of each airplane
+
+For each airplane, the share of its seats whose fare conditions is `Business`, as a percentage to one decimal.
+Show the code and the share, the largest first; airplanes with the same share are ordered by code.
+A conditional count divided by the count, both over the same group.
+
+.`seats_exercises_03_advanced.sql`, DEMODB-SEATS-A-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airplane_code,
+       ROUND(100.0 * COUNT(*) FILTER (WHERE fare_conditions = 'Business') / COUNT(*), 1) AS business_pct
+FROM seats
+GROUP BY airplane_code
+ORDER BY business_pct DESC, airplane_code
+----
+
+....
+ airplane_code | business_pct 
+---------------+--------------
+ 789           |         18.7
+ 32N           |         16.9
+ 351           |         13.5
+ 339           |         10.3
+ 7M7           |         10.0
+ CR7           |          8.6
+ E70           |          7.7
+ 77W           |          7.4
+(8 rows)
+....
+====
+
+== bookings
+
+The `bookings` table, mapped by `MappedBooking`: a booking, when it was made and what it cost in all.
+
+=== Basic
+
+[[DEMODB-BOOKINGS-B-01]]
+==== DEMODB-BOOKINGS-B-01: the bookings of the first minute
+
+Find the bookings made in the first minute of the data, from 2025-09-01 00:00 up to but not including 00:01.
+Show the whole rows, ordered by `book_date`.
+
+.`bookings_exercises_01_basic.sql`, DEMODB-BOOKINGS-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM bookings
+WHERE book_date >= '2025-09-01 00:00'
+  AND book_date < '2025-09-01 00:01'
+ORDER BY book_date
+----
+
+....
+ book_ref |           book_date           | total_amount 
+----------+-------------------------------+--------------
+ 6TAS39   | 2025-09-01 00:00:06.265219+00 |      5000.00
+ GGY5EU   | 2025-09-01 00:00:07.565193+00 |      5750.00
+ Y4KNLB   | 2025-09-01 00:00:07.980879+00 |     18000.00
+ MJUZ2D   | 2025-09-01 00:00:10.850077+00 |      5000.00
+ 4O2NMP   | 2025-09-01 00:00:12.040076+00 |     27500.00
+ 2EW1SQ   | 2025-09-01 00:00:12.557744+00 |      8125.00
+ KP3OIQ   | 2025-09-01 00:00:15.012997+00 |     15000.00
+ H40481   | 2025-09-01 00:00:17.28616+00  |     29000.00
+ KOS1KJ   | 2025-09-01 00:00:18.970418+00 |     21500.00
+ NWE9DB   | 2025-09-01 00:00:20.274286+00 |     41250.00
+... 17 rows in all.
+....
+====
+
+[[DEMODB-BOOKINGS-B-02]]
+==== DEMODB-BOOKINGS-B-02: how many bookings, and how much in all
+
+Count the bookings, and sum their `total_amount`.
+One row, two aggregates.
+
+.`bookings_exercises_01_basic.sql`, DEMODB-BOOKINGS-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS bookings, SUM(total_amount) AS total
+FROM bookings
+----
+
+....
+ bookings |     total      
+----------+----------------
+  1292893 | 24573931575.00
+(1 row)
+....
+====
+
+[[DEMODB-BOOKINGS-B-03]]
+==== DEMODB-BOOKINGS-B-03: the bookings of 700000 or more
+
+Find the bookings whose `total_amount` is 700000 or more.
+Show the whole rows, the largest first; bookings of the same amount are ordered by `book_ref`.
+
+.`bookings_exercises_01_basic.sql`, DEMODB-BOOKINGS-B-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM bookings
+WHERE total_amount >= 700000
+ORDER BY total_amount DESC, book_ref
+----
+
+....
+ book_ref |           book_date           | total_amount 
+----------+-------------------------------+--------------
+ 7UU4BE   | 2025-09-20 04:54:14.10585+00  |    915250.00
+ 3OSUL8   | 2025-10-13 09:23:52.261287+00 |    741100.00
+ 613WY4   | 2025-10-14 03:44:02.154647+00 |    717450.00
+(3 rows)
+....
+====
+
+=== Intermediate
+
+[[DEMODB-BOOKINGS-I-01]]
+==== DEMODB-BOOKINGS-I-01: the bookings and the money of each month
+
+Group the bookings by the month of `book_date`, written as `YYYY-MM`; count them and sum their amounts.
+Show the month, the count and the sum, in order.
+
+.`bookings_exercises_02_intermediate.sql`, DEMODB-BOOKINGS-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT TO_CHAR(book_date, 'YYYY-MM') AS month, COUNT(*) AS bookings, SUM(total_amount) AS total
+FROM bookings
+GROUP BY month
+ORDER BY month
+----
+
+....
+  month  | bookings |     total     
+---------+----------+---------------
+ 2025-09 |   448064 | 8749891200.00
+ 2025-10 |   434159 | 8223964900.00
+ 2025-11 |   410670 | 7600075475.00
+(3 rows)
+....
+====
+
+[[DEMODB-BOOKINGS-I-02]]
+==== DEMODB-BOOKINGS-I-02: the ten most expensive bookings
+
+Keep the ten bookings with the largest `total_amount`, the largest first; bookings of the same amount are ordered by `book_ref`.
+Show the whole rows.
+
+.`bookings_exercises_02_intermediate.sql`, DEMODB-BOOKINGS-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM bookings
+ORDER BY total_amount DESC, book_ref
+LIMIT 10
+----
+
+....
+ book_ref |           book_date           | total_amount 
+----------+-------------------------------+--------------
+ 7UU4BE   | 2025-09-20 04:54:14.10585+00  |    915250.00
+ 3OSUL8   | 2025-10-13 09:23:52.261287+00 |    741100.00
+ 613WY4   | 2025-10-14 03:44:02.154647+00 |    717450.00
+ 573JWM   | 2025-10-17 22:57:03.874836+00 |    635800.00
+ U44CN0   | 2025-10-02 11:31:37.375482+00 |    624150.00
+ 2U34KR   | 2025-09-25 17:59:24.015294+00 |    602200.00
+ DZHSB2   | 2025-09-23 14:13:19.234068+00 |    580900.00
+ YIHL90   | 2025-09-13 21:30:36.249724+00 |    577900.00
+ 8C20XV   | 2025-11-04 16:36:10.112231+00 |    564000.00
+ Q2ST5O   | 2025-11-09 23:43:51.389848+00 |    554750.00
+(10 rows)
+....
+====
+
+[[DEMODB-BOOKINGS-I-03]]
+==== DEMODB-BOOKINGS-I-03: the smallest, the average and the largest booking
+
+Find the smallest, the average, rounded to two decimals, and the largest `total_amount`.
+One row, three aggregates.
+
+.`bookings_exercises_02_intermediate.sql`, DEMODB-BOOKINGS-I-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT MIN(total_amount) AS smallest, ROUND(AVG(total_amount), 2) AS average, MAX(total_amount) AS largest
+FROM bookings
+----
+
+....
+ smallest | average  |  largest  
+----------+----------+-----------
+  1750.00 | 19006.93 | 915250.00
+(1 row)
+....
+====
+
+[[DEMODB-BOOKINGS-I-04]]
+==== DEMODB-BOOKINGS-I-04: how many bookings on each day of the week
+
+Count the bookings made on each day of the week, Sunday first.
+`EXTRACT(DOW FROM ...)` numbers the days from Sunday as 0, and `to_char` with `Dy` names them; the group is on both, the order on the number.
+
+.`bookings_exercises_02_intermediate.sql`, DEMODB-BOOKINGS-I-04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT TO_CHAR(book_date, 'Dy') AS weekday, COUNT(*) AS bookings
+FROM bookings
+GROUP BY weekday, EXTRACT(DOW FROM book_date)
+ORDER BY EXTRACT(DOW FROM book_date)
+----
+
+....
+ weekday | bookings 
+---------+----------
+ Sun     |   183235
+ Mon     |   185709
+ Tue     |   185390
+ Wed     |   185600
+ Thu     |   184292
+ Fri     |   184620
+ Sat     |   184047
+(7 rows)
+....
+====
+
+=== Advanced
+
+[[DEMODB-BOOKINGS-A-01]]
+==== DEMODB-BOOKINGS-A-01: how many bookings do not add up
+
+A booking's `total_amount` should be the sum of the prices of the segments of its tickets.
+Join the three tables, group by booking, and count the bookings whose total differs from the sum.
+A `HAVING` comparing a column of the group with an aggregate; the count is of the groups.
+
+.`bookings_exercises_03_advanced.sql`, DEMODB-BOOKINGS-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS bookings
+FROM (SELECT b.book_ref
+      FROM bookings b
+               JOIN tickets t ON t.book_ref = b.book_ref
+               JOIN segments s ON s.ticket_no = t.ticket_no
+      GROUP BY b.book_ref, b.total_amount
+      HAVING b.total_amount <> SUM(s.price)) x
+----
+
+....
+ bookings 
+----------
+        0
+(1 row)
+....
+====
+
+[[DEMODB-BOOKINGS-A-02]]
+==== DEMODB-BOOKINGS-A-02: the five bookings with the most tickets
+
+Count the tickets of each booking, and keep the five with the most; bookings with the same count are ordered by `book_ref`.
+Show the booking, when it was made, its amount and the count.
+
+.`bookings_exercises_03_advanced.sql`, DEMODB-BOOKINGS-A-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT b.book_ref, b.book_date, b.total_amount, COUNT(*) AS tickets
+FROM bookings b
+         JOIN tickets t ON t.book_ref = b.book_ref
+GROUP BY b.book_ref, b.book_date, b.total_amount
+ORDER BY tickets DESC, b.book_ref
+LIMIT 5
+----
+
+....
+ book_ref |           book_date           | total_amount | tickets 
+----------+-------------------------------+--------------+---------
+ 033CTO   | 2025-09-07 01:15:43.363826+00 |     87500.00 |      10
+ 1OP3KI   | 2025-10-14 22:12:29.76249+00  |    114000.00 |      10
+ 25XXZL   | 2025-09-08 06:49:23.980094+00 |     72500.00 |      10
+ 3WXRTI   | 2025-09-11 03:13:41.930626+00 |     36725.00 |      10
+ 49Z3NQ   | 2025-11-03 11:03:13.2549+00   |     86100.00 |      10
+(5 rows)
+....
+====
+
+== tickets
+
+The `tickets` table, mapped by `MappedTicket`: a passenger's ticket in a booking, outbound or return.
+
+=== Basic
+
+[[DEMODB-TICKETS-B-01]]
+==== DEMODB-TICKETS-B-01: the tickets of the booking 0000EG
+
+Find the tickets whose `book_ref` is `0000EG`.
+Show the whole rows, ordered by `ticket_no`.
+
+.`tickets_exercises_01_basic.sql`, DEMODB-TICKETS-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM tickets
+WHERE book_ref = '0000EG'
+ORDER BY ticket_no
+----
+
+....
+   ticket_no   | book_ref |   passenger_id   | passenger_name | outbound 
+---------------+----------+------------------+----------------+----------
+ 0005434564147 | 0000EG   | CA 1985281597520 | John Beland    | t
+ 0005434564152 | 0000EG   | CA 1985281597520 | John Beland    | f
+(2 rows)
+....
+====
+
+[[DEMODB-TICKETS-B-02]]
+==== DEMODB-TICKETS-B-02: how many tickets, outbound and return
+
+Count the tickets of each value of `outbound`.
+Show the flag and the count, return first.
+
+.`tickets_exercises_01_basic.sql`, DEMODB-TICKETS-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT outbound, COUNT(*) AS tickets
+FROM tickets
+GROUP BY outbound
+ORDER BY outbound
+----
+
+....
+ outbound | tickets 
+----------+---------
+ f        | 1168851
+ t        | 1805086
+(2 rows)
+....
+====
+
+[[DEMODB-TICKETS-B-03]]
+==== DEMODB-TICKETS-B-03: the tickets of one passenger
+
+Find the tickets whose `passenger_id` is `IT 2425980678984`.
+Show the whole rows, ordered by `ticket_no`.
+The id is a document number with its country's code in front.
+
+.`tickets_exercises_01_basic.sql`, DEMODB-TICKETS-B-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM tickets
+WHERE passenger_id = 'IT 2425980678984'
+ORDER BY ticket_no
+----
+
+....
+   ticket_no   | book_ref |   passenger_id   |  passenger_name  | outbound 
+---------------+----------+------------------+------------------+----------
+ 0005432000000 | RBUUIQ   | IT 2425980678984 | Ilaria Cazzaniga | t
+ 0005432000003 | RBUUIQ   | IT 2425980678984 | Ilaria Cazzaniga | f
+(2 rows)
+....
+====
+
+=== Intermediate
+
+[[DEMODB-TICKETS-I-01]]
+==== DEMODB-TICKETS-I-01: the five passengers with the most tickets
+
+Count the tickets of each passenger, by `passenger_id`, and keep the five with the most; passengers with the same count are ordered by id.
+Show the id, the name and the count.
+
+.`tickets_exercises_02_intermediate.sql`, DEMODB-TICKETS-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT passenger_id, passenger_name, COUNT(*) AS tickets
+FROM tickets
+GROUP BY passenger_id, passenger_name
+ORDER BY tickets DESC, passenger_id
+LIMIT 5
+----
+
+....
+   passenger_id   |  passenger_name  | tickets 
+------------------+------------------+---------
+ CN 1303160118058 | Haiyun Yang      |       5
+ CN 8458154433091 | Haiyun Zhao      |       5
+ US 2995168528581 | William Thompson |       5
+ CA 0307652121299 | Pascal Lang      |       4
+ CA 0314814108732 | Dawn Dupuis      |       4
+(5 rows)
+....
+====
+
+[[DEMODB-TICKETS-I-02]]
+==== DEMODB-TICKETS-I-02: the ten countries whose passengers hold the most tickets
+
+The first two characters of `passenger_id` are the country of the passenger's document.
+Count the tickets of each country, and keep the ten with the most; countries with the same count are ordered by code.
+
+.`tickets_exercises_02_intermediate.sql`, DEMODB-TICKETS-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT LEFT(passenger_id, 2) AS country, COUNT(*) AS tickets
+FROM tickets
+GROUP BY country
+ORDER BY tickets DESC, country
+LIMIT 10
+----
+
+....
+ country | tickets 
+---------+---------
+ CN      |  772440
+ US      |  520042
+ IN      |  401834
+ CA      |  198167
+ RU      |  191727
+ DE      |  171900
+ IT      |  151811
+ JP      |  149313
+ GB      |  144743
+ FR      |  125518
+(10 rows)
+....
+====
+
+[[DEMODB-TICKETS-I-03]]
+==== DEMODB-TICKETS-I-03: how many tickets have no segment
+
+Count the tickets no row of `segments` names.
+A `NOT EXISTS` against the referencing table; there should be none.
+
+.`tickets_exercises_02_intermediate.sql`, DEMODB-TICKETS-I-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS tickets
+FROM tickets t
+WHERE NOT EXISTS (SELECT 1 FROM segments s WHERE s.ticket_no = t.ticket_no)
+----
+
+....
+ tickets 
+---------
+       0
+(1 row)
+....
+====
+
+=== Advanced
+
+[[DEMODB-TICKETS-A-01]]
+==== DEMODB-TICKETS-A-01: how many passengers booked a return
+
+In a booking, a passenger's outbound ticket and return ticket share the `book_ref` and the `passenger_id`.
+Count the outbound tickets that have a return ticket in the same booking.
+A self join on two columns, one side outbound, the other not.
+
+.`tickets_exercises_03_advanced.sql`, DEMODB-TICKETS-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS returns
+FROM tickets o
+         JOIN tickets r ON r.book_ref = o.book_ref AND r.passenger_id = o.passenger_id AND NOT r.outbound
+WHERE o.outbound
+----
+
+....
+ returns 
+---------
+ 1168851
+(1 row)
+....
+====
+
+[[DEMODB-TICKETS-A-02]]
+==== DEMODB-TICKETS-A-02: the share of return tickets, by booking month
+
+Join the tickets to their bookings, group by the month of `book_date`, and find the share of the tickets that are not outbound, as a percentage to one decimal.
+Show the month and the share, in order.
+
+.`tickets_exercises_03_advanced.sql`, DEMODB-TICKETS-A-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT TO_CHAR(b.book_date, 'YYYY-MM')                                         AS month,
+       ROUND(100.0 * COUNT(*) FILTER (WHERE NOT t.outbound) / COUNT(*), 1)   AS return_pct
+FROM tickets t
+         JOIN bookings b ON b.book_ref = t.book_ref
+GROUP BY month
+ORDER BY month
+----
+
+....
+  month  | return_pct 
+---------+------------
+ 2025-09 |       41.4
+ 2025-10 |       39.2
+ 2025-11 |       37.0
+(3 rows)
+....
+====
+
+== segments
+
+The `segments` table, mapped by `MappedSegment`: a ticket's flight, with the fare conditions and the price paid.
+
+=== Basic
+
+[[DEMODB-SEGMENTS-B-01]]
+==== DEMODB-SEGMENTS-B-01: the segments of the ticket 0005432000000
+
+Find the segments whose `ticket_no` is `0005432000000`.
+Show the whole rows, ordered by `flight_id`.
+
+.`segments_exercises_01_basic.sql`, DEMODB-SEGMENTS-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM segments
+WHERE ticket_no = '0005432000000'
+ORDER BY flight_id
+----
+
+....
+   ticket_no   | flight_id | fare_conditions |  price  
+---------------+-----------+-----------------+---------
+ 0005432000000 |       108 | Economy         | 3250.00
+(1 row)
+....
+====
+
+[[DEMODB-SEGMENTS-B-02]]
+==== DEMODB-SEGMENTS-B-02: how many segments of each fare conditions
+
+Count the segments of each `fare_conditions`.
+Show the fare conditions and the count, ordered by fare conditions.
+
+.`segments_exercises_01_basic.sql`, DEMODB-SEGMENTS-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT fare_conditions, COUNT(*) AS segments
+FROM segments
+GROUP BY fare_conditions
+ORDER BY fare_conditions
+----
+
+....
+ fare_conditions | segments 
+-----------------+----------
+ Business        |   417644
+ Comfort         |   301832
+ Economy         |  3221773
+(3 rows)
+....
+====
+
+[[DEMODB-SEGMENTS-B-03]]
+==== DEMODB-SEGMENTS-B-03: the segments of the flight 1
+
+Find the segments whose `flight_id` is `1`: the passengers of that flight.
+Show the whole rows, ordered by `ticket_no`.
+
+.`segments_exercises_01_basic.sql`, DEMODB-SEGMENTS-B-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM segments
+WHERE flight_id = 1
+ORDER BY ticket_no
+----
+
+....
+   ticket_no   | flight_id | fare_conditions |  price   
+---------------+-----------+-----------------+----------
+ 0005432037091 |         1 | Economy         |  5000.00
+ 0005432099637 |         1 | Economy         |  5000.00
+ 0005432115850 |         1 | Economy         |  5000.00
+ 0005432175472 |         1 | Economy         |  5000.00
+ 0005432206213 |         1 | Economy         |  5000.00
+ 0005432206220 |         1 | Business        | 10000.00
+ 0005432229264 |         1 | Economy         |  5000.00
+ 0005432261838 |         1 | Economy         |  5000.00
+ 0005432301833 |         1 | Economy         |  5000.00
+ 0005432330445 |         1 | Economy         |  5000.00
+... 48 rows in all.
+....
+====
+
+=== Intermediate
+
+[[DEMODB-SEGMENTS-I-01]]
+==== DEMODB-SEGMENTS-I-01: the prices of each fare conditions
+
+For each `fare_conditions`, find the smallest, the average, rounded to two decimals, and the largest `price`.
+Show the fare conditions and the three values, ordered by fare conditions.
+
+.`segments_exercises_02_intermediate.sql`, DEMODB-SEGMENTS-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT fare_conditions, MIN(price) AS cheapest, ROUND(AVG(price), 2) AS average, MAX(price) AS dearest
+FROM segments
+GROUP BY fare_conditions
+ORDER BY fare_conditions
+----
+
+....
+ fare_conditions | cheapest | average  |  dearest  
+-----------------+----------+----------+-----------
+ Business        |  3500.00 | 11826.86 | 119500.00
+ Comfort         |  2275.00 |  6422.43 |  65325.00
+ Economy         |  1750.00 |  5492.63 |  59750.00
+(3 rows)
+....
+====
+
+[[DEMODB-SEGMENTS-I-02]]
+==== DEMODB-SEGMENTS-I-02: the five flights that earned the most
+
+Sum the prices of the segments of each flight, and keep the five flights with the largest sum; flights with the same sum are ordered by `flight_id`.
+Show the flight, the sum and how many segments it sums.
+
+.`segments_exercises_02_intermediate.sql`, DEMODB-SEGMENTS-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT flight_id, SUM(price) AS revenue, COUNT(*) AS passengers
+FROM segments
+GROUP BY flight_id
+ORDER BY revenue DESC, flight_id
+LIMIT 5
+----
+
+....
+ flight_id |   revenue   | passengers 
+-----------+-------------+------------
+     16679 | 22532100.00 |        404
+     17927 | 18808575.00 |        338
+     11358 | 15918200.00 |        404
+     11889 | 15918200.00 |        404
+     12608 | 15918200.00 |        404
+(5 rows)
+....
+====
+
+[[DEMODB-SEGMENTS-I-03]]
+==== DEMODB-SEGMENTS-I-03: how many tickets have more than two segments
+
+Group the segments by ticket, keep the tickets with more than two, and count them.
+A `HAVING` in a subquery, counted outside.
+
+.`segments_exercises_02_intermediate.sql`, DEMODB-SEGMENTS-I-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS tickets
+FROM (SELECT ticket_no
+      FROM segments
+      GROUP BY ticket_no
+      HAVING COUNT(*) > 2) t
+----
+
+....
+ tickets 
+---------
+  249113
+(1 row)
+....
+====
+
+=== Advanced
+
+[[DEMODB-SEGMENTS-A-01]]
+==== DEMODB-SEGMENTS-A-01: the five flights where Business costs the most over Economy
+
+For each flight sold in both fare conditions, divide the cheapest Business price by the cheapest Economy price, to two decimals.
+Keep the five flights with the largest ratio; flights with the same ratio are ordered by `flight_id`.
+Show the flight, the two prices and the ratio.
+Conditional aggregates with `FILTER`, in the select and in the `HAVING`.
+
+.`segments_exercises_03_advanced.sql`, DEMODB-SEGMENTS-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT flight_id,
+       MIN(price) FILTER (WHERE fare_conditions = 'Economy')                                                          AS economy,
+       MIN(price) FILTER (WHERE fare_conditions = 'Business')                                                         AS business,
+       ROUND(MIN(price) FILTER (WHERE fare_conditions = 'Business') / MIN(price) FILTER (WHERE fare_conditions = 'Economy'), 2) AS ratio
+FROM segments
+GROUP BY flight_id
+HAVING COUNT(*) FILTER (WHERE fare_conditions = 'Economy') > 0
+   AND COUNT(*) FILTER (WHERE fare_conditions = 'Business') > 0
+ORDER BY ratio DESC, flight_id
+LIMIT 5
+----
+
+....
+ flight_id | economy  | business | ratio 
+-----------+----------+----------+-------
+         1 |  5000.00 | 10000.00 |  2.00
+         2 |  9250.00 | 18500.00 |  2.00
+         3 |  6000.00 | 12000.00 |  2.00
+         4 | 10500.00 | 21000.00 |  2.00
+         5 |  5250.00 | 10500.00 |  2.00
+(5 rows)
+....
+====
+
+[[DEMODB-SEGMENTS-A-02]]
+==== DEMODB-SEGMENTS-A-02: how many segments of the first day were sold in fare conditions the airplane has not
+
+For the flights scheduled on 2025-10-01, count the segments whose `fare_conditions` no seat of the flight's airplane has.
+The airplane is the one of the route's row valid at the scheduled departure; a `NOT EXISTS` on `seats` does the check; there should be none.
+
+.`segments_exercises_03_advanced.sql`, DEMODB-SEGMENTS-A-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS segments
+FROM segments s
+         JOIN flights f ON f.flight_id = s.flight_id
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+WHERE f.scheduled_departure >= '2025-10-01'
+  AND f.scheduled_departure < '2025-10-02'
+  AND NOT EXISTS (SELECT 1
+                  FROM seats st
+                  WHERE st.airplane_code = r.airplane_code
+                    AND st.fare_conditions = s.fare_conditions)
+----
+
+....
+ segments 
+----------
+        0
+(1 row)
+....
+====
+
+== boarding_passes
+
+The `boarding_passes` table, mapped by `MappedBoardingPass`: a passenger checked in to a segment, with the seat and, once boarded, the boarding number and time.
+
+=== Basic
+
+[[DEMODB-BOARDING_PASSES-B-01]]
+==== DEMODB-BOARDING_PASSES-B-01: the boarding passes of the flight 1, in boarding order
+
+Find the boarding passes whose `flight_id` is `1`.
+Show the whole rows, ordered by `boarding_no`; a pass with no boarding number, a passenger checked in but not boarded, comes last.
+
+.`boarding_passes_exercises_01_basic.sql`, DEMODB-BOARDING_PASSES-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM boarding_passes
+WHERE flight_id = 1
+ORDER BY boarding_no NULLS LAST, ticket_no
+----
+
+....
+   ticket_no   | flight_id | seat_no | boarding_no |         boarding_time         
+---------------+-----------+---------+-------------+-------------------------------
+ 0005432486526 |         1 | 24A     |           1 | 2025-09-30 23:32:30.846267+00
+ 0005432803911 |         1 | 13C     |           2 | 2025-09-30 23:33:02.37625+00
+ 0005432498784 |         1 | 14B     |           3 | 2025-09-30 23:33:33.290931+00
+ 0005432803924 |         1 | 20A     |           4 | 2025-09-30 23:34:21.750622+00
+ 0005432533210 |         1 | 29D     |           5 | 2025-09-30 23:34:23.70731+00
+ 0005432821450 |         1 | 24D     |           6 | 2025-09-30 23:34:34.584991+00
+ 0005432099637 |         1 | 28D     |           7 | 2025-09-30 23:34:38.218385+00
+ 0005432175472 |         1 | 9B      |           8 | 2025-09-30 23:34:48.710511+00
+ 0005432928358 |         1 | 20E     |           9 | 2025-09-30 23:35:28.204127+00
+ 0005432229264 |         1 | 27B     |          10 | 2025-09-30 23:35:53.553426+00
+... 48 rows in all.
+....
+====
+
+[[DEMODB-BOARDING_PASSES-B-02]]
+==== DEMODB-BOARDING_PASSES-B-02: how many boarding passes, and how many not boarded
+
+Count the boarding passes, and those whose `boarding_no` is `NULL`.
+A conditional count with `FILTER`.
+
+.`boarding_passes_exercises_01_basic.sql`, DEMODB-BOARDING_PASSES-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS passes, COUNT(*) FILTER (WHERE boarding_no IS NULL) AS not_boarded
+FROM boarding_passes
+----
+
+....
+ passes  | not_boarded 
+---------+-------------
+ 2463832 |       30360
+(1 row)
+....
+====
+
+[[DEMODB-BOARDING_PASSES-B-03]]
+==== DEMODB-BOARDING_PASSES-B-03: the boarding passes of the ticket 0005432000000
+
+Find the boarding passes whose `ticket_no` is `0005432000000`.
+Show the whole rows, ordered by `flight_id`.
+
+.`boarding_passes_exercises_01_basic.sql`, DEMODB-BOARDING_PASSES-B-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM boarding_passes
+WHERE ticket_no = '0005432000000'
+ORDER BY flight_id
+----
+
+....
+   ticket_no   | flight_id | seat_no | boarding_no |         boarding_time         
+---------------+-----------+---------+-------------+-------------------------------
+ 0005432000000 |       108 | 39F     |         343 | 2025-10-01 14:35:05.617326+00
+(1 row)
+....
+====
+
+=== Intermediate
+
+[[DEMODB-BOARDING_PASSES-I-01]]
+==== DEMODB-BOARDING_PASSES-I-01: the five seats boarded the most
+
+Count the boarding passes of each `seat_no`, over all flights, and keep the five with the most; seats with the same count are ordered by `seat_no`.
+
+.`boarding_passes_exercises_02_intermediate.sql`, DEMODB-BOARDING_PASSES-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT seat_no, COUNT(*) AS boarded
+FROM boarding_passes
+GROUP BY seat_no
+ORDER BY boarded DESC, seat_no
+LIMIT 5
+----
+
+....
+ seat_no | boarded 
+---------+---------
+ 20D     |    9773
+ 22D     |    9752
+ 20A     |    9742
+ 20C     |    9732
+ 22A     |    9730
+(5 rows)
+....
+====
+
+[[DEMODB-BOARDING_PASSES-I-02]]
+==== DEMODB-BOARDING_PASSES-I-02: how many segments have no boarding pass
+
+Count the segments with no boarding pass: the passengers who did not check in, or whose flight has not departed.
+A `LEFT JOIN` on the two key columns, keeping the rows with no match.
+
+.`boarding_passes_exercises_02_intermediate.sql`, DEMODB-BOARDING_PASSES-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS segments
+FROM segments s
+         LEFT JOIN boarding_passes bp ON bp.ticket_no = s.ticket_no AND bp.flight_id = s.flight_id
+WHERE bp.ticket_no IS NULL
+----
+
+....
+ segments 
+----------
+  1477417
+(1 row)
+....
+====
+
+[[DEMODB-BOARDING_PASSES-I-03]]
+==== DEMODB-BOARDING_PASSES-I-03: how long before departure the passengers of the first day boarded
+
+For the boarding passes of the flights scheduled on 2025-10-01 that have a boarding time, average the time from boarding to the scheduled departure, in minutes, rounded.
+A join to `flights`, and `EXTRACT(EPOCH FROM ...)` to average an interval as seconds.
+
+.`boarding_passes_exercises_02_intermediate.sql`, DEMODB-BOARDING_PASSES-I-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT ROUND(AVG(EXTRACT(EPOCH FROM f.scheduled_departure - bp.boarding_time)) / 60) AS minutes_before
+FROM boarding_passes bp
+         JOIN flights f ON f.flight_id = bp.flight_id
+WHERE f.scheduled_departure >= '2025-10-01'
+  AND f.scheduled_departure < '2025-10-02'
+  AND bp.boarding_time IS NOT NULL
+----
+
+....
+ minutes_before 
+----------------
+             11
+(1 row)
+....
+====
+
+=== Advanced
+
+[[DEMODB-BOARDING_PASSES-A-01]]
+==== DEMODB-BOARDING_PASSES-A-01: the passengers of the first day seated in other fare conditions than they paid
+
+For the flights scheduled on 2025-10-01, find the boarding passes whose seat's `fare_conditions`, on the flight's airplane, differs from the segment's.
+Count them, and count them per direction: upgraded, a seat of better fare conditions than paid for, and downgraded.
+Four joins, one on a range containment; a `LATERAL` subquery ranks the two fare conditions with `array_position`, and conditional counts compare the ranks.
+
+.`boarding_passes_exercises_03_advanced.sql`, DEMODB-BOARDING_PASSES-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*)                                                                              AS passes,
+       COUNT(*) FILTER (WHERE rank.seat > rank.paid)                                            AS upgraded,
+       COUNT(*) FILTER (WHERE rank.seat < rank.paid)                                            AS downgraded
+FROM boarding_passes bp
+         JOIN segments s ON s.ticket_no = bp.ticket_no AND s.flight_id = bp.flight_id
+         JOIN flights f ON f.flight_id = bp.flight_id
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+         JOIN seats st ON st.airplane_code = r.airplane_code AND st.seat_no = bp.seat_no
+         CROSS JOIN LATERAL (SELECT ARRAY_POSITION(ARRAY ['Economy', 'Comfort', 'Business'], st.fare_conditions) AS seat,
+                                    ARRAY_POSITION(ARRAY ['Economy', 'Comfort', 'Business'], s.fare_conditions)  AS paid) rank
+WHERE f.scheduled_departure >= '2025-10-01'
+  AND f.scheduled_departure < '2025-10-02'
+  AND st.fare_conditions <> s.fare_conditions
+----
+
+....
+ passes | upgraded | downgraded 
+--------+----------+------------
+      0 |        0 |          0
+(1 row)
+....
+====
+
+[[DEMODB-BOARDING_PASSES-A-02]]
+==== DEMODB-BOARDING_PASSES-A-02: the boarding numbers the flight 1 skipped
+
+The boarding numbers of a flight should run from 1 to the largest without a gap.
+Generate the numbers up to the largest of the flight `1`, and keep those no boarding pass of the flight has; there should be none.
+`generate_series` makes the rows, and a `NOT EXISTS` drops the ones in use.
+
+.`boarding_passes_exercises_03_advanced.sql`, DEMODB-BOARDING_PASSES-A-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT n AS missing
+FROM GENERATE_SERIES(1, (SELECT MAX(boarding_no) FROM boarding_passes WHERE flight_id = 1)) n
+WHERE NOT EXISTS (SELECT 1 FROM boarding_passes WHERE flight_id = 1 AND boarding_no = n)
+ORDER BY n
+----
+
+....
+ missing 
+---------
+(0 rows)
+....
+====
+
+== The schema
+
+Exercises on the schema as a whole, not on a single table.
+
+=== Basic
+
+[[DEMODB-SCHEMA-B-01]]
+==== DEMODB-SCHEMA-B-01: the tables and the views of the schema
+
+List the tables and the views of the `bookings` schema from `information_schema.tables`.
+Show the name and the kind, ordered by kind and then by name.
+
+.`_schema_exercises_01_basic.sql`, DEMODB-SCHEMA-B-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT table_name, table_type
+FROM information_schema.tables
+WHERE table_schema = 'bookings'
+ORDER BY table_type, table_name
+----
+
+....
+   table_name    | table_type 
+-----------------+------------
+ airplanes_data  | BASE TABLE
+ airports_data   | BASE TABLE
+ boarding_passes | BASE TABLE
+ bookings        | BASE TABLE
+ flights         | BASE TABLE
+ routes          | BASE TABLE
+ seats           | BASE TABLE
+ segments        | BASE TABLE
+ tickets         | BASE TABLE
+ airplanes       | VIEW
+... 12 rows in all.
+....
+====
+
+[[DEMODB-SCHEMA-B-02]]
+==== DEMODB-SCHEMA-B-02: the columns of tickets
+
+List the columns of the `tickets` table from `information_schema.columns`, in their order: the name, the type and whether `NULL` is allowed.
+
+.`_schema_exercises_01_basic.sql`, DEMODB-SCHEMA-B-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_schema = 'bookings'
+  AND table_name = 'tickets'
+ORDER BY ordinal_position
+----
+
+....
+  column_name   | data_type | is_nullable 
+----------------+-----------+-------------
+ ticket_no      | text      | NO
+ book_ref       | character | NO
+ passenger_id   | text      | NO
+ passenger_name | text      | NO
+ outbound       | boolean   | NO
+(5 rows)
+....
+====
+
+[[DEMODB-SCHEMA-B-03]]
+==== DEMODB-SCHEMA-B-03: the foreign keys, and what they reference
+
+List the foreign keys of the schema from `pg_constraint`: the table, the constraint's name and its definition, ordered by table and then by name.
+`contype` is `f` for a foreign key, and `pg_get_constraintdef` writes the definition out.
+
+.`_schema_exercises_01_basic.sql`, DEMODB-SCHEMA-B-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT conrelid::regclass AS table_name, conname, PG_GET_CONSTRAINTDEF(oid) AS definition
+FROM pg_constraint
+WHERE connamespace = 'bookings'::regnamespace
+  AND contype = 'f'
+ORDER BY table_name, conname
+----
+
+....
+   table_name    |                 conname                  |                                       definition                                       
+-----------------+------------------------------------------+----------------------------------------------------------------------------------------
+ boarding_passes | boarding_passes_ticket_no_flight_id_fkey | FOREIGN KEY (ticket_no, flight_id) REFERENCES segments(ticket_no, flight_id)
+ routes          | routes_airplane_code_fkey                | FOREIGN KEY (airplane_code) REFERENCES airplanes_data(airplane_code)
+ routes          | routes_arrival_airport_fkey              | FOREIGN KEY (arrival_airport) REFERENCES airports_data(airport_code)
+ routes          | routes_departure_airport_fkey            | FOREIGN KEY (departure_airport) REFERENCES airports_data(airport_code)
+ seats           | seats_airplane_code_fkey                 | FOREIGN KEY (airplane_code) REFERENCES airplanes_data(airplane_code) ON DELETE CASCADE
+ segments        | segments_flight_id_fkey                  | FOREIGN KEY (flight_id) REFERENCES flights(flight_id)
+ segments        | segments_ticket_no_fkey                  | FOREIGN KEY (ticket_no) REFERENCES tickets(ticket_no)
+ tickets         | tickets_book_ref_fkey                    | FOREIGN KEY (book_ref) REFERENCES bookings(book_ref)
+(8 rows)
+....
+====
+
+[[DEMODB-SCHEMA-B-04]]
+==== DEMODB-SCHEMA-B-04: the functions of the schema
+
+List the functions of the `bookings` schema from `information_schema.routines`: the name and the type returned, ordered by name.
+`now()` is the database's today, `lang()` the language the views read the names in.
+
+.`_schema_exercises_01_basic.sql`, DEMODB-SCHEMA-B-04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT routine_name, data_type
+FROM information_schema.routines
+WHERE routine_schema = 'bookings'
+ORDER BY routine_name
+----
+
+....
+ routine_name |        data_type         
+--------------+--------------------------
+ lang         | text
+ now          | timestamp with time zone
+ version      | text
+(3 rows)
+....
+====
+
+[[DEMODB-SCHEMA-B-05]]
+==== DEMODB-SCHEMA-B-05: how many rows each table has
+
+Count the rows of each of the nine tables, one `SELECT` each, joined with `UNION ALL`, ordered by the table's name.
+`information_schema` only estimates, so each table is counted itself.
+
+.`_schema_exercises_01_basic.sql`, DEMODB-SCHEMA-B-05
+[%collapsible]
+====
+[source,sql]
+----
+SELECT 'airplanes_data' AS table_name, COUNT(*) AS rows FROM airplanes_data
+UNION ALL SELECT 'airports_data', COUNT(*) FROM airports_data
+UNION ALL SELECT 'boarding_passes', COUNT(*) FROM boarding_passes
+UNION ALL SELECT 'bookings', COUNT(*) FROM bookings
+UNION ALL SELECT 'flights', COUNT(*) FROM flights
+UNION ALL SELECT 'routes', COUNT(*) FROM routes
+UNION ALL SELECT 'seats', COUNT(*) FROM seats
+UNION ALL SELECT 'segments', COUNT(*) FROM segments
+UNION ALL SELECT 'tickets', COUNT(*) FROM tickets
+ORDER BY table_name
+----
+
+....
+   table_name    |  rows   
+-----------------+---------
+ airplanes_data  |      10
+ airports_data   |    5501
+ boarding_passes | 2463832
+ bookings        | 1292893
+ flights         |   21758
+ routes          |    1162
+ seats           |    1741
+ segments        | 3941249
+ tickets         | 2973937
+(9 rows)
+....
+====
+
+=== Intermediate
+
+[[DEMODB-SCHEMA-I-01]]
+==== DEMODB-SCHEMA-I-01: the segments sold and the money taken, by month of flight
+
+Join the segments to their flights, group by the month of the scheduled departure, count the segments and sum their prices.
+Show the month, the count and the sum, in order.
+
+.`_schema_exercises_02_intermediate.sql`, DEMODB-SCHEMA-I-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT TO_CHAR(f.scheduled_departure, 'YYYY-MM') AS month, COUNT(*) AS segments, SUM(s.price) AS revenue
+FROM segments s
+         JOIN flights f ON f.flight_id = s.flight_id
+GROUP BY month
+ORDER BY month
+----
+
+....
+  month  | segments |    revenue    
+---------+----------+---------------
+ 2025-10 |  1213221 | 7388546575.00
+ 2025-11 |  1221803 | 7579759950.00
+ 2025-12 |   996024 | 6209347975.00
+ 2026-01 |   510201 | 3396277075.00
+(4 rows)
+....
+====
+
+[[DEMODB-SCHEMA-I-02]]
+==== DEMODB-SCHEMA-I-02: the ten airports with the most passengers boarded in the first week
+
+For the flights scheduled in the first seven days from 2025-10-01, count the boarding passes by the departure airport of the flight's route, and keep the ten airports with the most.
+Show the code, the name and the count, the most first; airports with the same count are ordered by code.
+Four tables: `boarding_passes`, `flights`, `routes` on a range containment, and the `airports` view for the name.
+
+.`_schema_exercises_02_intermediate.sql`, DEMODB-SCHEMA-I-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.airport_code, a.airport_name, COUNT(*) AS boarded
+FROM boarding_passes bp
+         JOIN flights f ON f.flight_id = bp.flight_id
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+         JOIN airports a ON a.airport_code = r.departure_airport
+WHERE f.scheduled_departure >= '2025-10-01'
+  AND f.scheduled_departure < '2025-10-08'
+GROUP BY a.airport_code, a.airport_name
+ORDER BY boarded DESC, a.airport_code
+LIMIT 10
+----
+
+....
+ airport_code |    airport_name     | boarded 
+--------------+---------------------+---------
+ PVG          | Pudong              |   11468
+ ATL          | Hartsfield-Jackson  |   10666
+ DEL          | Indira Gandhi       |    9578
+ BOM          | Chhatrapati Shivaji |    8977
+ SHA          | Hongqiao            |    7982
+ SZX          | Bao'an              |    7743
+ TFU          | Tianfu              |    7653
+ FRA          | Frankfurt am Main   |    6932
+ HND          | Haneda              |    6743
+ CAN          | Baiyun              |    6668
+(10 rows)
+....
+====
+
+[[DEMODB-SCHEMA-I-03]]
+==== DEMODB-SCHEMA-I-03: the money each airplane model took
+
+Join the segments to their flights, each flight to its route's row valid at the scheduled departure, and that to the airplane; sum the prices per airplane.
+Show the code, the model and the sum, the most first; airplanes with the same sum are ordered by code.
+
+.`_schema_exercises_02_intermediate.sql`, DEMODB-SCHEMA-I-03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.airplane_code, a.model, SUM(s.price) AS revenue
+FROM segments s
+         JOIN flights f ON f.flight_id = s.flight_id
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+         JOIN airplanes a ON a.airplane_code = r.airplane_code
+GROUP BY a.airplane_code, a.model
+ORDER BY revenue DESC, a.airplane_code
+----
+
+....
+ airplane_code |          model          |    revenue    
+---------------+-------------------------+---------------
+ 77W           | Boeing 777-300ER        | 7669794850.00
+ 789           | Boeing 787-9 Dreamliner | 5208898700.00
+ 7M7           | Boeing 737 MAX 7        | 3421118000.00
+ 351           | Airbus A350-1000        | 3288182250.00
+ 339           | Airbus A330-900neo      | 2231027150.00
+ E70           | Embraer E170            | 1303822500.00
+ CR7           | Bombardier CRJ700       |  814050375.00
+ 32N           | Airbus A320neo          |  637037750.00
+(8 rows)
+....
+====
+
+[[DEMODB-SCHEMA-I-04]]
+==== DEMODB-SCHEMA-I-04: the ten countries flown to the most
+
+Count the flights by the country of the arrival airport, through the `timetable` view and the `airports` view, and keep the ten countries with the most.
+Show the country and the count, the most first; countries with the same count are ordered by name.
+
+.`_schema_exercises_02_intermediate.sql`, DEMODB-SCHEMA-I-04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.country, COUNT(*) AS arrivals
+FROM timetable t
+         JOIN airports a ON a.airport_code = t.arrival_airport
+GROUP BY a.country
+ORDER BY arrivals DESC, a.country
+LIMIT 10
+----
+
+....
+    country     | arrivals 
+----------------+----------
+ China          |     4844
+ United States  |     3500
+ India          |     3350
+ Russia         |     2311
+ Canada         |     1597
+ Germany        |     1256
+ Japan          |     1101
+ France         |     1001
+ Italy          |      890
+ United Kingdom |      760
+(10 rows)
+....
+====
+
+=== Advanced
+
+[[DEMODB-SCHEMA-A-01]]
+==== DEMODB-SCHEMA-A-01: the five tickets with the most segments, and their itineraries
+
+Count the segments of each ticket, and keep the five tickets with the most; tickets with the same count are ordered by `ticket_no`.
+Show the ticket, the count and the itinerary: the airports of each flight, `from->to`, joined in the order of the scheduled departures.
+Three joins, one on a range containment, and `string_agg` with its own `ORDER BY`.
+
+.`_schema_exercises_03_advanced.sql`, DEMODB-SCHEMA-A-01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT s.ticket_no,
+       COUNT(*)                                                                                                  AS segments,
+       STRING_AGG(r.departure_airport || '->' || r.arrival_airport, ', ' ORDER BY f.scheduled_departure)         AS itinerary
+FROM segments s
+         JOIN flights f ON f.flight_id = s.flight_id
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+GROUP BY s.ticket_no
+ORDER BY segments DESC, s.ticket_no
+LIMIT 5
+----
+
+....
+   ticket_no   | segments |               itinerary                
+---------------+----------+----------------------------------------
+ 0005432000048 |        4 | DEN->HEL, HEL->SVO, SVO->FRA, FRA->LHR
+ 0005432000064 |        4 | LHR->YYZ, YYZ->ORD, ORD->ATL, ATL->DEN
+ 0005432000070 |        4 | DEN->HEL, HEL->SVO, SVO->FRA, FRA->LHR
+ 0005432000078 |        4 | LHR->YYZ, YYZ->ORD, ORD->ATL, ATL->DEN
+ 0005432000085 |        4 | YYZ->YYC, YYC->YVR, YVR->PEK, PEK->SHA
+(5 rows)
+....
+====
+
+[[DEMODB-SCHEMA-A-02]]
+==== DEMODB-SCHEMA-A-02: the busiest airport of each country
+
+Count the departures from each airport through the `timetable` view, number the airports of each country from the busiest, and keep the first of each country.
+Show the country, the airport and its departures, the most first; the first ten.
+A window `ROW_NUMBER()` partitioned by the country, and an outer query that keeps rank 1.
+
+.`_schema_exercises_03_advanced.sql`, DEMODB-SCHEMA-A-02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT country, airport_code, departures
+FROM (SELECT a.country,
+             a.airport_code,
+             COUNT(*)                                                                         AS departures,
+             ROW_NUMBER() OVER (PARTITION BY a.country ORDER BY COUNT(*) DESC, a.airport_code) AS rank
+      FROM timetable t
+               JOIN airports a ON a.airport_code = t.departure_airport
+      GROUP BY a.country, a.airport_code) x
+WHERE rank = 1
+ORDER BY departures DESC, country
+LIMIT 10
+----
+
+....
+    country     | airport_code | departures 
+----------------+--------------+------------
+ Germany        | FRA          |        714
+ India          | BOM          |        600
+ United States  | ATL          |        576
+ Russia         | SVO          |        569
+ China          | TFU          |        533
+ Italy          | FCO          |        466
+ Japan          | HND          |        431
+ United Kingdom | LHR          |        427
+ France         | CDG          |        414
+ Canada         | YYZ          |        402
+(10 rows)
+....
+====
+
+[[DEMODB-SCHEMA-A-03]]
+==== DEMODB-SCHEMA-A-03: how many airports are one and two routes away from Sheremetyevo
+
+Starting from `SVO`, follow the routes' departure and arrival airports: the airports reachable with one flight, and with a second.
+Count the airports at each number of flights.
+A recursive query over `routes`; `UNION` drops an airport reached twice at the same step.
+
+.`_schema_exercises_03_advanced.sql`, DEMODB-SCHEMA-A-03
+[%collapsible]
+====
+[source,sql]
+----
+WITH RECURSIVE hops AS (SELECT 'SVO'::bpchar AS airport, 0 AS flights
+                        UNION
+                        SELECT r.arrival_airport, h.flights + 1
+                        FROM hops h
+                                 JOIN routes r ON r.departure_airport = h.airport
+                        WHERE h.flights < 2)
+SELECT flights, COUNT(DISTINCT airport) AS airports
+FROM hops
+GROUP BY flights
+ORDER BY flights
+----
+
+....
+ flights | airports 
+---------+----------
+       0 |        1
+       1 |       16
+       2 |       49
+(3 rows)
+....
+====
+

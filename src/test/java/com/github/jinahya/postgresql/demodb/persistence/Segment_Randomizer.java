@@ -1,0 +1,78 @@
+package com.github.jinahya.postgresql.demodb.persistence;
+
+/*-
+ * #%L
+ * postgres-demonstration-persistence
+ * %%
+ * Copyright (C) 2026 Jinahya, Inc.
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+import com.github.jinahya.object.randomizer.PodamObjectRandomizer;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSegment;
+
+import uk.co.jemos.podam.api.ClassInfoStrategy;
+import uk.co.jemos.podam.api.DataProviderStrategy;
+import uk.co.jemos.podam.api.PodamFactory;
+
+import java.util.List;
+
+/**
+ * A randomizer which produces randomized {@link Segment} instances.
+ * <p>
+ * The {@code ticket} and the {@code flight} are excluded from randomization;
+ * {@link Segment_Persister} supplies them, and the identifier with them. The fare conditions and
+ * the price are assigned after the fact.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
+class Segment_Randomizer
+        extends PodamObjectRandomizer<Segment> {
+
+    Segment_Randomizer() {
+        super(Segment.class, List.of(
+                "ticket",
+                "flight"
+        ));
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    @Override
+    protected DataProviderStrategy getDataProviderStrategy() {
+        return super.getDataProviderStrategy();
+    }
+
+    @Override
+    protected ClassInfoStrategy getClassInfoStrategy() {
+        return super.getClassInfoStrategy();
+    }
+
+    @Override
+    protected PodamFactory getPodamFactory() {
+        return super.getPodamFactory();
+    }
+
+    @Override
+    public Segment get() {
+        final var instance = super.get();
+        instance.setFareConditions(
+                __Random_TestUtils.pick(MappedSegment.COLUMN_VALUE_FARE_CONDITIONS_ECONOMY,
+                                        MappedSegment.COLUMN_VALUE_FARE_CONDITIONS_COMFORT,
+                                        MappedSegment.COLUMN_VALUE_FARE_CONDITIONS_BUSINESS));
+        instance.setPrice(__Random_TestUtils.amount(MappedSegment.COLUMN_PRECISION_PRICE,
+                                                    MappedSegment.COLUMN_SCALE_PRICE));
+        return instance;
+    }
+}

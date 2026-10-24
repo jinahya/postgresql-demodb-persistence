@@ -1,0 +1,298 @@
+package com.github.jinahya.postgresql.demodb.persistence.mapped;
+
+/*-
+ * #%L
+ * postgres-demonstration-persistence
+ * %%
+ * Copyright (C) 2026 Jinahya, Inc.
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
+import java.util.Objects;
+
+/**
+ * A mapped superclass which holds the mappings of the {@value MappedAirplaneData#TABLE_NAME} table,
+ * <q>Airplanes (internal multilingual data)</q>.
+ * <p>
+ * The {@value MappedAirplaneData#COLUMN_NAME_MODEL} column has no type in Jakarta Persistence
+ * ({@code jsonb}), so it is mapped as {@link String}, the text form the driver reads it as. Writing
+ * such a text back needs the driver to leave its type to the server, {@code stringtype=unspecified}
+ * on the JDBC URL, or a provider-specific type the extending entity may choose instead.
+ * <p>
+ * The {@value #COLUMN_NAME_MODEL} column is {@code jsonb}, an object of one name per language,
+ * keyed {@code en}, {@code ru}, ...; the {@code airplanes} view, see {@link MappedAirplane}, picks
+ * the session's language out of it.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
+@MappedSuperclass
+public abstract class MappedAirplaneData {
+
+    /**
+     * The name of the database schema which holds the {@value #TABLE_NAME} table. The value is
+     * {@value}.
+     */
+    public static final String TABLE_SCHEMA = "bookings";
+
+    /**
+     * The name of the database table to which this class maps. The value is {@value}.
+     */
+    public static final String TABLE_NAME = "airplanes_data";
+
+    // --------------------------------------------------------------------------------------------------- AIRPLANE_CODE
+
+    /**
+     * The name of the table column to which the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute
+     * maps. The value is {@value}.
+     */
+    public static final String COLUMN_NAME_AIRPLANE_CODE = "airplane_code";
+
+    /**
+     * The length of the {@value #COLUMN_NAME_AIRPLANE_CODE} column. The value is {@value}.
+     */
+    public static final int COLUMN_LENGTH_AIRPLANE_CODE = 3;
+
+    /**
+     * The name of the attribute which maps the {@value #COLUMN_NAME_AIRPLANE_CODE} column. The
+     * value is {@value}.
+     */
+    public static final String ATTRIBUTE_NAME_AIRPLANE_CODE = "airplaneCode";
+
+    /**
+     * The minimum size of the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute. The value is
+     * {@value}.
+     */
+    public static final int SIZE_MIN_AIRPLANE_CODE = 0;
+
+    /**
+     * The maximum size of the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute. The value is
+     * {@value}.
+     */
+    public static final int SIZE_MAX_AIRPLANE_CODE = COLUMN_LENGTH_AIRPLANE_CODE;
+
+    // ----------------------------------------------------------------------------------------------------------- MODEL
+
+    /**
+     * The name of the table column to which the {@value #ATTRIBUTE_NAME_MODEL} attribute maps. The
+     * value is {@value}.
+     */
+    public static final String COLUMN_NAME_MODEL = "model";
+
+    /**
+     * The name of the attribute which maps the {@value #COLUMN_NAME_MODEL} column. The value is
+     * {@value}.
+     */
+    public static final String ATTRIBUTE_NAME_MODEL = "model";
+
+    // ----------------------------------------------------------------------------------------------------------- RANGE
+
+    /**
+     * The name of the table column to which the {@value #ATTRIBUTE_NAME_RANGE} attribute maps. The
+     * value is {@value}.
+     */
+    public static final String COLUMN_NAME_RANGE = "range";
+
+    /**
+     * The name of the attribute which maps the {@value #COLUMN_NAME_RANGE} column. The value is
+     * {@value}.
+     */
+    public static final String ATTRIBUTE_NAME_RANGE = "range";
+
+    // ----------------------------------------------------------------------------------------------------------- SPEED
+
+    /**
+     * The name of the table column to which the {@value #ATTRIBUTE_NAME_SPEED} attribute maps. The
+     * value is {@value}.
+     */
+    public static final String COLUMN_NAME_SPEED = "speed";
+
+    /**
+     * The name of the attribute which maps the {@value #COLUMN_NAME_SPEED} column. The value is
+     * {@value}.
+     */
+    public static final String ATTRIBUTE_NAME_SPEED = "speed";
+
+    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+
+    /**
+     * Creates a new instance.
+     */
+    protected MappedAirplaneData() {
+        super();
+    }
+
+    // ------------------------------------------------------------------------------------------------ java.lang.Object
+
+    @Override
+    public final String toString() {
+        return super.toString() + '{' +
+               "airplaneCode=" + airplaneCode +
+               ",model=" + model +
+               ",range=" + range +
+               ",speed=" + speed +
+               '}';
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param obj {@inheritDoc}
+     * @return {@inheritDoc}
+     * @implSpec Equality is by the {@link Id @Id} attribute,
+     *         {@value #ATTRIBUTE_NAME_AIRPLANE_CODE}, alone.
+     */
+    @Override
+    public final boolean equals(final Object obj) {
+        if (!(obj instanceof MappedAirplaneData that)) {
+            return false;
+        }
+        return Objects.equals(getAirplaneCode(), that.getAirplaneCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     * @implSpec The hash is over the {@link Id @Id} attribute, consistent with
+     *         {@link #equals(Object)}.
+     */
+    @Override
+    public final int hashCode() {
+        return Objects.hashCode(getAirplaneCode());
+    }
+
+    // ---------------------------------------------------------------------------------------------------- airplaneCode
+
+    /**
+     * Returns current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
+     *
+     * @return current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
+     */
+    public String getAirplaneCode() {
+        return airplaneCode;
+    }
+
+    /**
+     * Replaces current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute with the specified
+     * value.
+     *
+     * @param airplaneCode new value for {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
+     */
+    protected void setAirplaneCode(final String airplaneCode) {
+        this.airplaneCode = airplaneCode;
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- model
+
+    /**
+     * Returns current value of {@value #ATTRIBUTE_NAME_MODEL} attribute -- a {@code jsonb} column,
+     * mapped as the JSON text.
+     *
+     * @return current value of {@value #ATTRIBUTE_NAME_MODEL} attribute.
+     */
+    public String getModel() {
+        return model;
+    }
+
+    /**
+     * Replaces current value of {@value #ATTRIBUTE_NAME_MODEL} attribute with the specified value.
+     *
+     * @param model new value for {@value #ATTRIBUTE_NAME_MODEL} attribute.
+     */
+    public void setModel(final String model) {
+        this.model = model;
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- range
+
+    /**
+     * Returns current value of {@value #ATTRIBUTE_NAME_RANGE} attribute.
+     *
+     * @return current value of {@value #ATTRIBUTE_NAME_RANGE} attribute.
+     */
+    public Integer getRange() {
+        return range;
+    }
+
+    /**
+     * Replaces current value of {@value #ATTRIBUTE_NAME_RANGE} attribute with the specified value.
+     *
+     * @param range new value for {@value #ATTRIBUTE_NAME_RANGE} attribute.
+     */
+    public void setRange(final Integer range) {
+        this.range = range;
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- speed
+
+    /**
+     * Returns current value of {@value #ATTRIBUTE_NAME_SPEED} attribute.
+     *
+     * @return current value of {@value #ATTRIBUTE_NAME_SPEED} attribute.
+     */
+    public Integer getSpeed() {
+        return speed;
+    }
+
+    /**
+     * Replaces current value of {@value #ATTRIBUTE_NAME_SPEED} attribute with the specified value.
+     *
+     * @param speed new value for {@value #ATTRIBUTE_NAME_SPEED} attribute.
+     */
+    public void setSpeed(final Integer speed) {
+        this.speed = speed;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @Size(min = SIZE_MIN_AIRPLANE_CODE, max = SIZE_MAX_AIRPLANE_CODE)
+    @NotNull
+    @Id
+    @Basic(optional = false)
+    @Column(name = COLUMN_NAME_AIRPLANE_CODE,
+            nullable = false,
+            insertable = true,
+            updatable = false,
+            length = COLUMN_LENGTH_AIRPLANE_CODE
+    )
+    private String airplaneCode;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = COLUMN_NAME_MODEL, nullable = false, insertable = true, updatable = true)
+    private String model;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @Positive
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = COLUMN_NAME_RANGE, nullable = false, insertable = true, updatable = true)
+    private Integer range;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @Positive
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = COLUMN_NAME_SPEED, nullable = false, insertable = true, updatable = true)
+    private Integer speed;
+}

@@ -7,7 +7,7 @@ services:
     # 3m edition (three months of flights), about 260 MB to pull. The other editions are 6m, 1y and 2y; `18-3m`
     # is the same dump on Debian.
     image: onacit/postgresql-demodb:18-alpine-3m
-    container_name: postgres-demonstration
+    container_name: postgresql-demodb
     ports:
       - "5432:5432"
     environment:
@@ -22,3 +22,47 @@ services:
       interval: 5s
       timeout: 5s
       retries: 240
+
+  pgadmin:
+    # https://hub.docker.com/r/dpage/pgadmin4 -- http://localhost:5050, log in as postgres@example.com / password
+    # (pgAdmin insists on an e-mail address for its own login). The demo server is registered on first start from
+    # the servers.json below, with its password read from the pgpass below, so it connects without being asked.
+    image: dpage/pgadmin4:9
+    container_name: postgresql-demodb-pgadmin
+    depends_on:
+      postgres-demonstration:
+        condition: service_healthy
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: postgres@example.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    configs:
+      - source: pgadmin-servers
+        target: /pgadmin4/servers.json
+      - source: pgadmin-pgpass
+        target: /pgadmin4/pgpass.src
+    # pgAdmin looks the password file up inside the user's storage directory, and libpq ignores one that is
+    # readable by others, so the file is copied there with the right mode before the regular entrypoint runs
+    entrypoint: [ "/bin/sh", "-c", "d=/var/lib/pgadmin/storage/postgres_example.com && mkdir -p -m 700 $$d && cp /pgadmin4/pgpass.src $$d/pgpass && chmod 600 $$d/pgpass && exec /entrypoint.sh" ]
+
+configs:
+  pgadmin-servers:
+    content: |
+      {
+        "Servers": {
+          "1": {
+            "Name": "postgresql-demodb",
+            "Group": "Servers",
+            "Host": "postgres-demonstration",
+            "Port": 5432,
+            "MaintenanceDB": "demo",
+            "Username": "postgres",
+            "PassFile": "/pgpass",
+            "SSLMode": "prefer"
+          }
+        }
+      }
+  pgadmin-pgpass:
+    content: |
+      postgres-demonstration:5432:*:postgres:password

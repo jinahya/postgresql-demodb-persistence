@@ -147,10 +147,19 @@
     <!-- https://central.sonatype.com/artifact/org.slf4j/slf4j-bom/versions -->
     <version.org.slf4j>2.0.20</version.org.slf4j>
     <eclipselink.woven>false</eclipselink.woven>
+
+    <!-- Transitive only; pinned to PROJECTS_VERSIONS.asciidoc at the book's root. -->
+    <!-- https://central.sonatype.com/artifact/io.github.jinahya/jinahya-object-randomizer/versions -->
+    <version.jinahya-object-randomizer>0.0.7</version.jinahya-object-randomizer>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>io.github.jinahya</groupId>
+        <artifactId>jinahya-object-randomizer</artifactId>
+        <version>${version.jinahya-object-randomizer}</version>
+      </dependency>
 
       <dependency>
         <groupId>ch.qos.logback</groupId>
@@ -254,11 +263,6 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.annotation</groupId>
-      <artifactId>jakarta.annotation-api</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>jakarta.enterprise</groupId>
