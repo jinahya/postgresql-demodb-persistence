@@ -66,14 +66,17 @@ class AirportData_Persistence_IT
                 .as("country of %s", entityInstance)
                 .isNotBlank();
         assertThat(entityInstance.getCoordinates()).as("coordinates of %s", entityInstance)
-                .startsWith("(")
-                .endsWith(")");
+                .isNotNull()
+                .satisfies(p -> {
+                    assertThat(p.x()).as("longitude").isBetween(-180.0d, 180.0d);
+                    assertThat(p.y()).as("latitude").isBetween(-90.0d, 90.0d);
+                });
         {
             final var timeZone = entityInstance.getTimezoneAsTimeZone();
             log.info("entity.timezone: {}, timeZone: {}", entityInstance.getTimezone(), timeZone);
         }
         try {
-            final var zoneId = entityInstance.getTimezoneAsZoneId();
+            final var zoneId = entityInstance.getTimezone();
             log.info("entity.timezone: {}, zoneId: {}", entityInstance.getTimezone(), zoneId);
         } catch (final DateTimeException dte) {
             log.error("failed to get ZoneId from " + entityInstance.getTimezone(), dte);

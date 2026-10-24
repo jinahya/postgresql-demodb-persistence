@@ -21,6 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.object.randomizer.PodamObjectRandomizer;
+import com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatus;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight;
 
 import uk.co.jemos.podam.api.ClassInfoStrategy;
@@ -68,13 +69,7 @@ class Flight_Randomizer
     public Flight get() {
         final var instance = super.get();
         instance.setRouteNo(__Random_TestUtils.routeNo());
-        instance.setStatus(__Random_TestUtils.pick(MappedFlight.COLUMN_VALUE_STATUS_SCHEDULED,
-                                                   MappedFlight.COLUMN_VALUE_STATUS_ON_TIME,
-                                                   MappedFlight.COLUMN_VALUE_STATUS_DELAYED,
-                                                   MappedFlight.COLUMN_VALUE_STATUS_BOARDING,
-                                                   MappedFlight.COLUMN_VALUE_STATUS_DEPARTED,
-                                                   MappedFlight.COLUMN_VALUE_STATUS_ARRIVED,
-                                                   MappedFlight.COLUMN_VALUE_STATUS_CANCELLED));
+        instance.setStatus(__Random_TestUtils.pick(FlightStatus.values()));
         final var departure = __Random_TestUtils.instant();
         final var arrival = departure.plusMinutes(ThreadLocalRandom.current().nextInt(30, 900));
         instance.setScheduledDeparture(departure);

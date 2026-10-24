@@ -20,13 +20,15 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.converter.FareConditions;
+import com.github.jinahya.postgresql.demodb.persistence.converter.FareConditionsConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
@@ -119,7 +121,6 @@ public abstract class MappedSegment {
      */
     public static final String COLUMN_VALUE_FARE_CONDITIONS_BUSINESS =
             MappedSeat.COLUMN_VALUE_FARE_CONDITIONS_BUSINESS;
-
     /**
      * The regular expression which the {@value #ATTRIBUTE_NAME_FARE_CONDITIONS} attribute matches:
      * one of the values the {@code segments_fare_conditions_check} constraint allows. The value is
@@ -264,7 +265,7 @@ public abstract class MappedSegment {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_FARE_CONDITIONS} attribute.
      */
-    public String getFareConditions() {
+    public FareConditions getFareConditions() {
         return fareConditions;
     }
 
@@ -274,7 +275,7 @@ public abstract class MappedSegment {
      *
      * @param fareConditions new value for {@value #ATTRIBUTE_NAME_FARE_CONDITIONS} attribute.
      */
-    public void setFareConditions(final String fareConditions) {
+    public void setFareConditions(final FareConditions fareConditions) {
         this.fareConditions = fareConditions;
     }
 
@@ -313,12 +314,12 @@ public abstract class MappedSegment {
     private Integer flightId;
 
     // -----------------------------------------------------------------------------------------------------------------
-    @Pattern(regexp = PATTERN_REGEXP_FARE_CONDITIONS)
+    @Convert(converter = FareConditionsConverter.class)
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_FARE_CONDITIONS, nullable = false, insertable = true,
             updatable = true)
-    private String fareConditions;
+    private FareConditions fareConditions;
 
     // -----------------------------------------------------------------------------------------------------------------
     @PositiveOrZero

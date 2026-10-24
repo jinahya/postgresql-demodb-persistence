@@ -20,12 +20,15 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.converter.Point;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -152,23 +155,24 @@ final class __Random_TestUtils {
     }
 
     /**
-     * Returns a {@code point} literal, {@code (longitude,latitude)}.
+     * Returns a point of a longitude and a latitude, each to four decimal places.
      */
-    static String point() {
+    static Point point() {
         final var random = ThreadLocalRandom.current();
-        return "(" +
-               BigDecimal.valueOf(random.nextDouble(-180, 180)).setScale(4, RoundingMode.HALF_UP)
-               + "," +
-               BigDecimal.valueOf(random.nextDouble(-90, 90)).setScale(4, RoundingMode.HALF_UP) +
-               ")";
+        return new Point(
+                BigDecimal.valueOf(random.nextDouble(-180, 180)).setScale(4, RoundingMode.HALF_UP)
+                        .doubleValue(),
+                BigDecimal.valueOf(random.nextDouble(-90, 90)).setScale(4, RoundingMode.HALF_UP)
+                        .doubleValue()
+        );
     }
 
     /**
      * Returns a {@code jsonb} literal of the schema's multilingual shape, an English and a Russian
      * name.
      */
-    static String timezone() {
-        return pick(TIMEZONES.toArray(String[]::new));
+    static ZoneId timezone() {
+        return ZoneId.of(pick(TIMEZONES.toArray(String[]::new)));
     }
 
     private __Random_TestUtils() {
