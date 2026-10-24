@@ -21,6 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute;
+import lombok.extern.slf4j.Slf4j;
 
 import nl.jqno.equalsverifier.Warning;
 import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
@@ -30,6 +31,7 @@ import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class Route_Test
         extends _Entity_Test<Route> {
 

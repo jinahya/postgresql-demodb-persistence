@@ -20,11 +20,14 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Verifies the mappings of {@link Route} against the schema generated into the in-memory database.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class Route_Persistence_Test
         extends _Entity_Persistence_Test<Route> {
 

@@ -24,6 +24,10 @@ import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirportData
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
+import java.util.Optional;
+import java.util.TimeZone;
 
 /**
  * An entity which maps the {@value MappedAirportData#TABLE_NAME} table, extending
@@ -36,6 +40,21 @@ import jakarta.persistence.Table;
 @Table(name = MappedAirportData.TABLE_NAME)
 public class AirportData
         extends MappedAirportData {
+
+    // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
+
+    /**
+     * Creates a new instance with the specified code.
+     *
+     * @param airportCode a value for the {@value MappedAirportData#ATTRIBUTE_NAME_AIRPORT_CODE}
+     *                    attribute.
+     * @return a new instance.
+     */
+    public static AirportData of(final String airportCode) {
+        return MappedAirportData.of(AirportData::new, airportCode);
+    }
+
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -57,4 +76,23 @@ public class AirportData
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @Transient
+    @Override
+    public TimeZone getTimezoneAsTimeZone() {
+        return Optional.ofNullable(getTimezoneAsZoneId())
+                .map(TimeZone::getTimeZone)
+                .orElse(null);
+    }
+
+    @Transient
+    @Override
+    public void setTimezoneFromTimeZone(final TimeZone timezone) {
+        setTimezoneFromZoneId(
+                Optional.ofNullable(timezone)
+                        .map(TimeZone::toZoneId)
+                        .orElse(null)
+        );
+    }
 }

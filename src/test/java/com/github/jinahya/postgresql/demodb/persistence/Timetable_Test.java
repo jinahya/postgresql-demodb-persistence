@@ -20,19 +20,37 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedTimetable;
+import lombok.extern.slf4j.Slf4j;
+
 import nl.jqno.equalsverifier.Warning;
 import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * A class for testing the {@link Timetable} entity class.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class Timetable_Test
         extends _Entity_Test<Timetable> {
 
     Timetable_Test() {
         super(Timetable.class);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Does nothing; {@value MappedTimetable#TABLE_NAME} is a view, which has no randomizer.
+     */
+    @Disabled("a view: no randomizer")
+    @Override
+    @Test
+    void toString_NotBlank_NewRandomizedInstance() {
+        // empty
     }
 
     // ----------------------------------------------------------------------------- equals/hashCode

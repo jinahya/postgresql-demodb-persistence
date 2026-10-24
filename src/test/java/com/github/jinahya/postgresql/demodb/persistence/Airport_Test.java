@@ -20,19 +20,37 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirport;
+import lombok.extern.slf4j.Slf4j;
+
 import nl.jqno.equalsverifier.Warning;
 import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * A class for testing the {@link Airport} entity class.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class Airport_Test
         extends _Entity_Test<Airport> {
 
     Airport_Test() {
         super(Airport.class);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Does nothing; {@value MappedAirport#TABLE_NAME} is a view, which has no randomizer.
+     */
+    @Disabled("a view: no randomizer")
+    @Override
+    @Test
+    void toString_NotBlank_NewRandomizedInstance() {
+        // empty
     }
 
     // ----------------------------------------------------------------------------- equals/hashCode

@@ -123,6 +123,8 @@
     <!-- https://eclipse.dev/eclipselink/releases/index.html -->
     <!-- https://central.sonatype.com/artifact/org.eclipse.persistence/org.eclipse.persistence.jpa/versions -->
     <version.org.eclipse.persistence>5.0.2</version.org.eclipse.persistence>
+    <!-- https://central.sonatype.com/artifact/org.eclipse.yasson/yasson/versions -->
+    <version.org.eclipse.yasson>3.0.5</version.org.eclipse.yasson>
     <!-- https://docs.jboss.org/hibernate/validator/9.1/reference/en-US/html_single/#validator-gettingstarted-uel -->
     <!-- hibernate-validator: 9 / expressly: 6 -->
     <!-- https://central.sonatype.com/artifact/org.glassfish.expressly/expressly/versions -->
@@ -201,6 +203,11 @@
         <version>${version.org.eclipse.persistence}</version>
       </dependency>
       <dependency>
+        <groupId>org.eclipse.yasson</groupId>
+        <artifactId>yasson</artifactId>
+        <version>${version.org.eclipse.yasson}</version>
+      </dependency>
+      <dependency>
         <groupId>org.glassfish.expressly</groupId>
         <artifactId>expressly</artifactId>
         <version>${version.org.glassfish.expressly}</version>
@@ -259,11 +266,11 @@
       <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.fasterxml.jackson.core</groupId>-->
+<!--      <artifactId>jackson-databind</artifactId>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>jakarta.enterprise</groupId>
       <artifactId>jakarta.enterprise.cdi-api</artifactId>
@@ -272,6 +279,11 @@
     <dependency>
       <groupId>jakarta.inject</groupId>
       <artifactId>jakarta.inject-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.json.bind</groupId>
+      <artifactId>jakarta.json.bind-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -318,6 +330,11 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.yasson</groupId>
+      <artifactId>yasson</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

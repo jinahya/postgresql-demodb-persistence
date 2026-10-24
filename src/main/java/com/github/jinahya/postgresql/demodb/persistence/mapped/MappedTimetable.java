@@ -36,7 +36,7 @@ import java.util.Objects;
  * <q>Detailed info about flights</q>.
  * <p>
  * Every column is mapped read-only; only the identifier stays insertable, which EclipseLink
- * requires of an {@link Id @Id}. The setters therefore change the instance only, never the view.
+ * requires of an {@link Id @Id}. It has no setters; nothing writes to a view.
  * <p>
  * The view joins {@code flights}, see {@link MappedFlight}, with the {@code routes} row valid at
  * the scheduled departure and with the two airports, and adds each time in its airport's time zone,
@@ -46,12 +46,6 @@ import java.util.Objects;
  */
 @MappedSuperclass
 public abstract class MappedTimetable {
-
-    /**
-     * The name of the database schema which holds the {@value #TABLE_NAME} view. The value is
-     * {@value}.
-     */
-    public static final String TABLE_SCHEMA = "bookings";
 
     /**
      * The name of the database view to which this class maps. The value is {@value}.
@@ -423,16 +417,6 @@ public abstract class MappedTimetable {
         return flightId;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute with the specified
-     * value.
-     *
-     * @param flightId new value for {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
-     */
-    protected void setFlightId(final Integer flightId) {
-        this.flightId = flightId;
-    }
-
     // --------------------------------------------------------------------------------------------------------- routeNo
 
     /**
@@ -442,16 +426,6 @@ public abstract class MappedTimetable {
      */
     public String getRouteNo() {
         return routeNo;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute with the specified
-     * value.
-     *
-     * @param routeNo new value for {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
-     */
-    public void setRouteNo(final String routeNo) {
-        this.routeNo = routeNo;
     }
 
     // ------------------------------------------------------------------------------------------------ departureAirport
@@ -465,16 +439,6 @@ public abstract class MappedTimetable {
         return departureAirport;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_DEPARTURE_AIRPORT} attribute with the
-     * specified value.
-     *
-     * @param departureAirport new value for {@value #ATTRIBUTE_NAME_DEPARTURE_AIRPORT} attribute.
-     */
-    public void setDepartureAirport(final String departureAirport) {
-        this.departureAirport = departureAirport;
-    }
-
     // -------------------------------------------------------------------------------------------------- arrivalAirport
 
     /**
@@ -484,16 +448,6 @@ public abstract class MappedTimetable {
      */
     public String getArrivalAirport() {
         return arrivalAirport;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_ARRIVAL_AIRPORT} attribute with the
-     * specified value.
-     *
-     * @param arrivalAirport new value for {@value #ATTRIBUTE_NAME_ARRIVAL_AIRPORT} attribute.
-     */
-    public void setArrivalAirport(final String arrivalAirport) {
-        this.arrivalAirport = arrivalAirport;
     }
 
     // ---------------------------------------------------------------------------------------------------------- status
@@ -507,16 +461,6 @@ public abstract class MappedTimetable {
         return status;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_STATUS} attribute with the specified
-     * value.
-     *
-     * @param status new value for {@value #ATTRIBUTE_NAME_STATUS} attribute.
-     */
-    public void setStatus(final String status) {
-        this.status = status;
-    }
-
     // ---------------------------------------------------------------------------------------------------- airplaneCode
 
     /**
@@ -528,16 +472,6 @@ public abstract class MappedTimetable {
         return airplaneCode;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute with the specified
-     * value.
-     *
-     * @param airplaneCode new value for {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
-     */
-    public void setAirplaneCode(final String airplaneCode) {
-        this.airplaneCode = airplaneCode;
-    }
-
     // ---------------------------------------------------------------------------------------------- scheduledDeparture
 
     /**
@@ -547,17 +481,6 @@ public abstract class MappedTimetable {
      */
     public OffsetDateTime getScheduledDeparture() {
         return scheduledDeparture;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE} attribute with the
-     * specified value.
-     *
-     * @param scheduledDeparture new value for {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE}
-     *                           attribute.
-     */
-    public void setScheduledDeparture(final OffsetDateTime scheduledDeparture) {
-        this.scheduledDeparture = scheduledDeparture;
     }
 
     // -----------------------------------------------------------------------------------------
@@ -572,17 +495,6 @@ public abstract class MappedTimetable {
         return scheduledDepartureLocal;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE_LOCAL} attribute with
-     * the specified value.
-     *
-     * @param scheduledDepartureLocal new value for
-     *                                {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE_LOCAL} attribute.
-     */
-    public void setScheduledDepartureLocal(final LocalDateTime scheduledDepartureLocal) {
-        this.scheduledDepartureLocal = scheduledDepartureLocal;
-    }
-
     // ------------------------------------------------------------------------------------------------- actualDeparture
 
     /**
@@ -592,16 +504,6 @@ public abstract class MappedTimetable {
      */
     public OffsetDateTime getActualDeparture() {
         return actualDeparture;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE} attribute with the
-     * specified value.
-     *
-     * @param actualDeparture new value for {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE} attribute.
-     */
-    public void setActualDeparture(final OffsetDateTime actualDeparture) {
-        this.actualDeparture = actualDeparture;
     }
 
     // -------------------------------------------------------------------------------------------- actualDepartureLocal
@@ -615,17 +517,6 @@ public abstract class MappedTimetable {
         return actualDepartureLocal;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE_LOCAL} attribute with the
-     * specified value.
-     *
-     * @param actualDepartureLocal new value for {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE_LOCAL}
-     *                             attribute.
-     */
-    public void setActualDepartureLocal(final LocalDateTime actualDepartureLocal) {
-        this.actualDepartureLocal = actualDepartureLocal;
-    }
-
     // ------------------------------------------------------------------------------------------------ scheduledArrival
 
     /**
@@ -635,16 +526,6 @@ public abstract class MappedTimetable {
      */
     public OffsetDateTime getScheduledArrival() {
         return scheduledArrival;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL} attribute with the
-     * specified value.
-     *
-     * @param scheduledArrival new value for {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL} attribute.
-     */
-    public void setScheduledArrival(final OffsetDateTime scheduledArrival) {
-        this.scheduledArrival = scheduledArrival;
     }
 
     // ------------------------------------------------------------------------------------------- scheduledArrivalLocal
@@ -658,17 +539,6 @@ public abstract class MappedTimetable {
         return scheduledArrivalLocal;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL_LOCAL} attribute with the
-     * specified value.
-     *
-     * @param scheduledArrivalLocal new value for {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL_LOCAL}
-     *                              attribute.
-     */
-    public void setScheduledArrivalLocal(final LocalDateTime scheduledArrivalLocal) {
-        this.scheduledArrivalLocal = scheduledArrivalLocal;
-    }
-
     // --------------------------------------------------------------------------------------------------- actualArrival
 
     /**
@@ -680,16 +550,6 @@ public abstract class MappedTimetable {
         return actualArrival;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL} attribute with the
-     * specified value.
-     *
-     * @param actualArrival new value for {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL} attribute.
-     */
-    public void setActualArrival(final OffsetDateTime actualArrival) {
-        this.actualArrival = actualArrival;
-    }
-
     // ---------------------------------------------------------------------------------------------- actualArrivalLocal
 
     /**
@@ -699,17 +559,6 @@ public abstract class MappedTimetable {
      */
     public LocalDateTime getActualArrivalLocal() {
         return actualArrivalLocal;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL_LOCAL} attribute with the
-     * specified value.
-     *
-     * @param actualArrivalLocal new value for {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL_LOCAL}
-     *                           attribute.
-     */
-    public void setActualArrivalLocal(final LocalDateTime actualArrivalLocal) {
-        this.actualArrivalLocal = actualArrivalLocal;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

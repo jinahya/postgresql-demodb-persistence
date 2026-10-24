@@ -181,12 +181,16 @@ abstract class _Entity_Persistence_Test<T> {
      *         without {@link Test @Test}.
      */
     @Test
-    void _persist_RandomizedInstance() {
+    void persistRandomizedInstance() {
         applyNewPersistedEntityInstanceAndRollback((em, v) -> {
             em.flush();
             log.debug("persisted: {}", v);
+            randomizedInstancePersisted(v);
             return v;
         });
+    }
+
+    void randomizedInstancePersisted(final T entityInstance) {
     }
 
     /**

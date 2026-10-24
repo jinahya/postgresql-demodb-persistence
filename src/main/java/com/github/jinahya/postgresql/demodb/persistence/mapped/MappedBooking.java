@@ -31,6 +31,7 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * A mapped superclass which holds the mappings of the {@value MappedBooking#TABLE_NAME} table,
@@ -40,12 +41,6 @@ import java.util.Objects;
  */
 @MappedSuperclass
 public abstract class MappedBooking {
-
-    /**
-     * The name of the database schema which holds the {@value #TABLE_NAME} table. The value is
-     * {@value}.
-     */
-    public static final String TABLE_SCHEMA = "bookings";
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -131,6 +126,28 @@ public abstract class MappedBooking {
      * attribute. The value is {@value}.
      */
     public static final int ATTRIBUTE_DIGITS_FRACTION_TOTAL_AMOUNT = COLUMN_SCALE_TOTAL_AMOUNT;
+
+    // ------------------------------------------------------------------------------------------
+    // STATIC_FACTORY_METHODS
+
+    /**
+     * Creates a new instance of a subclass, with the specified booking reference.
+     *
+     * @param <T>          the type of the instance.
+     * @param instantiator a supplier of a new, empty instance of {@code T}.
+     * @param bookRef      a value for the {@value #ATTRIBUTE_NAME_BOOK_REF} attribute.
+     * @return the instance supplied by {@code instantiator}, with its booking reference set.
+     * @throws NullPointerException if {@code instantiator} is {@code null}, or it supplies
+     *                              {@code null}.
+     */
+    protected static <T extends MappedBooking> T of(final Supplier<? extends T> instantiator,
+                                                    final String bookRef) {
+        Objects.requireNonNull(instantiator, "instantiator is null");
+        final var instance =
+                Objects.requireNonNull(instantiator.get(), "instantiator.get() is null");
+        instance.setBookRef(bookRef);
+        return instance;
+    }
 
     // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
 

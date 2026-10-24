@@ -33,7 +33,7 @@ import java.util.Objects;
  * <q>Airplanes</q>.
  * <p>
  * Every column is mapped read-only; only the identifier stays insertable, which EclipseLink
- * requires of an {@link Id @Id}. The setters therefore change the instance only, never the view.
+ * requires of an {@link Id @Id}. It has no setters; nothing writes to a view.
  * <p>
  * The view reads {@code airplanes_data}, see {@link MappedAirplaneData}, with the
  * {@value #COLUMN_NAME_MODEL} taken out of its {@code jsonb} for the session's language, the
@@ -43,12 +43,6 @@ import java.util.Objects;
  */
 @MappedSuperclass
 public abstract class MappedAirplane {
-
-    /**
-     * The name of the database schema which holds the {@value #TABLE_NAME} view. The value is
-     * {@value}.
-     */
-    public static final String TABLE_SCHEMA = "bookings";
 
     /**
      * The name of the database view to which this class maps. The value is {@value}.
@@ -188,16 +182,6 @@ public abstract class MappedAirplane {
         return airplaneCode;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute with the specified
-     * value.
-     *
-     * @param airplaneCode new value for {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
-     */
-    protected void setAirplaneCode(final String airplaneCode) {
-        this.airplaneCode = airplaneCode;
-    }
-
     // ----------------------------------------------------------------------------------------------------------- model
 
     /**
@@ -207,15 +191,6 @@ public abstract class MappedAirplane {
      */
     public String getModel() {
         return model;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_MODEL} attribute with the specified value.
-     *
-     * @param model new value for {@value #ATTRIBUTE_NAME_MODEL} attribute.
-     */
-    public void setModel(final String model) {
-        this.model = model;
     }
 
     // ----------------------------------------------------------------------------------------------------------- range
@@ -229,15 +204,6 @@ public abstract class MappedAirplane {
         return range;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_RANGE} attribute with the specified value.
-     *
-     * @param range new value for {@value #ATTRIBUTE_NAME_RANGE} attribute.
-     */
-    public void setRange(final Integer range) {
-        this.range = range;
-    }
-
     // ----------------------------------------------------------------------------------------------------------- speed
 
     /**
@@ -247,15 +213,6 @@ public abstract class MappedAirplane {
      */
     public Integer getSpeed() {
         return speed;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_SPEED} attribute with the specified value.
-     *
-     * @param speed new value for {@value #ATTRIBUTE_NAME_SPEED} attribute.
-     */
-    public void setSpeed(final Integer speed) {
-        this.speed = speed;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

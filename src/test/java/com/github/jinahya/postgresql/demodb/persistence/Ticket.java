@@ -39,6 +39,20 @@ import jakarta.persistence.Table;
 public class Ticket
         extends MappedTicket {
 
+    // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
+
+    /**
+     * Creates a new instance with the specified ticket number.
+     *
+     * @param ticketNo a value for the {@value MappedTicket#ATTRIBUTE_NAME_TICKET_NO} attribute.
+     * @return a new instance.
+     */
+    public static Ticket of(final String ticketNo) {
+        return MappedTicket.of(Ticket::new, ticketNo);
+    }
+
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
+
     /**
      * Creates a new instance.
      */

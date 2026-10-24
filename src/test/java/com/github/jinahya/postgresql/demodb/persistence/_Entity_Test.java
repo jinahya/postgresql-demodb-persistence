@@ -22,6 +22,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.object.randomizer.ObjectRandomizerUtils;
 import jakarta.persistence.Transient;
+import lombok.extern.slf4j.Slf4j;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @param <T> the type of the class.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 @SuppressWarnings({
         "java:S101", // Class names should comply with a naming convention
         "java:S118"  // Abstract class names should comply with a naming convention

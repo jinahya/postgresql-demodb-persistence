@@ -21,6 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.persistence.test.util.AbstractEntityPersister;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirplaneData;
 
 import jakarta.persistence.EntityManager;
 
@@ -42,6 +43,11 @@ class AirplaneData_Persister
     @Override
     public AirplaneData apply(final EntityManager entityManager,
                               final AirplaneData entityInstance) {
-        return super.apply(entityManager, entityInstance);
+        final var instance = AirplaneData.of(
+                __Random_TestUtils.code(MappedAirplaneData.COLUMN_LENGTH_AIRPLANE_CODE));
+        instance.setModel(entityInstance.getModel());
+        instance.setRange(entityInstance.getRange());
+        instance.setSpeed(entityInstance.getSpeed());
+        return super.apply(entityManager, instance);
     }
 }

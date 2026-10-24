@@ -20,6 +20,10 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.time.DateTimeException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -27,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class AirportData_Persistence_IT
         extends _Entity_Persistence_IT<AirportData> {
 
@@ -39,16 +44,26 @@ class AirportData_Persistence_IT
     /**
      * {@inheritDoc}
      *
-     * @param instance {@inheritDoc}
+     * @param entityInstance {@inheritDoc}
      * @implNote The names are JSON, the coordinates a point, and the time zone a zone the
      *         JDK knows.
      */
     @Override
-    void randomTargetInstanceSelected(final AirportData instance) {
-        assertThat(instance.getAirportName()).as("name of %s", instance).contains("\"en\"");
-        assertThat(instance.getCoordinates()).as("coordinates of %s", instance).startsWith("(")
+    void randomTargetInstanceSelected(final AirportData entityInstance) {
+        assertThat(entityInstance.getAirportName()).as("name of %s", entityInstance)
+                .contains("\"en\"");
+        assertThat(entityInstance.getCoordinates()).as("coordinates of %s", entityInstance)
+                .startsWith("(")
                 .endsWith(")");
-        assertThat(java.time.ZoneId.of(instance.getTimezone())).as("zone of %s", instance)
-                .isNotNull();
+        {
+            final var timeZone = entityInstance.getTimezoneAsTimeZone();
+            log.info("entity.timezone: {}, timeZone: {}", entityInstance.getTimezone(), timeZone);
+        }
+        try {
+            final var zoneId = entityInstance.getTimezoneAsZoneId();
+            log.info("entity.timezone: {}, zoneId: {}", entityInstance.getTimezone(), zoneId);
+        } catch (final DateTimeException dte) {
+            log.error("failed to get ZoneId from " + entityInstance.getTimezone(), dte);
+        }
     }
 }

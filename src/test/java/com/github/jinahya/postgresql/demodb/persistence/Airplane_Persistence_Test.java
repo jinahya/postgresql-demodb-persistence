@@ -21,6 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirplane;
+import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class Airplane_Persistence_Test
         extends _Entity_Persistence_Test<Airplane> {
 
@@ -48,7 +50,7 @@ class Airplane_Persistence_Test
     @Disabled("a view: nothing is inserted into it")
     @Override
     @Test
-    void _persist_RandomizedInstance() {
+    void persistRandomizedInstance() {
         // empty
     }
 

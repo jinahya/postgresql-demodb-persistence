@@ -37,6 +37,20 @@ import jakarta.persistence.Table;
 public class Booking
         extends MappedBooking {
 
+    // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
+
+    /**
+     * Creates a new instance with the specified booking reference.
+     *
+     * @param bookRef a value for the {@value MappedBooking#ATTRIBUTE_NAME_BOOK_REF} attribute.
+     * @return a new instance.
+     */
+    public static Booking of(final String bookRef) {
+        return MappedBooking.of(Booking::new, bookRef);
+    }
+
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
+
     /**
      * Creates a new instance.
      */

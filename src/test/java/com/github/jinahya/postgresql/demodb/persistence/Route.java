@@ -80,6 +80,22 @@ import jakarta.persistence.Table;
 public class Route
         extends MappedRoute {
 
+    // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
+
+    /**
+     * Creates a new instance with the specified identifier.
+     *
+     * @param id a value for the identifier.
+     * @return a new instance.
+     */
+    public static Route of(final RouteId id) {
+        final var instance = new Route();
+        instance.setId(id);
+        return instance;
+    }
+
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
+
     /**
      * Creates a new instance.
      */

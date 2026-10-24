@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -27,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class Flight_Persistence_IT
         extends _Entity_Persistence_IT<Flight> {
 

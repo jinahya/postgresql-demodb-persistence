@@ -24,6 +24,10 @@ import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirport;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
+import java.util.Optional;
+import java.util.TimeZone;
 
 /**
  * An entity which maps the {@value MappedAirport#TABLE_NAME} view, extending {@link MappedAirport}
@@ -44,4 +48,11 @@ public class Airport
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+    @Transient
+    @Override
+    public TimeZone getTimezoneAsTimeZone() {
+        return Optional.ofNullable(getTimezoneAsZoneId())
+                .map(TimeZone::getTimeZone)
+                .orElse(null);
+    }
 }

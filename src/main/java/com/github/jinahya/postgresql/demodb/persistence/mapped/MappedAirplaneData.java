@@ -29,9 +29,11 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
- * A mapped superclass which holds the mappings of the {@value MappedAirplaneData#TABLE_NAME} table,
+ * A mapped superclass which holds the mappings of the {@value MappedAirplaneData#TABLE_NAME}
+ * table,
  * <q>Airplanes (internal multilingual data)</q>.
  * <p>
  * The {@value MappedAirplaneData#COLUMN_NAME_MODEL} column has no type in Jakarta Persistence
@@ -47,12 +49,6 @@ import java.util.Objects;
  */
 @MappedSuperclass
 public abstract class MappedAirplaneData {
-
-    /**
-     * The name of the database schema which holds the {@value #TABLE_NAME} table. The value is
-     * {@value}.
-     */
-    public static final String TABLE_SCHEMA = "bookings";
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -131,6 +127,28 @@ public abstract class MappedAirplaneData {
      * {@value}.
      */
     public static final String ATTRIBUTE_NAME_SPEED = "speed";
+
+    // ------------------------------------------------------------------------------------------
+    // STATIC_FACTORY_METHODS
+
+    /**
+     * Creates a new instance of a subclass, with the specified code.
+     *
+     * @param <T>          the type of the instance.
+     * @param instantiator a supplier of a new, empty instance of {@code T}.
+     * @param airplaneCode a value for the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
+     * @return the instance supplied by {@code instantiator}, with its code set.
+     * @throws NullPointerException if {@code instantiator} is {@code null}, or it supplies
+     *                              {@code null}.
+     */
+    protected static <T extends MappedAirplaneData> T of(final Supplier<? extends T> instantiator,
+                                                         final String airplaneCode) {
+        Objects.requireNonNull(instantiator, "instantiator is null");
+        final var instance =
+                Objects.requireNonNull(instantiator.get(), "instantiator.get() is null");
+        instance.setAirplaneCode(airplaneCode);
+        return instance;
+    }
 
     // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
 

@@ -78,12 +78,6 @@ import java.util.Objects;
 public abstract class MappedRoute {
 
     /**
-     * The name of the database schema which holds the {@value #TABLE_NAME} table. The value is
-     * {@value}.
-     */
-    public static final String TABLE_SCHEMA = "bookings";
-
-    /**
      * The name of the database table to which this class maps. The value is {@value}.
      */
     public static final String TABLE_NAME = "routes";

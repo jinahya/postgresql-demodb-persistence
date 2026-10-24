@@ -22,6 +22,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.persistence.test.util.EntityPersisterUtils;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -48,6 +49,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * @param <T> the type of the entity under test.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 @SuppressWarnings({
         "java:S101", // Class names should comply with a naming convention
         "java:S118"  // Abstract class names should comply with a naming convention

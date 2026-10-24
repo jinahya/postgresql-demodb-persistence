@@ -21,9 +21,14 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirport;
-
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.time.DateTimeException;
+import java.time.ZoneId;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,6 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class Airport_Persistence_IT
         extends _Entity_Persistence_IT<Airport> {
 
@@ -55,12 +61,50 @@ class Airport_Persistence_IT
     /**
      * {@inheritDoc}
      *
-     * @param instance {@inheritDoc}
+     * @param entityInstance {@inheritDoc}
      * @implNote The name is the English name, no longer JSON.
      */
     @Override
-    void randomTargetInstanceSelected(final Airport instance) {
-        assertThat(instance.getAirportName()).as("name of %s", instance).isNotBlank()
-                .doesNotContain("\"en\"");
+    void randomTargetInstanceSelected(final Airport entityInstance) {
+        {
+            assertThat(entityInstance.getAirportName()).as("name of %s", entityInstance)
+                    .isNotBlank()
+                    .doesNotContain("\"en\"");
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @Nested
+    class TimezoneTest {
+
+        @Test
+        void __TimeZone() {
+            final var list = applyEntityManager(
+                    em -> em.createQuery("SELECT e FROM AirportData AS e", AirportData.class)
+                            .getResultList()
+            );
+            for (final var entityInstance : list) {
+                final var timezone = TimeZone.getTimeZone(entityInstance.getTimezone());
+                log.info("entity.timezone: {}, timeZone: {}", entityInstance.getTimezone(),
+                         timezone);
+            }
+        }
+
+        @Test
+        void __ZoneId() {
+            final var list = applyEntityManager(
+                    em -> em.createQuery("SELECT e FROM AirportData AS e", AirportData.class)
+                            .getResultList()
+            );
+            for (final var entityInstance : list) {
+                try {
+                    final var zoneId = ZoneId.of(entityInstance.getTimezone());
+                    log.info("entity.timezone: {}, zoneId: {}", entityInstance.getTimezone(),
+                             zoneId);
+                } catch (final DateTimeException dte) {
+                    log.error("failed to get ZoneId from " + entityInstance.getTimezone(), dte);
+                }
+            }
+        }
     }
 }

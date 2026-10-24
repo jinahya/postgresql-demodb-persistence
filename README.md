@@ -26,9 +26,30 @@ https://edu.postgrespro.ru/demo-20250901-3m.sql.gz, unchanged (see
 $ docker exec -it postgres-demonstration psql -U postgres -d demo
 ```
 
+[`src/test/sql`](src/test/sql) holds a profiling script per table and view, a section per column; each query says
+what it looks for and what the installed data gives back, and `no rows` marks a check which passes when nothing comes
+back. The `*_exercises_*.sql` files beside them are the exercises of [`EXERCISES.asciidoc`](EXERCISES.asciidoc).
+
+```shell
+$ docker exec -i postgresql-demodb psql -U postgres -d demo < src/test/sql/routes.sql
+```
+
 The same stack brings up [pgAdmin](https://hub.docker.com/r/dpage/pgadmin4) on http://localhost:5050, login
 `postgres@example.com` / `password` (pgAdmin wants an e-mail address). The demo server is already registered
 there and connects on its own; see the `configs` at the bottom of `compose.yaml`.
+
+## The diagrams
+
+`docs/erd/` holds the entity-relationship diagrams, SVGs from Graphviz in the style of `mysql-sakila-persistence`,
+one per table and view, three groups, and the whole schema; a table shows its key columns, `PK` and `FK`, and
+`routes`, which has no primary key, the pair its exclusion constraint keeps apart.
+
+| File | What it shows |
+|---|---|
+| `<table>.svg` | the table, the tables it references and the tables referencing it, and the foreign keys among them |
+| `<view>.svg` | the view, each column with the table it reads, and the tables it reads |
+| `_airplanes_and_airports.svg`, `_routes_and_flights.svg`, `_bookings.svg` | a group of tables and the foreign keys between them only; the header comment names the group |
+| `__demo.svg` | the whole schema as the [official diagram](https://postgrespro.com/community/demodb) draws it: every table, each view as an enclosure around the tables it reads, the foreign keys, and, dashed, the join of `flights` to `routes` on `route_no` and the validity period, which no foreign key declares |
 
 ## Column types the providers differ on
 

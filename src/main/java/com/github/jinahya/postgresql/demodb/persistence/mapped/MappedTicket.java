@@ -28,6 +28,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * A mapped superclass which holds the mappings of the {@value MappedTicket#TABLE_NAME} table,
@@ -53,12 +54,6 @@ import java.util.Objects;
  */
 @MappedSuperclass
 public abstract class MappedTicket {
-
-    /**
-     * The name of the database schema which holds the {@value #TABLE_NAME} table. The value is
-     * {@value}.
-     */
-    public static final String TABLE_SCHEMA = "bookings";
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -149,6 +144,28 @@ public abstract class MappedTicket {
      * {@value}.
      */
     public static final String ATTRIBUTE_NAME_OUTBOUND = "outbound";
+
+    // ------------------------------------------------------------------------------------------
+    // STATIC_FACTORY_METHODS
+
+    /**
+     * Creates a new instance of a subclass, with the specified ticket number.
+     *
+     * @param <T>          the type of the instance.
+     * @param instantiator a supplier of a new, empty instance of {@code T}.
+     * @param ticketNo     a value for the {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
+     * @return the instance supplied by {@code instantiator}, with its ticket number set.
+     * @throws NullPointerException if {@code instantiator} is {@code null}, or it supplies
+     *                              {@code null}.
+     */
+    protected static <T extends MappedTicket> T of(final Supplier<? extends T> instantiator,
+                                                   final String ticketNo) {
+        Objects.requireNonNull(instantiator, "instantiator is null");
+        final var instance =
+                Objects.requireNonNull(instantiator.get(), "instantiator.get() is null");
+        instance.setTicketNo(ticketNo);
+        return instance;
+    }
 
     // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
 

@@ -41,7 +41,7 @@ class AirplaneData_Randomizer
 
     AirplaneData_Randomizer() {
         super(AirplaneData.class, List.of(
-
+                MappedAirplaneData.ATTRIBUTE_NAME_AIRPLANE_CODE
         ));
     }
 
@@ -64,8 +64,6 @@ class AirplaneData_Randomizer
     @Override
     public AirplaneData get() {
         final var instance = super.get();
-        instance.setAirplaneCode(
-                __Random_TestUtils.code(MappedAirplaneData.COLUMN_LENGTH_AIRPLANE_CODE));
         instance.setModel(__Random_TestUtils.jsonNames());
         return instance;
     }

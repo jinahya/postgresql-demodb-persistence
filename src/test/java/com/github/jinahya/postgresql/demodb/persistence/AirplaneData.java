@@ -37,24 +37,21 @@ import jakarta.persistence.Table;
 public class AirplaneData
         extends MappedAirplaneData {
 
+    // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
+
+    public static AirplaneData of(final String airplaneCode) {
+        return MappedAirplaneData.of(AirplaneData::new, airplaneCode);
+    }
+
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
+
     /**
      * Creates a new instance.
      */
-    public AirplaneData() {
+    protected AirplaneData() {
         super();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param airplaneCode {@inheritDoc}
-     * @implNote Widened to {@code public}: the identifier is assigned, not generated, so
-     *         whoever creates an instance sets it.
-     */
-    @Override
-    public void setAirplaneCode(final String airplaneCode) {
-        super.setAirplaneCode(airplaneCode);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 }
+

@@ -20,6 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
 import nl.jqno.equalsverifier.Warning;
 import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
 
@@ -28,6 +29,7 @@ import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class BoardingPass_Test
         extends _Entity_Test<BoardingPass> {
 

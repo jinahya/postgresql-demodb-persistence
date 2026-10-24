@@ -24,16 +24,21 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
 
+import java.time.ZoneId;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.TimeZone;
+import java.util.function.Function;
 
 /**
  * A mapped superclass which holds the mappings of the {@value MappedAirport#TABLE_NAME} view,
  * <q>Airports</q>.
  * <p>
  * Every column is mapped read-only; only the identifier stays insertable, which EclipseLink
- * requires of an {@link Id @Id}. The setters therefore change the instance only, never the view.
+ * requires of an {@link Id @Id}. It has no setters; nothing writes to a view.
  * <p>
  * The {@value MappedAirport#COLUMN_NAME_COORDINATES} column has no type in Jakarta Persistence
  * ({@code point}), so it is mapped as {@link String}, the text form the driver reads it as. Writing
@@ -49,12 +54,6 @@ import java.util.Objects;
  */
 @MappedSuperclass
 public abstract class MappedAirport {
-
-    /**
-     * The name of the database schema which holds the {@value #TABLE_NAME} view. The value is
-     * {@value}.
-     */
-    public static final String TABLE_SCHEMA = "bookings";
 
     /**
      * The name of the database view to which this class maps. The value is {@value}.
@@ -224,16 +223,6 @@ public abstract class MappedAirport {
         return airportCode;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_AIRPORT_CODE} attribute with the specified
-     * value.
-     *
-     * @param airportCode new value for {@value #ATTRIBUTE_NAME_AIRPORT_CODE} attribute.
-     */
-    protected void setAirportCode(final String airportCode) {
-        this.airportCode = airportCode;
-    }
-
     // ----------------------------------------------------------------------------------------------------- airportName
 
     /**
@@ -243,16 +232,6 @@ public abstract class MappedAirport {
      */
     public String getAirportName() {
         return airportName;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_AIRPORT_NAME} attribute with the specified
-     * value.
-     *
-     * @param airportName new value for {@value #ATTRIBUTE_NAME_AIRPORT_NAME} attribute.
-     */
-    public void setAirportName(final String airportName) {
-        this.airportName = airportName;
     }
 
     // ------------------------------------------------------------------------------------------------------------ city
@@ -266,15 +245,6 @@ public abstract class MappedAirport {
         return city;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_CITY} attribute with the specified value.
-     *
-     * @param city new value for {@value #ATTRIBUTE_NAME_CITY} attribute.
-     */
-    public void setCity(final String city) {
-        this.city = city;
-    }
-
     // --------------------------------------------------------------------------------------------------------- country
 
     /**
@@ -284,16 +254,6 @@ public abstract class MappedAirport {
      */
     public String getCountry() {
         return country;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_COUNTRY} attribute with the specified
-     * value.
-     *
-     * @param country new value for {@value #ATTRIBUTE_NAME_COUNTRY} attribute.
-     */
-    public void setCountry(final String country) {
-        this.country = country;
     }
 
     // ----------------------------------------------------------------------------------------------------- coordinates
@@ -308,16 +268,6 @@ public abstract class MappedAirport {
         return coordinates;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute with the specified
-     * value.
-     *
-     * @param coordinates new value for {@value #ATTRIBUTE_NAME_COORDINATES} attribute.
-     */
-    public void setCoordinates(final String coordinates) {
-        this.coordinates = coordinates;
-    }
-
     // -------------------------------------------------------------------------------------------------------- timezone
 
     /**
@@ -329,14 +279,19 @@ public abstract class MappedAirport {
         return timezone;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_TIMEZONE} attribute with the specified
-     * value.
-     *
-     * @param timezone new value for {@value #ATTRIBUTE_NAME_TIMEZONE} attribute.
-     */
-    public void setTimezone(final String timezone) {
-        this.timezone = timezone;
+    public <R> R getTimezoneAs(final Function<? super String, ? extends R> mapper) {
+        Objects.requireNonNull(mapper, "mapper is null");
+        return Optional.ofNullable(getTimezone()).map(mapper).orElse(null);
+    }
+
+    @Transient
+    public TimeZone getTimezoneAsTimeZone() {
+        return getTimezoneAs(TimeZone::getTimeZone);
+    }
+
+    @Transient
+    public ZoneId getTimezoneAsZoneId() {
+        return getTimezoneAs(ZoneId::of);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

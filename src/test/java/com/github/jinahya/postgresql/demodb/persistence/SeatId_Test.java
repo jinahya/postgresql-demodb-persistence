@@ -20,11 +20,14 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * A class for testing the {@link SeatId} composite primary key class.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class SeatId_Test
         extends _NonEntity_Test<SeatId> {
 

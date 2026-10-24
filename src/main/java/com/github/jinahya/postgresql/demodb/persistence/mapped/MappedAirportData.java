@@ -24,10 +24,16 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.ZoneId;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.TimeZone;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * A mapped superclass which holds the mappings of the {@value MappedAirportData#TABLE_NAME} table,
@@ -161,6 +167,28 @@ public abstract class MappedAirportData {
      * {@value}.
      */
     public static final String ATTRIBUTE_NAME_TIMEZONE = "timezone";
+
+    // -----------------------------------------------------------------------
+    // STATIC_FACTORY_METHODS
+
+    /**
+     * Creates a new instance of a subclass, with the specified code.
+     *
+     * @param <T>          the type of the instance.
+     * @param instantiator a supplier of a new, empty instance of {@code T}.
+     * @param airportCode  a value for the {@value #ATTRIBUTE_NAME_AIRPORT_CODE} attribute.
+     * @return the instance supplied by {@code instantiator}, with its code set.
+     * @throws NullPointerException if {@code instantiator} is {@code null}, or it supplies
+     *                              {@code null}.
+     */
+    protected static <T extends MappedAirportData> T of(final Supplier<? extends T> instantiator,
+                                                        final String airportCode) {
+        Objects.requireNonNull(instantiator, "instantiator is null");
+        final var instance =
+                Objects.requireNonNull(instantiator.get(), "instantiator.get() is null");
+        instance.setAirportCode(airportCode);
+        return instance;
+    }
 
     // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
 
@@ -340,6 +368,37 @@ public abstract class MappedAirportData {
      */
     public void setTimezone(final String timezone) {
         this.timezone = timezone;
+    }
+
+    public <R> R getTimezoneAs(final Function<? super String, ? extends R> mapper) {
+        Objects.requireNonNull(mapper, "mapper is null");
+        return Optional.ofNullable(getTimezone()).map(mapper).orElse(null);
+    }
+
+    public <T> void setTimezoneFrom(final T timezone,
+                                    final Function<? super T, ? extends String> mapper) {
+        Objects.requireNonNull(mapper, "mapper is null");
+        setTimezone(Optional.ofNullable(timezone).map(mapper).orElse(null));
+    }
+
+    @Transient
+    public TimeZone getTimezoneAsTimeZone() {
+        return getTimezoneAs(TimeZone::getTimeZone);
+    }
+
+    @Transient
+    public void setTimezoneFromTimeZone(final TimeZone timezone) {
+        setTimezoneFrom(timezone, TimeZone::getID);
+    }
+
+    @Transient
+    public ZoneId getTimezoneAsZoneId() {
+        return getTimezoneAs(ZoneId::of);
+    }
+
+    @Transient
+    public void setTimezoneFromZoneId(final ZoneId zoneId) {
+        setTimezoneFrom(zoneId, ZoneId::getId);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

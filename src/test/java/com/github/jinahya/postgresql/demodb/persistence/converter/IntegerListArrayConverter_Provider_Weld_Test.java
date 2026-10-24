@@ -26,6 +26,7 @@ import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.persistence.Persistence;
+import lombok.extern.slf4j.Slf4j;
 import org.jboss.weld.junit5.EnableWeld;
 import org.jboss.weld.junit5.WeldInitiator;
 import org.jboss.weld.junit5.WeldSetup;
@@ -45,6 +46,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 @EnableWeld
 @SuppressWarnings({
         "java:S101" // Class names should comply with a naming convention

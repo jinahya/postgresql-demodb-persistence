@@ -37,6 +37,8 @@ import jakarta.persistence.Table;
 public class Airplane
         extends MappedAirplane {
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * Creates a new instance.
      */
