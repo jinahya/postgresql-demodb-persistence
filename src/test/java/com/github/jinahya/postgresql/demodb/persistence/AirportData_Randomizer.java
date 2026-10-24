@@ -68,7 +68,7 @@ class AirportData_Randomizer
         instance.setAirportCode(
                 __Random_TestUtils.code(MappedAirportData.COLUMN_LENGTH_AIRPORT_CODE));
         instance.setAirportName(__Random_TestUtils.jsonNames());
-        instance.setCity(__Random_TestUtils.jsonNames());
+        instance.setCity(__Random_TestUtils.names());
         instance.setCountry(__Random_TestUtils.jsonNames());
         instance.setCoordinates(__Random_TestUtils.point());
         instance.setTimezone(__Random_TestUtils.timezone());

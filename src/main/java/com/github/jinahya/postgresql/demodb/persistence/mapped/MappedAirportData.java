@@ -20,8 +20,10 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
@@ -29,6 +31,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.ZoneId;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -288,11 +291,11 @@ public abstract class MappedAirportData {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_CITY} attribute -- a {@code jsonb} column,
-     * mapped as the JSON text.
+     * mapped as the names it holds, keyed by language.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_CITY} attribute.
      */
-    public String getCity() {
+    public Map<String, String> getCity() {
         return city;
     }
 
@@ -301,7 +304,7 @@ public abstract class MappedAirportData {
      *
      * @param city new value for {@value #ATTRIBUTE_NAME_CITY} attribute.
      */
-    public void setCity(final String city) {
+    public void setCity(final Map<String, String> city) {
         this.city = city;
     }
 
@@ -422,9 +425,10 @@ public abstract class MappedAirportData {
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
+    @Convert(converter = LanguageNamesConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_CITY, nullable = false, insertable = true, updatable = true)
-    private String city;
+    private Map<String, String> city;
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull

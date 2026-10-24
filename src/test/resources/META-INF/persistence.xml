@@ -31,6 +31,7 @@
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirplaneData</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirportData</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.Booking</class>
@@ -84,6 +85,7 @@
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirplaneData</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirportData</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.Booking</class>

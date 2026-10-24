@@ -52,6 +52,9 @@ class AirportData_Persistence_IT
     void randomTargetInstanceSelected(final AirportData entityInstance) {
         assertThat(entityInstance.getAirportName()).as("name of %s", entityInstance)
                 .contains("\"en\"");
+        assertThat(entityInstance.getCity()).as("city of %s", entityInstance)
+                .containsOnlyKeys("en", "ru")
+                .allSatisfy((k, v) -> assertThat(v).isNotBlank());
         assertThat(entityInstance.getCoordinates()).as("coordinates of %s", entityInstance)
                 .startsWith("(")
                 .endsWith(")");
