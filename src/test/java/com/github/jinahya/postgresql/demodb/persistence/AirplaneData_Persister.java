@@ -25,6 +25,8 @@ import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirplaneDat
 
 import jakarta.persistence.EntityManager;
 
+import java.util.Locale;
+
 /**
  * A persister which persists {@link AirplaneData} instances.
  * <p>
@@ -45,7 +47,9 @@ class AirplaneData_Persister
                               final AirplaneData entityInstance) {
         final var instance = AirplaneData.of(
                 __Random_TestUtils.code(MappedAirplaneData.COLUMN_LENGTH_AIRPLANE_CODE));
-        instance.setModel(entityInstance.getModel());
+        for (final var locale : new Locale[] {Locale.ENGLISH, Locale.of("ru")}) {
+            instance.setModelName(locale, entityInstance.getModelName(locale));
+        }
         instance.setRange(entityInstance.getRange());
         instance.setSpeed(entityInstance.getSpeed());
         return super.apply(entityManager, instance);

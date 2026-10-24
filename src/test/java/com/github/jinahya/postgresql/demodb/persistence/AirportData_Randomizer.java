@@ -28,6 +28,7 @@ import uk.co.jemos.podam.api.DataProviderStrategy;
 import uk.co.jemos.podam.api.PodamFactory;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A randomizer which produces randomized {@link AirportData} instances.
@@ -67,9 +68,12 @@ class AirportData_Randomizer
         final var instance = super.get();
         instance.setAirportCode(
                 __Random_TestUtils.code(MappedAirportData.COLUMN_LENGTH_AIRPORT_CODE));
-        instance.setAirportName(__Random_TestUtils.jsonNames());
-        instance.setCity(__Random_TestUtils.names());
-        instance.setCountry(__Random_TestUtils.jsonNames());
+        instance.setAirportName(Locale.ENGLISH, __Random_TestUtils.code(8));
+        instance.setAirportName(Locale.of("ru"), __Random_TestUtils.code(8));
+        instance.setCityName(Locale.ENGLISH, __Random_TestUtils.code(8));
+        instance.setCityName(Locale.of("ru"), __Random_TestUtils.code(8));
+        instance.setCountryName(Locale.ENGLISH, __Random_TestUtils.code(8));
+        instance.setCountryName(Locale.of("ru"), __Random_TestUtils.code(8));
         instance.setCoordinates(__Random_TestUtils.point());
         instance.setTimezone(__Random_TestUtils.timezone());
         return instance;

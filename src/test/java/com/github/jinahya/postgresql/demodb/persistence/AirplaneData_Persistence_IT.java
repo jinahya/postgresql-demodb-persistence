@@ -22,6 +22,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Locale;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -48,7 +50,8 @@ class AirplaneData_Persistence_IT
      */
     @Override
     void randomTargetInstanceSelected(final AirplaneData instance) {
-        assertThat(instance.getModel()).as("model of %s", instance).contains("\"en\"");
+        assertThat(instance.getModelName(Locale.ENGLISH)).as("model of %s", instance).isNotBlank();
+        assertThat(instance.getModelName(Locale.of("ru"))).as("model of %s", instance).isNotBlank();
         assertThat(instance.getRange()).as("range of %s", instance).isPositive();
         assertThat(instance.getSpeed()).as("speed of %s", instance).isPositive();
     }

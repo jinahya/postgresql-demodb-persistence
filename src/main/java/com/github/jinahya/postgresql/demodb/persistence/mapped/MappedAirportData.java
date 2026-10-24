@@ -31,6 +31,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.ZoneId;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,16 +44,18 @@ import java.util.function.Supplier;
  * <q>Airports (internal multilingual data)</q>.
  * <p>
  * The {@value MappedAirportData#COLUMN_NAME_AIRPORT_NAME},
- * {@value MappedAirportData#COLUMN_NAME_CITY}, {@value MappedAirportData#COLUMN_NAME_COUNTRY},
- * {@value MappedAirportData#COLUMN_NAME_COORDINATES} columns have no type in Jakarta Persistence
- * ({@code jsonb}, {@code point}), so they are mapped as {@link String}, the text form the driver
- * reads them as. Writing such a text back needs the driver to leave its type to the server,
- * {@code stringtype=unspecified} on the JDBC URL, or a provider-specific type the extending entity
- * may choose instead.
+ * {@value MappedAirportData#COLUMN_NAME_CITY} and {@value MappedAirportData#COLUMN_NAME_COUNTRY}
+ * columns are {@code jsonb}, an object of one name per language, keyed {@code en}, {@code ru}, ...;
+ * each is mapped as a {@link Map} of names keyed by language, through a
+ * {@link LanguageNamesConverter}, with package-private accessors, and is read and written a name at
+ * a time, by the language of a {@link Locale}. The {@code airports} view, see
+ * {@link MappedAirport}, picks the session's language out of them.
  * <p>
- * The {@value #COLUMN_NAME_AIRPORT_NAME}, {@value #COLUMN_NAME_CITY} and
- * {@value #COLUMN_NAME_COUNTRY} columns are {@code jsonb}, an object of one value per language; the
- * {@code airports} view, see {@link MappedAirport}, picks the session's language out of them.
+ * The {@value MappedAirportData#COLUMN_NAME_COORDINATES} column has no type in Jakarta Persistence
+ * ({@code point}), so it is mapped as {@link String}, the text form the driver reads it as.
+ * <p>
+ * Writing a text back, the names' or the point's, needs the driver to leave its type to the server,
+ * {@code stringtype=unspecified} on the JDBC URL.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -265,15 +268,16 @@ public abstract class MappedAirportData {
         this.airportCode = airportCode;
     }
 
-    // ----------------------------------------------------------------------------------------------------- airportName
+    // --------------------------------------------------------------------------------- airportName
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_AIRPORT_NAME} attribute -- a {@code jsonb}
-     * column, mapped as the JSON text.
+     * column, mapped as the names it holds, keyed by language.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_AIRPORT_NAME} attribute.
+     * @see #getAirportName(Locale)
      */
-    public String getAirportName() {
+    Map<String, String> getAirportName() {
         return airportName;
     }
 
@@ -282,41 +286,144 @@ public abstract class MappedAirportData {
      * value.
      *
      * @param airportName new value for {@value #ATTRIBUTE_NAME_AIRPORT_NAME} attribute.
+     * @see #setAirportName(Locale, String)
      */
-    public void setAirportName(final String airportName) {
+    void setAirportName(final Map<String, String> airportName) {
         this.airportName = airportName;
     }
 
-    // ------------------------------------------------------------------------------------------------------------ city
+    /**
+     * Returns the name of the airport in the language of the specified locale.
+     *
+     * @param locale the locale whose {@link Locale#getLanguage() language} names the airport.
+     * @return the name of the airport in the language of {@code locale}; {@code null} if there is
+     *         none.
+     * @throws NullPointerException     if {@code locale} is {@code null}.
+     * @throws IllegalArgumentException if {@code locale} has no language.
+     */
+    public String getAirportName(final Locale locale) {
+        return _LocaleNames.get(getAirportName(), locale);
+    }
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_CITY} attribute -- a {@code jsonb} column,
-     * mapped as the names it holds, keyed by language.
+     * Replaces the name of the airport in the language of the specified locale with the specified
+     * value.
+     *
+     * @param locale the locale whose {@link Locale#getLanguage() language} names the airport.
+     * @param name   the new name of the airport in the language of {@code locale}.
+     * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
+     *                                  blank.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute.
+     * @see #removeAirportName(Locale)
+     */
+    public void setAirportName(final Locale locale, final String name) {
+        setAirportName(_LocaleNames.with(getAirportName(), locale, name));
+    }
+
+    /**
+     * Removes the name of the airport in the language of the specified locale.
+     *
+     * @param locale the locale whose {@link Locale#getLanguage() language} names the airport.
+     * @return the name removed; {@code null} if there was none.
+     * @throws NullPointerException     if {@code locale} is {@code null}.
+     * @throws IllegalArgumentException if {@code locale} has no language.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute; nothing is replaced when there was no
+     *         name.
+     */
+    public String removeAirportName(final Locale locale) {
+        final var removed = getAirportName(locale);
+        if (removed != null) {
+            setAirportName(_LocaleNames.without(getAirportName(), locale));
+        }
+        return removed;
+    }
+
+    // ---------------------------------------------------------------------------------------- city
+
+    /**
+     * Returns current value of {@value #ATTRIBUTE_NAME_CITY} attribute -- a {@code jsonb}
+     * column, mapped as the names it holds, keyed by language.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_CITY} attribute.
+     * @see #getCityName(Locale)
      */
-    public Map<String, String> getCity() {
+    Map<String, String> getCity() {
         return city;
     }
 
     /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_CITY} attribute with the specified value.
+     * Replaces current value of {@value #ATTRIBUTE_NAME_CITY} attribute with the specified
+     * value.
      *
      * @param city new value for {@value #ATTRIBUTE_NAME_CITY} attribute.
+     * @see #setCityName(Locale, String)
      */
-    public void setCity(final Map<String, String> city) {
+    void setCity(final Map<String, String> city) {
         this.city = city;
     }
 
-    // --------------------------------------------------------------------------------------------------------- country
+    /**
+     * Returns the name of the city in the language of the specified locale.
+     *
+     * @param locale the locale whose {@link Locale#getLanguage() language} names the city.
+     * @return the name of the city in the language of {@code locale}; {@code null} if there is
+     *         none.
+     * @throws NullPointerException     if {@code locale} is {@code null}.
+     * @throws IllegalArgumentException if {@code locale} has no language.
+     */
+    public String getCityName(final Locale locale) {
+        return _LocaleNames.get(getCity(), locale);
+    }
+
+    /**
+     * Replaces the name of the city in the language of the specified locale with the specified
+     * value.
+     *
+     * @param locale the locale whose {@link Locale#getLanguage() language} names the city.
+     * @param name   the new name of the city in the language of {@code locale}.
+     * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
+     *                                  blank.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute.
+     * @see #removeCityName(Locale)
+     */
+    public void setCityName(final Locale locale, final String name) {
+        setCity(_LocaleNames.with(getCity(), locale, name));
+    }
+
+    /**
+     * Removes the name of the city in the language of the specified locale.
+     *
+     * @param locale the locale whose {@link Locale#getLanguage() language} names the city.
+     * @return the name removed; {@code null} if there was none.
+     * @throws NullPointerException     if {@code locale} is {@code null}.
+     * @throws IllegalArgumentException if {@code locale} has no language.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute; nothing is replaced when there was no
+     *         name.
+     */
+    public String removeCityName(final Locale locale) {
+        final var removed = getCityName(locale);
+        if (removed != null) {
+            setCity(_LocaleNames.without(getCity(), locale));
+        }
+        return removed;
+    }
+
+    // ------------------------------------------------------------------------------------- country
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_COUNTRY} attribute -- a {@code jsonb}
-     * column, mapped as the JSON text.
+     * column, mapped as the names it holds, keyed by language.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_COUNTRY} attribute.
+     * @see #getCountryName(Locale)
      */
-    public String getCountry() {
+    Map<String, String> getCountry() {
         return country;
     }
 
@@ -325,12 +432,62 @@ public abstract class MappedAirportData {
      * value.
      *
      * @param country new value for {@value #ATTRIBUTE_NAME_COUNTRY} attribute.
+     * @see #setCountryName(Locale, String)
      */
-    public void setCountry(final String country) {
+    void setCountry(final Map<String, String> country) {
         this.country = country;
     }
 
-    // ----------------------------------------------------------------------------------------------------- coordinates
+    /**
+     * Returns the name of the country in the language of the specified locale.
+     *
+     * @param locale the locale whose {@link Locale#getLanguage() language} names the country.
+     * @return the name of the country in the language of {@code locale}; {@code null} if there is
+     *         none.
+     * @throws NullPointerException     if {@code locale} is {@code null}.
+     * @throws IllegalArgumentException if {@code locale} has no language.
+     */
+    public String getCountryName(final Locale locale) {
+        return _LocaleNames.get(getCountry(), locale);
+    }
+
+    /**
+     * Replaces the name of the country in the language of the specified locale with the specified
+     * value.
+     *
+     * @param locale the locale whose {@link Locale#getLanguage() language} names the country.
+     * @param name   the new name of the country in the language of {@code locale}.
+     * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
+     *                                  blank.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute.
+     * @see #removeCountryName(Locale)
+     */
+    public void setCountryName(final Locale locale, final String name) {
+        setCountry(_LocaleNames.with(getCountry(), locale, name));
+    }
+
+    /**
+     * Removes the name of the country in the language of the specified locale.
+     *
+     * @param locale the locale whose {@link Locale#getLanguage() language} names the country.
+     * @return the name removed; {@code null} if there was none.
+     * @throws NullPointerException     if {@code locale} is {@code null}.
+     * @throws IllegalArgumentException if {@code locale} has no language.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute; nothing is replaced when there was no
+     *         name.
+     */
+    public String removeCountryName(final Locale locale) {
+        final var removed = getCountryName(locale);
+        if (removed != null) {
+            setCountry(_LocaleNames.without(getCountry(), locale));
+        }
+        return removed;
+    }
+
+    // --------------------------------------------------------------------------------- coordinates
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute -- a {@code point}
@@ -352,7 +509,7 @@ public abstract class MappedAirportData {
         this.coordinates = coordinates;
     }
 
-    // -------------------------------------------------------------------------------------------------------- timezone
+    // ------------------------------------------------------------------------------------ timezone
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_TIMEZONE} attribute.
@@ -419,9 +576,10 @@ public abstract class MappedAirportData {
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
+    @Convert(converter = LanguageNamesConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_AIRPORT_NAME, nullable = false, insertable = true, updatable = true)
-    private String airportName;
+    private Map<String, String> airportName;
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
@@ -432,9 +590,10 @@ public abstract class MappedAirportData {
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
+    @Convert(converter = LanguageNamesConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_COUNTRY, nullable = false, insertable = true, updatable = true)
-    private String country;
+    private Map<String, String> country;
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull

@@ -20,14 +20,18 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -36,14 +40,12 @@ import java.util.function.Supplier;
  * table,
  * <q>Airplanes (internal multilingual data)</q>.
  * <p>
- * The {@value MappedAirplaneData#COLUMN_NAME_MODEL} column has no type in Jakarta Persistence
- * ({@code jsonb}), so it is mapped as {@link String}, the text form the driver reads it as. Writing
- * such a text back needs the driver to leave its type to the server, {@code stringtype=unspecified}
- * on the JDBC URL, or a provider-specific type the extending entity may choose instead.
- * <p>
- * The {@value #COLUMN_NAME_MODEL} column is {@code jsonb}, an object of one name per language,
- * keyed {@code en}, {@code ru}, ...; the {@code airplanes} view, see {@link MappedAirplane}, picks
- * the session's language out of it.
+ * The {@value MappedAirplaneData#COLUMN_NAME_MODEL} column is {@code jsonb}, an object of one
+ * name per language, keyed {@code en}, {@code ru}, ...; it is mapped as a {@link Map} of names
+ * keyed by language, through a {@link LanguageNamesConverter}, with package-private accessors, and
+ * is read and written a name at a time, by the language of a {@link Locale}. Writing it back needs
+ * the driver to leave its type to the server, {@code stringtype=unspecified} on the JDBC URL. The
+ * {@code airplanes} view, see {@link MappedAirplane}, picks the session's language out of it.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -223,22 +225,74 @@ public abstract class MappedAirplaneData {
     // ----------------------------------------------------------------------------------------------------------- model
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_MODEL} attribute -- a {@code jsonb} column,
-     * mapped as the JSON text.
+     * Returns current value of {@value #ATTRIBUTE_NAME_MODEL} attribute -- a {@code jsonb}
+     * column, mapped as the names it holds, keyed by language.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_MODEL} attribute.
+     * @see #getModelName(Locale)
      */
-    public String getModel() {
+    Map<String, String> getModel() {
         return model;
     }
 
     /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_MODEL} attribute with the specified value.
+     * Replaces current value of {@value #ATTRIBUTE_NAME_MODEL} attribute with the specified
+     * value.
      *
      * @param model new value for {@value #ATTRIBUTE_NAME_MODEL} attribute.
+     * @see #setModelName(Locale, String)
      */
-    public void setModel(final String model) {
+    void setModel(final Map<String, String> model) {
         this.model = model;
+    }
+
+    /**
+     * Returns the name of the model in the language of the specified locale.
+     *
+     * @param locale the locale whose {@link Locale#getLanguage() language} names the model.
+     * @return the name of the model in the language of {@code locale}; {@code null} if there is
+     *         none.
+     * @throws NullPointerException     if {@code locale} is {@code null}.
+     * @throws IllegalArgumentException if {@code locale} has no language.
+     */
+    public String getModelName(final Locale locale) {
+        return _LocaleNames.get(getModel(), locale);
+    }
+
+    /**
+     * Replaces the name of the model in the language of the specified locale with the specified
+     * value.
+     *
+     * @param locale the locale whose {@link Locale#getLanguage() language} names the model.
+     * @param name   the new name of the model in the language of {@code locale}.
+     * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
+     *                                  blank.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute.
+     * @see #removeModelName(Locale)
+     */
+    public void setModelName(final Locale locale, final String name) {
+        setModel(_LocaleNames.with(getModel(), locale, name));
+    }
+
+    /**
+     * Removes the name of the model in the language of the specified locale.
+     *
+     * @param locale the locale whose {@link Locale#getLanguage() language} names the model.
+     * @return the name removed; {@code null} if there was none.
+     * @throws NullPointerException     if {@code locale} is {@code null}.
+     * @throws IllegalArgumentException if {@code locale} has no language.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute; nothing is replaced when there was no
+     *         name.
+     */
+    public String removeModelName(final Locale locale) {
+        final var removed = getModelName(locale);
+        if (removed != null) {
+            setModel(_LocaleNames.without(getModel(), locale));
+        }
+        return removed;
     }
 
     // ----------------------------------------------------------------------------------------------------------- range
@@ -296,9 +350,10 @@ public abstract class MappedAirplaneData {
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
+    @Convert(converter = LanguageNamesConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_MODEL, nullable = false, insertable = true, updatable = true)
-    private String model;
+    private Map<String, String> model;
 
     // -----------------------------------------------------------------------------------------------------------------
     @Positive

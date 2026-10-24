@@ -23,6 +23,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.DateTimeException;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,11 +51,20 @@ class AirportData_Persistence_IT
      */
     @Override
     void randomTargetInstanceSelected(final AirportData entityInstance) {
-        assertThat(entityInstance.getAirportName()).as("name of %s", entityInstance)
-                .contains("\"en\"");
-        assertThat(entityInstance.getCity()).as("city of %s", entityInstance)
-                .containsOnlyKeys("en", "ru")
-                .allSatisfy((k, v) -> assertThat(v).isNotBlank());
+        assertThat(entityInstance.getAirportName(Locale.ENGLISH)).as("name of %s", entityInstance)
+                .isNotBlank();
+        assertThat(entityInstance.getAirportName(Locale.of("ru"))).as("name of %s", entityInstance)
+                .isNotBlank();
+        assertThat(entityInstance.getCityName(Locale.ENGLISH)).as("city of %s", entityInstance)
+                .isNotBlank();
+        assertThat(entityInstance.getCityName(Locale.of("ru"))).as("city of %s", entityInstance)
+                .isNotBlank();
+        assertThat(entityInstance.getCountryName(Locale.ENGLISH))
+                .as("country of %s", entityInstance)
+                .isNotBlank();
+        assertThat(entityInstance.getCountryName(Locale.of("ru")))
+                .as("country of %s", entityInstance)
+                .isNotBlank();
         assertThat(entityInstance.getCoordinates()).as("coordinates of %s", entityInstance)
                 .startsWith("(")
                 .endsWith(")");

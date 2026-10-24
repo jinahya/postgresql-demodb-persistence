@@ -28,6 +28,7 @@ import uk.co.jemos.podam.api.DataProviderStrategy;
 import uk.co.jemos.podam.api.PodamFactory;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A randomizer which produces randomized {@link AirplaneData} instances.
@@ -64,7 +65,8 @@ class AirplaneData_Randomizer
     @Override
     public AirplaneData get() {
         final var instance = super.get();
-        instance.setModel(__Random_TestUtils.jsonNames());
+        instance.setModelName(Locale.ENGLISH, __Random_TestUtils.code(8));
+        instance.setModelName(Locale.of("ru"), __Random_TestUtils.code(8));
         return instance;
     }
 }
