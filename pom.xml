@@ -110,6 +110,10 @@
     <version.ch.qus.logback>1.6.5</version.ch.qus.logback>
     <!-- https://central.sonatype.com/artifact/com.h2database/h2/versions -->
     <version.com.h2database>2.5.252</version.com.h2database>
+    <!-- https://github.com/vladmihalcea/hypersistence-utils -->
+    <!-- https://central.sonatype.com/artifact/io.hypersistence/hypersistence-utils-hibernate-73/versions -->
+    <!-- -hibernate-73 is the newest; it takes hibernate-core as provided, so it runs on the 7.4 this module uses -->
+    <version.io.hypersistence>3.16.0</version.io.hypersistence>
     <!-- https://jakarta.ee/specifications/platform/11/ -->
     <!-- https://central.sonatype.com/artifact/jakarta.platform/jakarta.jakartaee-bom/versions -->
     <!-- 11.0.0 manages: jakarta.persistence-api 3.2.0, jakarta.validation-api 3.1.1, -->
@@ -140,6 +144,8 @@
     <!-- note: this is the weld-junit5 (weld-testing) version, not the Weld version; -->
     <!--       weld-junit5 5.0.x pulls weld-se-core 6.0.x, i.e. Weld 6 / CDI 4.1 -->
     <version.org.jboss.weld>5.0.3.Final</version.org.jboss.weld>
+    <!-- https://central.sonatype.com/artifact/org.jooq/jooq-postgres-extensions/versions -->
+    <version.org.jooq>3.21.9</version.org.jooq>
     <!-- https://central.sonatype.com/artifact/org.junit/junit-bom/versions -->
     <version.org.junit>5.14.4</version.org.junit>
     <!-- https://central.sonatype.com/artifact/org.mockito/mockito-junit-jupiter/versions -->
@@ -179,6 +185,11 @@
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
         <version>${version.com.h2database}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.hypersistence</groupId>
+        <artifactId>hypersistence-utils-hibernate-73</artifactId>
+        <version>${version.io.hypersistence}</version>
       </dependency>
       <dependency><!-- https://central.sonatype.com/artifact/jakarta.platform/jakarta.jakartaee-bom/versions -->
         <groupId>jakarta.platform</groupId>
@@ -232,6 +243,11 @@
         <artifactId>weld-junit5</artifactId>
         <version>${version.org.jboss.weld}</version>
       </dependency>
+      <dependency>
+        <groupId>org.jooq</groupId>
+        <artifactId>jooq-postgres-extensions</artifactId>
+        <version>${version.org.jooq}</version>
+      </dependency>
       <dependency><!-- https://search.maven.org/artifact/org.junit/junit-bom -->
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
@@ -281,6 +297,11 @@
       <artifactId>jakarta.inject-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency><!-- JSON-P; JSON-B's API declares it provided, so it does not come along -->
+      <groupId>jakarta.json</groupId>
+      <artifactId>jakarta.json-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>jakarta.json.bind</groupId>
       <artifactId>jakarta.json.bind-api</artifactId>
@@ -309,6 +330,11 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.hypersistence</groupId>
+      <artifactId>hypersistence-utils-hibernate-73</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -350,6 +376,11 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq-postgres-extensions</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

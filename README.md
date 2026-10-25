@@ -129,10 +129,14 @@ What follows from it, and what this module does:
   `CALL IDENTITY()`, neither of which the mode accepts, so the `flights` table was never created. The PostgreSQL
   platform's `SERIAL` and `select lastval()` are. A column definition cannot reach the read-back query, so the
   platform is the switch that has to flip.
-- `point` and `jsonb` go through `_TextConverter`s of the same kind. `PGpointConverter` maps a `point` as the
-  driver's `org.postgresql.geometric.PGpoint`, written `(x,y)`. `LanguageNamesConverter` maps each `jsonb` column, an
-  object of one name per language, as a `Map<String, String>` through Jakarta JSON Binding; the attributes have
-  package-private accessors, and are read and written a name at a time, by the language of a `Locale`.
+- `point` goes through a `_TextConverter` of the same kind. `PGpointConverter` maps it as the driver's
+  `org.postgresql.geometric.PGpoint`, written `(x,y)`.
+- Each `jsonb` column, an object of one name per language, is mapped as a JSON-P `JsonObject` through
+  `JsonpStringConverter.OfJsonObject`, whose database side is a plain `String`, not a type variable; the attributes
+  have package-private accessors, and are read and written a name at a time, by the language of a `Locale`.
+  `JsonpStringConverter` has a converter for each JSON-P type, `OfJsonValue`, `OfJsonStructure`, `OfJsonObject`,
+  `OfJsonArray`, `OfJsonString` and `OfJsonNumber`; each reads one JSON value, rejects anything after it, and rejects
+  a value of another type. EclipseLink hands it the column as a `String` too, not the driver's `PGobject`.
 - Three `text` columns go through `_TextConverter`s too, for a type the text has no room for:
   `flights.status`, and the `timetable` view's, as a `FlightStatus` (`On Time` is no Java identifier, which is why
   `@Enumerated` cannot map it), `seats.fare_conditions` and `segments.fare_conditions` as a `FareConditions`, both
@@ -207,9 +211,10 @@ the server's, the database's or the role's default, and the attribute names the 
 
 ### `jsonb`, and why not `@Lob`
 
-The four `jsonb` columns are plain `String` attributes, `@Basic` and `@Column` with no `length` and no `@Lob`. Both
-providers read them as the JSON text and write them back, the write with `stringtype=unspecified` like every other
-exotic column. A `jsonb` value is at most 268,435,455 bytes, one short of 256 MB -- the 28-bit offsets of its binary
+The four `jsonb` columns are `JsonObject` attributes over the text, `@Basic` and `@Column` with no `length` and no
+`@Lob`. Both providers read them as the JSON text, which the converter parses, and write them back, the write
+with `stringtype=unspecified` like every other exotic column.
+A `jsonb` value is at most 268,435,455 bytes, one short of 256 MB -- the 28-bit offsets of its binary
 form, not a setting, see [BUG #15079](https://www.postgresql.org/message-id/151933308143.1365.3106046996770708952%40wrigleys.postgresql.org)
 and its [reply](https://www.postgresql.org/message-id/CAKFQuwZZ95W5JxQ_fgzdPONeCenUJ59-RB_zQtSQ8puKUJEJiQ%40mail.gmail.com)
 -- which a `String` holds with room to spare.

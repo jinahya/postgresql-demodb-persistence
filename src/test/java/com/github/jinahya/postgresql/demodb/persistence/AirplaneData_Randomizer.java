@@ -42,7 +42,8 @@ class AirplaneData_Randomizer
 
     AirplaneData_Randomizer() {
         super(AirplaneData.class, List.of(
-                MappedAirplaneData.ATTRIBUTE_NAME_AIRPLANE_CODE
+                MappedAirplaneData.ATTRIBUTE_NAME_AIRPLANE_CODE,
+                MappedAirplaneData.ATTRIBUTE_NAME_MODEL
         ));
     }
 
