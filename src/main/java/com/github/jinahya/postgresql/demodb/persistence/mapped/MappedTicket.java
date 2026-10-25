@@ -60,7 +60,7 @@ public abstract class MappedTicket {
      */
     public static final String TABLE_NAME = "tickets";
 
-    // ------------------------------------------------------------------------------------------------------- TICKET_NO
+    // ----------------------------------------------------------------------------------- ticket_no
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_TICKET_NO} attribute maps.
@@ -74,7 +74,7 @@ public abstract class MappedTicket {
      */
     public static final String ATTRIBUTE_NAME_TICKET_NO = "ticketNo";
 
-    // -------------------------------------------------------------------------------------------------------- BOOK_REF
+    // ------------------------------------------------------------------------------------ book_ref
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_BOOK_REF} attribute maps.
@@ -103,7 +103,7 @@ public abstract class MappedTicket {
      */
     public static final int SIZE_MAX_BOOK_REF = COLUMN_LENGTH_BOOK_REF;
 
-    // ---------------------------------------------------------------------------------------------------- PASSENGER_ID
+    // -------------------------------------------------------------------------------- passenger_id
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_PASSENGER_ID} attribute
@@ -117,7 +117,7 @@ public abstract class MappedTicket {
      */
     public static final String ATTRIBUTE_NAME_PASSENGER_ID = "passengerId";
 
-    // -------------------------------------------------------------------------------------------------- PASSENGER_NAME
+    // ------------------------------------------------------------------------------ passenger_name
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_PASSENGER_NAME} attribute
@@ -131,7 +131,7 @@ public abstract class MappedTicket {
      */
     public static final String ATTRIBUTE_NAME_PASSENGER_NAME = "passengerName";
 
-    // -------------------------------------------------------------------------------------------------------- OUTBOUND
+    // ------------------------------------------------------------------------------------ outbound
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_OUTBOUND} attribute maps.

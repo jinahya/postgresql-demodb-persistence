@@ -47,7 +47,7 @@ public abstract class MappedBooking {
      */
     public static final String TABLE_NAME = "bookings";
 
-    // -------------------------------------------------------------------------------------------------------- BOOK_REF
+    // ------------------------------------------------------------------------------------ book_ref
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_BOOK_REF} attribute maps.
@@ -76,7 +76,7 @@ public abstract class MappedBooking {
      */
     public static final int SIZE_MAX_BOOK_REF = COLUMN_LENGTH_BOOK_REF;
 
-    // ------------------------------------------------------------------------------------------------------- BOOK_DATE
+    // ----------------------------------------------------------------------------------- book_date
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_BOOK_DATE} attribute maps.
@@ -90,7 +90,7 @@ public abstract class MappedBooking {
      */
     public static final String ATTRIBUTE_NAME_BOOK_DATE = "bookDate";
 
-    // ---------------------------------------------------------------------------------------------------- TOTAL_AMOUNT
+    // -------------------------------------------------------------------------------- total_amount
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_TOTAL_AMOUNT} attribute

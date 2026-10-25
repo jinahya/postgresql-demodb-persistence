@@ -63,7 +63,7 @@ public abstract class MappedAirport {
      */
     public static final String TABLE_NAME = "airports";
 
-    // ---------------------------------------------------------------------------------------------------- AIRPORT_CODE
+    // -------------------------------------------------------------------------------- airport_code
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_AIRPORT_CODE} attribute
@@ -94,7 +94,7 @@ public abstract class MappedAirport {
      */
     public static final int SIZE_MAX_AIRPORT_CODE = COLUMN_LENGTH_AIRPORT_CODE;
 
-    // ---------------------------------------------------------------------------------------------------- AIRPORT_NAME
+    // -------------------------------------------------------------------------------- airport_name
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_AIRPORT_NAME} attribute
@@ -108,7 +108,7 @@ public abstract class MappedAirport {
      */
     public static final String ATTRIBUTE_NAME_AIRPORT_NAME = "airportName";
 
-    // ------------------------------------------------------------------------------------------------------------ CITY
+    // ---------------------------------------------------------------------------------------- city
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_CITY} attribute maps. The
@@ -122,7 +122,7 @@ public abstract class MappedAirport {
      */
     public static final String ATTRIBUTE_NAME_CITY = "city";
 
-    // --------------------------------------------------------------------------------------------------------- COUNTRY
+    // ------------------------------------------------------------------------------------- country
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_COUNTRY} attribute maps. The
@@ -136,7 +136,7 @@ public abstract class MappedAirport {
      */
     public static final String ATTRIBUTE_NAME_COUNTRY = "country";
 
-    // ----------------------------------------------------------------------------------------------------- COORDINATES
+    // --------------------------------------------------------------------------------- coordinates
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_COORDINATES} attribute maps.
@@ -150,7 +150,7 @@ public abstract class MappedAirport {
      */
     public static final String ATTRIBUTE_NAME_COORDINATES = "coordinates";
 
-    // -------------------------------------------------------------------------------------------------------- TIMEZONE
+    // ------------------------------------------------------------------------------------ timezone
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_TIMEZONE} attribute maps.
