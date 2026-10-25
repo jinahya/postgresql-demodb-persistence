@@ -57,7 +57,7 @@ public abstract class MappedAirplaneData {
      */
     public static final String TABLE_NAME = "airplanes_data";
 
-    // --------------------------------------------------------------------------------------------------- AIRPLANE_CODE
+    // ------------------------------------------------------------------------------- airplane_code
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute
@@ -88,7 +88,7 @@ public abstract class MappedAirplaneData {
      */
     public static final int SIZE_MAX_AIRPLANE_CODE = COLUMN_LENGTH_AIRPLANE_CODE;
 
-    // ----------------------------------------------------------------------------------------------------------- MODEL
+    // --------------------------------------------------------------------------------------- model
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_MODEL} attribute maps. The
@@ -102,7 +102,7 @@ public abstract class MappedAirplaneData {
      */
     public static final String ATTRIBUTE_NAME_MODEL = "model";
 
-    // ----------------------------------------------------------------------------------------------------------- RANGE
+    // --------------------------------------------------------------------------------------- range
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_RANGE} attribute maps. The
@@ -116,7 +116,7 @@ public abstract class MappedAirplaneData {
      */
     public static final String ATTRIBUTE_NAME_RANGE = "range";
 
-    // ----------------------------------------------------------------------------------------------------------- SPEED
+    // --------------------------------------------------------------------------------------- speed
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_SPEED} attribute maps. The

@@ -82,7 +82,7 @@ public abstract class MappedRoute {
      */
     public static final String TABLE_NAME = "routes";
 
-    // -------------------------------------------------------------------------------------------------------- ROUTE_NO
+    // ------------------------------------------------------------------------------------ route_no
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute maps.
@@ -96,7 +96,7 @@ public abstract class MappedRoute {
      */
     public static final String ATTRIBUTE_NAME_ROUTE_NO = "routeNo";
 
-    // -------------------------------------------------------------------------------------------------------- VALIDITY
+    // ------------------------------------------------------------------------------------ validity
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_VALIDITY} attribute maps.
@@ -110,7 +110,7 @@ public abstract class MappedRoute {
      */
     public static final String ATTRIBUTE_NAME_VALIDITY = "validity";
 
-    // ----------------------------------------------------------------------------------------------- DEPARTURE_AIRPORT
+    // --------------------------------------------------------------------------- departure_airport
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_DEPARTURE_AIRPORT}
@@ -141,7 +141,7 @@ public abstract class MappedRoute {
      */
     public static final int SIZE_MAX_DEPARTURE_AIRPORT = COLUMN_LENGTH_DEPARTURE_AIRPORT;
 
-    // ------------------------------------------------------------------------------------------------- ARRIVAL_AIRPORT
+    // ----------------------------------------------------------------------------- arrival_airport
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_ARRIVAL_AIRPORT} attribute
@@ -172,7 +172,7 @@ public abstract class MappedRoute {
      */
     public static final int SIZE_MAX_ARRIVAL_AIRPORT = COLUMN_LENGTH_ARRIVAL_AIRPORT;
 
-    // --------------------------------------------------------------------------------------------------- AIRPLANE_CODE
+    // ------------------------------------------------------------------------------- airplane_code
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute
@@ -203,7 +203,7 @@ public abstract class MappedRoute {
      */
     public static final int SIZE_MAX_AIRPLANE_CODE = COLUMN_LENGTH_AIRPLANE_CODE;
 
-    // ---------------------------------------------------------------------------------------------------- DAYS_OF_WEEK
+    // -------------------------------------------------------------------------------- days_of_week
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_DAYS_OF_WEEK} attribute
@@ -217,7 +217,7 @@ public abstract class MappedRoute {
      */
     public static final String ATTRIBUTE_NAME_DAYS_OF_WEEK = "daysOfWeek";
 
-    // -------------------------------------------------------------------------------------------------- SCHEDULED_TIME
+    // ------------------------------------------------------------------------------ scheduled_time
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_SCHEDULED_TIME} attribute
@@ -231,7 +231,7 @@ public abstract class MappedRoute {
      */
     public static final String ATTRIBUTE_NAME_SCHEDULED_TIME = "scheduledTime";
 
-    // -------------------------------------------------------------------------------------------------------- DURATION
+    // ------------------------------------------------------------------------------------ duration
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_DURATION} attribute maps.

@@ -129,10 +129,10 @@ What follows from it, and what this module does:
   `CALL IDENTITY()`, neither of which the mode accepts, so the `flights` table was never created. The PostgreSQL
   platform's `SERIAL` and `select lastval()` are. A column definition cannot reach the read-back query, so the
   platform is the switch that has to flip.
-- `point` and `jsonb` go through `_TextConverter`s of the same kind. `PointConverter` maps a `point` as a `Point`, a
-  record of two `double`s, written `(x,y)`. `LanguageNamesConverter` maps each `jsonb` column, an object of one name
-  per language, as a `Map<String, String>` through Jakarta JSON Binding; the attributes have package-private
-  accessors, and are read and written a name at a time, by the language of a `Locale`.
+- `point` and `jsonb` go through `_TextConverter`s of the same kind. `PGpointConverter` maps a `point` as the
+  driver's `org.postgresql.geometric.PGpoint`, written `(x,y)`. `LanguageNamesConverter` maps each `jsonb` column, an
+  object of one name per language, as a `Map<String, String>` through Jakarta JSON Binding; the attributes have
+  package-private accessors, and are read and written a name at a time, by the language of a `Locale`.
 - Three `text` columns go through `_TextConverter`s too, for a type the text has no room for:
   `flights.status`, and the `timetable` view's, as a `FlightStatus` (`On Time` is no Java identifier, which is why
   `@Enumerated` cannot map it), `seats.fare_conditions` and `segments.fare_conditions` as a `FareConditions`, both

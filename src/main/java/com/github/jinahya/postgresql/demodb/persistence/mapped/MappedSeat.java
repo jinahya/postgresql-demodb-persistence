@@ -56,7 +56,7 @@ public abstract class MappedSeat {
      */
     public static final String TABLE_NAME = "seats";
 
-    // --------------------------------------------------------------------------------------------------- AIRPLANE_CODE
+    // ------------------------------------------------------------------------------- airplane_code
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute
@@ -88,7 +88,7 @@ public abstract class MappedSeat {
      */
     public static final int SIZE_MAX_AIRPLANE_CODE = COLUMN_LENGTH_AIRPLANE_CODE;
 
-    // --------------------------------------------------------------------------------------------------------- SEAT_NO
+    // ------------------------------------------------------------------------------------- seat_no
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_SEAT_NO} attribute maps.
@@ -102,7 +102,7 @@ public abstract class MappedSeat {
      */
     public static final String ATTRIBUTE_NAME_SEAT_NO = MappedSeatId.ATTRIBUTE_NAME_SEAT_NO;
 
-    // ------------------------------------------------------------------------------------------------- FARE_CONDITIONS
+    // ----------------------------------------------------------------------------- fare_conditions
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_FARE_CONDITIONS} attribute

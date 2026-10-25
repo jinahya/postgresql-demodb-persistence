@@ -56,7 +56,7 @@ public abstract class MappedBoardingPass {
      */
     public static final String TABLE_NAME = "boarding_passes";
 
-    // ------------------------------------------------------------------------------------------------------- TICKET_NO
+    // ----------------------------------------------------------------------------------- ticket_no
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_TICKET_NO} attribute maps.
@@ -71,7 +71,7 @@ public abstract class MappedBoardingPass {
     public static final String ATTRIBUTE_NAME_TICKET_NO =
             MappedBoardingPassId.ATTRIBUTE_NAME_TICKET_NO;
 
-    // ------------------------------------------------------------------------------------------------------- FLIGHT_ID
+    // ----------------------------------------------------------------------------------- flight_id
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute maps.
@@ -86,7 +86,7 @@ public abstract class MappedBoardingPass {
     public static final String ATTRIBUTE_NAME_FLIGHT_ID =
             MappedBoardingPassId.ATTRIBUTE_NAME_FLIGHT_ID;
 
-    // --------------------------------------------------------------------------------------------------------- SEAT_NO
+    // ------------------------------------------------------------------------------------- seat_no
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_SEAT_NO} attribute maps.
@@ -100,7 +100,7 @@ public abstract class MappedBoardingPass {
      */
     public static final String ATTRIBUTE_NAME_SEAT_NO = "seatNo";
 
-    // ----------------------------------------------------------------------------------------------------- BOARDING_NO
+    // --------------------------------------------------------------------------------- boarding_no
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_BOARDING_NO} attribute
@@ -114,7 +114,7 @@ public abstract class MappedBoardingPass {
      */
     public static final String ATTRIBUTE_NAME_BOARDING_NO = "boardingNo";
 
-    // --------------------------------------------------------------------------------------------------- BOARDING_TIME
+    // ------------------------------------------------------------------------------- boarding_time
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_BOARDING_TIME} attribute

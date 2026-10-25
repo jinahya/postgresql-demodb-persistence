@@ -62,7 +62,7 @@ public abstract class MappedFlight {
      */
     public static final String TABLE_NAME = "flights";
 
-    // ------------------------------------------------------------------------------------------------------- FLIGHT_ID
+    // ----------------------------------------------------------------------------------- flight_id
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute maps.
@@ -76,7 +76,7 @@ public abstract class MappedFlight {
      */
     public static final String ATTRIBUTE_NAME_FLIGHT_ID = "flightId";
 
-    // -------------------------------------------------------------------------------------------------------- ROUTE_NO
+    // ------------------------------------------------------------------------------------ route_no
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute maps.
@@ -90,7 +90,7 @@ public abstract class MappedFlight {
      */
     public static final String ATTRIBUTE_NAME_ROUTE_NO = "routeNo";
 
-    // ---------------------------------------------------------------------------------------------------------- STATUS
+    // -------------------------------------------------------------------------------------- status
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_STATUS} attribute maps. The
@@ -147,7 +147,7 @@ public abstract class MappedFlight {
     public static final String PATTERN_REGEXP_STATUS =
             "Scheduled|On Time|Delayed|Boarding|Departed|Arrived|Cancelled";
 
-    // --------------------------------------------------------------------------------------------- SCHEDULED_DEPARTURE
+    // ------------------------------------------------------------------------- scheduled_departure
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE}
@@ -161,7 +161,7 @@ public abstract class MappedFlight {
      */
     public static final String ATTRIBUTE_NAME_SCHEDULED_DEPARTURE = "scheduledDeparture";
 
-    // ----------------------------------------------------------------------------------------------- SCHEDULED_ARRIVAL
+    // --------------------------------------------------------------------------- scheduled_arrival
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL}
@@ -175,7 +175,7 @@ public abstract class MappedFlight {
      */
     public static final String ATTRIBUTE_NAME_SCHEDULED_ARRIVAL = "scheduledArrival";
 
-    // ------------------------------------------------------------------------------------------------ ACTUAL_DEPARTURE
+    // ---------------------------------------------------------------------------- actual_departure
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE} attribute
@@ -189,7 +189,7 @@ public abstract class MappedFlight {
      */
     public static final String ATTRIBUTE_NAME_ACTUAL_DEPARTURE = "actualDeparture";
 
-    // -------------------------------------------------------------------------------------------------- ACTUAL_ARRIVAL
+    // ------------------------------------------------------------------------------ actual_arrival
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL} attribute

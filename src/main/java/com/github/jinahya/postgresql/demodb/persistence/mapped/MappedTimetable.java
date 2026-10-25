@@ -54,7 +54,7 @@ public abstract class MappedTimetable {
      */
     public static final String TABLE_NAME = "timetable";
 
-    // ------------------------------------------------------------------------------------------------------- FLIGHT_ID
+    // ----------------------------------------------------------------------------------- flight_id
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute maps.
@@ -68,7 +68,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_FLIGHT_ID = "flightId";
 
-    // -------------------------------------------------------------------------------------------------------- ROUTE_NO
+    // ------------------------------------------------------------------------------------ route_no
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute maps.
@@ -82,7 +82,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_ROUTE_NO = "routeNo";
 
-    // ----------------------------------------------------------------------------------------------- DEPARTURE_AIRPORT
+    // --------------------------------------------------------------------------- departure_airport
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_DEPARTURE_AIRPORT} attribute
@@ -113,7 +113,7 @@ public abstract class MappedTimetable {
      */
     public static final int SIZE_MAX_DEPARTURE_AIRPORT = COLUMN_LENGTH_DEPARTURE_AIRPORT;
 
-    // ------------------------------------------------------------------------------------------------- ARRIVAL_AIRPORT
+    // ----------------------------------------------------------------------------- arrival_airport
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_ARRIVAL_AIRPORT} attribute
@@ -144,7 +144,7 @@ public abstract class MappedTimetable {
      */
     public static final int SIZE_MAX_ARRIVAL_AIRPORT = COLUMN_LENGTH_ARRIVAL_AIRPORT;
 
-    // ---------------------------------------------------------------------------------------------------------- STATUS
+    // -------------------------------------------------------------------------------------- status
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_STATUS} attribute maps. The
@@ -202,7 +202,7 @@ public abstract class MappedTimetable {
     public static final String PATTERN_REGEXP_STATUS =
             "Scheduled|On Time|Delayed|Boarding|Departed|Arrived|Cancelled";
 
-    // --------------------------------------------------------------------------------------------------- AIRPLANE_CODE
+    // ------------------------------------------------------------------------------- airplane_code
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute
@@ -233,7 +233,7 @@ public abstract class MappedTimetable {
      */
     public static final int SIZE_MAX_AIRPLANE_CODE = COLUMN_LENGTH_AIRPLANE_CODE;
 
-    // --------------------------------------------------------------------------------------------- SCHEDULED_DEPARTURE
+    // ------------------------------------------------------------------------- scheduled_departure
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE}
@@ -262,7 +262,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_SCHEDULED_DEPARTURE_LOCAL = "scheduledDepartureLocal";
 
-    // ------------------------------------------------------------------------------------------------ ACTUAL_DEPARTURE
+    // ---------------------------------------------------------------------------- actual_departure
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE} attribute
@@ -291,7 +291,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_ACTUAL_DEPARTURE_LOCAL = "actualDepartureLocal";
 
-    // ----------------------------------------------------------------------------------------------- SCHEDULED_ARRIVAL
+    // --------------------------------------------------------------------------- scheduled_arrival
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL} attribute
@@ -320,7 +320,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_SCHEDULED_ARRIVAL_LOCAL = "scheduledArrivalLocal";
 
-    // -------------------------------------------------------------------------------------------------- ACTUAL_ARRIVAL
+    // ------------------------------------------------------------------------------ actual_arrival
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL} attribute
@@ -334,7 +334,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_ACTUAL_ARRIVAL = "actualArrival";
 
-    // -------------------------------------------------------------------------------------------- ACTUAL_ARRIVAL_LOCAL
+    // ------------------------------------------------------------------------ actual_arrival_local
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL_LOCAL}

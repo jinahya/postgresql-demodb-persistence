@@ -32,7 +32,7 @@
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.FareConditionsConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatusConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter</class>
@@ -90,7 +90,7 @@
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.FareConditionsConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatusConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter</class>

@@ -59,7 +59,7 @@ public abstract class MappedSegment {
      */
     public static final String TABLE_NAME = "segments";
 
-    // ------------------------------------------------------------------------------------------------------- TICKET_NO
+    // ----------------------------------------------------------------------------------- ticket_no
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_TICKET_NO} attribute maps.
@@ -73,7 +73,7 @@ public abstract class MappedSegment {
      */
     public static final String ATTRIBUTE_NAME_TICKET_NO = MappedSegmentId.ATTRIBUTE_NAME_TICKET_NO;
 
-    // ------------------------------------------------------------------------------------------------------- FLIGHT_ID
+    // ----------------------------------------------------------------------------------- flight_id
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute maps.
@@ -87,7 +87,7 @@ public abstract class MappedSegment {
      */
     public static final String ATTRIBUTE_NAME_FLIGHT_ID = MappedSegmentId.ATTRIBUTE_NAME_FLIGHT_ID;
 
-    // ------------------------------------------------------------------------------------------------- FARE_CONDITIONS
+    // ----------------------------------------------------------------------------- fare_conditions
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_FARE_CONDITIONS} attribute
@@ -129,7 +129,7 @@ public abstract class MappedSegment {
     public static final String PATTERN_REGEXP_FARE_CONDITIONS =
             MappedSeat.PATTERN_REGEXP_FARE_CONDITIONS;
 
-    // ----------------------------------------------------------------------------------------------------------- PRICE
+    // --------------------------------------------------------------------------------------- price
 
     /**
      * The name of the table column to which the {@value #ATTRIBUTE_NAME_PRICE} attribute maps. The
