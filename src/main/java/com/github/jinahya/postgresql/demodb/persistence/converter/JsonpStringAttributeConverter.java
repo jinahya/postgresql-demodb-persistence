@@ -35,13 +35,24 @@ import java.io.StringReader;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+/**
+ * An attribute converter between an attribute of a JSON-P type and its JSON text.
+ *
+ * @param <X> the attribute type.
+ */
 public abstract class JsonpStringAttributeConverter<X extends JsonValue>
         implements AttributeConverter<X, String> {
 
+    /**
+     * A converter for {@link JsonValue} attributes.
+     */
     @Converter(autoApply = false)
     public static class OfJsonValue
             extends JsonpStringAttributeConverter<JsonValue> {
 
+        /**
+         * Creates a new instance.
+         */
         public OfJsonValue() {
             super(JsonValue.class);
         }
@@ -55,46 +66,76 @@ public abstract class JsonpStringAttributeConverter<X extends JsonValue>
         }
     }
 
+    /**
+     * A converter for {@link JsonStructure} attributes.
+     */
     @Converter(autoApply = false)
     public static class OfJsonStructure
             extends _OfJsonStructure<JsonStructure> {
 
+        /**
+         * Creates a new instance.
+         */
         public OfJsonStructure() {
             super(JsonStructure.class);
         }
     }
 
+    /**
+     * A converter for {@link JsonObject} attributes.
+     */
     @Converter(autoApply = false)
     public static class OfJsonObject
             extends _OfJsonStructure<JsonObject> {
 
+        /**
+         * Creates a new instance.
+         */
         public OfJsonObject() {
             super(JsonObject.class);
         }
     }
 
+    /**
+     * A converter for {@link JsonArray} attributes.
+     */
     @Converter(autoApply = false)
     public static class OfJsonArray
             extends _OfJsonStructure<JsonArray> {
 
+        /**
+         * Creates a new instance.
+         */
         public OfJsonArray() {
             super(JsonArray.class);
         }
     }
 
+    /**
+     * A converter for {@link JsonString} attributes.
+     */
     @Converter(autoApply = false)
     public static class OfJsonString
             extends JsonpStringAttributeConverter<JsonString> {
 
+        /**
+         * Creates a new instance.
+         */
         public OfJsonString() {
             super(JsonString.class);
         }
     }
 
+    /**
+     * A converter for {@link JsonNumber} attributes.
+     */
     @Converter(autoApply = false)
     public static class OfJsonNumber
             extends JsonpStringAttributeConverter<JsonNumber> {
 
+        /**
+         * Creates a new instance.
+         */
         public OfJsonNumber() {
             super(JsonNumber.class);
         }
@@ -102,6 +143,11 @@ public abstract class JsonpStringAttributeConverter<X extends JsonValue>
 
     // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
 
+    /**
+     * Creates a new instance for the specified attribute class.
+     *
+     * @param attributeClass the attribute class.
+     */
     protected JsonpStringAttributeConverter(final Class<X> attributeClass) {
         super();
         this.attributeClass = Objects.requireNonNull(attributeClass, "attributeClass is null");

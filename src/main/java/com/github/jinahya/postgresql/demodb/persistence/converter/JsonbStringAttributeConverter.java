@@ -30,6 +30,11 @@ import jakarta.persistence.AttributeConverter;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
+/**
+ * An attribute converter between an attribute of type {@code X} and its JSON text, through JSON-B.
+ *
+ * @param <X> the attribute type.
+ */
 public abstract class JsonbStringAttributeConverter<X>
         implements AttributeConverter<X, String> {
 
@@ -39,6 +44,11 @@ public abstract class JsonbStringAttributeConverter<X>
 
     // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
 
+    /**
+     * Creates a new instance for the specified attribute type.
+     *
+     * @param attributeType the attribute type.
+     */
     protected JsonbStringAttributeConverter(final Type attributeType) {
         super();
         this.attributeType = Objects.requireNonNull(attributeType, "attributeType is null");
