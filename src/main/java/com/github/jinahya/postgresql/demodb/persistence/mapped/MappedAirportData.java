@@ -20,7 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringConverter;
+import com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringAttributeConverter;
 import com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter;
 import com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter;
 import jakarta.json.JsonObject;
@@ -48,7 +48,7 @@ import java.util.function.Supplier;
  * The {@value MappedAirportData#COLUMN_NAME_AIRPORT_NAME},
  * {@value MappedAirportData#COLUMN_NAME_CITY} and {@value MappedAirportData#COLUMN_NAME_COUNTRY}
  * columns are {@code jsonb}, an object of one name per language, keyed {@code en}, {@code ru}, ...;
- * each is mapped as a {@link JsonObject}, through a {@link JsonpStringConverter.OfJsonObject},
+ * each is mapped as a {@link JsonObject}, through a {@link JsonpStringAttributeConverter.OfJsonObject},
  * with package-private accessors, and is read and written a name at a time, by the language of a
  * {@link Locale}. The {@code airports} view, see {@link MappedAirport}, picks the session's
  * language out of them.
@@ -571,21 +571,21 @@ public abstract class MappedAirportData {
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = JsonpStringConverter.OfJsonObject.class)
+    @Convert(converter = JsonpStringAttributeConverter.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_AIRPORT_NAME, nullable = false, insertable = true, updatable = true)
     private JsonObject airportName;
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = JsonpStringConverter.OfJsonObject.class)
+    @Convert(converter = JsonpStringAttributeConverter.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_CITY, nullable = false, insertable = true, updatable = true)
     private JsonObject city;
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = JsonpStringConverter.OfJsonObject.class)
+    @Convert(converter = JsonpStringAttributeConverter.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_COUNTRY, nullable = false, insertable = true, updatable = true)
     private JsonObject country;

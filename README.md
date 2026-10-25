@@ -132,9 +132,9 @@ What follows from it, and what this module does:
 - `point` goes through a `_TextConverter` of the same kind. `PGpointConverter` maps it as the driver's
   `org.postgresql.geometric.PGpoint`, written `(x,y)`.
 - Each `jsonb` column, an object of one name per language, is mapped as a JSON-P `JsonObject` through
-  `JsonpStringConverter.OfJsonObject`, whose database side is a plain `String`, not a type variable; the attributes
+  `JsonpStringAttributeConverter.OfJsonObject`, whose database side is a plain `String`, not a type variable; the attributes
   have package-private accessors, and are read and written a name at a time, by the language of a `Locale`.
-  `JsonpStringConverter` has a converter for each JSON-P type, `OfJsonValue`, `OfJsonStructure`, `OfJsonObject`,
+  `JsonpStringAttributeConverter` has a converter for each JSON-P type, `OfJsonValue`, `OfJsonStructure`, `OfJsonObject`,
   `OfJsonArray`, `OfJsonString` and `OfJsonNumber`; each reads one JSON value, rejects anything after it, and rejects
   a value of another type. EclipseLink hands it the column as a `String` too, not the driver's `PGobject`.
 - Three `text` columns go through `_TextConverter`s too, for a type the text has no room for:

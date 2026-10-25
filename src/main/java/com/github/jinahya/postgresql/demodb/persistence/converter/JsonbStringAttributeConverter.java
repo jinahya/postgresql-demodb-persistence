@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence.converter;
  * #L%
  */
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbException;
@@ -28,17 +30,37 @@ import jakarta.persistence.AttributeConverter;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
-public abstract class JsonbStringConverter<X>
+public abstract class JsonbStringAttributeConverter<X>
         implements AttributeConverter<X, String> {
 
     // -----------------------------------------------------------------------------------------------------------------
-    private static final Jsonb JSONB = JsonbBuilder.create();
+    private static final System.Logger LOGGER =
+            System.getLogger(JsonbStringAttributeConverter.class.getName());
 
     // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
 
-    protected JsonbStringConverter(final Type attributeType) {
+    protected JsonbStringAttributeConverter(final Type attributeType) {
         super();
         this.attributeType = Objects.requireNonNull(attributeType, "attributeType is null");
+    }
+
+    // ------------------------------------------------------------------------------------------------------- LIFECYCLE
+
+    // both called only when the provider obtains this converter through CDI (jakarta.persistence.bean.manager);
+    // without one, the provider calls no lifecycle method, and there is no jsonb to convert with
+    @PostConstruct
+    private void createJsonb() {
+        jsonb = JsonbBuilder.create();
+    }
+
+    @PreDestroy
+    private void closeJsonb() {
+        try {
+            jsonb.close();
+        } catch (final Exception e) {
+            LOGGER.log(System.Logger.Level.WARNING, "failed to close " + jsonb, e);
+        }
+        jsonb = null;
     }
 
     // ---------------------------------------------------------------------------------------------- AttributeConverter
@@ -49,7 +71,7 @@ public abstract class JsonbStringConverter<X>
             return null;
         }
         try {
-            return JSONB.toJson(attribute, attributeType);
+            return jsonb.toJson(attribute, attributeType);
         } catch (final JsonbException jsonbe) {
             throw new IllegalArgumentException("failed to write " + attribute, jsonbe);
         }
@@ -61,7 +83,7 @@ public abstract class JsonbStringConverter<X>
             return null;
         }
         try {
-            return JSONB.fromJson(dbData, attributeType);
+            return jsonb.fromJson(dbData, attributeType);
         } catch (final JsonbException jsonbe) {
             throw new IllegalArgumentException(
                     "not a JSON " + attributeType.getTypeName() + ": " + dbData, jsonbe);
@@ -70,5 +92,7 @@ public abstract class JsonbStringConverter<X>
 
     // -----------------------------------------------------------------------------------------------------------------
     private final Type attributeType;
+
+    private Jsonb jsonb;
 }
 
