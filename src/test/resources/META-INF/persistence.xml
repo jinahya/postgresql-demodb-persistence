@@ -29,11 +29,11 @@
     <!--    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
     <!--        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter$OfString</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGIntervalConverter$OfPostgres</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringConverter$OfJsonObject</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringAttributeConverter$OfJsonObject</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.FareConditionsConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatusConverter</class>
@@ -89,11 +89,11 @@
     <!--    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
     <!--    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter$OfString</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGIntervalConverter$OfPostgres</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringConverter$OfJsonObject</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringAttributeConverter$OfJsonObject</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.FareConditionsConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatusConverter</class>

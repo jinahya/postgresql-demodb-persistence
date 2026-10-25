@@ -98,7 +98,7 @@ to Java serialization for any other type it does not know, which fails.
 
 What follows from it, and what this module does:
 
-- `integer[]` and `interval` go through an `AttributeConverter` each, `IntegerListArrayConverter` (`List<Integer>`) and
+- `integer[]` and `interval` go through an `AttributeConverter` each, `IntegerListArrayAttributeConverter.OfString` (`List<Integer>`) and
   `PGIntervalConverter.OfPostgres` (`PGInterval`), whose database side is `String`, so that both providers bind the
   text on a write. The catch is the read: Hibernate hands a converter the column the way its database side says,
   EclipseLink hands it the driver's raw object whatever it says, and a method declared on `String` casts, and fails,
@@ -107,18 +107,11 @@ What follows from it, and what this module does:
   to `String` without overriding the methods, which is what keeps the cast out. A database side declared as `Object`
   was tried first: reads work, but neither provider can write through it, Hibernate having no JDBC type to bind and
   EclipseLink guessing one from the attribute.
-- `IntegerListArrayConverter` is an `_ListArrayConverter<E, Y>`, which owns the array literal -- braces, commas, quotes,
-  backslash escapes, `NULL`, matched strictly by a regular expression, one dimension only -- and the shapes an array
-  arrives in, a `java.sql.Array` or a Java array included, and applies an element converter, here
-  `IntegerConverter`, to each element; any other one-dimensional array type is a subclass with its own element
-  converter.
-- `IntegerConverter` and `IntegerListArrayConverter` are CDI beans as well, `@Dependent`, and `IntegerListArrayConverter` has an `@Inject`
-  constructor which takes its element converter. A provider handed a `BeanManager` through
-  `jakarta.persistence.bean.manager` obtains its converter instances from CDI, as the specification has required
-  since Jakarta Persistence 2.2 in a container and both providers do in Java SE too; one without uses the no-arg
-  constructor, which builds the element converter itself. Two Weld tests prove it, under each provider: the
-  container resolves an alternative element converter into the array converter, and a `Route` read back through
-  the in-memory unit, with Weld's `BeanManager` handed to the provider, is converted by that alternative.
+- `IntegerListArrayAttributeConverter` holds all of it in one file: the integer array literal -- braces, commas,
+  `NULL`; an integer never needs quotes -- and the shapes an array arrives in, a `java.sql.Array` or a Java array
+  included. It cannot be a plain class bound to `String`, for the cast above, so it declares the database side as a
+  type variable itself, and its nested `OfString` binds it to `String`; an attribute names
+  `IntegerListArrayAttributeConverter.OfString`.
 - `flights.flight_id` is `GENERATED ALWAYS AS IDENTITY`, which `information_schema.columns` shows as `is_identity`,
   not as a default; it is `@GeneratedValue(IDENTITY)`, and the only generated identifier in the schema.
 - A read-only foreign-key attribute, and the generated identifier, carry no `@NotNull`: the units validate on
@@ -132,9 +125,9 @@ What follows from it, and what this module does:
 - `point` goes through a `_TextConverter` of the same kind. `PGpointConverter` maps it as the driver's
   `org.postgresql.geometric.PGpoint`, written `(x,y)`.
 - Each `jsonb` column, an object of one name per language, is mapped as a JSON-P `JsonObject` through
-  `JsonpStringConverter.OfJsonObject`, whose database side is a plain `String`, not a type variable; the attributes
+  `JsonpStringAttributeConverter.OfJsonObject`, whose database side is a plain `String`, not a type variable; the attributes
   have package-private accessors, and are read and written a name at a time, by the language of a `Locale`.
-  `JsonpStringConverter` has a converter for each JSON-P type, `OfJsonValue`, `OfJsonStructure`, `OfJsonObject`,
+  `JsonpStringAttributeConverter` has a converter for each JSON-P type, `OfJsonValue`, `OfJsonStructure`, `OfJsonObject`,
   `OfJsonArray`, `OfJsonString` and `OfJsonNumber`; each reads one JSON value, rejects anything after it, and rejects
   a value of another type. EclipseLink hands it the column as a `String` too, not the driver's `PGobject`.
 - Three `text` columns go through `_TextConverter`s too, for a type the text has no room for:
@@ -167,7 +160,7 @@ either of these.
 | `integer[]` | `Integer[]`, `int[]`, `long[]`, `List<Integer>`, `Set<Integer>` | reads and writes natively, no cast needed | fails: serialized to `bytea` |
 | `integer[]` | `Number[]` | reads; the write sends `bytea[]` | fails |
 | `integer[]` | `Object[]` | fails both ways, `UnsupportedOperationException` | fails |
-| `integer[]` | `List<Integer>` through `IntegerListArrayConverter` | works | works |
+| `integer[]` | `List<Integer>` through `IntegerListArrayAttributeConverter.OfString` | works | works |
 
 So Hibernate maps `Duration` to a real `interval` behind one property, since 6.2, and any typed array or collection
 of a basic type to a SQL array, since 6.1 ([migration guide](https://docs.hibernate.org/orm/6.1/migration-guide/));

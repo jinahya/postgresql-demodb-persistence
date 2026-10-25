@@ -35,12 +35,12 @@ import java.io.StringReader;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-public abstract class JsonpStringConverter<X extends JsonValue>
+public abstract class JsonpStringAttributeConverter<X extends JsonValue>
         implements AttributeConverter<X, String> {
 
     @Converter(autoApply = false)
     public static class OfJsonValue
-            extends JsonpStringConverter<JsonValue> {
+            extends JsonpStringAttributeConverter<JsonValue> {
 
         public OfJsonValue() {
             super(JsonValue.class);
@@ -48,7 +48,7 @@ public abstract class JsonpStringConverter<X extends JsonValue>
     }
 
     private static class _OfJsonStructure<X extends JsonStructure>
-            extends JsonpStringConverter<X> {
+            extends JsonpStringAttributeConverter<X> {
 
         _OfJsonStructure(final Class<X> attributeClass) {
             super(attributeClass);
@@ -84,7 +84,7 @@ public abstract class JsonpStringConverter<X extends JsonValue>
 
     @Converter(autoApply = false)
     public static class OfJsonString
-            extends JsonpStringConverter<JsonString> {
+            extends JsonpStringAttributeConverter<JsonString> {
 
         public OfJsonString() {
             super(JsonString.class);
@@ -93,7 +93,7 @@ public abstract class JsonpStringConverter<X extends JsonValue>
 
     @Converter(autoApply = false)
     public static class OfJsonNumber
-            extends JsonpStringConverter<JsonNumber> {
+            extends JsonpStringAttributeConverter<JsonNumber> {
 
         public OfJsonNumber() {
             super(JsonNumber.class);
@@ -102,7 +102,7 @@ public abstract class JsonpStringConverter<X extends JsonValue>
 
     // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
 
-    protected JsonpStringConverter(final Class<X> attributeClass) {
+    protected JsonpStringAttributeConverter(final Class<X> attributeClass) {
         super();
         this.attributeClass = Objects.requireNonNull(attributeClass, "attributeClass is null");
     }

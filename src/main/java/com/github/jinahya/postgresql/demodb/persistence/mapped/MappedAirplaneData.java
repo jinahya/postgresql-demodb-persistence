@@ -20,7 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringConverter;
+import com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringAttributeConverter;
 import jakarta.json.JsonObject;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  * <p>
  * The {@value MappedAirplaneData#COLUMN_NAME_MODEL} column is {@code jsonb}, an object of one name
  * per language, keyed {@code en}, {@code ru}, ...; it is mapped as a {@link JsonObject}, through a
- * {@link JsonpStringConverter.OfJsonObject}, with package-private accessors, and is read and
+ * {@link JsonpStringAttributeConverter.OfJsonObject}, with package-private accessors, and is read and
  * written a name at a time, by the language of a {@link Locale}. Writing it back needs the
  * driver to leave its type to the server, {@code stringtype=unspecified} on the JDBC URL. The
  * {@code airplanes} view, see {@link MappedAirplane}, picks the session's language out of it.
@@ -349,7 +349,7 @@ public abstract class MappedAirplaneData {
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = JsonpStringConverter.OfJsonObject.class)
+    @Convert(converter = JsonpStringAttributeConverter.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_MODEL, nullable = false, insertable = true, updatable = true)
     private JsonObject model;
