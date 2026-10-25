@@ -20,17 +20,24 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.PGIntervalConverter;
+import com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter;
 import io.hypersistence.utils.hibernate.type.range.Range;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.postgres.extensions.converters.OffsetDateTimeRangeConverter;
 import org.jooq.postgres.extensions.types.OffsetDateTimeRange;
+import org.postgresql.util.PGInterval;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Verifies the mappings of {@link Route} against the installed {@code demo} database.
@@ -40,6 +47,43 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class Route_Persistence_IT
         extends _Entity_Persistence_IT<Route> {
+
+    private static final boolean HIBERNATE = isPresent("org.hibernate.usertype.UserType");
+
+    private static boolean isPresent(final String className) {
+        try {
+            Class.forName(className, false, Route_Persistence_IT.class.getClassLoader());
+            return true;
+        } catch (final ClassNotFoundException cnfe) {
+            return false;
+        }
+    }
+
+    private static PGInterval interval(final String text) {
+        try {
+            return new PGInterval(text);
+        } catch (final SQLException sqle) {
+            throw new IllegalArgumentException("not an interval: " + text, sqle);
+        }
+    }
+
+    // reflectively, for the EclipseLink run compiles this class without Hibernate ORM, which
+    // PostgreSQLIntervalType's supertypes are of
+    private static Duration hypersistenceDuration(final String text) {
+        try {
+            final var rs = mock(ResultSet.class);
+            when(rs.getObject(1)).thenReturn(interval(text));
+            final var type = Class.forName(
+                    "io.hypersistence.utils.hibernate.type.interval.PostgreSQLIntervalType");
+            final var nullSafeGet = Arrays.stream(type.getMethods())
+                    .filter(m -> m.getName().equals("nullSafeGet") && m.getParameterCount() == 4)
+                    .findFirst().orElseThrow();
+            return (Duration) nullSafeGet.invoke(type.getField("INSTANCE").get(null), rs, 1, null,
+                                                 null);
+        } catch (final ReflectiveOperationException | SQLException e) {
+            throw new IllegalStateException("failed to read " + text + " by hypersistence-utils", e);
+        }
+    }
 
     private static final DateTimeFormatter HYPERSISTENCE_TIMESTAMP =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ssx");
@@ -68,7 +112,7 @@ class Route_Persistence_IT
                 .setParameter(2, entityInstance.getValidity())
                 .getSingleResult();
         log.info("duration: {}, text: {}", duration, text);
-        assertThat(new PGIntervalConverter.OfPostgres().convertToEntityAttribute(text))
+        assertThat(new IntervalPostgresAttributeConverter.OfString().convertToEntityAttribute(text))
                 .as("duration of %s, as the server reads it", entityInstance)
                 .isEqualTo(duration);
         entityManager.clear();
@@ -96,13 +140,27 @@ class Route_Persistence_IT
                 .allSatisfy(d -> assertThat(d).isBetween(1, 7));
         assertThat(instance.getDuration()).as("duration of %s", instance).isNotNull()
                 .satisfies(d -> {
-                    assertThat(d.getYears()).as("years").isZero();
-                    assertThat(d.getMonths()).as("months").isZero();
-                    assertThat(d.getHours() * 60 + d.getMinutes()).as("minutes").isPositive();
+                    assertThat(d.months()).as("months").isZero();
+                    assertThat(d.days()).as("days").isZero();
+                    assertThat(d.microseconds()).as("microseconds").isPositive();
                 });
         assertThat(instance.getDepartureAirportData()).as("departure of %s", instance).isNotNull();
         assertThat(instance.getArrivalAirportData()).as("arrival of %s", instance).isNotNull();
         assertThat(instance.getAirplaneData()).as("airplane of %s", instance).isNotNull();
+        { // the duration's text, read by hypersistence-utils
+            if (HIBERNATE) {
+                // PostgreSQLIntervalType reads the driver's PGInterval from a result set, never text, so
+                // the text is handed to it as the object the driver would have returned
+                final var text = new IntervalPostgresAttributeConverter.OfString()
+                        .convertToDatabaseColumn(instance.getDuration());
+                final var duration = hypersistenceDuration(text);
+                log.info("hypersistence-utils: {} -> {}", text, duration);
+                assertThat(duration).as("duration").isPositive();
+            } else {
+                // PostgreSQLIntervalType is a Hibernate UserType, which the EclipseLink run cannot load
+                log.info("hypersistence-utils: skipped, no Hibernate ORM on the class path");
+            }
+        }
         { // the validity's text, read by hypersistence-utils
             final var validity = Range.zonedDateTimeRange(instance.getValidity());
             log.info("hypersistence-utils: {} -> {} ({})", instance.getValidity(), validity,

@@ -20,8 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatus;
-import com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatusConverter;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight.FlightStatus;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight.FlightStatusConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;

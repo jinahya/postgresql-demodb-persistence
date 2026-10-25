@@ -21,7 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import org.postgresql.geometric.PGpoint;
-import org.postgresql.util.PGInterval;
+import com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter.PostgresInterval;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -113,9 +113,9 @@ final class __Random_TestUtils {
     /**
      * Returns an interval of hours and minutes only, from half an hour to fifteen hours.
      */
-    static PGInterval duration() {
+    static PostgresInterval duration() {
         final var minutes = ThreadLocalRandom.current().nextInt(30, 900);
-        return new PGInterval(0, 0, 0, minutes / 60, minutes % 60, 0.0d);
+        return new PostgresInterval(0, 0, minutes * 60_000_000L);
     }
 
     /**

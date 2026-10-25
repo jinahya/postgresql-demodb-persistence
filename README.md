@@ -99,7 +99,7 @@ to Java serialization for any other type it does not know, which fails.
 What follows from it, and what this module does:
 
 - `integer[]` and `interval` go through an `AttributeConverter` each, `IntegerListArrayAttributeConverter.OfString` (`List<Integer>`) and
-  `PGIntervalConverter.OfPostgres` (`PGInterval`), whose database side is `String`, so that both providers bind the
+  `IntervalPostgresAttributeConverter.OfString` (`PostgresInterval`), whose database side is `String`, so that both providers bind the
   text on a write. The catch is the read: Hibernate hands a converter the column the way its database side says,
   EclipseLink hands it the driver's raw object whatever it says, and a method declared on `String` casts, and fails,
   before the converter runs. So the base class, `_TextConverter<X, Y>`, declares the database side as a type variable
@@ -130,11 +130,12 @@ What follows from it, and what this module does:
   `JsonpStringAttributeConverter` has a converter for each JSON-P type, `OfJsonValue`, `OfJsonStructure`, `OfJsonObject`,
   `OfJsonArray`, `OfJsonString` and `OfJsonNumber`; each reads one JSON value, rejects anything after it, and rejects
   a value of another type. EclipseLink hands it the column as a `String` too, not the driver's `PGobject`.
-- Three `text` columns go through `_TextConverter`s too, for a type the text has no room for:
-  `flights.status`, and the `timetable` view's, as a `FlightStatus` (`On Time` is no Java identifier, which is why
-  `@Enumerated` cannot map it), `seats.fare_conditions` and `segments.fare_conditions` as a `FareConditions`, both
-  enums of the values the check constraints allow, and `airports_data.timezone`, and the `airports` view's, as a
-  `ZoneId`, through `FlightStatusConverter`, `FareConditionsConverter` and `ZoneIdConverter`.
+- Three `text` columns go through converters too, for a type the text has no room for: `flights.status`, and the
+  `timetable` view's, as a `MappedFlight.FlightStatus` (`On Time` is no Java identifier, which is why `@Enumerated`
+  cannot map it), `seats.fare_conditions` and `segments.fare_conditions` as a `MappedSeat.FareConditions`, both enums
+  of the values the check constraints allow, and `airports_data.timezone`, and the `airports` view's, as a `ZoneId`,
+  through `MappedFlight.FlightStatusConverter`, `MappedSeat.FareConditionsConverter` and `ZoneIdConverter`. An enum
+  and its converter, specific to a column, are nested in the mapped class of the column's table.
 - `tstzrange` stays `String`, the text both providers read alike: the test entity over `routes` writes the column
   through its embedded identifier, and the specification has no conversion applied to an identifier's attributes,
   so a converted `validity` would leave the entity the same value twice, once converted and once as text.
@@ -155,8 +156,7 @@ either of these.
 | `interval` | `Duration`, as is | fails: `Duration` is a number to it, `Bad value for type BigDecimal` | fails: the driver's `PGInterval` is not converted |
 | `interval` | `Duration` with `hibernate.type.preferred_duration_jdbc_type=INTERVAL_SECOND` | reads `PT5H5M`, writes `02:05:00` | no such setting |
 | `interval` | `org.postgresql.util.PGInterval` | fails: serialized, `StreamCorruptedException` | fails: serialized to `bytea` |
-| `interval` | `Duration` through `IntervalConverter` | works | works |
-| `interval` | `PGInterval` through `PGIntervalConverter.OfPostgres` | works | works |
+| `interval` | `PostgresInterval` through `IntervalPostgresAttributeConverter.OfString` | works | works |
 | `integer[]` | `Integer[]`, `int[]`, `long[]`, `List<Integer>`, `Set<Integer>` | reads and writes natively, no cast needed | fails: serialized to `bytea` |
 | `integer[]` | `Number[]` | reads; the write sends `bytea[]` | fails |
 | `integer[]` | `Object[]` | fails both ways, `UnsupportedOperationException` | fails |
@@ -171,36 +171,28 @@ route is `@Array` over `java.sql.Array` inside object-relational structures
 entity. No portable converter exists off the shelf: [threeten-jpa](https://github.com/marschall/threeten-jpa) has none
 for PostgreSQL intervals, the driver has no `Duration` support of its own, and the Hibernate-only
 [Hypersistence type](https://vladmihalcea.com/map-postgresql-interval-java-duration-hibernate/) is a `@Type`, not a
-converter. The rule `IntervalConverter` applies, rejecting a non-zero year or month because a `Duration` cannot hold
-one, is the one [jdbi's mapper](https://jdbi.org/apidocs/org/jdbi/v3/postgres/DurationColumnMapperFactory.html)
-applies too.
+converter.
 
 ### The shapes an `interval` arrives in
 
 The text of an `interval` depends on the server's `IntervalStyle`, which a JDBC session runs with at the server
 default, `postgres`; the driver does not change it. Hibernate hands a `String`-typed attribute or converter the text,
 `getString`; EclipseLink hands it the driver's `PGInterval`, whose `toString()` is the driver's own form and does not
-depend on the style. What `IntervalConverter` parses:
+depend on the style:
 
-| `IntervalStyle` | Hibernate (`getString`) | EclipseLink (`PGInterval.toString()`) | Parsed |
-|---|---|---|---|
-| `postgres`, the default | `1 day 02:05:00`, `-1 days -02:05:00` | `1 days 2 hours 5 mins`, `-1 days -2 hours -5 mins` | both |
-| `postgres_verbose` | `@ 1 day 2 hours 5 mins`, `@ 1 day 2 hours 5 mins ago` | as above | both; `ago` negates the whole |
-| `sql_standard` | `1 2:05:00`, `-1 2:05:00`, `+1-2 +3 +4:05:06.5` | `0 secs`, the driver misreads the style | Hibernate's; the leading sign applies to the whole. EclipseLink's `0 secs` parses, to the wrong value, which is the driver's doing |
-| `iso_8601` | `P1DT2H5M`, `P-1DT-2H-5M` | as above | both |
+| `IntervalStyle` | Hibernate (`getString`) | EclipseLink (`PGInterval.toString()`) |
+|---|---|---|
+| `postgres`, the default | `1 day 02:05:00`, `-1 days -02:05:00` | `1 days 2 hours 5 mins`, `-1 days -2 hours -5 mins` |
+| `postgres_verbose` | `@ 1 day 2 hours 5 mins`, `@ 1 day 2 hours 5 mins ago` | as above |
+| `sql_standard` | `1 2:05:00`, `-1 2:05:00`, `+1-2 +3 +4:05:06.5` | `0 secs`, the driver misreads the style |
+| `iso_8601` | `P1DT2H5M`, `P-1DT-2H-5M` | as above |
 
-Also parsed: fractional seconds, and the verbose words with zero years and months, `0 years 0 mons 1 days ...`. Weeks
-never appear in output, the server prints them as days. A non-zero year or month is rejected in every style, as is
-anything that is not an interval. So every shape the server prints, and the driver's own, is handled; the one case
-beyond repair is EclipseLink under `sql_standard`, where the driver itself has already lost the value.
-
-`routes.duration` is mapped as the driver's `PGInterval`, which keeps the months and the days apart from the time, as
-the column does, through `PGIntervalConverter`. It has a converter for each style, nested, `OfPostgres`,
-`OfPostgresVerbose`, `OfSqlStandard` and `OfIso8601`; each reads, and writes, the text of its own style only, and
-rejects another's rather than misread it. The JDBC URL picks the style, `options=-c IntervalStyle=postgres`, whatever
-the server's, the database's or the role's default, and the attribute names the converter of the same style,
-`@Convert(converter = PGIntervalConverter.OfPostgres.class)`. EclipseLink still hands the converter the driver's
-`PGInterval`, which it copies, so the pinned `postgres` is what keeps the driver from misreading.
+`routes.duration` is mapped as `IntervalPostgresAttributeConverter.PostgresInterval`, a record of the months, the
+days and the microseconds, as the column keeps them, through `IntervalPostgresAttributeConverter.OfString`, with no
+class of the driver's in the code. It reads, and writes, the text of the `postgres` style only, which the JDBC URL
+pins, `options=-c IntervalStyle=postgres`, whatever the server's, the database's or the role's default. EclipseLink
+still hands the converter the driver's `PGInterval`, which it reads through the object's getters, by reflection, so
+the driver is needed at run time only; the pinned `postgres` is what keeps the driver from misreading.
 
 ### `jsonb`, and why not `@Lob`
 

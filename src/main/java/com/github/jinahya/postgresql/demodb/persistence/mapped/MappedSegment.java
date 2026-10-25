@@ -20,8 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.FareConditions;
-import com.github.jinahya.postgresql.demodb.persistence.converter.FareConditionsConverter;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat.FareConditions;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat.FareConditionsConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;

@@ -20,10 +20,10 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatus;
-import com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatusConverter;
+import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
+import jakarta.persistence.Converter;
 import jakarta.persistence.Convert;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,6 +33,7 @@ import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -56,6 +57,118 @@ import java.util.Objects;
  */
 @MappedSuperclass
 public abstract class MappedFlight {
+
+    /**
+     * The status of a flight, the value of a {@code flights.status} column, and of the
+     * {@code timetable} view's; the values the {@code flight_status_check} constraint allows.
+     *
+     * @see FlightStatusConverter
+     */
+    public enum FlightStatus {
+
+        /**
+         * {@code Scheduled}.
+         */
+        SCHEDULED("Scheduled"),
+
+        /**
+         * {@code On Time}.
+         */
+        ON_TIME("On Time"),
+
+        /**
+         * {@code Delayed}.
+         */
+        DELAYED("Delayed"),
+
+        /**
+         * {@code Boarding}.
+         */
+        BOARDING("Boarding"),
+
+        /**
+         * {@code Departed}.
+         */
+        DEPARTED("Departed"),
+
+        /**
+         * {@code Arrived}.
+         */
+        ARRIVED("Arrived"),
+
+        /**
+         * {@code Cancelled}.
+         */
+        CANCELLED("Cancelled");
+
+        /**
+         * Returns the constant of the specified column value.
+         *
+         * @param text the column value.
+         * @return the constant whose {@link #text() text} is {@code text}.
+         * @throws NullPointerException     if {@code text} is {@code null}.
+         * @throws IllegalArgumentException if no constant's text is {@code text}.
+         */
+        public static FlightStatus valueOfText(final String text) {
+            Objects.requireNonNull(text, "text is null");
+            return Arrays.stream(values())
+                    .filter(v -> v.text.equals(text))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("no constant for '" + text + "'"));
+        }
+
+        FlightStatus(final String text) {
+            this.text = text;
+        }
+
+        /**
+         * Returns the column value of this constant.
+         *
+         * @return the column value of this constant.
+         */
+        public String text() {
+            return text;
+        }
+
+        private final String text;
+    }
+
+    /**
+     * Converts between a {@link FlightStatus} and its column value, {@link FlightStatus#text()}. The
+     * column is text, so both providers hand the converter a {@link String}.
+     * <p>
+     * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
+     * {@link jakarta.persistence.Convert @Convert}.
+     */
+    @Converter(autoApply = false)
+    public static class FlightStatusConverter
+            implements AttributeConverter<FlightStatus, String> {
+
+        /**
+         * Creates a new instance.
+         */
+        public FlightStatusConverter() {
+            super();
+        }
+
+        @Override
+        public String convertToDatabaseColumn(final FlightStatus attribute) {
+            return attribute == null ? null : attribute.text();
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @param dbData {@inheritDoc}
+         * @return the constant of {@code dbData}, or {@code null} if {@code dbData} is
+         *         {@code null}.
+         * @throws IllegalArgumentException if no constant's text is {@code dbData}.
+         */
+        @Override
+        public FlightStatus convertToEntityAttribute(final String dbData) {
+            return dbData == null ? null : FlightStatus.valueOfText(dbData);
+        }
+    }
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.

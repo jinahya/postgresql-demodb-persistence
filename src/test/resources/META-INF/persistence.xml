@@ -30,13 +30,12 @@
     <!--        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter$OfString</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGIntervalConverter$OfPostgres</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter$OfString</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringAttributeConverter$OfJsonObject</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.FareConditionsConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatusConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirplaneData</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirportData</class>
@@ -90,13 +89,12 @@
     <!--    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter$OfString</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGIntervalConverter$OfPostgres</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter$OfString</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringAttributeConverter$OfJsonObject</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.FareConditionsConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.FlightStatusConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirplaneData</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirportData</class>
@@ -123,7 +121,7 @@
       <!-- untyped, so that the server casts it; see README.md, "Column types the providers differ on" -->
       <!-- options=-c IntervalStyle=postgres: an interval is printed in the postgres style whatever the server's, -->
       <!-- database's or role's default; the driver's own PGInterval, which is what EclipseLink hands a converter, -->
-      <!-- misreads sql_standard, and a PGIntervalConverter is named for one style, OfPostgres for this one -->
+      <!-- misreads sql_standard, and IntervalPostgresAttributeConverter reads the postgres style only -->
       <property name="jakarta.persistence.jdbc.url"
                 value="jdbc:postgresql://localhost:5432/demo?stringtype=unspecified&amp;options=-c%20IntervalStyle=postgres"/>
       <property name="jakarta.persistence.jdbc.user" value="postgres"/>

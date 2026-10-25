@@ -20,16 +20,17 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.FareConditions;
-import com.github.jinahya.postgresql.demodb.persistence.converter.FareConditionsConverter;
+import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
+import jakarta.persistence.Converter;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -50,6 +51,99 @@ import java.util.Objects;
  */
 @MappedSuperclass
 public abstract class MappedSeat {
+
+    /**
+     * The fare conditions, the travel class, the value of a {@code seats.fare_conditions} column and
+     * of a {@code segments.fare_conditions} column; the values the {@code seat_fare_conditions_check}
+     * and {@code segments_fare_conditions_check} constraints allow.
+     *
+     * @see FareConditionsConverter
+     */
+    public enum FareConditions {
+
+        /**
+         * {@code Economy}.
+         */
+        ECONOMY("Economy"),
+
+        /**
+         * {@code Comfort}.
+         */
+        COMFORT("Comfort"),
+
+        /**
+         * {@code Business}.
+         */
+        BUSINESS("Business");
+
+        /**
+         * Returns the constant of the specified column value.
+         *
+         * @param text the column value.
+         * @return the constant whose {@link #text() text} is {@code text}.
+         * @throws NullPointerException     if {@code text} is {@code null}.
+         * @throws IllegalArgumentException if no constant's text is {@code text}.
+         */
+        public static FareConditions valueOfText(final String text) {
+            Objects.requireNonNull(text, "text is null");
+            return Arrays.stream(values())
+                    .filter(v -> v.text.equals(text))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("no constant for '" + text + "'"));
+        }
+
+        FareConditions(final String text) {
+            this.text = text;
+        }
+
+        /**
+         * Returns the column value of this constant.
+         *
+         * @return the column value of this constant.
+         */
+        public String text() {
+            return text;
+        }
+
+        private final String text;
+    }
+
+    /**
+     * Converts between a {@link FareConditions} and its column value, {@link FareConditions#text()}. The
+     * column is text, so both providers hand the converter a {@link String}.
+     * <p>
+     * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
+     * {@link jakarta.persistence.Convert @Convert}.
+     */
+    @Converter(autoApply = false)
+    public static class FareConditionsConverter
+            implements AttributeConverter<FareConditions, String> {
+
+        /**
+         * Creates a new instance.
+         */
+        public FareConditionsConverter() {
+            super();
+        }
+
+        @Override
+        public String convertToDatabaseColumn(final FareConditions attribute) {
+            return attribute == null ? null : attribute.text();
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @param dbData {@inheritDoc}
+         * @return the constant of {@code dbData}, or {@code null} if {@code dbData} is
+         *         {@code null}.
+         * @throws IllegalArgumentException if no constant's text is {@code dbData}.
+         */
+        @Override
+        public FareConditions convertToEntityAttribute(final String dbData) {
+            return dbData == null ? null : FareConditions.valueOfText(dbData);
+        }
+    }
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.

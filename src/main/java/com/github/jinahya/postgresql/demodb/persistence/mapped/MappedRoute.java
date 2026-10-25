@@ -21,7 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter;
-import com.github.jinahya.postgresql.demodb.persistence.converter.PGIntervalConverter;
+import com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -29,7 +29,6 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.postgresql.util.PGInterval;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -67,12 +66,13 @@ import java.util.Objects;
  * <p>
  * The {@value #COLUMN_NAME_DAYS_OF_WEEK} column is an {@code integer[]} and the
  * {@value #COLUMN_NAME_DURATION} column an {@code interval}, neither a type of Jakarta Persistence.
- * Each is mapped through a converter of this package, {@link IntegerListArrayAttributeConverter.OfString} and
- * {@link PGIntervalConverter.OfPostgres}, which carries it as the column's text form, so that no
- * provider feature is relied on; writing the text back needs the driver to leave its type to the
- * server, {@code stringtype=unspecified} on the JDBC URL. The interval is mapped as the driver's
- * {@link PGInterval}, which holds the months and the days apart from the time, as the column does;
- * its text is read in the {@code postgres} {@code IntervalStyle}, which the JDBC URL pins,
+ Each is mapped through a converter of this package,
+ * {@link IntegerListArrayAttributeConverter.OfString} and
+ * {@link IntervalPostgresAttributeConverter.OfString}, which carries it as the column's text form,
+ * so that no provider feature is relied on; writing the text back needs the driver to leave its type
+ * to the server, {@code stringtype=unspecified} on the JDBC URL. The interval is mapped as a
+ * {@link IntervalPostgresAttributeConverter.PostgresInterval}, which holds the months, the days and the time apart, as the column does; its
+ * text is read in the {@code postgres} {@code IntervalStyle}, which the JDBC URL pins,
  * {@code options=-c IntervalStyle=postgres}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -434,11 +434,11 @@ public abstract class MappedRoute {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_DURATION} attribute -- an {@code interval}
-     * column, mapped as a {@link PGInterval}.
+     * column, mapped as a {@link IntervalPostgresAttributeConverter.PostgresInterval}.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_DURATION} attribute.
      */
-    public PGInterval getDuration() {
+    public IntervalPostgresAttributeConverter.PostgresInterval getDuration() {
         return duration;
     }
 
@@ -448,7 +448,7 @@ public abstract class MappedRoute {
      *
      * @param duration new value for {@value #ATTRIBUTE_NAME_DURATION} attribute.
      */
-    public void setDuration(final PGInterval duration) {
+    public void setDuration(final IntervalPostgresAttributeConverter.PostgresInterval duration) {
         this.duration = duration;
     }
 
@@ -516,8 +516,8 @@ public abstract class MappedRoute {
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = PGIntervalConverter.OfPostgres.class)
+    @Convert(converter = IntervalPostgresAttributeConverter.OfString.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_DURATION, nullable = false, insertable = true, updatable = true)
-    private PGInterval duration;
+    private IntervalPostgresAttributeConverter.PostgresInterval duration;
 }

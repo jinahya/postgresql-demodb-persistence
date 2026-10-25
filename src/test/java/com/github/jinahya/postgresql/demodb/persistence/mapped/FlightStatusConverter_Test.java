@@ -1,4 +1,4 @@
-package com.github.jinahya.postgresql.demodb.persistence.converter;
+package com.github.jinahya.postgresql.demodb.persistence.mapped;
 
 /*-
  * #%L
@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence.converter;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight.FlightStatus;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight.FlightStatusConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
