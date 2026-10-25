@@ -177,7 +177,7 @@ public abstract class MappedAirportData {
      */
     public static final String ATTRIBUTE_NAME_TIMEZONE = "timezone";
 
-    // -----------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // STATIC_FACTORY_METHODS
 
     /**
@@ -199,7 +199,7 @@ public abstract class MappedAirportData {
         return instance;
     }
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -208,7 +208,7 @@ public abstract class MappedAirportData {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -250,7 +250,7 @@ public abstract class MappedAirportData {
         return Objects.hashCode(getAirportCode());
     }
 
-    // ----------------------------------------------------------------------------------------------------- airportCode
+    // --------------------------------------------------------------------------------- airportCode
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_AIRPORT_CODE} attribute.
@@ -556,7 +556,7 @@ public abstract class MappedAirportData {
         setTimezone(Optional.ofNullable(timezone).map(TimeZone::toZoneId).orElse(null));
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Size(min = SIZE_MIN_AIRPORT_CODE, max = SIZE_MAX_AIRPORT_CODE)
     @NotNull
     @Id
@@ -569,35 +569,35 @@ public abstract class MappedAirportData {
     )
     private String airportCode;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Convert(converter = JsonpStringAttributeConverter.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_AIRPORT_NAME, nullable = false, insertable = true, updatable = true)
     private JsonObject airportName;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Convert(converter = JsonpStringAttributeConverter.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_CITY, nullable = false, insertable = true, updatable = true)
     private JsonObject city;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Convert(converter = JsonpStringAttributeConverter.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_COUNTRY, nullable = false, insertable = true, updatable = true)
     private JsonObject country;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Convert(converter = PGpointConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_COORDINATES, nullable = false, insertable = true, updatable = true)
     private PGpoint coordinates;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Convert(converter = ZoneIdConverter.class)
     @Basic(optional = false)

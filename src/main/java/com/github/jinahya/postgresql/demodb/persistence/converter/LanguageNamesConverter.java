@@ -57,7 +57,7 @@ public class LanguageNamesConverter
      */
     private static final Jsonb JSONB = JsonbBuilder.create();
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -66,7 +66,7 @@ public class LanguageNamesConverter
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------------------ text
+    // ---------------------------------------------------------------------------------------- text
 
     @Override
     protected String toText(final Map<String, String> attribute) {

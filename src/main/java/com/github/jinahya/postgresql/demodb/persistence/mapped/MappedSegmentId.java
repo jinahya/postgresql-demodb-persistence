@@ -39,7 +39,7 @@ import java.util.function.Supplier;
 @MappedSuperclass
 public abstract class MappedSegmentId {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * The name of the attribute which maps the {@value MappedSegment#COLUMN_NAME_TICKET_NO} column.
@@ -47,7 +47,7 @@ public abstract class MappedSegmentId {
      */
     public static final String ATTRIBUTE_NAME_TICKET_NO = "ticketNo";
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * The name of the attribute which maps the {@value MappedSegment#COLUMN_NAME_FLIGHT_ID} column.
@@ -55,7 +55,7 @@ public abstract class MappedSegmentId {
      */
     public static final String ATTRIBUTE_NAME_FLIGHT_ID = "flightId";
 
-    // ------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // STATIC_FACTORY_METHODS
 
     /**
@@ -80,7 +80,7 @@ public abstract class MappedSegmentId {
         return instance;
     }
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -89,7 +89,7 @@ public abstract class MappedSegmentId {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -128,7 +128,7 @@ public abstract class MappedSegmentId {
         return Objects.hash(getTicketNo(), getFlightId());
     }
 
-    // -------------------------------------------------------------------------------------------------------- ticketNo
+    // ------------------------------------------------------------------------------------ ticketNo
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
@@ -149,7 +149,7 @@ public abstract class MappedSegmentId {
         this.ticketNo = ticketNo;
     }
 
-    // -------------------------------------------------------------------------------------------------------- flightId
+    // ------------------------------------------------------------------------------------ flightId
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
@@ -170,14 +170,14 @@ public abstract class MappedSegmentId {
         this.flightId = flightId;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = MappedSegment.COLUMN_NAME_TICKET_NO, nullable = false, insertable = true,
             updatable = false)
     private String ticketNo;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = MappedSegment.COLUMN_NAME_FLIGHT_ID, nullable = false, insertable = true,

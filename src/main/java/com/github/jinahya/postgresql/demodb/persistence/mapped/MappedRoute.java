@@ -248,7 +248,7 @@ public abstract class MappedRoute {
      */
     public static final String ATTRIBUTE_NAME_DURATION = "duration";
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -257,7 +257,7 @@ public abstract class MappedRoute {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -302,7 +302,7 @@ public abstract class MappedRoute {
         return Objects.hash(getRouteNo(), getValidity());
     }
 
-    // --------------------------------------------------------------------------------------------------------- routeNo
+    // ------------------------------------------------------------------------------------- routeNo
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
@@ -323,7 +323,7 @@ public abstract class MappedRoute {
         this.routeNo = routeNo;
     }
 
-    // -------------------------------------------------------------------------------------------------------- validity
+    // ------------------------------------------------------------------------------------ validity
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_VALIDITY} attribute -- a {@code tstzrange}
@@ -346,7 +346,7 @@ public abstract class MappedRoute {
         this.validity = validity;
     }
 
-    // ------------------------------------------------------------------------------------------------ departureAirport
+    // ---------------------------------------------------------------------------- departureAirport
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_DEPARTURE_AIRPORT} attribute, which is
@@ -360,7 +360,7 @@ public abstract class MappedRoute {
         return departureAirport;
     }
 
-    // -------------------------------------------------------------------------------------------------- arrivalAirport
+    // ------------------------------------------------------------------------------ arrivalAirport
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_ARRIVAL_AIRPORT} attribute, which is
@@ -374,7 +374,7 @@ public abstract class MappedRoute {
         return arrivalAirport;
     }
 
-    // ---------------------------------------------------------------------------------------------------- airplaneCode
+    // -------------------------------------------------------------------------------- airplaneCode
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute, which is
@@ -388,7 +388,7 @@ public abstract class MappedRoute {
         return airplaneCode;
     }
 
-    // ------------------------------------------------------------------------------------------------------ daysOfWeek
+    // ---------------------------------------------------------------------------------- daysOfWeek
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_DAYS_OF_WEEK} attribute.
@@ -409,7 +409,7 @@ public abstract class MappedRoute {
         this.daysOfWeek = daysOfWeek;
     }
 
-    // --------------------------------------------------------------------------------------------------- scheduledTime
+    // ------------------------------------------------------------------------------- scheduledTime
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_SCHEDULED_TIME} attribute.
@@ -430,7 +430,7 @@ public abstract class MappedRoute {
         this.scheduledTime = scheduledTime;
     }
 
-    // -------------------------------------------------------------------------------------------------------- duration
+    // ------------------------------------------------------------------------------------ duration
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_DURATION} attribute -- an {@code interval}
@@ -452,19 +452,19 @@ public abstract class MappedRoute {
         this.duration = duration;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_ROUTE_NO, nullable = false, insertable = true, updatable = true)
     private String routeNo;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_VALIDITY, nullable = false, insertable = true, updatable = true)
     private String validity;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // read-only: the extending entity owns the writable mapping; see the class documentation
     @Size(min = SIZE_MIN_DEPARTURE_AIRPORT, max = SIZE_MAX_DEPARTURE_AIRPORT)
     @Basic(optional = false)
@@ -476,7 +476,7 @@ public abstract class MappedRoute {
     )
     private String departureAirport;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // read-only: the extending entity owns the writable mapping; see the class documentation
     @Size(min = SIZE_MIN_ARRIVAL_AIRPORT, max = SIZE_MAX_ARRIVAL_AIRPORT)
     @Basic(optional = false)
@@ -488,7 +488,7 @@ public abstract class MappedRoute {
     )
     private String arrivalAirport;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // read-only: the extending entity owns the writable mapping; see the class documentation
     @Size(min = SIZE_MIN_AIRPLANE_CODE, max = SIZE_MAX_AIRPLANE_CODE)
     @Basic(optional = false)
@@ -500,21 +500,21 @@ public abstract class MappedRoute {
     )
     private String airplaneCode;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Convert(converter = IntegerListArrayAttributeConverter.OfString.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_DAYS_OF_WEEK, nullable = false, insertable = true, updatable = true)
     private List<Integer> daysOfWeek;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_SCHEDULED_TIME, nullable = false, insertable = true,
             updatable = true)
     private LocalTime scheduledTime;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Convert(converter = IntervalPostgresAttributeConverter.OfString.class)
     @Basic(optional = false)

@@ -38,11 +38,11 @@ import java.util.Objects;
 public abstract class JsonbStringAttributeConverter<X>
         implements AttributeConverter<X, String> {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     private static final System.Logger LOGGER =
             System.getLogger(JsonbStringAttributeConverter.class.getName());
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance for the specified attribute type.
@@ -54,7 +54,7 @@ public abstract class JsonbStringAttributeConverter<X>
         this.attributeType = Objects.requireNonNull(attributeType, "attributeType is null");
     }
 
-    // ------------------------------------------------------------------------------------------------------- LIFECYCLE
+    // ----------------------------------------------------------------------------------- LIFECYCLE
 
     // both called only when the provider obtains this converter through CDI (jakarta.persistence.bean.manager);
     // without one, the provider calls no lifecycle method, and there is no jsonb to convert with
@@ -73,7 +73,7 @@ public abstract class JsonbStringAttributeConverter<X>
         jsonb = null;
     }
 
-    // ---------------------------------------------------------------------------------------------- AttributeConverter
+    // -------------------------------------------------------------------------- AttributeConverter
 
     @Override
     public String convertToDatabaseColumn(final X attribute) {
@@ -100,7 +100,7 @@ public abstract class JsonbStringAttributeConverter<X>
         }
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     private final Type attributeType;
 
     private Jsonb jsonb;

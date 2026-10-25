@@ -47,7 +47,7 @@ public class RouteId
     @Serial
     private static final long serialVersionUID = 1L;
 
-    // ------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // STATIC_FACTORY_METHODS
 
     /**
@@ -64,7 +64,7 @@ public class RouteId
         return instance;
     }
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance. The constructor is {@code public}, as the specification requires of a
@@ -74,7 +74,7 @@ public class RouteId
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -98,7 +98,7 @@ public class RouteId
         return Objects.hash(routeNo, validity);
     }
 
-    // --------------------------------------------------------------------------------------------------------- routeNo
+    // ------------------------------------------------------------------------------------- routeNo
 
     /**
      * Returns current value of {@code routeNo} attribute.
@@ -118,7 +118,7 @@ public class RouteId
         this.routeNo = routeNo;
     }
 
-    // -------------------------------------------------------------------------------------------------------- validity
+    // ------------------------------------------------------------------------------------ validity
 
     /**
      * Returns current value of {@code validity} attribute.
@@ -138,13 +138,13 @@ public class RouteId
         this.validity = validity;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = false)
     @Column(name = MappedRoute.COLUMN_NAME_ROUTE_NO, nullable = false, insertable = true,
             updatable = false)
     private String routeNo;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = false)
     @Column(name = MappedRoute.COLUMN_NAME_VALIDITY, nullable = false, insertable = true,
             updatable = false)

@@ -40,7 +40,7 @@ import java.util.function.Supplier;
 @MappedSuperclass
 public abstract class MappedSeatId {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * The minimum size of the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute. The value is
@@ -60,7 +60,7 @@ public abstract class MappedSeatId {
      */
     public static final String ATTRIBUTE_NAME_AIRPLANE_CODE = "airplaneCode";
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * The name of the attribute which maps the {@value MappedSeat#COLUMN_NAME_SEAT_NO} column. The
@@ -68,7 +68,7 @@ public abstract class MappedSeatId {
      */
     public static final String ATTRIBUTE_NAME_SEAT_NO = "seatNo";
 
-    // ------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // STATIC_FACTORY_METHODS
 
     /**
@@ -92,7 +92,7 @@ public abstract class MappedSeatId {
         return instance;
     }
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -101,7 +101,7 @@ public abstract class MappedSeatId {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -140,7 +140,7 @@ public abstract class MappedSeatId {
         return Objects.hash(getAirplaneCode(), getSeatNo());
     }
 
-    // ---------------------------------------------------------------------------------------------------- airplaneCode
+    // -------------------------------------------------------------------------------- airplaneCode
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
@@ -161,7 +161,7 @@ public abstract class MappedSeatId {
         this.airplaneCode = airplaneCode;
     }
 
-    // ---------------------------------------------------------------------------------------------------------- seatNo
+    // -------------------------------------------------------------------------------------- seatNo
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_SEAT_NO} attribute.
@@ -182,7 +182,7 @@ public abstract class MappedSeatId {
         this.seatNo = seatNo;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Size(min = MappedSeat.SIZE_MIN_AIRPLANE_CODE, max = MappedSeat.SIZE_MAX_AIRPLANE_CODE)
     @NotNull
     @Basic(optional = false)
@@ -194,7 +194,7 @@ public abstract class MappedSeatId {
     )
     private String airplaneCode;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = MappedSeat.COLUMN_NAME_SEAT_NO, nullable = false, insertable = true,

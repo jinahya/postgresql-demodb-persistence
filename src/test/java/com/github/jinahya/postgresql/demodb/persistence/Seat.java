@@ -79,7 +79,7 @@ public class Seat
         return airplaneData;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = COLUMN_NAME_AIRPLANE_CODE, nullable = false, insertable = false,
                 updatable = false)

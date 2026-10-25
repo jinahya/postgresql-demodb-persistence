@@ -166,7 +166,7 @@ public abstract class MappedSegment {
      */
     public static final int ATTRIBUTE_DIGITS_FRACTION_PRICE = COLUMN_SCALE_PRICE;
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -175,7 +175,7 @@ public abstract class MappedSegment {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -216,7 +216,7 @@ public abstract class MappedSegment {
         return Objects.hash(getTicketNo(), getFlightId());
     }
 
-    // -------------------------------------------------------------------------------------------------------- ticketNo
+    // ------------------------------------------------------------------------------------ ticketNo
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
@@ -237,7 +237,7 @@ public abstract class MappedSegment {
         this.ticketNo = ticketNo;
     }
 
-    // -------------------------------------------------------------------------------------------------------- flightId
+    // ------------------------------------------------------------------------------------ flightId
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
@@ -258,7 +258,7 @@ public abstract class MappedSegment {
         this.flightId = flightId;
     }
 
-    // -------------------------------------------------------------------------------------------------- fareConditions
+    // ------------------------------------------------------------------------------ fareConditions
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_FARE_CONDITIONS} attribute.
@@ -279,7 +279,7 @@ public abstract class MappedSegment {
         this.fareConditions = fareConditions;
     }
 
-    // ----------------------------------------------------------------------------------------------------------- price
+    // --------------------------------------------------------------------------------------- price
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_PRICE} attribute.
@@ -299,21 +299,21 @@ public abstract class MappedSegment {
         this.price = price;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Id
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_TICKET_NO, nullable = false, insertable = true, updatable = false)
     private String ticketNo;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Id
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_FLIGHT_ID, nullable = false, insertable = true, updatable = false)
     private Integer flightId;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Convert(converter = FareConditionsConverter.class)
     @NotNull
     @Basic(optional = false)
@@ -321,7 +321,7 @@ public abstract class MappedSegment {
             updatable = true)
     private FareConditions fareConditions;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @PositiveOrZero
     @Digits(integer = ATTRIBUTE_DIGITS_INTEGER_PRICE, fraction = ATTRIBUTE_DIGITS_FRACTION_PRICE)
     @NotNull

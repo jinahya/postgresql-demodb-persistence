@@ -115,7 +115,7 @@ final class _LocaleNames {
         return names == null ? Json.createObjectBuilder() : Json.createObjectBuilder(names);
     }
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     private _LocaleNames() {
         throw new AssertionError("instantiation is not allowed");

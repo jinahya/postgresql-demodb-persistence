@@ -38,7 +38,7 @@ public class BoardingPassId
     @Serial
     private static final long serialVersionUID = 1L;
 
-    // ------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // STATIC_FACTORY_METHODS
 
     /**
@@ -52,7 +52,7 @@ public class BoardingPassId
         return of(BoardingPassId::new, ticketNo, flightId);
     }
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance. The constructor is {@code public}, as the specification requires of a

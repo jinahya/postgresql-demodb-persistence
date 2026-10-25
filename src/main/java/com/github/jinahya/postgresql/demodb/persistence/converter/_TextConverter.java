@@ -48,7 +48,7 @@ import jakarta.persistence.AttributeConverter;
 abstract class _TextConverter<X, Y>
         implements AttributeConverter<X, Y> {
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -57,7 +57,7 @@ abstract class _TextConverter<X, Y>
         super();
     }
 
-    // ---------------------------------------------------------------------------------------------- AttributeConverter
+    // -------------------------------------------------------------------------- AttributeConverter
 
     /**
      * {@inheritDoc}
@@ -92,7 +92,7 @@ abstract class _TextConverter<X, Y>
         return fromText(dbData.toString());
     }
 
-    // ------------------------------------------------------------------------------------------------------------ text
+    // ---------------------------------------------------------------------------------------- text
 
     /**
      * Writes the specified attribute as the column's text.

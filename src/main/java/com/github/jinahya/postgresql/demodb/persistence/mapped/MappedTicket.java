@@ -145,7 +145,7 @@ public abstract class MappedTicket {
      */
     public static final String ATTRIBUTE_NAME_OUTBOUND = "outbound";
 
-    // ------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // STATIC_FACTORY_METHODS
 
     /**
@@ -167,7 +167,7 @@ public abstract class MappedTicket {
         return instance;
     }
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -176,7 +176,7 @@ public abstract class MappedTicket {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -217,7 +217,7 @@ public abstract class MappedTicket {
         return Objects.hashCode(getTicketNo());
     }
 
-    // -------------------------------------------------------------------------------------------------------- ticketNo
+    // ------------------------------------------------------------------------------------ ticketNo
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
@@ -238,7 +238,7 @@ public abstract class MappedTicket {
         this.ticketNo = ticketNo;
     }
 
-    // --------------------------------------------------------------------------------------------------------- bookRef
+    // ------------------------------------------------------------------------------------- bookRef
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_BOOK_REF} attribute, which is {@code null}
@@ -252,7 +252,7 @@ public abstract class MappedTicket {
         return bookRef;
     }
 
-    // ----------------------------------------------------------------------------------------------------- passengerId
+    // --------------------------------------------------------------------------------- passengerId
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_PASSENGER_ID} attribute.
@@ -273,7 +273,7 @@ public abstract class MappedTicket {
         this.passengerId = passengerId;
     }
 
-    // --------------------------------------------------------------------------------------------------- passengerName
+    // ------------------------------------------------------------------------------- passengerName
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_PASSENGER_NAME} attribute.
@@ -294,7 +294,7 @@ public abstract class MappedTicket {
         this.passengerName = passengerName;
     }
 
-    // -------------------------------------------------------------------------------------------------------- outbound
+    // ------------------------------------------------------------------------------------ outbound
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_OUTBOUND} attribute.
@@ -315,14 +315,14 @@ public abstract class MappedTicket {
         this.outbound = outbound;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Id
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_TICKET_NO, nullable = false, insertable = true, updatable = false)
     private String ticketNo;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // read-only: the extending entity owns the writable mapping; see the class documentation
     @Size(min = SIZE_MIN_BOOK_REF, max = SIZE_MAX_BOOK_REF)
     @Basic(optional = false)
@@ -334,20 +334,20 @@ public abstract class MappedTicket {
     )
     private String bookRef;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_PASSENGER_ID, nullable = false, insertable = true, updatable = true)
     private String passengerId;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_PASSENGER_NAME, nullable = false, insertable = true,
             updatable = true)
     private String passengerName;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_OUTBOUND, nullable = false, insertable = true, updatable = true)

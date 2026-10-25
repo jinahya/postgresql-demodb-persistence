@@ -122,7 +122,7 @@ public abstract class MappedAirplane {
      */
     public static final String ATTRIBUTE_NAME_SPEED = "speed";
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -131,7 +131,7 @@ public abstract class MappedAirplane {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -171,7 +171,7 @@ public abstract class MappedAirplane {
         return Objects.hashCode(getAirplaneCode());
     }
 
-    // ---------------------------------------------------------------------------------------------------- airplaneCode
+    // -------------------------------------------------------------------------------- airplaneCode
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
@@ -182,7 +182,7 @@ public abstract class MappedAirplane {
         return airplaneCode;
     }
 
-    // ----------------------------------------------------------------------------------------------------------- model
+    // --------------------------------------------------------------------------------------- model
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_MODEL} attribute.
@@ -193,7 +193,7 @@ public abstract class MappedAirplane {
         return model;
     }
 
-    // ----------------------------------------------------------------------------------------------------------- range
+    // --------------------------------------------------------------------------------------- range
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_RANGE} attribute.
@@ -204,7 +204,7 @@ public abstract class MappedAirplane {
         return range;
     }
 
-    // ----------------------------------------------------------------------------------------------------------- speed
+    // --------------------------------------------------------------------------------------- speed
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_SPEED} attribute.
@@ -215,7 +215,7 @@ public abstract class MappedAirplane {
         return speed;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Size(min = SIZE_MIN_AIRPLANE_CODE, max = SIZE_MAX_AIRPLANE_CODE)
     @Id
     @Basic(optional = true)
@@ -229,17 +229,17 @@ public abstract class MappedAirplane {
     )
     private String airplaneCode;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_MODEL, nullable = true, insertable = false, updatable = false)
     private String model;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_RANGE, nullable = true, insertable = false, updatable = false)
     private Integer range;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_SPEED, nullable = true, insertable = false, updatable = false)
     private Integer speed;

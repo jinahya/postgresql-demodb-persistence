@@ -80,7 +80,7 @@ public class BoardingPass
         return segment;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumns({
             @JoinColumn(name = COLUMN_NAME_TICKET_NO,

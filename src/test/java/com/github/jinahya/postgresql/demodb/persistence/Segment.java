@@ -89,7 +89,7 @@ public class Segment
         return flight;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = COLUMN_NAME_TICKET_NO, nullable = false, insertable = false,
                 updatable = false)

@@ -130,7 +130,7 @@ public abstract class MappedAirplaneData {
      */
     public static final String ATTRIBUTE_NAME_SPEED = "speed";
 
-    // ------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // STATIC_FACTORY_METHODS
 
     /**
@@ -152,7 +152,7 @@ public abstract class MappedAirplaneData {
         return instance;
     }
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -161,7 +161,7 @@ public abstract class MappedAirplaneData {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -201,7 +201,7 @@ public abstract class MappedAirplaneData {
         return Objects.hashCode(getAirplaneCode());
     }
 
-    // ---------------------------------------------------------------------------------------------------- airplaneCode
+    // -------------------------------------------------------------------------------- airplaneCode
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
@@ -222,7 +222,7 @@ public abstract class MappedAirplaneData {
         this.airplaneCode = airplaneCode;
     }
 
-    // ----------------------------------------------------------------------------------------------------------- model
+    // --------------------------------------------------------------------------------------- model
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_MODEL} attribute -- a {@code jsonb} column,
@@ -294,7 +294,7 @@ public abstract class MappedAirplaneData {
         return removed;
     }
 
-    // ----------------------------------------------------------------------------------------------------------- range
+    // --------------------------------------------------------------------------------------- range
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_RANGE} attribute.
@@ -314,7 +314,7 @@ public abstract class MappedAirplaneData {
         this.range = range;
     }
 
-    // ----------------------------------------------------------------------------------------------------------- speed
+    // --------------------------------------------------------------------------------------- speed
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_SPEED} attribute.
@@ -334,7 +334,7 @@ public abstract class MappedAirplaneData {
         this.speed = speed;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Size(min = SIZE_MIN_AIRPLANE_CODE, max = SIZE_MAX_AIRPLANE_CODE)
     @NotNull
     @Id
@@ -347,21 +347,21 @@ public abstract class MappedAirplaneData {
     )
     private String airplaneCode;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Convert(converter = JsonpStringAttributeConverter.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_MODEL, nullable = false, insertable = true, updatable = true)
     private JsonObject model;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Positive
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_RANGE, nullable = false, insertable = true, updatable = true)
     private Integer range;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Positive
     @NotNull
     @Basic(optional = false)

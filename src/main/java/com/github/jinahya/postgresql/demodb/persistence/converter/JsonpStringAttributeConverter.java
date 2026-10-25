@@ -141,7 +141,7 @@ public abstract class JsonpStringAttributeConverter<X extends JsonValue>
         }
     }
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance for the specified attribute class.
@@ -153,7 +153,7 @@ public abstract class JsonpStringAttributeConverter<X extends JsonValue>
         this.attributeClass = Objects.requireNonNull(attributeClass, "attributeClass is null");
     }
 
-    // ---------------------------------------------------------------------------------------------- AttributeConverter
+    // -------------------------------------------------------------------------- AttributeConverter
 
     @Override
     public String convertToDatabaseColumn(final X attribute) {
@@ -190,7 +190,7 @@ public abstract class JsonpStringAttributeConverter<X extends JsonValue>
         return attributeClass.cast(value);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     private final Class<X> attributeClass;
 }
 

@@ -234,7 +234,7 @@ public abstract class MappedSeat {
      */
     public static final String PATTERN_REGEXP_FARE_CONDITIONS = "Economy|Comfort|Business";
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -243,7 +243,7 @@ public abstract class MappedSeat {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -283,7 +283,7 @@ public abstract class MappedSeat {
         return Objects.hash(getAirplaneCode(), getSeatNo());
     }
 
-    // ---------------------------------------------------------------------------------------------------- airplaneCode
+    // -------------------------------------------------------------------------------- airplaneCode
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
@@ -304,7 +304,7 @@ public abstract class MappedSeat {
         this.airplaneCode = airplaneCode;
     }
 
-    // ---------------------------------------------------------------------------------------------------------- seatNo
+    // -------------------------------------------------------------------------------------- seatNo
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_SEAT_NO} attribute.
@@ -325,7 +325,7 @@ public abstract class MappedSeat {
         this.seatNo = seatNo;
     }
 
-    // -------------------------------------------------------------------------------------------------- fareConditions
+    // ------------------------------------------------------------------------------ fareConditions
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_FARE_CONDITIONS} attribute.
@@ -346,7 +346,7 @@ public abstract class MappedSeat {
         this.fareConditions = fareConditions;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Size(min = SIZE_MIN_AIRPLANE_CODE, max = SIZE_MAX_AIRPLANE_CODE)
     @NotNull
     @Id
@@ -359,14 +359,14 @@ public abstract class MappedSeat {
     )
     private String airplaneCode;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Id
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_SEAT_NO, nullable = false, insertable = true, updatable = false)
     private String seatNo;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Convert(converter = FareConditionsConverter.class)
     @NotNull
     @Basic(optional = false)

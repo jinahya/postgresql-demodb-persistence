@@ -113,7 +113,7 @@ public abstract class IntervalPostgresAttributeConverter<Y>
             + "(?:(?<sign>[+-]?)(?<hours>\\d+):(?<minutes>\\d{2}):"
             + "(?<seconds>\\d{2}(?:\\.\\d+)?))?");
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -122,7 +122,7 @@ public abstract class IntervalPostgresAttributeConverter<Y>
         super();
     }
 
-    // ---------------------------------------------------------------------------------------------- AttributeConverter
+    // -------------------------------------------------------------------------- AttributeConverter
 
     /**
      * {@inheritDoc}
@@ -188,7 +188,7 @@ public abstract class IntervalPostgresAttributeConverter<Y>
                         negative ? -seconds : seconds);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * The name of the driver's own interval class, which EclipseLink hands a converter.

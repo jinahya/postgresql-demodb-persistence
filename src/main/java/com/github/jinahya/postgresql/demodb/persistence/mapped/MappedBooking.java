@@ -127,7 +127,7 @@ public abstract class MappedBooking {
      */
     public static final int ATTRIBUTE_DIGITS_FRACTION_TOTAL_AMOUNT = COLUMN_SCALE_TOTAL_AMOUNT;
 
-    // ------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // STATIC_FACTORY_METHODS
 
     /**
@@ -149,7 +149,7 @@ public abstract class MappedBooking {
         return instance;
     }
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -158,7 +158,7 @@ public abstract class MappedBooking {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -197,7 +197,7 @@ public abstract class MappedBooking {
         return Objects.hashCode(getBookRef());
     }
 
-    // --------------------------------------------------------------------------------------------------------- bookRef
+    // ------------------------------------------------------------------------------------- bookRef
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_BOOK_REF} attribute.
@@ -218,7 +218,7 @@ public abstract class MappedBooking {
         this.bookRef = bookRef;
     }
 
-    // -------------------------------------------------------------------------------------------------------- bookDate
+    // ------------------------------------------------------------------------------------ bookDate
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_BOOK_DATE} attribute.
@@ -239,7 +239,7 @@ public abstract class MappedBooking {
         this.bookDate = bookDate;
     }
 
-    // ----------------------------------------------------------------------------------------------------- totalAmount
+    // --------------------------------------------------------------------------------- totalAmount
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_TOTAL_AMOUNT} attribute.
@@ -260,7 +260,7 @@ public abstract class MappedBooking {
         this.totalAmount = totalAmount;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Size(min = SIZE_MIN_BOOK_REF, max = SIZE_MAX_BOOK_REF)
     @NotNull
     @Id
@@ -273,13 +273,13 @@ public abstract class MappedBooking {
     )
     private String bookRef;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_BOOK_DATE, nullable = false, insertable = true, updatable = true)
     private OffsetDateTime bookDate;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Digits(integer = ATTRIBUTE_DIGITS_INTEGER_TOTAL_AMOUNT,
             fraction = ATTRIBUTE_DIGITS_FRACTION_TOTAL_AMOUNT)
     @NotNull

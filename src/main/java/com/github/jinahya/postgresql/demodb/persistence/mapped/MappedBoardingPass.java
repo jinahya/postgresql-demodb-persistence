@@ -128,7 +128,7 @@ public abstract class MappedBoardingPass {
      */
     public static final String ATTRIBUTE_NAME_BOARDING_TIME = "boardingTime";
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -137,7 +137,7 @@ public abstract class MappedBoardingPass {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -179,7 +179,7 @@ public abstract class MappedBoardingPass {
         return Objects.hash(getTicketNo(), getFlightId());
     }
 
-    // -------------------------------------------------------------------------------------------------------- ticketNo
+    // ------------------------------------------------------------------------------------ ticketNo
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
@@ -200,7 +200,7 @@ public abstract class MappedBoardingPass {
         this.ticketNo = ticketNo;
     }
 
-    // -------------------------------------------------------------------------------------------------------- flightId
+    // ------------------------------------------------------------------------------------ flightId
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
@@ -221,7 +221,7 @@ public abstract class MappedBoardingPass {
         this.flightId = flightId;
     }
 
-    // ---------------------------------------------------------------------------------------------------------- seatNo
+    // -------------------------------------------------------------------------------------- seatNo
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_SEAT_NO} attribute.
@@ -242,7 +242,7 @@ public abstract class MappedBoardingPass {
         this.seatNo = seatNo;
     }
 
-    // ------------------------------------------------------------------------------------------------------ boardingNo
+    // ---------------------------------------------------------------------------------- boardingNo
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_BOARDING_NO} attribute.
@@ -263,7 +263,7 @@ public abstract class MappedBoardingPass {
         this.boardingNo = boardingNo;
     }
 
-    // ---------------------------------------------------------------------------------------------------- boardingTime
+    // -------------------------------------------------------------------------------- boardingTime
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_BOARDING_TIME} attribute.
@@ -284,32 +284,32 @@ public abstract class MappedBoardingPass {
         this.boardingTime = boardingTime;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Id
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_TICKET_NO, nullable = false, insertable = true, updatable = false)
     private String ticketNo;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Id
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_FLIGHT_ID, nullable = false, insertable = true, updatable = false)
     private Integer flightId;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_SEAT_NO, nullable = false, insertable = true, updatable = true)
     private String seatNo;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_BOARDING_NO, nullable = true, insertable = true, updatable = true)
     private Integer boardingNo;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_BOARDING_TIME, nullable = true, insertable = true, updatable = true)
     private OffsetDateTime boardingTime;

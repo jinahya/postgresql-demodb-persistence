@@ -69,7 +69,7 @@ public abstract class IntegerListArrayAttributeConverter<Y>
 
     private static final String NULL_ELEMENT = "NULL";
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -78,7 +78,7 @@ public abstract class IntegerListArrayAttributeConverter<Y>
         super();
     }
 
-    // ---------------------------------------------------------------------------------------------- AttributeConverter
+    // -------------------------------------------------------------------------- AttributeConverter
 
     /**
      * {@inheritDoc}
@@ -131,7 +131,7 @@ public abstract class IntegerListArrayAttributeConverter<Y>
         return fromText(dbData.toString());
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     private static List<Integer> fromArray(final Object array) {
         final var length = Array.getLength(array);
         final var list = new ArrayList<Integer>(length);

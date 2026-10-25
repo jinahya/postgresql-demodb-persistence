@@ -316,7 +316,7 @@ public abstract class MappedFlight {
      */
     public static final String ATTRIBUTE_NAME_ACTUAL_ARRIVAL = "actualArrival";
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -325,7 +325,7 @@ public abstract class MappedFlight {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -368,7 +368,7 @@ public abstract class MappedFlight {
         return Objects.hashCode(getFlightId());
     }
 
-    // ---------------------------------------------------------------------------------------------- Jakarta-Validation
+    // -------------------------------------------------------------------------- Jakarta-Validation
 
     /**
      * Tests whether current value of {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL} attribute is after
@@ -417,7 +417,7 @@ public abstract class MappedFlight {
         return actualArrival.isAfter(actualDeparture);
     }
 
-    // -------------------------------------------------------------------------------------------------------- flightId
+    // ------------------------------------------------------------------------------------ flightId
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
@@ -438,7 +438,7 @@ public abstract class MappedFlight {
         this.flightId = flightId;
     }
 
-    // --------------------------------------------------------------------------------------------------------- routeNo
+    // ------------------------------------------------------------------------------------- routeNo
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
@@ -459,7 +459,7 @@ public abstract class MappedFlight {
         this.routeNo = routeNo;
     }
 
-    // ---------------------------------------------------------------------------------------------------------- status
+    // -------------------------------------------------------------------------------------- status
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_STATUS} attribute.
@@ -480,7 +480,7 @@ public abstract class MappedFlight {
         this.status = status;
     }
 
-    // ---------------------------------------------------------------------------------------------- scheduledDeparture
+    // -------------------------------------------------------------------------- scheduledDeparture
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE} attribute.
@@ -502,7 +502,7 @@ public abstract class MappedFlight {
         this.scheduledDeparture = scheduledDeparture;
     }
 
-    // ------------------------------------------------------------------------------------------------ scheduledArrival
+    // ---------------------------------------------------------------------------- scheduledArrival
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL} attribute.
@@ -523,7 +523,7 @@ public abstract class MappedFlight {
         this.scheduledArrival = scheduledArrival;
     }
 
-    // ------------------------------------------------------------------------------------------------- actualDeparture
+    // ----------------------------------------------------------------------------- actualDeparture
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE} attribute.
@@ -544,7 +544,7 @@ public abstract class MappedFlight {
         this.actualDeparture = actualDeparture;
     }
 
-    // --------------------------------------------------------------------------------------------------- actualArrival
+    // ------------------------------------------------------------------------------- actualArrival
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL} attribute.
@@ -565,47 +565,47 @@ public abstract class MappedFlight {
         this.actualArrival = actualArrival;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_FLIGHT_ID, nullable = false, insertable = true, updatable = false)
     private Integer flightId;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_ROUTE_NO, nullable = false, insertable = true, updatable = true)
     private String routeNo;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Convert(converter = FlightStatusConverter.class)
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_STATUS, nullable = false, insertable = true, updatable = true)
     private FlightStatus status;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_SCHEDULED_DEPARTURE, nullable = false, insertable = true,
             updatable = true)
     private OffsetDateTime scheduledDeparture;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_SCHEDULED_ARRIVAL, nullable = false, insertable = true,
             updatable = true)
     private OffsetDateTime scheduledArrival;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ACTUAL_DEPARTURE, nullable = true, insertable = true,
             updatable = true)
     private OffsetDateTime actualDeparture;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ACTUAL_ARRIVAL, nullable = true, insertable = true, updatable = true)
     private OffsetDateTime actualArrival;

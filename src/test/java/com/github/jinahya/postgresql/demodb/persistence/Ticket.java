@@ -92,7 +92,7 @@ public class Ticket
         this.booking = booking;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = COLUMN_NAME_BOOK_REF, nullable = false)
     private Booking booking;

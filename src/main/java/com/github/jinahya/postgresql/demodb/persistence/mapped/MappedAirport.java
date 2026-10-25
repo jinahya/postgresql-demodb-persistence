@@ -163,7 +163,7 @@ public abstract class MappedAirport {
      */
     public static final String ATTRIBUTE_NAME_TIMEZONE = "timezone";
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -172,7 +172,7 @@ public abstract class MappedAirport {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -214,7 +214,7 @@ public abstract class MappedAirport {
         return Objects.hashCode(getAirportCode());
     }
 
-    // ----------------------------------------------------------------------------------------------------- airportCode
+    // --------------------------------------------------------------------------------- airportCode
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_AIRPORT_CODE} attribute.
@@ -225,7 +225,7 @@ public abstract class MappedAirport {
         return airportCode;
     }
 
-    // ----------------------------------------------------------------------------------------------------- airportName
+    // --------------------------------------------------------------------------------- airportName
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_AIRPORT_NAME} attribute.
@@ -236,7 +236,7 @@ public abstract class MappedAirport {
         return airportName;
     }
 
-    // ------------------------------------------------------------------------------------------------------------ city
+    // ---------------------------------------------------------------------------------------- city
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_CITY} attribute.
@@ -247,7 +247,7 @@ public abstract class MappedAirport {
         return city;
     }
 
-    // --------------------------------------------------------------------------------------------------------- country
+    // ------------------------------------------------------------------------------------- country
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_COUNTRY} attribute.
@@ -258,7 +258,7 @@ public abstract class MappedAirport {
         return country;
     }
 
-    // ----------------------------------------------------------------------------------------------------- coordinates
+    // --------------------------------------------------------------------------------- coordinates
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute -- a {@code point}
@@ -270,7 +270,7 @@ public abstract class MappedAirport {
         return coordinates;
     }
 
-    // -------------------------------------------------------------------------------------------------------- timezone
+    // ------------------------------------------------------------------------------------ timezone
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_TIMEZONE} attribute -- a {@code text} column
@@ -293,7 +293,7 @@ public abstract class MappedAirport {
         return Optional.ofNullable(getTimezone()).map(TimeZone::getTimeZone).orElse(null);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Size(min = SIZE_MIN_AIRPORT_CODE, max = SIZE_MAX_AIRPORT_CODE)
     @Id
     @Basic(optional = true)
@@ -307,28 +307,28 @@ public abstract class MappedAirport {
     )
     private String airportCode;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_AIRPORT_NAME, nullable = true, insertable = false, updatable = false)
     private String airportName;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_CITY, nullable = true, insertable = false, updatable = false)
     private String city;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_COUNTRY, nullable = true, insertable = false, updatable = false)
     private String country;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Convert(converter = PGpointConverter.class)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_COORDINATES, nullable = true, insertable = false, updatable = false)
     private PGpoint coordinates;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Convert(converter = ZoneIdConverter.class)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_TIMEZONE, nullable = true, insertable = false, updatable = false)

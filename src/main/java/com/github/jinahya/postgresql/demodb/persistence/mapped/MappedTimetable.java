@@ -247,7 +247,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_SCHEDULED_DEPARTURE = "scheduledDeparture";
 
-    // ---------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // SCHEDULED_DEPARTURE_LOCAL
 
     /**
@@ -276,7 +276,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_ACTUAL_DEPARTURE = "actualDeparture";
 
-    // ------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // ACTUAL_DEPARTURE_LOCAL
 
     /**
@@ -305,7 +305,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_SCHEDULED_ARRIVAL = "scheduledArrival";
 
-    // -----------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // SCHEDULED_ARRIVAL_LOCAL
 
     /**
@@ -348,7 +348,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_ACTUAL_ARRIVAL_LOCAL = "actualArrivalLocal";
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -357,7 +357,7 @@ public abstract class MappedTimetable {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public final String toString() {
@@ -407,7 +407,7 @@ public abstract class MappedTimetable {
         return Objects.hashCode(getFlightId());
     }
 
-    // -------------------------------------------------------------------------------------------------------- flightId
+    // ------------------------------------------------------------------------------------ flightId
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
@@ -418,7 +418,7 @@ public abstract class MappedTimetable {
         return flightId;
     }
 
-    // --------------------------------------------------------------------------------------------------------- routeNo
+    // ------------------------------------------------------------------------------------- routeNo
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
@@ -429,7 +429,7 @@ public abstract class MappedTimetable {
         return routeNo;
     }
 
-    // ------------------------------------------------------------------------------------------------ departureAirport
+    // ---------------------------------------------------------------------------- departureAirport
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_DEPARTURE_AIRPORT} attribute.
@@ -440,7 +440,7 @@ public abstract class MappedTimetable {
         return departureAirport;
     }
 
-    // -------------------------------------------------------------------------------------------------- arrivalAirport
+    // ------------------------------------------------------------------------------ arrivalAirport
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_ARRIVAL_AIRPORT} attribute.
@@ -451,7 +451,7 @@ public abstract class MappedTimetable {
         return arrivalAirport;
     }
 
-    // ---------------------------------------------------------------------------------------------------------- status
+    // -------------------------------------------------------------------------------------- status
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_STATUS} attribute.
@@ -462,7 +462,7 @@ public abstract class MappedTimetable {
         return status;
     }
 
-    // ---------------------------------------------------------------------------------------------------- airplaneCode
+    // -------------------------------------------------------------------------------- airplaneCode
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
@@ -473,7 +473,7 @@ public abstract class MappedTimetable {
         return airplaneCode;
     }
 
-    // ---------------------------------------------------------------------------------------------- scheduledDeparture
+    // -------------------------------------------------------------------------- scheduledDeparture
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE} attribute.
@@ -484,7 +484,7 @@ public abstract class MappedTimetable {
         return scheduledDeparture;
     }
 
-    // -----------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // scheduledDepartureLocal
 
     /**
@@ -496,7 +496,7 @@ public abstract class MappedTimetable {
         return scheduledDepartureLocal;
     }
 
-    // ------------------------------------------------------------------------------------------------- actualDeparture
+    // ----------------------------------------------------------------------------- actualDeparture
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE} attribute.
@@ -507,7 +507,7 @@ public abstract class MappedTimetable {
         return actualDeparture;
     }
 
-    // -------------------------------------------------------------------------------------------- actualDepartureLocal
+    // ------------------------------------------------------------------------ actualDepartureLocal
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE_LOCAL} attribute.
@@ -518,7 +518,7 @@ public abstract class MappedTimetable {
         return actualDepartureLocal;
     }
 
-    // ------------------------------------------------------------------------------------------------ scheduledArrival
+    // ---------------------------------------------------------------------------- scheduledArrival
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL} attribute.
@@ -529,7 +529,7 @@ public abstract class MappedTimetable {
         return scheduledArrival;
     }
 
-    // ------------------------------------------------------------------------------------------- scheduledArrivalLocal
+    // ----------------------------------------------------------------------- scheduledArrivalLocal
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL_LOCAL} attribute.
@@ -540,7 +540,7 @@ public abstract class MappedTimetable {
         return scheduledArrivalLocal;
     }
 
-    // --------------------------------------------------------------------------------------------------- actualArrival
+    // ------------------------------------------------------------------------------- actualArrival
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL} attribute.
@@ -551,7 +551,7 @@ public abstract class MappedTimetable {
         return actualArrival;
     }
 
-    // ---------------------------------------------------------------------------------------------- actualArrivalLocal
+    // -------------------------------------------------------------------------- actualArrivalLocal
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL_LOCAL} attribute.
@@ -562,7 +562,7 @@ public abstract class MappedTimetable {
         return actualArrivalLocal;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Id
     @Basic(optional = true)
     // insertable=false on an @Id -- "There should be one non-read-only mapping defined for the
@@ -570,12 +570,12 @@ public abstract class MappedTimetable {
     @Column(name = COLUMN_NAME_FLIGHT_ID, nullable = true, insertable = true, updatable = false)
     private Integer flightId;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ROUTE_NO, nullable = true, insertable = false, updatable = false)
     private String routeNo;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Size(min = SIZE_MIN_DEPARTURE_AIRPORT, max = SIZE_MAX_DEPARTURE_AIRPORT)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_DEPARTURE_AIRPORT,
@@ -586,7 +586,7 @@ public abstract class MappedTimetable {
     )
     private String departureAirport;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Size(min = SIZE_MIN_ARRIVAL_AIRPORT, max = SIZE_MAX_ARRIVAL_AIRPORT)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ARRIVAL_AIRPORT,
@@ -597,13 +597,13 @@ public abstract class MappedTimetable {
     )
     private String arrivalAirport;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Convert(converter = FlightStatusConverter.class)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_STATUS, nullable = true, insertable = false, updatable = false)
     private FlightStatus status;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Size(min = SIZE_MIN_AIRPLANE_CODE, max = SIZE_MAX_AIRPLANE_CODE)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_AIRPLANE_CODE,
@@ -614,49 +614,49 @@ public abstract class MappedTimetable {
     )
     private String airplaneCode;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_SCHEDULED_DEPARTURE, nullable = true, insertable = false,
             updatable = false)
     private OffsetDateTime scheduledDeparture;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_SCHEDULED_DEPARTURE_LOCAL, nullable = true, insertable = false,
             updatable = false)
     private LocalDateTime scheduledDepartureLocal;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ACTUAL_DEPARTURE, nullable = true, insertable = false,
             updatable = false)
     private OffsetDateTime actualDeparture;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ACTUAL_DEPARTURE_LOCAL, nullable = true, insertable = false,
             updatable = false)
     private LocalDateTime actualDepartureLocal;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_SCHEDULED_ARRIVAL, nullable = true, insertable = false,
             updatable = false)
     private OffsetDateTime scheduledArrival;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_SCHEDULED_ARRIVAL_LOCAL, nullable = true, insertable = false,
             updatable = false)
     private LocalDateTime scheduledArrivalLocal;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ACTUAL_ARRIVAL, nullable = true, insertable = false,
             updatable = false)
     private OffsetDateTime actualArrival;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ACTUAL_ARRIVAL_LOCAL, nullable = true, insertable = false,
             updatable = false)
