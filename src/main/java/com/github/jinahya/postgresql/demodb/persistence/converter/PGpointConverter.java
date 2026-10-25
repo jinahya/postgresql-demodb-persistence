@@ -21,9 +21,12 @@ package com.github.jinahya.postgresql.demodb.persistence.converter;
  */
 
 import jakarta.persistence.Converter;
+import org.postgresql.geometric.PGpoint;
+
+import java.sql.SQLException;
 
 /**
- * Converts between a {@link Point} and a PostgreSQL {@code point} column, through its text,
+ * Converts between a {@link PGpoint} and a PostgreSQL {@code point} column, through its text,
  * {@code (x,y)}. The database side is bound to {@link String} here, and the methods are inherited
  * as they are; see {@link _TextConverter} for why that is what keeps it portable.
  * <p>
@@ -33,15 +36,15 @@ import jakarta.persistence.Converter;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Converter(autoApply = false)
-public class PointConverter
-        extends _TextConverter<Point, String> {
+public class PGpointConverter
+        extends _TextConverter<PGpoint, String> {
 
     // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
      */
-    public PointConverter() {
+    public PGpointConverter() {
         super();
     }
 
@@ -54,37 +57,23 @@ public class PointConverter
      * @return {@code attribute} as {@code (x,y)}.
      */
     @Override
-    protected String toText(final Point attribute) {
-        return "(" + attribute.x() + "," + attribute.y() + ")";
+    protected String toText(final PGpoint attribute) {
+        return attribute.getValue();
     }
 
     /**
      * {@inheritDoc}
      *
-     * @param text {@inheritDoc} -- the point as {@code (x,y)}, which is what the server writes;
-     *             the parentheses may be left out, and spaces put around the numbers, as the server
-     *             accepts it.
+     * @param text {@inheritDoc} -- the point as {@code (x,y)}, which is what the server writes.
      * @return the point {@code text} denotes.
-     * @throws IllegalArgumentException if {@code text} is not a point.
+     * @throws IllegalArgumentException if {@link PGpoint} does not read {@code text} as a point.
      */
     @Override
-    protected Point fromText(final String text) {
-        var body = text.strip();
-        if (body.startsWith("(") != body.endsWith(")")) {
-            throw new IllegalArgumentException("not a point: " + text);
-        }
-        if (body.startsWith("(")) {
-            body = body.substring(1, body.length() - 1);
-        }
-        final var parts = body.split(",", -1);
-        if (parts.length != 2) {
-            throw new IllegalArgumentException("not a point: " + text);
-        }
+    protected PGpoint fromText(final String text) {
         try {
-            return new Point(Double.parseDouble(parts[0].strip()),
-                             Double.parseDouble(parts[1].strip()));
-        } catch (final NumberFormatException nfe) {
-            throw new IllegalArgumentException("not a point: " + text, nfe);
+            return new PGpoint(text);
+        } catch (final SQLException | IndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("not a point: " + text, e);
         }
     }
 }

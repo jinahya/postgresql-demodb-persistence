@@ -20,8 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.Point;
-import com.github.jinahya.postgresql.demodb.persistence.converter.PointConverter;
+import com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter;
 import com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -30,6 +29,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
+import org.postgresql.geometric.PGpoint;
 
 import java.time.ZoneId;
 import java.util.Objects;
@@ -43,10 +43,9 @@ import java.util.TimeZone;
  * Every column is mapped read-only; only the identifier stays insertable, which EclipseLink
  * requires of an {@link Id @Id}. It has no setters; nothing writes to a view.
  * <p>
- * The {@value MappedAirport#COLUMN_NAME_COORDINATES} column has no type in Jakarta Persistence
- * ({@code point}), so it is mapped as {@link String}, the text form the driver reads it as. Writing
- * such a text back needs the driver to leave its type to the server, {@code stringtype=unspecified}
- * on the JDBC URL, or a provider-specific type the extending entity may choose instead.
+ * The {@value MappedAirport#COLUMN_NAME_COORDINATES} column is a {@code point}, which has no type in
+ * Jakarta Persistence; it is mapped as a {@link PGpoint}, the longitude as {@code x} and the
+ * latitude as {@code y}, through a {@link PGpointConverter}.
  * <p>
  * The view reads {@code airports_data}, see {@link MappedAirportData}, with the
  * {@value #COLUMN_NAME_AIRPORT_NAME}, {@value #COLUMN_NAME_CITY} and {@value #COLUMN_NAME_COUNTRY}
@@ -263,11 +262,11 @@ public abstract class MappedAirport {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute -- a {@code point}
-     * column, mapped as a {@link Point}, the longitude as {@code x} and the latitude as {@code y}.
+     * column, mapped as a {@link PGpoint}, the longitude as {@code x} and the latitude as {@code y}.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute.
      */
-    public Point getCoordinates() {
+    public PGpoint getCoordinates() {
         return coordinates;
     }
 
@@ -324,10 +323,10 @@ public abstract class MappedAirport {
     private String country;
 
     // -----------------------------------------------------------------------------------------------------------------
-    @Convert(converter = PointConverter.class)
+    @Convert(converter = PGpointConverter.class)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_COORDINATES, nullable = true, insertable = false, updatable = false)
-    private Point coordinates;
+    private PGpoint coordinates;
 
     // -----------------------------------------------------------------------------------------------------------------
     @Convert(converter = ZoneIdConverter.class)

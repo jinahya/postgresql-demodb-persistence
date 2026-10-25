@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.DateTimeException;
@@ -41,6 +43,34 @@ class AirportData_Persistence_IT
     }
 
     // ---------------------------------------------------------------------------------------------
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param entityManager  {@inheritDoc}
+     * @param entityInstance {@inheritDoc}
+     * @implNote The coordinates, written as a point, are read back as they were, by the
+     *         server and by a new find.
+     */
+    @Override
+    void targetInstancePersisted(final EntityManager entityManager,
+                                 final AirportData entityInstance) {
+        final var coordinates = entityInstance.getCoordinates();
+        final var text = (String) entityManager.createNativeQuery(
+                        "SELECT coordinates::text FROM airports_data WHERE airport_code = ?1")
+                .setParameter(1, entityInstance.getAirportCode())
+                .getSingleResult();
+        log.info("coordinates: {}, text: {}", coordinates, text);
+        assertThat(new PGpointConverter().convertToEntityAttribute(text))
+                .as("coordinates of %s, as the server reads them", entityInstance)
+                .isEqualTo(coordinates);
+        entityManager.clear();
+        final var found = entityManager.find(AirportData.class, entityInstance.getAirportCode());
+        assertThat(found.getCoordinates())
+                .as("coordinates of %s, found", entityInstance)
+                .isNotSameAs(coordinates)
+                .isEqualTo(coordinates);
+    }
 
     /**
      * {@inheritDoc}
@@ -68,8 +98,8 @@ class AirportData_Persistence_IT
         assertThat(entityInstance.getCoordinates()).as("coordinates of %s", entityInstance)
                 .isNotNull()
                 .satisfies(p -> {
-                    assertThat(p.x()).as("longitude").isBetween(-180.0d, 180.0d);
-                    assertThat(p.y()).as("latitude").isBetween(-90.0d, 90.0d);
+                    assertThat(p.x).as("longitude").isBetween(-180.0d, 180.0d);
+                    assertThat(p.y).as("latitude").isBetween(-90.0d, 90.0d);
                 });
         {
             final var timeZone = entityInstance.getTimezoneAsTimeZone();

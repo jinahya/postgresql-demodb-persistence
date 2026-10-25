@@ -43,7 +43,7 @@ class AirportData_Randomizer
 
     AirportData_Randomizer() {
         super(AirportData.class, List.of(
-
+                "coordinates"
         ));
     }
 

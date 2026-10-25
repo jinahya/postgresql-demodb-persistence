@@ -21,8 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter;
-import com.github.jinahya.postgresql.demodb.persistence.converter.Point;
-import com.github.jinahya.postgresql.demodb.persistence.converter.PointConverter;
+import com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter;
 import com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -32,6 +31,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.postgresql.geometric.PGpoint;
 
 import java.time.ZoneId;
 import java.util.Locale;
@@ -54,8 +54,8 @@ import java.util.function.Supplier;
  * {@link MappedAirport}, picks the session's language out of them.
  * <p>
  * The {@value MappedAirportData#COLUMN_NAME_COORDINATES} column is a {@code point}, which has no type
- * in Jakarta Persistence; it is mapped as a {@link Point}, the longitude as {@code x} and the
- * latitude as {@code y}, through a {@link PointConverter}.
+ * in Jakarta Persistence; it is mapped as a {@link PGpoint}, the longitude as {@code x} and the
+ * latitude as {@code y}, through a {@link PGpointConverter}.
  * <p>
  * Writing a text back, the names' or the point's, needs the driver to leave its type to the server,
  * {@code stringtype=unspecified} on the JDBC URL.
@@ -493,11 +493,11 @@ public abstract class MappedAirportData {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute -- a {@code point}
-     * column, mapped as a {@link Point}, the longitude as {@code x} and the latitude as {@code y}.
+     * column, mapped as a {@link PGpoint}, the longitude as {@code x} and the latitude as {@code y}.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute.
      */
-    public Point getCoordinates() {
+    public PGpoint getCoordinates() {
         return coordinates;
     }
 
@@ -507,7 +507,7 @@ public abstract class MappedAirportData {
      *
      * @param coordinates new value for {@value #ATTRIBUTE_NAME_COORDINATES} attribute.
      */
-    public void setCoordinates(final Point coordinates) {
+    public void setCoordinates(final PGpoint coordinates) {
         this.coordinates = coordinates;
     }
 
@@ -592,10 +592,10 @@ public abstract class MappedAirportData {
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = PointConverter.class)
+    @Convert(converter = PGpointConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_COORDINATES, nullable = false, insertable = true, updatable = true)
-    private Point coordinates;
+    private PGpoint coordinates;
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
