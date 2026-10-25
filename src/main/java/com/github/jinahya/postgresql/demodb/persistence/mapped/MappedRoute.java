@@ -20,7 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayConverter;
+import com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter;
 import com.github.jinahya.postgresql.demodb.persistence.converter.PGIntervalConverter;
 
 import jakarta.persistence.Basic;
@@ -67,7 +67,7 @@ import java.util.Objects;
  * <p>
  * The {@value #COLUMN_NAME_DAYS_OF_WEEK} column is an {@code integer[]} and the
  * {@value #COLUMN_NAME_DURATION} column an {@code interval}, neither a type of Jakarta Persistence.
- * Each is mapped through a converter of this package, {@link IntegerListArrayConverter} and
+ * Each is mapped through a converter of this package, {@link IntegerListArrayAttributeConverter.OfString} and
  * {@link PGIntervalConverter.OfPostgres}, which carries it as the column's text form, so that no
  * provider feature is relied on; writing the text back needs the driver to leave its type to the
  * server, {@code stringtype=unspecified} on the JDBC URL. The interval is mapped as the driver's
@@ -502,7 +502,7 @@ public abstract class MappedRoute {
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = IntegerListArrayConverter.class)
+    @Convert(converter = IntegerListArrayAttributeConverter.OfString.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_DAYS_OF_WEEK, nullable = false, insertable = true, updatable = true)
     private List<Integer> daysOfWeek;

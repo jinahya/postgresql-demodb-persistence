@@ -29,7 +29,7 @@
     <!--    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
     <!--        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter$OfString</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGIntervalConverter$OfPostgres</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
@@ -89,7 +89,7 @@
     <!--    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
     <!--    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter$OfString</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGIntervalConverter$OfPostgres</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
