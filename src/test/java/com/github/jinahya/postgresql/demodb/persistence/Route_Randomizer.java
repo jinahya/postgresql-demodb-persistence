@@ -50,7 +50,8 @@ class Route_Randomizer
                 MappedRoute.ATTRIBUTE_NAME_AIRPLANE_CODE,
                 "departureAirportData",
                 "arrivalAirportData",
-                "airplaneData"
+                "airplaneData",
+                MappedRoute.ATTRIBUTE_NAME_DURATION
         ));
     }
 

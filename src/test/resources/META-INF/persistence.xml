@@ -31,6 +31,7 @@
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGIntervalConverter$OfPostgres</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.FareConditionsConverter</class>
@@ -89,6 +90,7 @@
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGIntervalConverter$OfPostgres</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.FareConditionsConverter</class>
@@ -117,8 +119,11 @@
       <!-- database's search_path, so unqualified table names resolve there -->
       <!-- stringtype=unspecified: a String bound for a tstzrange, point, jsonb, integer[] or interval column is sent -->
       <!-- untyped, so that the server casts it; see README.md, "Column types the providers differ on" -->
+      <!-- options=-c IntervalStyle=postgres: an interval is printed in the postgres style whatever the server's, -->
+      <!-- database's or role's default; the driver's own PGInterval, which is what EclipseLink hands a converter, -->
+      <!-- misreads sql_standard, and a PGIntervalConverter is named for one style, OfPostgres for this one -->
       <property name="jakarta.persistence.jdbc.url"
-                value="jdbc:postgresql://localhost:5432/demo?stringtype=unspecified"/>
+                value="jdbc:postgresql://localhost:5432/demo?stringtype=unspecified&amp;options=-c%20IntervalStyle=postgres"/>
       <property name="jakarta.persistence.jdbc.user" value="postgres"/>
       <property name="jakarta.persistence.jdbc.password" value="password"/>
       <!-- ///////////////////////////////////////////////////////////////////////////////////////////// eclipselink -->

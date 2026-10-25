@@ -99,12 +99,12 @@ to Java serialization for any other type it does not know, which fails.
 What follows from it, and what this module does:
 
 - `integer[]` and `interval` go through an `AttributeConverter` each, `IntegerListArrayConverter` (`List<Integer>`) and
-  `IntervalConverter` (`Duration`), whose database side is `String`, so that both providers bind the text on a
-  write. The catch is the read: Hibernate hands a converter the column the way its database side says, EclipseLink
-  hands it the driver's raw object whatever it says, and a method declared on `String` casts, and fails, before the
-  converter runs. So the base class, `_TextConverter<X, Y>`, declares the database side as a type variable -- its
-  method takes an `Object` once erased, and accepts text or object alike -- and the concrete converter binds `Y` to
-  `String` without overriding the methods, which is what keeps the cast out. A database side declared as `Object`
+  `PGIntervalConverter.OfPostgres` (`PGInterval`), whose database side is `String`, so that both providers bind the
+  text on a write. The catch is the read: Hibernate hands a converter the column the way its database side says,
+  EclipseLink hands it the driver's raw object whatever it says, and a method declared on `String` casts, and fails,
+  before the converter runs. So the base class, `_TextConverter<X, Y>`, declares the database side as a type variable
+  -- its method takes an `Object` once erased, and accepts text or object alike -- and the concrete converter binds `Y`
+  to `String` without overriding the methods, which is what keeps the cast out. A database side declared as `Object`
   was tried first: reads work, but neither provider can write through it, Hibernate having no JDBC type to bind and
   EclipseLink guessing one from the attribute.
 - `IntegerListArrayConverter` is an `_ListArrayConverter<E, Y>`, which owns the array literal -- braces, commas, quotes,
@@ -159,6 +159,7 @@ either of these.
 | `interval` | `Duration` with `hibernate.type.preferred_duration_jdbc_type=INTERVAL_SECOND` | reads `PT5H5M`, writes `02:05:00` | no such setting |
 | `interval` | `org.postgresql.util.PGInterval` | fails: serialized, `StreamCorruptedException` | fails: serialized to `bytea` |
 | `interval` | `Duration` through `IntervalConverter` | works | works |
+| `interval` | `PGInterval` through `PGIntervalConverter.OfPostgres` | works | works |
 | `integer[]` | `Integer[]`, `int[]`, `long[]`, `List<Integer>`, `Set<Integer>` | reads and writes natively, no cast needed | fails: serialized to `bytea` |
 | `integer[]` | `Number[]` | reads; the write sends `bytea[]` | fails |
 | `integer[]` | `Object[]` | fails both ways, `UnsupportedOperationException` | fails |
@@ -195,6 +196,14 @@ Also parsed: fractional seconds, and the verbose words with zero years and month
 never appear in output, the server prints them as days. A non-zero year or month is rejected in every style, as is
 anything that is not an interval. So every shape the server prints, and the driver's own, is handled; the one case
 beyond repair is EclipseLink under `sql_standard`, where the driver itself has already lost the value.
+
+`routes.duration` is mapped as the driver's `PGInterval`, which keeps the months and the days apart from the time, as
+the column does, through `PGIntervalConverter`. It has a converter for each style, nested, `OfPostgres`,
+`OfPostgresVerbose`, `OfSqlStandard` and `OfIso8601`; each reads, and writes, the text of its own style only, and
+rejects another's rather than misread it. The JDBC URL picks the style, `options=-c IntervalStyle=postgres`, whatever
+the server's, the database's or the role's default, and the attribute names the converter of the same style,
+`@Convert(converter = PGIntervalConverter.OfPostgres.class)`. EclipseLink still hands the converter the driver's
+`PGInterval`, which it copies, so the pinned `postgres` is what keeps the driver from misreading.
 
 ### `jsonb`, and why not `@Lob`
 
