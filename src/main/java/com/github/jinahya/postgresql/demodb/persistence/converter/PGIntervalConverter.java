@@ -73,6 +73,7 @@ public abstract class PGIntervalConverter<Y>
                 + "(?:(?<sign>[+-]?)(?<hours>\\d+):(?<minutes>\\d{2}):"
                 + "(?<seconds>\\d{2}(?:\\.\\d+)?))?");
 
+        // -----------------------------------------------------------------------------------------
         /**
          * Creates a new instance.
          */

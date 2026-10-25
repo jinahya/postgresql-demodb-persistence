@@ -20,7 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter;
+import com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringConverter;
+import jakarta.json.JsonObject;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -31,7 +32,6 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -41,9 +41,9 @@ import java.util.function.Supplier;
  * <q>Airplanes (internal multilingual data)</q>.
  * <p>
  * The {@value MappedAirplaneData#COLUMN_NAME_MODEL} column is {@code jsonb}, an object of one name
- * per language, keyed {@code en}, {@code ru}, ...; it is mapped as a {@link Map} of names keyed by
- * language, through a {@link LanguageNamesConverter}, with package-private accessors, and is read
- * and written a name at a time, by the language of a {@link Locale}. Writing it back needs the
+ * per language, keyed {@code en}, {@code ru}, ...; it is mapped as a {@link JsonObject}, through a
+ * {@link JsonpStringConverter.OfJsonObject}, with package-private accessors, and is read and
+ * written a name at a time, by the language of a {@link Locale}. Writing it back needs the
  * driver to leave its type to the server, {@code stringtype=unspecified} on the JDBC URL. The
  * {@code airplanes} view, see {@link MappedAirplane}, picks the session's language out of it.
  *
@@ -231,7 +231,7 @@ public abstract class MappedAirplaneData {
      * @return current value of {@value #ATTRIBUTE_NAME_MODEL} attribute.
      * @see #getModelName(Locale)
      */
-    Map<String, String> getModel() {
+    JsonObject getModel() {
         return model;
     }
 
@@ -241,7 +241,7 @@ public abstract class MappedAirplaneData {
      * @param model new value for {@value #ATTRIBUTE_NAME_MODEL} attribute.
      * @see #setModelName(Locale, String)
      */
-    void setModel(final Map<String, String> model) {
+    void setModel(final JsonObject model) {
         this.model = model;
     }
 
@@ -267,7 +267,7 @@ public abstract class MappedAirplaneData {
      * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
      *                                  blank.
-     * @implNote The names are replaced with a new map, not changed in place, so that the
+     * @implNote The names are replaced with a new object, not changed in place, so that the
      *         change is seen as a change of the attribute.
      * @see #removeModelName(Locale)
      */
@@ -282,7 +282,7 @@ public abstract class MappedAirplaneData {
      * @return the name removed; {@code null} if there was none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language.
-     * @implNote The names are replaced with a new map, not changed in place, so that the
+     * @implNote The names are replaced with a new object, not changed in place, so that the
      *         change is seen as a change of the attribute; nothing is replaced when there was no
      *         name.
      */
@@ -349,10 +349,10 @@ public abstract class MappedAirplaneData {
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = LanguageNamesConverter.class)
+    @Convert(converter = JsonpStringConverter.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_MODEL, nullable = false, insertable = true, updatable = true)
-    private Map<String, String> model;
+    private JsonObject model;
 
     // -----------------------------------------------------------------------------------------------------------------
     @Positive

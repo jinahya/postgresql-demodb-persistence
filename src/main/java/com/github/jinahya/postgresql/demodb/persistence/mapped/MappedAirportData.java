@@ -20,9 +20,10 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter;
+import com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringConverter;
 import com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter;
 import com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter;
+import jakarta.json.JsonObject;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -35,7 +36,6 @@ import org.postgresql.geometric.PGpoint;
 
 import java.time.ZoneId;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -48,10 +48,10 @@ import java.util.function.Supplier;
  * The {@value MappedAirportData#COLUMN_NAME_AIRPORT_NAME},
  * {@value MappedAirportData#COLUMN_NAME_CITY} and {@value MappedAirportData#COLUMN_NAME_COUNTRY}
  * columns are {@code jsonb}, an object of one name per language, keyed {@code en}, {@code ru}, ...;
- * each is mapped as a {@link Map} of names keyed by language, through a
- * {@link LanguageNamesConverter}, with package-private accessors, and is read and written a name at
- * a time, by the language of a {@link Locale}. The {@code airports} view, see
- * {@link MappedAirport}, picks the session's language out of them.
+ * each is mapped as a {@link JsonObject}, through a {@link JsonpStringConverter.OfJsonObject},
+ * with package-private accessors, and is read and written a name at a time, by the language of a
+ * {@link Locale}. The {@code airports} view, see {@link MappedAirport}, picks the session's
+ * language out of them.
  * <p>
  * The {@value MappedAirportData#COLUMN_NAME_COORDINATES} column is a {@code point}, which has no type
  * in Jakarta Persistence; it is mapped as a {@link PGpoint}, the longitude as {@code x} and the
@@ -280,7 +280,7 @@ public abstract class MappedAirportData {
      * @return current value of {@value #ATTRIBUTE_NAME_AIRPORT_NAME} attribute.
      * @see #getAirportName(Locale)
      */
-    Map<String, String> getAirportName() {
+    JsonObject getAirportName() {
         return airportName;
     }
 
@@ -291,7 +291,7 @@ public abstract class MappedAirportData {
      * @param airportName new value for {@value #ATTRIBUTE_NAME_AIRPORT_NAME} attribute.
      * @see #setAirportName(Locale, String)
      */
-    void setAirportName(final Map<String, String> airportName) {
+    void setAirportName(final JsonObject airportName) {
         this.airportName = airportName;
     }
 
@@ -317,7 +317,7 @@ public abstract class MappedAirportData {
      * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
      *                                  blank.
-     * @implNote The names are replaced with a new map, not changed in place, so that the
+     * @implNote The names are replaced with a new object, not changed in place, so that the
      *         change is seen as a change of the attribute.
      * @see #removeAirportName(Locale)
      */
@@ -332,7 +332,7 @@ public abstract class MappedAirportData {
      * @return the name removed; {@code null} if there was none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language.
-     * @implNote The names are replaced with a new map, not changed in place, so that the
+     * @implNote The names are replaced with a new object, not changed in place, so that the
      *         change is seen as a change of the attribute; nothing is replaced when there was no
      *         name.
      */
@@ -353,7 +353,7 @@ public abstract class MappedAirportData {
      * @return current value of {@value #ATTRIBUTE_NAME_CITY} attribute.
      * @see #getCityName(Locale)
      */
-    Map<String, String> getCity() {
+    JsonObject getCity() {
         return city;
     }
 
@@ -363,7 +363,7 @@ public abstract class MappedAirportData {
      * @param city new value for {@value #ATTRIBUTE_NAME_CITY} attribute.
      * @see #setCityName(Locale, String)
      */
-    void setCity(final Map<String, String> city) {
+    void setCity(final JsonObject city) {
         this.city = city;
     }
 
@@ -389,7 +389,7 @@ public abstract class MappedAirportData {
      * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
      *                                  blank.
-     * @implNote The names are replaced with a new map, not changed in place, so that the
+     * @implNote The names are replaced with a new object, not changed in place, so that the
      *         change is seen as a change of the attribute.
      * @see #removeCityName(Locale)
      */
@@ -404,7 +404,7 @@ public abstract class MappedAirportData {
      * @return the name removed; {@code null} if there was none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language.
-     * @implNote The names are replaced with a new map, not changed in place, so that the
+     * @implNote The names are replaced with a new object, not changed in place, so that the
      *         change is seen as a change of the attribute; nothing is replaced when there was no
      *         name.
      */
@@ -425,7 +425,7 @@ public abstract class MappedAirportData {
      * @return current value of {@value #ATTRIBUTE_NAME_COUNTRY} attribute.
      * @see #getCountryName(Locale)
      */
-    Map<String, String> getCountry() {
+    JsonObject getCountry() {
         return country;
     }
 
@@ -436,7 +436,7 @@ public abstract class MappedAirportData {
      * @param country new value for {@value #ATTRIBUTE_NAME_COUNTRY} attribute.
      * @see #setCountryName(Locale, String)
      */
-    void setCountry(final Map<String, String> country) {
+    void setCountry(final JsonObject country) {
         this.country = country;
     }
 
@@ -462,7 +462,7 @@ public abstract class MappedAirportData {
      * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
      *                                  blank.
-     * @implNote The names are replaced with a new map, not changed in place, so that the
+     * @implNote The names are replaced with a new object, not changed in place, so that the
      *         change is seen as a change of the attribute.
      * @see #removeCountryName(Locale)
      */
@@ -477,7 +477,7 @@ public abstract class MappedAirportData {
      * @return the name removed; {@code null} if there was none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language.
-     * @implNote The names are replaced with a new map, not changed in place, so that the
+     * @implNote The names are replaced with a new object, not changed in place, so that the
      *         change is seen as a change of the attribute; nothing is replaced when there was no
      *         name.
      */
@@ -571,24 +571,24 @@ public abstract class MappedAirportData {
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = LanguageNamesConverter.class)
+    @Convert(converter = JsonpStringConverter.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_AIRPORT_NAME, nullable = false, insertable = true, updatable = true)
-    private Map<String, String> airportName;
+    private JsonObject airportName;
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = LanguageNamesConverter.class)
+    @Convert(converter = JsonpStringConverter.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_CITY, nullable = false, insertable = true, updatable = true)
-    private Map<String, String> city;
+    private JsonObject city;
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = LanguageNamesConverter.class)
+    @Convert(converter = JsonpStringConverter.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_COUNTRY, nullable = false, insertable = true, updatable = true)
-    private Map<String, String> country;
+    private JsonObject country;
 
     // -----------------------------------------------------------------------------------------------------------------
     @NotNull

@@ -20,19 +20,21 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import java.util.HashMap;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * Utilities for names kept in a {@code jsonb} column as a JSON object keyed by language,
- * {@code {"en": "...", "ru": "..."}}, and mapped as a {@link Map} of {@link String}s.
+ * {@code {"en": "...", "ru": "..."}}, and mapped as a {@link JsonObject}.
  * <p>
- * A name is looked up by the {@link Locale#getLanguage() language} of a {@link Locale}. The methods
- * which change names never change the map in place; they return a new one, which the attribute is
- * replaced with, so that the change is seen as a change of the attribute.
+ * A name is looked up by the {@link Locale#getLanguage() language} of a {@link Locale}. A
+ * {@link JsonObject} cannot be changed, so the methods which change names return a new one, which
+ * the attribute is replaced with, so that the change is seen as a change of the attribute.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -60,54 +62,57 @@ final class _LocaleNames {
      *
      * @param names  the names; may be {@code null}.
      * @param locale the locale whose language names the name.
-     * @return the name in the language of {@code locale}; {@code null} if there is none.
+     * @return the name in the language of {@code locale}; {@code null} if there is none, or it is
+     *         not a JSON string.
      * @throws NullPointerException     if {@code locale} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language.
      */
-    static String get(final Map<String, String> names, final Locale locale) {
+    static String get(final JsonObject names, final Locale locale) {
         final var language = language(locale);
-        return Optional.ofNullable(names).map(v -> v.get(language)).orElse(null);
+        return Optional.ofNullable(names).map(v -> v.getString(language, null)).orElse(null);
     }
 
     /**
-     * Returns a new map of the specified names, with the name in the language of the specified
+     * Returns a new object of the specified names, with the name in the language of the specified
      * locale replaced with the specified value.
      *
      * @param names  the names; may be {@code null}.
      * @param locale the locale whose language names the name.
      * @param name   the new name in the language of {@code locale}.
-     * @return a new map of {@code names} with {@code name} in the language of {@code locale}.
+     * @return a new object of {@code names} with {@code name} in the language of {@code locale}.
      * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
      *                                  blank.
      */
-    static Map<String, String> with(final Map<String, String> names, final Locale locale,
-                                    final String name) {
+    static JsonObject with(final JsonObject names, final Locale locale, final String name) {
         final var language = language(locale);
         Objects.requireNonNull(name, "name is null");
         if (name.isBlank()) {
             throw new IllegalArgumentException("name is blank");
         }
-        final var result = new HashMap<>(Optional.ofNullable(names).orElseGet(Map::of));
-        result.put(language, name);
-        return result;
+        return builder(names).add(language, name).build();
     }
 
     /**
-     * Returns a new map of the specified names, without the name in the language of the specified
-     * locale.
+     * Returns a new object of the specified names, without the name in the language of the
+     * specified locale.
      *
      * @param names  the names; may be {@code null}.
      * @param locale the locale whose language names the name.
-     * @return a new map of {@code names} without the name in the language of {@code locale}.
+     * @return a new object of {@code names} without the name in the language of {@code locale}.
      * @throws NullPointerException     if {@code locale} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language.
      */
-    static Map<String, String> without(final Map<String, String> names, final Locale locale) {
+    static JsonObject without(final JsonObject names, final Locale locale) {
         final var language = language(locale);
-        final var result = new HashMap<>(Optional.ofNullable(names).orElseGet(Map::of));
-        result.remove(language);
-        return result;
+        return builder(names).remove(language).build();
+    }
+
+    /**
+     * Returns a new builder of the specified names, or of none.
+     */
+    private static JsonObjectBuilder builder(final JsonObject names) {
+        return names == null ? Json.createObjectBuilder() : Json.createObjectBuilder(names);
     }
 
     // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS

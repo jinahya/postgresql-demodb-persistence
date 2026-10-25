@@ -43,7 +43,10 @@ class AirportData_Randomizer
 
     AirportData_Randomizer() {
         super(AirportData.class, List.of(
-                "coordinates"
+                "coordinates",
+                MappedAirportData.ATTRIBUTE_NAME_AIRPORT_NAME,
+                MappedAirportData.ATTRIBUTE_NAME_CITY,
+                MappedAirportData.ATTRIBUTE_NAME_COUNTRY
         ));
     }
 
