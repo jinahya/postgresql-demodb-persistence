@@ -20,9 +20,9 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringAttributeConverter;
+import com.github.jinahya.persistence.more.converter.json.JsonpStringAttributeConverter;
 import com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter;
-import com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter;
+import com.github.jinahya.persistence.more.converter.time.ZoneIdStringAttributeConverter;
 import jakarta.json.JsonObject;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -599,7 +599,7 @@ public abstract class MappedAirportData {
 
     // ---------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = ZoneIdConverter.class)
+    @Convert(converter = ZoneIdStringAttributeConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_TIMEZONE, nullable = false, insertable = true, updatable = true)
     private ZoneId timezone;

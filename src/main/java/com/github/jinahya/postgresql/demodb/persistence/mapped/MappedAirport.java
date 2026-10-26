@@ -21,7 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter;
-import com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter;
+import com.github.jinahya.persistence.more.converter.time.ZoneIdStringAttributeConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -329,7 +329,7 @@ public abstract class MappedAirport {
     private PointAttributeConverter.Point coordinates;
 
     // ---------------------------------------------------------------------------------------------
-    @Convert(converter = ZoneIdConverter.class)
+    @Convert(converter = ZoneIdStringAttributeConverter.class)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_TIMEZONE, nullable = true, insertable = false, updatable = false)
     private ZoneId timezone;

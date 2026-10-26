@@ -102,9 +102,9 @@ What follows from it, and what this module does:
   `IntervalPostgresAttributeConverter.OfString` (`PostgresInterval`), whose database side is `String`, so that both providers bind the
   text on a write. The catch is the read: Hibernate hands a converter the column the way its database side says,
   EclipseLink hands it the driver's raw object whatever it says, and a method declared on `String` casts, and fails,
-  before the converter runs. So the base class, `_TextConverter<X, Y>`, declares the database side as a type variable
-  -- its method takes an `Object` once erased, and accepts text or object alike -- and the concrete converter binds `Y`
-  to `String` without overriding the methods, which is what keeps the cast out. A database side declared as `Object`
+  before the converter runs. So each converter declares the database side as a type variable -- its method takes an
+  `Object` once erased, and accepts text or object alike -- and its nested `OfString` binds `Y` to `String` without
+  overriding the methods, which is what keeps the cast out. A database side declared as `Object`
   was tried first: reads work, but neither provider can write through it, Hibernate having no JDBC type to bind and
   EclipseLink guessing one from the attribute.
 - `IntegerListArrayAttributeConverter` holds all of it in one file: the integer array literal -- braces, commas,
@@ -127,14 +127,14 @@ What follows from it, and what this module does:
 - Each `jsonb` column, an object of one name per language, is mapped as a JSON-P `JsonObject` through
   `JsonpStringAttributeConverter.OfJsonObject`, whose database side is a plain `String`, not a type variable; the attributes
   have package-private accessors, and are read and written a name at a time, by the language of a `Locale`.
-  `JsonpStringAttributeConverter` has a converter for each JSON-P type, `OfJsonValue`, `OfJsonStructure`, `OfJsonObject`,
+  `JsonpStringAttributeConverter`, from `jinahya-persistence-more`, has a converter for each JSON-P type, `OfJsonValue`, `OfJsonStructure`, `OfJsonObject`,
   `OfJsonArray`, `OfJsonString` and `OfJsonNumber`; each reads one JSON value, rejects anything after it, and rejects
   a value of another type. EclipseLink hands it the column as a `String` too, not the driver's `PGobject`.
 - Three `text` columns go through converters too, for a type the text has no room for: `flights.status`, and the
   `timetable` view's, as a `MappedFlight.FlightStatus` (`On Time` is no Java identifier, which is why `@Enumerated`
   cannot map it), `seats.fare_conditions` and `segments.fare_conditions` as a `MappedSeat.FareConditions`, both enums
   of the values the check constraints allow, and `airports_data.timezone`, and the `airports` view's, as a `ZoneId`,
-  through `MappedFlight.FlightStatusConverter`, `MappedSeat.FareConditionsConverter` and `ZoneIdConverter`. An enum
+  through `MappedFlight.FlightStatusConverter`, `MappedSeat.FareConditionsConverter` and `ZoneIdStringAttributeConverter`, from `jinahya-persistence-more`. An enum
   and its converter, specific to a column, are nested in the mapped class of the column's table.
 - `tstzrange` stays `String`, the text both providers read alike: the test entity over `routes` writes the column
   through its embedded identifier, and the specification has no conversion applied to an identifier's attributes,
