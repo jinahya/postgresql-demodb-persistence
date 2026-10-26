@@ -156,6 +156,9 @@
     <!-- https://central.sonatype.com/artifact/org.slf4j/slf4j-bom/versions -->
     <version.org.slf4j>2.0.20</version.org.slf4j>
     <eclipselink.woven>false</eclipselink.woven>
+    <!-- the session's bookings.lang, which bookings.lang() returns and the views read their names in; -->
+    <!-- the defaults are bookings-lang-en's, see that profile -->
+    <bookings.lang>en</bookings.lang>
 
     <!-- Transitive only; pinned to PROJECTS_VERSIONS.asciidoc at the book's root. -->
     <!-- https://central.sonatype.com/artifact/io.github.jinahya/jinahya-object-randomizer/versions -->
@@ -906,6 +909,27 @@
           <scope>test</scope>
         </dependency>
       </dependencies>
+    </profile>
+    <!-- The language the views (airplanes, airports, timetable) read their names in: the `it`
+         unit passes it to the server as bookings.lang on the JDBC URL. The demo database's own default is
+         en; the names are there in en and ru only, and any other language reads as NULL.
+         Naming any profile on the command line deactivates every activeByDefault profile, so the defaults
+         in <properties> are bookings-lang-en's, as the provider's are jakarta-ee-11-hibernate-orm's; a run
+         which names only the provider still reads en. -->
+    <profile>
+      <id>bookings-lang-en</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <bookings.lang>en</bookings.lang>
+      </properties>
+    </profile>
+    <profile>
+      <id>bookings-lang-ru</id>
+      <properties>
+        <bookings.lang>ru</bookings.lang>
+      </properties>
     </profile>
   </profiles>
 </project>

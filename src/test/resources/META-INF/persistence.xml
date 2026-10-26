@@ -24,7 +24,7 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence ${persistence.schemaLocation}"
              version="${persistence.version}">
-  <persistence-unit name="demonstration-test" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
     <description>Persistence Unit for an In-Memory DB</description>
     <!--    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
     <!--        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
@@ -82,7 +82,7 @@
       <property name="hibernate.use_sql_comment" value="true"/>
     </properties>
   </persistence-unit>
-  <persistence-unit name="demonstration-it" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="it" transaction-type="RESOURCE_LOCAL">
     <description>Persistence Unit for a Physical Database</description>
     <!--    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
     <!--    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
@@ -120,8 +120,10 @@
       <!-- options=-c IntervalStyle=postgres: an interval is printed in the postgres style whatever the server's, -->
       <!-- database's or role's default; the driver's own PGInterval, which is what EclipseLink hands a converter, -->
       <!-- misreads sql_standard, and IntervalPostgresAttributeConverter reads the postgres style only -->
+      <!-- options=-c bookings.lang=...: the language the views read their names in, bookings.lang(); the -->
+      <!-- bookings-lang-en (default) and bookings-lang-ru profiles in pom.xml choose it -->
       <property name="jakarta.persistence.jdbc.url"
-                value="jdbc:postgresql://localhost:5432/demo?stringtype=unspecified&amp;options=-c%20IntervalStyle=postgres"/>
+                value="jdbc:postgresql://localhost:5432/demo?stringtype=unspecified&amp;options=-c%20IntervalStyle=postgres%20-c%20bookings.lang=${bookings.lang}"/>
       <property name="jakarta.persistence.jdbc.user" value="postgres"/>
       <property name="jakarta.persistence.jdbc.password" value="password"/>
       <!-- ///////////////////////////////////////////////////////////////////////////////////////////// eclipselink -->

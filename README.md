@@ -244,7 +244,7 @@ $ ./_mvn_jakarta_ee_11_verify_notests_eclipselink.sh
 The entities live in `src/test`, one per table and view, extending the mapped superclasses with what an
 application decides: the associations, lazy, with no cascade; `of(...)` factories where an association is part of
 the identifier; the identifier `Route` gives a table which has none. The persistence units are there too,
-`demonstration-test` on H2 in PostgreSQL mode, whose schema the provider generates, and `demonstration-it` on the
+`test` on H2 in PostgreSQL mode, whose schema the provider generates, and `it` on the
 database above.
 
 Per entity, after `mysql-sakila-persistence`: a `*_Randomizer`, podam with the constrained attributes assigned after

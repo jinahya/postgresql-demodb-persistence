@@ -63,7 +63,7 @@ abstract class _Entity_Persistence_Test<T> {
     /**
      * The name of the persistence unit this class bootstraps. The value is {@value}.
      */
-    static final String PERSISTENCE_UNIT_NAME = "demonstration-test";
+    static final String PERSISTENCE_UNIT_NAME = "test";
 
     /**
      * The prefix of the constants {@link #_Resolvable_ATTRIBUTE_NAME_()} checks. The value is

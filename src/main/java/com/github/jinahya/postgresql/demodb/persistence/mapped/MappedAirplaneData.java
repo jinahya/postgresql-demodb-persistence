@@ -42,8 +42,8 @@ import java.util.function.Supplier;
  * <p>
  * The {@value MappedAirplaneData#COLUMN_NAME_MODEL} column is {@code jsonb}, an object of one name
  * per language, keyed {@code en}, {@code ru}, ...; it is mapped as a {@link JsonObject}, through a
- * {@link JsonpStringAttributeConverter.OfJsonObject}, with package-private accessors, and is read and
- * written a name at a time, by the language of a {@link Locale}. Writing it back needs the
+ * {@link JsonpStringAttributeConverter.OfJsonObject}, with package-private accessors, and is read
+ * and written a name at a time, by the language of a {@link Locale}. Writing it back needs the
  * driver to leave its type to the server, {@code stringtype=unspecified} on the JDBC URL. The
  * {@code airplanes} view, see {@link MappedAirplane}, picks the session's language out of it.
  *
