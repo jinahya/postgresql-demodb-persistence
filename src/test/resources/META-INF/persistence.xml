@@ -31,9 +31,8 @@
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter$OfString</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter$OfString</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringAttributeConverter$OfJsonObject</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter$OfString</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter</class>
@@ -90,9 +89,8 @@
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter$OfString</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter$OfString</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.LanguageNamesConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.JsonpStringAttributeConverter$OfJsonObject</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter$OfString</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter</class>

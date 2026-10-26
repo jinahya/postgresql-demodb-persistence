@@ -1,7 +1,9 @@
 /**
  * Attribute converters for the PostgreSQL column types Jakarta Persistence has none of its own for:
  * an {@code integer[]} as a {@link java.util.List} of {@link java.lang.Integer}s, an
- * {@code interval} as a {@link java.time.Duration}.
+ * {@code interval} as an {@link IntervalPostgresAttributeConverter.PostgresInterval}, a
+ * {@code point} as a {@link PointAttributeConverter.Point}, a {@code jsonb} as a JSON-P value, and a
+ * time zone's text as a {@link java.time.ZoneId}.
  * <p>
  * Each carries its column as text towards the database and accepts, from the database, whatever the
  * provider hands over -- the text, or the driver's own object, since Hibernate and EclipseLink

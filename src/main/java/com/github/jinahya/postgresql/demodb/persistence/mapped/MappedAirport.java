@@ -20,7 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.PGpointConverter;
+import com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter;
 import com.github.jinahya.postgresql.demodb.persistence.converter.ZoneIdConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -29,7 +29,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
-import org.postgresql.geometric.PGpoint;
 
 import java.time.ZoneId;
 import java.util.Objects;
@@ -44,8 +43,8 @@ import java.util.TimeZone;
  * requires of an {@link Id @Id}. It has no setters; nothing writes to a view.
  * <p>
  * The {@value MappedAirport#COLUMN_NAME_COORDINATES} column is a {@code point}, which has no type in
- * Jakarta Persistence; it is mapped as a {@link PGpoint}, the longitude as {@code x} and the
- * latitude as {@code y}, through a {@link PGpointConverter}.
+ * Jakarta Persistence; it is mapped as a {@link PointAttributeConverter.Point}, the longitude as
+ * {@code x} and the latitude as {@code y}, through a {@link PointAttributeConverter.OfString}.
  * <p>
  * The view reads {@code airports_data}, see {@link MappedAirportData}, with the
  * {@value #COLUMN_NAME_AIRPORT_NAME}, {@value #COLUMN_NAME_CITY} and {@value #COLUMN_NAME_COUNTRY}
@@ -262,11 +261,12 @@ public abstract class MappedAirport {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute -- a {@code point}
-     * column, mapped as a {@link PGpoint}, the longitude as {@code x} and the latitude as {@code y}.
+     * column, mapped as a {@link PointAttributeConverter.Point}, the longitude as {@code x} and the
+     * latitude as {@code y}.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute.
      */
-    public PGpoint getCoordinates() {
+    public PointAttributeConverter.Point getCoordinates() {
         return coordinates;
     }
 
@@ -323,10 +323,10 @@ public abstract class MappedAirport {
     private String country;
 
     // ---------------------------------------------------------------------------------------------
-    @Convert(converter = PGpointConverter.class)
+    @Convert(converter = PointAttributeConverter.OfString.class)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_COORDINATES, nullable = true, insertable = false, updatable = false)
-    private PGpoint coordinates;
+    private PointAttributeConverter.Point coordinates;
 
     // ---------------------------------------------------------------------------------------------
     @Convert(converter = ZoneIdConverter.class)

@@ -20,7 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
-import org.postgresql.geometric.PGpoint;
+import com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter.Point;
 import com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter.PostgresInterval;
 
 import java.math.BigDecimal;
@@ -161,9 +161,9 @@ final class __Random_TestUtils {
     /**
      * Returns a point of a longitude and a latitude, each to four decimal places.
      */
-    static PGpoint point() {
+    static Point point() {
         final var random = ThreadLocalRandom.current();
-        return new PGpoint(
+        return new Point(
                 BigDecimal.valueOf(random.nextDouble(-180, 180)).setScale(4, RoundingMode.HALF_UP)
                         .doubleValue(),
                 BigDecimal.valueOf(random.nextDouble(-90, 90)).setScale(4, RoundingMode.HALF_UP)

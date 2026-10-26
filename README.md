@@ -122,8 +122,8 @@ What follows from it, and what this module does:
   `CALL IDENTITY()`, neither of which the mode accepts, so the `flights` table was never created. The PostgreSQL
   platform's `SERIAL` and `select lastval()` are. A column definition cannot reach the read-back query, so the
   platform is the switch that has to flip.
-- `point` goes through a `_TextConverter` of the same kind. `PGpointConverter` maps it as the driver's
-  `org.postgresql.geometric.PGpoint`, written `(x,y)`.
+- `point` goes through a converter of the same kind. `PointAttributeConverter.OfString` maps it as
+  `PointAttributeConverter.Point`, written `(x,y)`; EclipseLink's `PGpoint` is read through its fields, by reflection.
 - Each `jsonb` column, an object of one name per language, is mapped as a JSON-P `JsonObject` through
   `JsonpStringAttributeConverter.OfJsonObject`, whose database side is a plain `String`, not a type variable; the attributes
   have package-private accessors, and are read and written a name at a time, by the language of a `Locale`.
