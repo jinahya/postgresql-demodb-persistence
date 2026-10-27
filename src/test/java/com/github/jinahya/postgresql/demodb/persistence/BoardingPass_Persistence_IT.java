@@ -24,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -84,6 +87,69 @@ class BoardingPass_Persistence_IT
         assertThat(instance.getSegment()).as("segment of %s", instance).isNotNull().satisfies(s -> {
             assertThat(s.getTicketNo()).isEqualTo(instance.getTicketNo());
             assertThat(s.getFlightId()).isEqualTo(instance.getFlightId());
+        });
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Verifies that the {@code selectByFlightIdAndBoardingNo} named query finds a randomly
+     * selected row by its flight id and boarding number, a unique pair.
+     *
+     * @implNote The context is cleared after the selection, so the instance found is read
+     *         from the database, not answered from the context. The boarding number is nullable,
+     *         and a row without one cannot be found by it, {@code = NULL} matching no row; rows are
+     *         drawn until one has it, a few times at most, for nearly all of them do.
+     */
+    @DisplayName("selectByFlightIdAndBoardingNo finds a randomly selected row")
+    @Test
+    void selectByFlightIdAndBoardingNo__() {
+        applyEntityManagerInTransactionAndRollback(em -> {
+            final var optional = Stream.generate(
+                            () -> __Persistence_TestUtils.selectRandomEntity(em, targetClass))
+                    .limit(10)
+                    .flatMap(Optional::stream)
+                    .filter(e -> e.getBoardingNo() != null)
+                    .findFirst();
+            assumeTrue(optional.isPresent(),
+                       () -> "no row of " + targetClass + " with a boarding number was drawn");
+            final var selected = optional.get();
+            em.clear();
+            final var found = em.createNamedQuery("selectByFlightIdAndBoardingNo",
+                                                  BoardingPass.class)
+                    .setParameter("flightId", selected.getFlightId())
+                    .setParameter("boardingNo", selected.getBoardingNo())
+                    .getSingleResult();
+            assertThat(found).as("found by flight id and boarding number of %s", selected)
+                    .isNotSameAs(selected)
+                    .isEqualTo(selected);
+            return null;
+        });
+    }
+
+    /**
+     * Verifies that the {@code selectByFlightIdAndSeatNo} named query finds a randomly selected
+     * row by its flight id and seat number, a unique pair.
+     *
+     * @implNote The context is cleared after the selection, so the instance found is read
+     *         from the database, not answered from the context.
+     */
+    @DisplayName("selectByFlightIdAndSeatNo finds a randomly selected row")
+    @Test
+    void selectByFlightIdAndSeatNo__() {
+        applyEntityManagerInTransactionAndRollback(em -> {
+            final var optional = __Persistence_TestUtils.selectRandomEntity(em, targetClass);
+            assumeTrue(optional.isPresent(), () -> "no row of " + targetClass + " is installed");
+            final var selected = optional.get();
+            em.clear();
+            final var found = em.createNamedQuery("selectByFlightIdAndSeatNo", BoardingPass.class)
+                    .setParameter("flightId", selected.getFlightId())
+                    .setParameter("seatNo", selected.getSeatNo())
+                    .getSingleResult();
+            assertThat(found).as("found by flight id and seat number of %s", selected)
+                    .isNotSameAs(selected)
+                    .isEqualTo(selected);
+            return null;
         });
     }
 }

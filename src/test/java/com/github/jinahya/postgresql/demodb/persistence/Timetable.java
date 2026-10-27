@@ -40,7 +40,7 @@ public class Timetable
     /**
      * Creates a new instance.
      */
-    public Timetable() {
+    protected Timetable() {
         super();
     }
 

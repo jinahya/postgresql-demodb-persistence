@@ -27,10 +27,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -367,4 +369,21 @@ public abstract class MappedAirplaneData {
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_SPEED, nullable = false, insertable = true, updatable = true)
     private Integer speed;
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns how long this airplane flies at its cruising speed until its range runs out; the
+     * {@value #ATTRIBUTE_NAME_RANGE} divided by the {@value #ATTRIBUTE_NAME_SPEED}.
+     *
+     * @return the time, in whole seconds, flown at the cruising speed; {@code null} when either the
+     *         {@value #ATTRIBUTE_NAME_RANGE} or the {@value #ATTRIBUTE_NAME_SPEED} is {@code null}.
+     */
+    @Transient
+    public Duration getEndurance() {
+        if (range == null || speed == null) {
+            return null;
+        }
+        return Duration.ofSeconds(range * 3_600L / speed);
+    }
 }

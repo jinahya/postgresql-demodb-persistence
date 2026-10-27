@@ -910,6 +910,26 @@
         </dependency>
       </dependencies>
     </profile>
+    <!-- Weaves the entities for EclipseLink as they are loaded, with no plugin: the EclipseLink jar is itself a
+         Java agent (its Premain-Class is JavaSECMPInitializerAgent), handed to the test JVM on the argLine.
+         Without weaving EclipseLink ignores LAZY on a to-one association and on a basic attribute, and reads
+         them at once; with it, LAZY is honoured, as under Hibernate ORM.
+         An add-on, not a provider: it is named together with jakarta-ee-11-eclipselink,
+           ./mvnw -Pjakarta-ee-11-eclipselink,jakarta-ee-11-eclipselink-weaving clean test
+         and on its own it would hand the agent to a JVM which has no EclipseLink to run it.
+         Nothing on disk is rewritten, so what is packaged stays unwoven whichever profiles built it.
+         The agent goes into the argLine property, which surefire and failsafe read by default;
+         jacoco:prepare-agent adds its own agent to the same property, so both run.
+         For demonstration only, of LAZY under EclipseLink: woven, the equals_verify_ tests skip the classes the
+         weaver touched, whose _persistence_* fields EqualsVerifier cannot fill, and Route_Persistence_Test skips
+         the getReference tests EclipseLink fails with an EmbeddedId; see those tests. -->
+    <profile>
+      <id>jakarta-ee-11-eclipselink-weaving</id>
+      <properties>
+        <argLine>-javaagent:${settings.localRepository}/org/eclipse/persistence/org.eclipse.persistence.jpa/${version.org.eclipse.persistence}/org.eclipse.persistence.jpa-${version.org.eclipse.persistence}.jar</argLine>
+        <eclipselink.woven>true</eclipselink.woven>
+      </properties>
+    </profile>
     <!-- The language the views (airplanes, airports, timetable) read their names in: the `it`
          unit passes it to the server as bookings.lang on the JDBC URL. The demo database's own default is
          en; the names are there in en and ru only, and any other language reads as NULL.

@@ -69,6 +69,34 @@ final class __Object_TestUtils {
         }
     }
 
+    /**
+     * The name of the interface EclipseLink's weaver adds to every class it weaves.
+     */
+    private static final String ECLIPSELINK_PERSISTENCE_WEAVED =
+            "org.eclipse.persistence.internal.weaving.PersistenceWeaved";
+
+    /**
+     * Checks whether the specified class, or one of its superclasses, has been woven by
+     * EclipseLink, as the {@code jakarta-ee-11-eclipselink-weaving} profile does to the entities
+     * and embeddables of the unit.
+     *
+     * @param targetClass the class to check.
+     * @return {@code true} when {@code targetClass} is woven; {@code false} otherwise.
+     * @implNote The interface is matched by name, so that this compiles, and answers
+     *         {@code false}, without EclipseLink on the class path.
+     */
+    static boolean isWovenByEclipseLink(final Class<?> targetClass) {
+        Objects.requireNonNull(targetClass, "targetClass is null");
+        for (Class<?> c = targetClass; c != null; c = c.getSuperclass()) {
+            for (final var i : c.getInterfaces()) {
+                if (ECLIPSELINK_PERSISTENCE_WEAVED.equals(i.getName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     // -------------------------------------------------------------------------------- CONSTRUCTORS
     private __Object_TestUtils() {
         throw new AssertionError("instantiation is not allowed");

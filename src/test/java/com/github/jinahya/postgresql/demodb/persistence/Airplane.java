@@ -23,12 +23,18 @@ package com.github.jinahya.postgresql.demodb.persistence;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirplane;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 /**
  * An entity which maps the {@value MappedAirplane#TABLE_NAME} view, extending
- * {@link MappedAirplane} with what is an application's to decide; a view has no association to
- * add.
+ * {@link MappedAirplane} with what is an application's to decide: a read-only association to the
+ * {@link AirplaneData} row the view reads.
+ * <p>
+ * A view has no foreign key; the association rests on the view's definition, which reads every
+ * row of {@code airplanes_data} by the same {@value MappedAirplane#COLUMN_NAME_AIRPLANE_CODE}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -42,9 +48,24 @@ public class Airplane
     /**
      * Creates a new instance.
      */
-    public Airplane() {
+    protected Airplane() {
         super();
     }
 
+    /**
+     * Returns the airplane data this view row reads, over the
+     * {@value MappedAirplane#COLUMN_NAME_AIRPLANE_CODE} column, which is the identifier; the
+     * association is read-only.
+     *
+     * @return the airplaneData.
+     */
+    public AirplaneData getAirplaneData() {
+        return airplaneData;
+    }
+
     // ---------------------------------------------------------------------------------------------
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = COLUMN_NAME_AIRPLANE_CODE, nullable = false, insertable = false,
+                updatable = false)
+    private AirplaneData airplaneData;
 }

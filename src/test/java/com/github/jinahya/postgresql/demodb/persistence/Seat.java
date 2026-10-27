@@ -55,19 +55,20 @@ public class Seat
      */
     public static Seat of(final AirplaneData airplaneData, final String seatNo) {
         final var instance = new Seat();
-        instance.setAirplaneCode(airplaneData.getAirplaneCode());
+        instance.setAirplaneData(airplaneData);
         instance.setSeatNo(seatNo);
-        instance.airplaneData = airplaneData;
         return instance;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     /**
      * Creates a new instance.
      */
-    public Seat() {
+    protected Seat() {
         super();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     /**
      * Returns the airplane this seat is in, over the {@value MappedSeat#COLUMN_NAME_AIRPLANE_CODE}
      * column, which is part of the identifier and so already writable through
@@ -77,6 +78,18 @@ public class Seat
      */
     public AirplaneData getAirplaneData() {
         return airplaneData;
+    }
+
+    /**
+     * Replaces the airplane this seat is in with the specified value, and the
+     * {@value MappedSeat#COLUMN_NAME_AIRPLANE_CODE} part of the identifier with its code; the
+     * association itself writes nothing, so the code is what reaches the column.
+     *
+     * @param airplaneData new value for the airplaneData; {@code null} clears the code too.
+     */
+    void setAirplaneData(final AirplaneData airplaneData) {
+        this.airplaneData = airplaneData;
+        setAirplaneCode(airplaneData == null ? null : airplaneData.getAirplaneCode());
     }
 
     // ---------------------------------------------------------------------------------------------

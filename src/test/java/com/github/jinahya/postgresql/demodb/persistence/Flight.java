@@ -24,23 +24,34 @@ import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 /**
  * An entity which maps the {@value MappedFlight#TABLE_NAME} table, extending {@link MappedFlight}
  * with what is an application's to decide; it adds nothing, there being no foreign key to map an
  * association over.
+ * <p>
+ * The table's unique constraint, one flight of a route per scheduled departure, is declared with
+ * {@link UniqueConstraint @UniqueConstraint}, under the name the database gives it, so that a
+ * schema generated from the mapping, the in-memory one, has it too.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Entity
-@Table(name = MappedFlight.TABLE_NAME)
+@Table(name = MappedFlight.TABLE_NAME,
+       uniqueConstraints = {
+               @UniqueConstraint(name = "flights_route_no_scheduled_departure_key",
+                                 columnNames = {MappedFlight.COLUMN_NAME_ROUTE_NO,
+                                                MappedFlight.COLUMN_NAME_SCHEDULED_DEPARTURE})
+       }
+)
 public class Flight
         extends MappedFlight {
 
     /**
      * Creates a new instance.
      */
-    public Flight() {
+    protected Flight() {
         super();
     }
 

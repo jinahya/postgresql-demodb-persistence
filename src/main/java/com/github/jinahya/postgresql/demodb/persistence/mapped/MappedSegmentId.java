@@ -106,6 +106,10 @@ public abstract class MappedSegmentId {
      * @return {@inheritDoc}
      * @implSpec Equality is by {@value #ATTRIBUTE_NAME_TICKET_NO} and
      *         {@value #ATTRIBUTE_NAME_FLIGHT_ID}.
+     * @implNote {@link MappedBoardingPassId} extends this class, for the {@code boarding_passes}
+     *         key is the {@code segments} key it references; an identifier of either equals one of
+     *         the other with the same values. A subclass which checked its own type here would
+     *         break the symmetry, so this method is {@code final}.
      */
     @Override
     public final boolean equals(final Object obj) {

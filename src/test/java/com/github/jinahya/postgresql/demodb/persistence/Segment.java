@@ -65,7 +65,7 @@ public class Segment
     /**
      * Creates a new instance.
      */
-    public Segment() {
+    protected Segment() {
         super();
     }
 

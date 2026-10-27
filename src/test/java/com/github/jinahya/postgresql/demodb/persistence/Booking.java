@@ -54,7 +54,7 @@ public class Booking
     /**
      * Creates a new instance.
      */
-    public Booking() {
+    protected Booking() {
         super();
     }
 

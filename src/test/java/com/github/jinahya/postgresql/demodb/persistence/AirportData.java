@@ -59,7 +59,7 @@ public class AirportData
     /**
      * Creates a new instance.
      */
-    public AirportData() {
+    protected AirportData() {
         super();
     }
 

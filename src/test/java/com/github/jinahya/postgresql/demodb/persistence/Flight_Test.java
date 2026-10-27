@@ -42,13 +42,14 @@ class Flight_Test
     /**
      * {@inheritDoc}
      *
-     * @implNote {@link Flight#equals(Object) equals} compares only the {@code @Id}, because
-     *         every other attribute is mutable state.
+     * @implNote {@link Flight#equals(Object) equals} compares only the natural key, the route
+     *         number and the scheduled departure, not the {@code @Id}, nor the rest, which is
+     *         mutable state.
      */
     @Override
     public SingleTypeEqualsVerifierApi<Flight> equalsVerifier() {
         return super.equalsVerifier()
-                .suppress(Warning.SURROGATE_KEY,
+                .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED,
                           Warning.IDENTICAL_COPY_FOR_VERSIONED_ENTITY,
                           Warning.STRICT_HASHCODE);
     }

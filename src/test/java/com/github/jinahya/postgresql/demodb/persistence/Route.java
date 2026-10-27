@@ -99,7 +99,7 @@ public class Route
     /**
      * Creates a new instance.
      */
-    public Route() {
+    protected Route() {
         super();
     }
 

@@ -23,6 +23,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirport;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +32,7 @@ import java.time.ZoneId;
 import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Verifies the mappings of {@link Airport} against the installed {@code demo} database.
@@ -62,7 +64,8 @@ class Airport_Persistence_IT
      * {@inheritDoc}
      *
      * @param entityInstance {@inheritDoc}
-     * @implNote The name is the English name, no longer JSON.
+     * @implNote The name is the name in the session's language, no longer JSON, and the
+     *         association reaches the airport data of the code.
      */
     @Override
     void randomTargetInstanceSelected(final Airport entityInstance) {
@@ -71,6 +74,50 @@ class Airport_Persistence_IT
                     .isNotBlank()
                     .doesNotContain("\"en\"");
         }
+        assertThat(entityInstance.getAirportData()).as("airport data of %s", entityInstance)
+                .isNotNull()
+                .extracting(AirportData::getAirportCode)
+                .isEqualTo(entityInstance.getAirportCode());
+    }
+
+    /**
+     * Selects every instance with its {@link Airport#getAirportData() airport data} fetched by
+     * the same query, and checks that the fetch join, an inner join, loses no row of the view.
+     *
+     * @implNote The number of instances is counted with
+     *         {@link __Persistence_TestUtils#selectEntityCount(jakarta.persistence.EntityManager, Class)},
+     *         of the view and of the table alike; the view reads every row of the table, so the
+     *         three numbers are the same.
+     */
+    @DisplayName("a fetch join loads the airport data with every airport")
+    @Test
+    void selectTargetInstances_FetchAirportData() {
+        applyEntityManagerInTransactionAndRollback(em -> {
+            final var count = __Persistence_TestUtils.selectEntityCount(em, Airport.class);
+            assumeTrue(count > 0L, () -> "no row of " + Airport.class + " is installed");
+            assertThat(__Persistence_TestUtils.selectEntityCount(em, AirportData.class))
+                    .as("number of airport data")
+                    .isEqualTo(count);
+            final var builder = em.getCriteriaBuilder();
+            final var query = builder.createQuery(Airport.class);
+            final var root = query.from(Airport.class);
+            root.fetch(Airport_.airportData);
+            query.select(root);
+            final var airports = em.createQuery(query).getResultList();
+            assertThat(airports).as("airports, with their airport data fetched")
+                    .hasSize(Math.toIntExact(count));
+            final var util = em.getEntityManagerFactory().getPersistenceUnitUtil();
+            airports.forEach(airport -> {
+                assertThat(util.isLoaded(airport, Airport_.AIRPORT_DATA))
+                        .as("airport data of %s, loaded", airport)
+                        .isTrue();
+                assertThat(airport.getAirportData()).as("airport data of %s", airport)
+                        .isNotNull()
+                        .extracting(AirportData::getAirportCode)
+                        .isEqualTo(airport.getAirportCode());
+            });
+            return null;
+        });
     }
 
     // ---------------------------------------------------------------------------------------------

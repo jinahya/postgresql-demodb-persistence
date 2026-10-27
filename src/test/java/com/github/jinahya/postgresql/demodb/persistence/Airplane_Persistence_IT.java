@@ -24,9 +24,11 @@ import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirplane;
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Verifies the mappings of {@link Airplane} against the installed {@code demo} database.
@@ -58,11 +60,57 @@ class Airplane_Persistence_IT
      * {@inheritDoc}
      *
      * @param instance {@inheritDoc}
-     * @implNote The model is the English name, no longer JSON.
+     * @implNote The model is the name in the session's language, no longer JSON, and the
+     *         association reaches the airplane data of the code.
      */
     @Override
     void randomTargetInstanceSelected(final Airplane instance) {
-        assertThat(instance.getModel()).as("model of %s", instance).isNotBlank()
+        assertThat(instance.getModel())
+                .as("model of %s", instance).isNotBlank()
                 .doesNotContain("\"en\"");
+        assertThat(instance.getAirplaneData()).as("airplane data of %s", instance).isNotNull()
+                .extracting(AirplaneData::getAirplaneCode).isEqualTo(instance.getAirplaneCode());
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Selects every instance with its {@link Airplane#getAirplaneData() airplane data} fetched by
+     * the same query, and checks that the fetch join, an inner join, loses no row of the view.
+     *
+     * @implNote The number of instances is counted with
+     *         {@link __Persistence_TestUtils#selectEntityCount(jakarta.persistence.EntityManager, Class)},
+     *         of the view and of the table alike; the view reads every row of the table, so the
+     *         three numbers are the same.
+     */
+    @DisplayName("a fetch join loads the airplane data with every airplane")
+    @Test
+    void selectTargetInstances_FetchAirplaneData() {
+        applyEntityManagerInTransactionAndRollback(em -> {
+            final var count = __Persistence_TestUtils.selectEntityCount(em, Airplane.class);
+            assumeTrue(count > 0L, () -> "no row of " + Airplane.class + " is installed");
+            assertThat(__Persistence_TestUtils.selectEntityCount(em, AirplaneData.class))
+                    .as("number of airplane data")
+                    .isEqualTo(count);
+            final var builder = em.getCriteriaBuilder();
+            final var query = builder.createQuery(Airplane.class);
+            final var root = query.from(Airplane.class);
+            root.fetch(Airplane_.airplaneData);
+            query.select(root);
+            final var airplanes = em.createQuery(query).getResultList();
+            assertThat(airplanes).as("airplanes, with their airplane data fetched")
+                    .hasSize(Math.toIntExact(count));
+            final var util = em.getEntityManagerFactory().getPersistenceUnitUtil();
+            airplanes.forEach(airplane -> {
+                assertThat(util.isLoaded(airplane, Airplane_.AIRPLANE_DATA))
+                        .as("airplane data of %s, loaded", airplane)
+                        .isTrue();
+                assertThat(airplane.getAirplaneData()).as("airplane data of %s", airplane)
+                        .isNotNull()
+                        .extracting(AirplaneData::getAirplaneCode)
+                        .isEqualTo(airplane.getAirplaneCode());
+            });
+            return null;
+        });
     }
 }

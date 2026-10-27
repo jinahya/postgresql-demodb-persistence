@@ -27,15 +27,27 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 /**
  * An entity which maps the {@value MappedTicket#TABLE_NAME} table, extending {@link MappedTicket}
  * with what is an application's to decide: its associations, their fetch types and their cascades.
+ * <p>
+ * The table's unique constraint, one ticket of a passenger per booking and direction, is declared
+ * with {@link UniqueConstraint @UniqueConstraint}, under the name the database gives it, so that a
+ * schema generated from the mapping, the in-memory one, has it too.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Entity
-@Table(name = MappedTicket.TABLE_NAME)
+@Table(name = MappedTicket.TABLE_NAME,
+       uniqueConstraints = {
+               @UniqueConstraint(name = "tickets_book_ref_passenger_id_outbound_key",
+                                 columnNames = {MappedTicket.COLUMN_NAME_BOOK_REF,
+                                                MappedTicket.COLUMN_NAME_PASSENGER_ID,
+                                                MappedTicket.COLUMN_NAME_OUTBOUND})
+       }
+)
 public class Ticket
         extends MappedTicket {
 
@@ -56,7 +68,7 @@ public class Ticket
     /**
      * Creates a new instance.
      */
-    public Ticket() {
+    protected Ticket() {
         super();
     }
 

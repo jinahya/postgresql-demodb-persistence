@@ -20,65 +20,25 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.validation.constraints.NotNull;
-
-import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * A superclass for the identifier of the {@value MappedBoardingPass#TABLE_NAME} table -- the pair
  * of the {@value MappedBoardingPass#COLUMN_NAME_TICKET_NO} and
  * {@value MappedBoardingPass#COLUMN_NAME_FLIGHT_ID} columns.
+ * <p>
+ * The pair is the table's primary key and, as a whole, a foreign key to the
+ * {@value MappedSegment#TABLE_NAME} table's, so this class adds nothing to
+ * {@link MappedSegmentId}: the attributes, their names, the factory method and the equality are
+ * all its.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see MappedBoardingPass
+ * @see MappedSegmentId
  */
 @MappedSuperclass
-public abstract class MappedBoardingPassId {
-
-    // ---------------------------------------------------------------------------------------------
-
-    /**
-     * The name of the attribute which maps the {@value MappedBoardingPass#COLUMN_NAME_TICKET_NO}
-     * column. The value is {@value}.
-     */
-    public static final String ATTRIBUTE_NAME_TICKET_NO = "ticketNo";
-
-    // ---------------------------------------------------------------------------------------------
-
-    /**
-     * The name of the attribute which maps the {@value MappedBoardingPass#COLUMN_NAME_FLIGHT_ID}
-     * column. The value is {@value}.
-     */
-    public static final String ATTRIBUTE_NAME_FLIGHT_ID = "flightId";
-
-    // ---------------------------------------------------------------------------------------------
-    // STATIC_FACTORY_METHODS
-
-    /**
-     * Creates a new instance of a subclass, with the specified values.
-     *
-     * @param <T>          the type of the identifier.
-     * @param instantiator a supplier of a new, empty instance of {@code T}.
-     * @param ticketNo     a value for the {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
-     * @param flightId     a value for the {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
-     * @return the instance supplied by {@code instantiator}, with its attributes set.
-     * @throws NullPointerException if {@code instantiator} is {@code null}, or it supplies
-     *                              {@code null}.
-     */
-    protected static <T extends MappedBoardingPassId> T of(final Supplier<? extends T> instantiator,
-                                                           final String ticketNo,
-                                                           final Integer flightId) {
-        Objects.requireNonNull(instantiator, "instantiator is null");
-        final var instance =
-                Objects.requireNonNull(instantiator.get(), "instantiator.get() is null");
-        instance.setTicketNo(ticketNo);
-        instance.setFlightId(flightId);
-        return instance;
-    }
+public abstract class MappedBoardingPassId
+        extends MappedSegmentId {
 
     // -------------------------------------------------------------------------------- CONSTRUCTORS
 
@@ -88,99 +48,4 @@ public abstract class MappedBoardingPassId {
     protected MappedBoardingPassId() {
         super();
     }
-
-    // ---------------------------------------------------------------------------- java.lang.Object
-
-    @Override
-    public final String toString() {
-        return super.toString() + '{' +
-               "ticketNo=" + ticketNo +
-               ",flightId=" + flightId +
-               '}';
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param obj {@inheritDoc}
-     * @return {@inheritDoc}
-     * @implSpec Equality is by {@value #ATTRIBUTE_NAME_TICKET_NO} and
-     *         {@value #ATTRIBUTE_NAME_FLIGHT_ID}.
-     */
-    @Override
-    public final boolean equals(final Object obj) {
-        if (!(obj instanceof MappedBoardingPassId that)) {
-            return false;
-        }
-        return Objects.equals(getTicketNo(), that.getTicketNo())
-               && Objects.equals(getFlightId(), that.getFlightId());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     * @implSpec The hash is over {@value #ATTRIBUTE_NAME_TICKET_NO} and
-     *         {@value #ATTRIBUTE_NAME_FLIGHT_ID}, consistent with {@link #equals(Object)}.
-     */
-    @Override
-    public final int hashCode() {
-        return Objects.hash(getTicketNo(), getFlightId());
-    }
-
-    // ------------------------------------------------------------------------------------ ticketNo
-
-    /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
-     *
-     * @return current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
-     */
-    public String getTicketNo() {
-        return ticketNo;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute with the specified
-     * value.
-     *
-     * @param ticketNo new value for {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
-     */
-    protected void setTicketNo(final String ticketNo) {
-        this.ticketNo = ticketNo;
-    }
-
-    // ------------------------------------------------------------------------------------ flightId
-
-    /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
-     *
-     * @return current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
-     */
-    public Integer getFlightId() {
-        return flightId;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute with the specified
-     * value.
-     *
-     * @param flightId new value for {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
-     */
-    protected void setFlightId(final Integer flightId) {
-        this.flightId = flightId;
-    }
-
-    // ---------------------------------------------------------------------------------------------
-    @NotNull
-    @Basic(optional = false)
-    @Column(name = MappedBoardingPass.COLUMN_NAME_TICKET_NO, nullable = false, insertable = true,
-            updatable = false)
-    private String ticketNo;
-
-    // ---------------------------------------------------------------------------------------------
-    @NotNull
-    @Basic(optional = false)
-    @Column(name = MappedBoardingPass.COLUMN_NAME_FLIGHT_ID, nullable = false, insertable = true,
-            updatable = false)
-    private Integer flightId;
 }

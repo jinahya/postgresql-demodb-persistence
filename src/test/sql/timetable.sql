@@ -37,7 +37,7 @@ WHERE table_schema = 'bookings'
 ;
 
 
--- ----------------------------------------------------------------------------------------------------------- flight_id
+-- --------------------------------------------------------------------------------------- flight_id
 -- how many rows; 21758, as many as flights has.
 SELECT COUNT(*), (SELECT COUNT(*) FROM flights) AS flights
 FROM timetable

@@ -29,7 +29,9 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 /**
  * An entity which maps the {@value MappedBoardingPass#TABLE_NAME} table, extending
@@ -38,12 +40,39 @@ import jakarta.persistence.Table;
  * <p>
  * The identifier is the inherited pair of {@code @Id} attributes, named by {@link BoardingPassId}
  * through {@link IdClass @IdClass}.
+ * <p>
+ * The table's two unique constraints, a boarding number and a seat each once per flight, are
+ * declared with {@link UniqueConstraint @UniqueConstraint}, under the names the database gives
+ * them, so that a schema generated from the mapping, the in-memory one, has them too.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@NamedQuery(
+        name = "selectByFlightIdAndSeatNo",
+        query = """
+                SELECT e
+                FROM BoardingPass AS e
+                WHERE e.flightId = :flightId AND e.seatNo = :seatNo"""
+)
+@NamedQuery(
+        name = "selectByFlightIdAndBoardingNo",
+        query = """
+                SELECT e
+                FROM BoardingPass AS e
+                WHERE e.flightId = :flightId AND e.boardingNo = :boardingNo"""
+)
 @IdClass(BoardingPassId.class)
 @Entity
-@Table(name = MappedBoardingPass.TABLE_NAME)
+@Table(name = MappedBoardingPass.TABLE_NAME,
+       uniqueConstraints = {
+               @UniqueConstraint(name = "boarding_passes_flight_id_boarding_no_key",
+                                 columnNames = {MappedBoardingPass.COLUMN_NAME_FLIGHT_ID,
+                                         MappedBoardingPass.COLUMN_NAME_BOARDING_NO}),
+               @UniqueConstraint(name = "boarding_passes_flight_id_seat_no_key",
+                                 columnNames = {MappedBoardingPass.COLUMN_NAME_FLIGHT_ID,
+                                         MappedBoardingPass.COLUMN_NAME_SEAT_NO})
+       }
+)
 public class BoardingPass
         extends MappedBoardingPass {
 
@@ -64,7 +93,7 @@ public class BoardingPass
     /**
      * Creates a new instance.
      */
-    public BoardingPass() {
+    protected BoardingPass() {
         super();
     }
 
