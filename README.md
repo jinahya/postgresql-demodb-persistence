@@ -139,6 +139,13 @@ What follows from it, and what this module does:
 - `tstzrange` stays `String`, the text both providers read alike: the test entity over `routes` writes the column
   through its embedded identifier, and the specification has no conversion applied to an identifier's attributes,
   so a converted `validity` would leave the entity the same value twice, once converted and once as text.
+- Each `timestamptz` column -- the four of `flights`, `bookings.book_date`, `boarding_passes.boarding_time` and the
+  `timetable` view's four -- is mapped as an `Instant`, a basic type since Jakarta Persistence 3.2. The column holds a
+  moment and no offset; an `OffsetDateTime` would carry an offset the database never stored, the provider's own -- UTC
+  under Hibernate ORM, the JVM's default zone's under EclipseLink, as the table above shows -- so the same row would
+  read back as a different value by provider, and `MappedFlight`'s natural key, the route number and the scheduled
+  departure, would need the departure compared as an instant. A local time is the airport's: `airports_data.timezone`,
+  a `ZoneId`, or the `timetable` view's `*_local` columns, `timestamp without time zone`, mapped as `LocalDateTime`.
 - Writing any of the five needs `stringtype=unspecified` on the JDBC URL. Reading needs nothing.
 - A persistence unit with `exclude-unlisted-classes` has to list the converters; EclipseLink does not find them
   otherwise.

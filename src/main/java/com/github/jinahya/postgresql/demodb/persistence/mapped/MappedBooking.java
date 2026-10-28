@@ -30,7 +30,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -240,7 +240,7 @@ public abstract class MappedBooking {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_BOOK_DATE} attribute.
      */
-    public OffsetDateTime getBookDate() {
+    public Instant getBookDate() {
         return bookDate;
     }
 
@@ -250,7 +250,7 @@ public abstract class MappedBooking {
      *
      * @param bookDate new value for {@value #ATTRIBUTE_NAME_BOOK_DATE} attribute.
      */
-    public void setBookDate(final OffsetDateTime bookDate) {
+    public void setBookDate(final Instant bookDate) {
         this.bookDate = bookDate;
     }
 
@@ -292,7 +292,7 @@ public abstract class MappedBooking {
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_BOOK_DATE, nullable = false, insertable = true, updatable = true)
-    private OffsetDateTime bookDate;
+    private Instant bookDate;
 
     // ---------------------------------------------------------------------------------------------
     // @Digits counts digits differently by provider;

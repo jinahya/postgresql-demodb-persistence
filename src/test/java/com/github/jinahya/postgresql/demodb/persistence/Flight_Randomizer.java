@@ -28,6 +28,7 @@ import uk.co.jemos.podam.api.ClassInfoStrategy;
 import uk.co.jemos.podam.api.DataProviderStrategy;
 import uk.co.jemos.podam.api.PodamFactory;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -71,14 +72,15 @@ class Flight_Randomizer
         instance.setRouteNo(__Random_TestUtils.routeNo());
         instance.setStatus(__Random_TestUtils.pick(FlightStatus.values()));
         final var departure = __Random_TestUtils.instant();
-        final var arrival = departure.plusMinutes(ThreadLocalRandom.current().nextInt(30, 900));
+        final var arrival = departure.plus(ThreadLocalRandom.current().nextInt(30, 900),
+                                           ChronoUnit.MINUTES);
         instance.setScheduledDeparture(departure);
         instance.setScheduledArrival(arrival);
         if (ThreadLocalRandom.current().nextBoolean()) {
             instance.setActualDeparture(
-                    departure.plusMinutes(ThreadLocalRandom.current().nextInt(0, 60)));
+                    departure.plus(ThreadLocalRandom.current().nextInt(0, 60), ChronoUnit.MINUTES));
             instance.setActualArrival(
-                    arrival.plusMinutes(ThreadLocalRandom.current().nextInt(0, 60)));
+                    arrival.plus(ThreadLocalRandom.current().nextInt(0, 60), ChronoUnit.MINUTES));
         } else {
             instance.setActualDeparture(null);
             instance.setActualArrival(null);

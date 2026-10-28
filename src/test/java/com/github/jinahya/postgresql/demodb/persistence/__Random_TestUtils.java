@@ -25,11 +25,10 @@ import com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgr
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.time.LocalTime;
-import java.time.OffsetDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,9 +99,9 @@ final class __Random_TestUtils {
         return BigDecimal.valueOf(unscaled, scale).setScale(scale, RoundingMode.UNNECESSARY);
     }
 
-    static OffsetDateTime instant() {
-        return OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MICROS)
-                .plusDays(ThreadLocalRandom.current().nextInt(-365, 365));
+    static Instant instant() {
+        return Instant.now().truncatedTo(ChronoUnit.MICROS)
+                .plus(ThreadLocalRandom.current().nextInt(-365, 365), ChronoUnit.DAYS);
     }
 
     static LocalTime time() {

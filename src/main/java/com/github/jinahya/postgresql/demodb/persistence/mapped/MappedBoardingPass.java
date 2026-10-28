@@ -26,7 +26,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -270,7 +270,7 @@ public abstract class MappedBoardingPass {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_BOARDING_TIME} attribute.
      */
-    public OffsetDateTime getBoardingTime() {
+    public Instant getBoardingTime() {
         return boardingTime;
     }
 
@@ -280,7 +280,7 @@ public abstract class MappedBoardingPass {
      *
      * @param boardingTime new value for {@value #ATTRIBUTE_NAME_BOARDING_TIME} attribute.
      */
-    public void setBoardingTime(final OffsetDateTime boardingTime) {
+    public void setBoardingTime(final Instant boardingTime) {
         this.boardingTime = boardingTime;
     }
 
@@ -312,5 +312,5 @@ public abstract class MappedBoardingPass {
     // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_BOARDING_TIME, nullable = true, insertable = true, updatable = true)
-    private OffsetDateTime boardingTime;
+    private Instant boardingTime;
 }

@@ -35,7 +35,6 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -355,11 +354,6 @@ public abstract class MappedFlight {
      *         by the {@link Id @Id} attribute, {@value #ATTRIBUTE_NAME_FLIGHT_ID}, an identity
      *         which a new instance does not have until it is persisted, or, under EclipseLink,
      *         flushed.
-     * @implNote The {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE} is compared as an
-     *         {@link Instant}, not as an {@link OffsetDateTime}, whose equality takes the offset
-     *         in: a provider reads a {@code timestamptz} back in an offset of its own, UTC under
-     *         Hibernate ORM and the JVM's default zone's under EclipseLink, so the same departure
-     *         may come back as another {@link OffsetDateTime}.
      */
     @Override
     public final boolean equals(final Object obj) {
@@ -367,25 +361,18 @@ public abstract class MappedFlight {
             return false;
         }
         return Objects.equals(getRouteNo(), that.getRouteNo())
-               && Objects.equals(instant(getScheduledDeparture()),
-                                 instant(that.getScheduledDeparture()));
+               && Objects.equals(getScheduledDeparture(), that.getScheduledDeparture());
     }
 
     /**
      * {@inheritDoc}
      *
      * @return {@inheritDoc}
-     * @implSpec The hash is over the natural key, the
-     *         {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE} as an {@link Instant}, consistent with
-     *         {@link #equals(Object)}.
+     * @implSpec The hash is over the natural key, consistent with {@link #equals(Object)}.
      */
     @Override
     public final int hashCode() {
-        return Objects.hash(getRouteNo(), instant(getScheduledDeparture()));
-    }
-
-    private static Instant instant(final OffsetDateTime value) {
-        return value == null ? null : value.toInstant();
+        return Objects.hash(getRouteNo(), getScheduledDeparture());
     }
 
     // -------------------------------------------------------------------------- Jakarta-Validation
@@ -507,7 +494,7 @@ public abstract class MappedFlight {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE} attribute.
      */
-    public OffsetDateTime getScheduledDeparture() {
+    public Instant getScheduledDeparture() {
         return scheduledDeparture;
     }
 
@@ -518,7 +505,7 @@ public abstract class MappedFlight {
      * @param scheduledDeparture new value for {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE}
      *                           attribute.
      */
-    public void setScheduledDeparture(final OffsetDateTime scheduledDeparture) {
+    public void setScheduledDeparture(final Instant scheduledDeparture) {
         this.scheduledDeparture = scheduledDeparture;
     }
 
@@ -529,7 +516,7 @@ public abstract class MappedFlight {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL} attribute.
      */
-    public OffsetDateTime getScheduledArrival() {
+    public Instant getScheduledArrival() {
         return scheduledArrival;
     }
 
@@ -539,7 +526,7 @@ public abstract class MappedFlight {
      *
      * @param scheduledArrival new value for {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL} attribute.
      */
-    public void setScheduledArrival(final OffsetDateTime scheduledArrival) {
+    public void setScheduledArrival(final Instant scheduledArrival) {
         this.scheduledArrival = scheduledArrival;
     }
 
@@ -550,7 +537,7 @@ public abstract class MappedFlight {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE} attribute.
      */
-    public OffsetDateTime getActualDeparture() {
+    public Instant getActualDeparture() {
         return actualDeparture;
     }
 
@@ -560,7 +547,7 @@ public abstract class MappedFlight {
      *
      * @param actualDeparture new value for {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE} attribute.
      */
-    public void setActualDeparture(final OffsetDateTime actualDeparture) {
+    public void setActualDeparture(final Instant actualDeparture) {
         this.actualDeparture = actualDeparture;
     }
 
@@ -571,7 +558,7 @@ public abstract class MappedFlight {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL} attribute.
      */
-    public OffsetDateTime getActualArrival() {
+    public Instant getActualArrival() {
         return actualArrival;
     }
 
@@ -581,7 +568,7 @@ public abstract class MappedFlight {
      *
      * @param actualArrival new value for {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL} attribute.
      */
-    public void setActualArrival(final OffsetDateTime actualArrival) {
+    public void setActualArrival(final Instant actualArrival) {
         this.actualArrival = actualArrival;
     }
 
@@ -610,28 +597,28 @@ public abstract class MappedFlight {
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_SCHEDULED_DEPARTURE, nullable = false, insertable = true,
             updatable = true)
-    private OffsetDateTime scheduledDeparture;
+    private Instant scheduledDeparture;
 
     // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_SCHEDULED_ARRIVAL, nullable = false, insertable = true,
             updatable = true)
-    private OffsetDateTime scheduledArrival;
+    private Instant scheduledArrival;
 
     // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ACTUAL_DEPARTURE, nullable = true, insertable = true,
             updatable = true)
-    private OffsetDateTime actualDeparture;
+    private Instant actualDeparture;
 
     // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ACTUAL_ARRIVAL, nullable = true, insertable = true, updatable = true)
-    private OffsetDateTime actualArrival;
+    private Instant actualArrival;
 
     // -----------------------------------------------------------------------------------------------------------------
-    private static Duration between(final OffsetDateTime from, final OffsetDateTime to) {
+    private static Duration between(final Instant from, final Instant to) {
         if (from == null || to == null) {
             return null;
         }

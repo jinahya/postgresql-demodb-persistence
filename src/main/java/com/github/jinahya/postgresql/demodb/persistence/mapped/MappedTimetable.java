@@ -29,8 +29,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.Size;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /**
@@ -480,7 +480,7 @@ public abstract class MappedTimetable {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE} attribute.
      */
-    public OffsetDateTime getScheduledDeparture() {
+    public Instant getScheduledDeparture() {
         return scheduledDeparture;
     }
 
@@ -503,7 +503,7 @@ public abstract class MappedTimetable {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE} attribute.
      */
-    public OffsetDateTime getActualDeparture() {
+    public Instant getActualDeparture() {
         return actualDeparture;
     }
 
@@ -525,7 +525,7 @@ public abstract class MappedTimetable {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL} attribute.
      */
-    public OffsetDateTime getScheduledArrival() {
+    public Instant getScheduledArrival() {
         return scheduledArrival;
     }
 
@@ -547,7 +547,7 @@ public abstract class MappedTimetable {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL} attribute.
      */
-    public OffsetDateTime getActualArrival() {
+    public Instant getActualArrival() {
         return actualArrival;
     }
 
@@ -618,7 +618,7 @@ public abstract class MappedTimetable {
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_SCHEDULED_DEPARTURE, nullable = true, insertable = false,
             updatable = false)
-    private OffsetDateTime scheduledDeparture;
+    private Instant scheduledDeparture;
 
     // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
@@ -630,7 +630,7 @@ public abstract class MappedTimetable {
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ACTUAL_DEPARTURE, nullable = true, insertable = false,
             updatable = false)
-    private OffsetDateTime actualDeparture;
+    private Instant actualDeparture;
 
     // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
@@ -642,7 +642,7 @@ public abstract class MappedTimetable {
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_SCHEDULED_ARRIVAL, nullable = true, insertable = false,
             updatable = false)
-    private OffsetDateTime scheduledArrival;
+    private Instant scheduledArrival;
 
     // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
@@ -654,7 +654,7 @@ public abstract class MappedTimetable {
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ACTUAL_ARRIVAL, nullable = true, insertable = false,
             updatable = false)
-    private OffsetDateTime actualArrival;
+    private Instant actualArrival;
 
     // ---------------------------------------------------------------------------------------------
     @Basic(optional = true)
