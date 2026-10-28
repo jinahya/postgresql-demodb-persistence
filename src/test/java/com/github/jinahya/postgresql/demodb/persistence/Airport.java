@@ -37,8 +37,8 @@ import java.util.TimeZone;
  * with what is an application's to decide: a read-only association to the {@link AirportData} row
  * the view reads, whose names are there in every language.
  * <p>
- * A view has no foreign key; the association rests on the view's definition, which reads every
- * row of {@code airports_data} by the same {@value MappedAirport#COLUMN_NAME_AIRPORT_CODE}.
+ * A view has no foreign key; the association rests on the view's definition, which reads every row
+ * of {@code airports_data} by the same {@value MappedAirport#COLUMN_NAME_AIRPORT_CODE}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

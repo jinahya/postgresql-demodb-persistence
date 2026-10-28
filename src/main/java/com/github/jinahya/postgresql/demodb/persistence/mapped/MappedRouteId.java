@@ -26,6 +26,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Converter;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -35,6 +36,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -216,7 +218,8 @@ public abstract class MappedRouteId {
      *
      * @param fromInclusive the lower bound, inclusive.
      * @param toExclusive   the upper bound, exclusive.
-     * @return a new array of {@code fromInclusive} and {@code toExclusive}.
+     * @return a new array of {@code fromInclusive} and {@code toExclusive}, each truncated to
+     *         microseconds, the precision of the column.
      * @throws NullPointerException     if either bound is {@code null}.
      * @throws IllegalArgumentException if {@code fromInclusive} is not before {@code toExclusive};
      *                                  the server would store the range as {@code empty}, which is
@@ -230,7 +233,8 @@ public abstract class MappedRouteId {
                     "fromInclusive(" + fromInclusive + ") is not before toExclusive(" + toExclusive
                     + ")");
         }
-        return new Instant[] {fromInclusive, toExclusive};
+        return new Instant[]{fromInclusive.truncatedTo(ChronoUnit.MICROS),
+                toExclusive.truncatedTo(ChronoUnit.MICROS)};
     }
 
     // -------------------------------------------------------------------------------- CONSTRUCTORS
@@ -281,6 +285,26 @@ public abstract class MappedRouteId {
         return Objects.hash(getRouteNo(), Arrays.hashCode(validity));
     }
 
+    // ---------------------------------------------------------------------------------- VALIDATION
+
+    /**
+     * Tests whether the lower bound of current value of {@value #ATTRIBUTE_NAME_VALIDITY} attribute
+     * is before its upper bound, as a {@code tstzrange} of the shape {@code [lower,upper)}
+     * requires: the server rejects a lower bound after the upper, and stores an equal pair as
+     * {@code empty}.
+     *
+     * @return {@code true} if the lower bound is before the upper bound, or the attribute, or
+     *         either bound, is {@code null}, or the attribute has fewer than two bounds;
+     *         {@code false} otherwise.
+     */
+    @AssertTrue
+    protected boolean isValidityLowerBeforeUpper() {
+        if (validity == null || validity.length < 2 || validity[0] == null || validity[1] == null) {
+            return true;
+        }
+        return validity[0].isBefore(validity[1]);
+    }
+
     // ------------------------------------------------------------------------------------- routeNo
 
     /**
@@ -319,6 +343,11 @@ public abstract class MappedRouteId {
     private String routeNo;
 
     // ---------------------------------------------------------------------------------------------
+    // an array, not a List<@NotNull Instant>: the attribute is part of the identifier, whose hash
+    // Hibernate ORM takes, and it does not hash a converted List;
+    // CollectionJavaType.extractHashCode throws UnsupportedOperationException, so a List would need
+    // an @JavaType of its own. Hibernate Validator does not check an array's elements, so a null
+    // bound is kept out by of(...)
     @Size(min = 2, max = 2)
     @NotNull
     @Basic(optional = false)

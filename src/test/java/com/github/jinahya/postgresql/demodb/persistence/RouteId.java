@@ -45,8 +45,7 @@ public class RouteId
     @Serial
     private static final long serialVersionUID = 1L;
 
-    // ---------------------------------------------------------------------------------------------
-    // STATIC_FACTORY_METHODS
+    // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
     /**
      * Creates a new instance of the specified values.

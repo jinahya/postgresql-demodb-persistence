@@ -31,6 +31,11 @@ import jakarta.persistence.EntityManager;
  * A newly persisted {@link Segment} is flushed first, and what is persisted is
  * {@link BoardingPass#of(Segment) BoardingPass.of} it, with the instance's seat, number and time;
  * {@code of} is the only way to set the association, and the identifier with it.
+ * <p>
+ * A boarding pass's {@code seat_no} is no foreign key, but every installed one is a seat of the
+ * airplane of its flight's route, of the segment's fare conditions. So a {@link Seat} of that
+ * airplane, of the instance's seat number and the segment's fare conditions, is persisted too, and
+ * the pass takes its number.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -48,8 +53,15 @@ class BoardingPass_Persister
         final var segment =
                 EntityPersisterUtils.newPersistedInstanceOf(entityManager, Segment.class);
         entityManager.flush();
+        // the route, a read-only association by a formula, is loaded by a refresh
+        final var flight = segment.getFlight();
+        entityManager.refresh(flight);
+        final var seat = Seat.of(flight.getRoute().getAirplaneData(), entityInstance.getSeatNo());
+        seat.setFareConditions(segment.getFareConditions());
+        entityManager.persist(seat);
+        entityManager.flush();
         final var instance = BoardingPass.of(segment);
-        instance.setSeatNo(entityInstance.getSeatNo());
+        instance.setSeatNo(seat.getSeatNo());
         instance.setBoardingNo(entityInstance.getBoardingNo());
         instance.setBoardingTime(entityInstance.getBoardingTime());
         return super.apply(entityManager, instance);

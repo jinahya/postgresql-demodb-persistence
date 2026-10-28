@@ -64,7 +64,7 @@ each is mapped with what maps it best: Hibernate's own types, or a converter.
 | `integer[]` | `routes.days_of_week` | `List<Integer>` | Hibernate's, `@JdbcTypeCode(SqlTypes.ARRAY)` |
 | `interval` | `routes.duration` | `Duration` | Hibernate's, `@JdbcTypeCode(SqlTypes.INTERVAL_SECOND)` |
 | `tstzrange` | `routes.validity` | `Instant[]`, the lower and the upper bound | `MappedRouteId.ValidityConverter`, through the text `["lower","upper")` |
-| `point` | `airports_data.coordinates`, the `airports` view's | `PointAttributeConverter.Point` | `PointAttributeConverter`, through the text `(x,y)` |
+| `point` | `airports_data.coordinates`, the `airports` view's | `List<Double>`, the longitude and the latitude | `MappedAirportData.CoordinatesAttributeConverter`, through the text `(x,y)` |
 | `jsonb` | `airplanes_data.model`, `airports_data.airport_name`, `city`, `country` | `JsonObject` | `JsonpStringAttributeConverter.OfJsonObject`, through the JSON text |
 
 What Hibernate does with each of the five, mapped by a plain `@Column` and no converter, measured against the database
@@ -100,7 +100,7 @@ And what it hands over before any mapping is applied, read through a native quer
 
 Until this module dropped EclipseLink, a second provider shaped these mappings: it maps no array, and hands a converter
 the driver's own object whatever the converter declares. Its measurements, and the converters it called for, are in
-[`HIBERNATE_ONLY.adoc`](HIBERNATE_ONLY.adoc), and in this file as it was at `9ef856e`, before the provider went.
+this file as it was at `9ef856e`, before the provider went.
 
 What else this module does:
 
@@ -117,7 +117,7 @@ What else this module does:
   converter writes UTC, in the server's own text, which it has to read back too: Hibernate copies an array, a mutable
   value to it, through the converter both ways. The write needs `stringtype=unspecified` on the JDBC URL.
 - `point` holds an airport's geolocation, the longitude as `x` and the latitude as `y`, as the columns' comments say;
-  `PointAttributeConverter`, a plain `AttributeConverter<Point, String>`, prints `(longitude,latitude)` and reads the
+  `MappedAirportData.CoordinatesAttributeConverter`, a plain `AttributeConverter<List<Double>, String>`, prints `(longitude,latitude)` and reads the
   text as the server does. No provider maps a native `point`: Hibernate Spatial and geolatte need PostGIS `geometry`,
   which the database does not have.
 - Each `jsonb` column, an object of one name per language, is mapped as a JSON-P `JsonObject` through
@@ -197,8 +197,7 @@ columns' objects have no fixed keys and values, so they stay JSON-P `JsonObject`
 
 ## Building
 
-Hibernate ORM is the persistence provider; see [`HIBERNATE_ONLY.adoc`](HIBERNATE_ONLY.adoc) for why EclipseLink was
-dropped.
+Hibernate ORM is the persistence provider.
 
 ```shell
 $ ./_mvn_test.sh              # unit tests, no database needed

@@ -36,6 +36,7 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -102,9 +103,8 @@ public abstract class MappedRoute<T extends MappedRouteId> {
     // ------------------------------------------------------------------------------------------ id
 
     /**
-     * The name of the attribute which holds the identifier, the
-     * {@value #COLUMN_NAME_ROUTE_NO} and {@value #COLUMN_NAME_VALIDITY} columns. The value is
-     * {@value}.
+     * The name of the attribute which holds the identifier, the {@value #COLUMN_NAME_ROUTE_NO} and
+     * {@value #COLUMN_NAME_VALIDITY} columns. The value is {@value}.
      */
     public static final String ATTRIBUTE_NAME_ID = "id";
 
@@ -302,8 +302,9 @@ public abstract class MappedRoute<T extends MappedRouteId> {
      *
      * @param obj {@inheritDoc}
      * @return {@inheritDoc}
-     * @implSpec Equality is by the identifier, {@value MappedRouteId#ATTRIBUTE_NAME_ROUTE_NO}
-     *         and {@value MappedRouteId#ATTRIBUTE_NAME_VALIDITY}, the latter's bounds compared as
+     * @implSpec Equality is by the identifier,
+     *         {@value MappedRouteId#ATTRIBUTE_NAME_ROUTE_NO} and
+     *         {@value MappedRouteId#ATTRIBUTE_NAME_VALIDITY}, the latter's bounds compared as
      *         instants.
      */
     @Override
@@ -464,8 +465,8 @@ public abstract class MappedRoute<T extends MappedRouteId> {
      * Returns current value of {@value #ATTRIBUTE_NAME_DAYS_OF_WEEK} attribute.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_DAYS_OF_WEEK} attribute.
-     * @apiNote This method is {@code protected}: the attribute is the column's numbers, and the
-     *         days are read as {@link DayOfWeek}s with {@link #getDaysOfWeekSet()}.
+     * @apiNote This method is {@code protected}: the attribute is the column's numbers, and
+     *         the days are read as {@link DayOfWeek}s with {@link #getDaysOfWeekSet()}.
      */
     protected List<Integer> getDaysOfWeek() {
         return daysOfWeek;
@@ -476,8 +477,8 @@ public abstract class MappedRoute<T extends MappedRouteId> {
      * value.
      *
      * @param daysOfWeek new value for {@value #ATTRIBUTE_NAME_DAYS_OF_WEEK} attribute.
-     * @apiNote This method is {@code protected}: the attribute is the column's numbers, and the
-     *         days are written as {@link DayOfWeek}s with {@link #setDaysOfWeekSet(Set)}.
+     * @apiNote This method is {@code protected}: the attribute is the column's numbers, and
+     *         the days are written as {@link DayOfWeek}s with {@link #setDaysOfWeekSet(Set)}.
      */
     protected void setDaysOfWeek(final List<Integer> daysOfWeek) {
         this.daysOfWeek = daysOfWeek;
@@ -490,8 +491,8 @@ public abstract class MappedRoute<T extends MappedRouteId> {
      *
      * @return a new set of the days, from Monday to Sunday; {@code null} when the attribute is
      *         {@code null}. Changing the set does not change the attribute.
-     * @throws java.time.DateTimeException when the attribute holds a number other than {@code 1}
-     *                                     to {@code 7}, which no check constraint of the column
+     * @throws java.time.DateTimeException when the attribute holds a number other than {@code 1} to
+     *                                     {@code 7}, which no check constraint of the column
      *                                     forbids.
      */
     @Transient
@@ -533,12 +534,15 @@ public abstract class MappedRoute<T extends MappedRouteId> {
 
     /**
      * Replaces current value of {@value #ATTRIBUTE_NAME_SCHEDULED_TIME} attribute with the
-     * specified value.
+     * specified value, truncated to milliseconds, the precision of the {@link java.sql.Time}
+     * Hibernate ORM binds it as.
      *
      * @param scheduledTime new value for {@value #ATTRIBUTE_NAME_SCHEDULED_TIME} attribute.
      */
     public void setScheduledTime(final LocalTime scheduledTime) {
-        this.scheduledTime = scheduledTime;
+        this.scheduledTime = Optional.ofNullable(scheduledTime)
+                .map(v -> v.truncatedTo(ChronoUnit.MILLIS))
+                .orElse(null);
     }
 
     // ------------------------------------------------------------------------------------ duration
@@ -555,12 +559,17 @@ public abstract class MappedRoute<T extends MappedRouteId> {
 
     /**
      * Replaces current value of {@value #ATTRIBUTE_NAME_DURATION} attribute with the specified
-     * value.
+     * value, truncated to microseconds, the precision of the column.
      *
      * @param duration new value for {@value #ATTRIBUTE_NAME_DURATION} attribute.
+     * @implNote An {@code interval} holds microseconds; a finer part would be rounded by
+     *         the server, and read back as another value. Truncated here, the attribute holds what
+     *         the column holds.
      */
     public void setDuration(final Duration duration) {
-        this.duration = duration;
+        this.duration = Optional.ofNullable(duration)
+                .map(v -> v.truncatedTo(ChronoUnit.MICROS))
+                .orElse(null);
     }
 
     // ---------------------------------------------------------------------------------------------

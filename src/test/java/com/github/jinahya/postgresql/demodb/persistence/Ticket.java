@@ -44,10 +44,14 @@ import java.util.Optional;
 @Entity
 @Table(name = MappedTicket.TABLE_NAME,
        uniqueConstraints = {
-               @UniqueConstraint(name = "tickets_book_ref_passenger_id_outbound_key",
-                                 columnNames = {MappedTicket.COLUMN_NAME_BOOK_REF,
-                                                MappedTicket.COLUMN_NAME_PASSENGER_ID,
-                                                MappedTicket.COLUMN_NAME_OUTBOUND})
+               @UniqueConstraint(
+                       name = "tickets_book_ref_passenger_id_outbound_key",
+                       columnNames = {
+                               MappedTicket.COLUMN_NAME_BOOK_REF,
+                               MappedTicket.COLUMN_NAME_PASSENGER_ID,
+                               MappedTicket.COLUMN_NAME_OUTBOUND
+                       }
+               )
        }
 )
 public class Ticket
@@ -107,8 +111,8 @@ public class Ticket
     public void setBooking(final Booking booking) {
         this.booking = booking;
         setBookRef(Optional.ofNullable(booking)
-                .map(Booking::getBookRef)
-                .orElse(null));
+                           .map(Booking::getBookRef)
+                           .orElse(null));
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -57,12 +57,16 @@ public class Segment
         return instance;
     }
 
+    // ---------------------------------------------------------------------------------------------
+
     /**
      * Creates a new instance.
      */
     protected Segment() {
         super();
     }
+
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * Returns the ticket this segment is on, over the {@value MappedSegment#COLUMN_NAME_TICKET_NO}

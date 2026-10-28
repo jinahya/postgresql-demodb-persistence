@@ -24,13 +24,12 @@ import com.github.jinahya.persistence.more.__AttributeEnum;
 import com.github.jinahya.persistence.more.converter.__AttributeEnumConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.Converter;
 import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -41,8 +40,8 @@ import java.util.Optional;
  * <p>
  * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of a subclass of
  * {@link MappedSeatId}, {@code T}, which an extending entity names; {@link #equals(Object)}
- * compares the identifiers, and the getters of the key's attributes read them. An identifier is
- * not modified once created; a seat takes another with {@link #setId(MappedSeatId)}.
+ * compares the identifiers, and the getters of the key's attributes read them. An identifier is not
+ * modified once created; a seat takes another with {@link #setId(MappedSeatId)}.
  * <p>
  * The {@value MappedSeat#COLUMN_NAME_AIRPLANE_CODE} column is also a foreign key; the identifier
  * writes it, and an association over it, if the extending entity maps one, is read-only
@@ -56,9 +55,10 @@ import java.util.Optional;
 public abstract class MappedSeat<T extends MappedSeatId> {
 
     /**
-     * The fare conditions, the travel class, the value of a {@code seats.fare_conditions} column and
-     * of a {@code segments.fare_conditions} column; the values the {@code seat_fare_conditions_check}
-     * and {@code segments_fare_conditions_check} constraints allow.
+     * The fare conditions, the travel class, the value of a {@code seats.fare_conditions} column
+     * and of a {@code segments.fare_conditions} column; the values the
+     * {@code seat_fare_conditions_check} and {@code segments_fare_conditions_check} constraints
+     * allow.
      *
      * @see FareConditionsConverter
      */
@@ -208,6 +208,7 @@ public abstract class MappedSeat<T extends MappedSeatId> {
      * {@value}.
      */
     public static final String COLUMN_VALUE_FARE_CONDITIONS_BUSINESS = "Business";
+
     /**
      * The regular expression which the {@value #ATTRIBUTE_NAME_FARE_CONDITIONS} attribute matches:
      * one of the values the {@code seat_fare_conditions_check} constraint allows. The value is

@@ -21,13 +21,23 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.persistence.test.util.AbstractEntityPersister;
+import com.github.jinahya.persistence.test.util.EntityPersisterUtils;
 
 import jakarta.persistence.EntityManager;
+
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * A persister which persists {@link Flight} instances.
  * <p>
- * A flight's {@code route_no} is no foreign key, so an instance is persisted as it arrives.
+ * A flight's {@code route_no} is no foreign key, but every installed flight flies a route: one of
+ * its route number whose validity holds the scheduled departure, which departs at the route's
+ * scheduled time, local to its departure airport, on one of the route's days of the week, and
+ * arrives the route's duration later. So a newly persisted {@link Route} is flushed first, and the
+ * instance is given a departure of it; an actual departure, if the instance has one, is up to an
+ * hour late, and the actual arrival the route's duration after it, and up to half an hour more.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -41,6 +51,28 @@ class Flight_Persister
     // ---------------------------------------------------------------------------------------------
     @Override
     public Flight apply(final EntityManager entityManager, final Flight entityInstance) {
+        final var route = EntityPersisterUtils.newPersistedInstanceOf(entityManager, Route.class);
+        entityManager.flush();
+        final var random = ThreadLocalRandom.current();
+        final var zone = route.getDepartureAirportData().getTimezone();
+        final var departures = route.getValidityRange(
+                (lower, upper) -> lower.atZone(zone).toLocalDate()
+                        .datesUntil(upper.atZone(zone).toLocalDate().plusDays(1L))
+                        .filter(d -> route.getDaysOfWeekSet().contains(d.getDayOfWeek()))
+                        .map(d -> ZonedDateTime.of(d, route.getScheduledTime(), zone).toInstant())
+                        .filter(i -> !i.isBefore(lower) && i.isBefore(upper))
+                        .toList());
+        final var departure = departures.get(random.nextInt(departures.size()));
+        entityInstance.setRouteNo(route.getRouteNo());
+        entityInstance.setScheduledDeparture(departure);
+        entityInstance.setScheduledArrival(departure.plus(route.getDuration()));
+        if (entityInstance.getActualDeparture() != null) {
+            final var actualDeparture = departure.plus(random.nextInt(0, 60), ChronoUnit.MINUTES);
+            entityInstance.setActualDeparture(actualDeparture);
+            entityInstance.setActualArrival(
+                    actualDeparture.plus(route.getDuration())
+                            .plus(random.nextInt(0, 30), ChronoUnit.MINUTES));
+        }
         return super.apply(entityManager, entityInstance);
     }
 }

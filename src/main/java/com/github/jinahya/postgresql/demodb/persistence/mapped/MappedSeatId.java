@@ -68,8 +68,7 @@ public abstract class MappedSeatId {
      */
     public static final String ATTRIBUTE_NAME_SEAT_NO = "seatNo";
 
-    // ---------------------------------------------------------------------------------------------
-    // STATIC_FACTORY_METHODS
+    // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
     /**
      * Creates a new instance of a subclass, with the specified values. The instance is not modified

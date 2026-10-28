@@ -20,8 +20,6 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter.Point;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
@@ -160,11 +158,11 @@ final class __Random_TestUtils {
     }
 
     /**
-     * Returns a point of a longitude and a latitude, each to four decimal places.
+     * Returns a point, a longitude and a latitude, each to four decimal places.
      */
-    static Point point() {
+    static List<Double> point() {
         final var random = ThreadLocalRandom.current();
-        return new Point(
+        return List.of(
                 BigDecimal.valueOf(random.nextDouble(-180, 180)).setScale(4, RoundingMode.HALF_UP)
                         .doubleValue(),
                 BigDecimal.valueOf(random.nextDouble(-90, 90)).setScale(4, RoundingMode.HALF_UP)

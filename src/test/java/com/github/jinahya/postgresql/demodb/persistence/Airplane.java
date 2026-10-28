@@ -33,8 +33,8 @@ import jakarta.persistence.Table;
  * {@link MappedAirplane} with what is an application's to decide: a read-only association to the
  * {@link AirplaneData} row the view reads.
  * <p>
- * A view has no foreign key; the association rests on the view's definition, which reads every
- * row of {@code airplanes_data} by the same {@value MappedAirplane#COLUMN_NAME_AIRPLANE_CODE}.
+ * A view has no foreign key; the association rests on the view's definition, which reads every row
+ * of {@code airplanes_data} by the same {@value MappedAirplane#COLUMN_NAME_AIRPLANE_CODE}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

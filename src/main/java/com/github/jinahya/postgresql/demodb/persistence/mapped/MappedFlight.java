@@ -36,7 +36,9 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A mapped superclass which holds the mappings of the {@value MappedFlight#TABLE_NAME} table,
@@ -104,8 +106,8 @@ public abstract class MappedFlight {
          */
         CANCELLED("Cancelled");
 
-        FlightStatus(final String text) {
-            this.text = text;
+        FlightStatus(final String attributeValue) {
+            this.attributeValue = attributeValue;
         }
 
         /**
@@ -116,10 +118,10 @@ public abstract class MappedFlight {
          */
         @Override
         public String attributeValue() {
-            return text;
+            return attributeValue;
         }
 
-        private final String text;
+        private final String attributeValue;
     }
 
     /**
@@ -469,13 +471,15 @@ public abstract class MappedFlight {
 
     /**
      * Replaces current value of {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE} attribute with the
-     * specified value.
+     * specified value, truncated to microseconds, the precision of the column.
      *
      * @param scheduledDeparture new value for {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE}
      *                           attribute.
      */
     public void setScheduledDeparture(final Instant scheduledDeparture) {
-        this.scheduledDeparture = scheduledDeparture;
+        this.scheduledDeparture = Optional.ofNullable(scheduledDeparture)
+                .map(v -> v.truncatedTo(ChronoUnit.MICROS))
+                .orElse(null);
     }
 
     // ---------------------------------------------------------------------------- scheduledArrival
@@ -491,12 +495,14 @@ public abstract class MappedFlight {
 
     /**
      * Replaces current value of {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL} attribute with the
-     * specified value.
+     * specified value, truncated to microseconds, the precision of the column.
      *
      * @param scheduledArrival new value for {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL} attribute.
      */
     public void setScheduledArrival(final Instant scheduledArrival) {
-        this.scheduledArrival = scheduledArrival;
+        this.scheduledArrival = Optional.ofNullable(scheduledArrival)
+                .map(v -> v.truncatedTo(ChronoUnit.MICROS))
+                .orElse(null);
     }
 
     // ----------------------------------------------------------------------------- actualDeparture
@@ -512,12 +518,14 @@ public abstract class MappedFlight {
 
     /**
      * Replaces current value of {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE} attribute with the
-     * specified value.
+     * specified value, truncated to microseconds, the precision of the column.
      *
      * @param actualDeparture new value for {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE} attribute.
      */
     public void setActualDeparture(final Instant actualDeparture) {
-        this.actualDeparture = actualDeparture;
+        this.actualDeparture = Optional.ofNullable(actualDeparture)
+                .map(v -> v.truncatedTo(ChronoUnit.MICROS))
+                .orElse(null);
     }
 
     // ------------------------------------------------------------------------------- actualArrival
@@ -533,12 +541,14 @@ public abstract class MappedFlight {
 
     /**
      * Replaces current value of {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL} attribute with the
-     * specified value.
+     * specified value, truncated to microseconds, the precision of the column.
      *
      * @param actualArrival new value for {@value #ATTRIBUTE_NAME_ACTUAL_ARRIVAL} attribute.
      */
     public void setActualArrival(final Instant actualArrival) {
-        this.actualArrival = actualArrival;
+        this.actualArrival = Optional.ofNullable(actualArrival)
+                .map(v -> v.truncatedTo(ChronoUnit.MICROS))
+                .orElse(null);
     }
 
     // ---------------------------------------------------------------------------------------------

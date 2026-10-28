@@ -20,6 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.persistence.util.JinahyaEntityManagerUtils;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirport;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
@@ -28,9 +29,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.time.DateTimeException;
-import java.time.ZoneId;
 import java.util.TimeZone;
 
+import static com.github.jinahya.persistence.util.JinahyaPersistenceUtils.applyEntityManager;
+import static com.github.jinahya.persistence.util.JinahyaEntityManagerUtils.applyInTransaction;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -81,21 +83,21 @@ class Airport_Persistence_IT
     }
 
     /**
-     * Selects every instance with its {@link Airport#getAirportData() airport data} fetched by
-     * the same query, and checks that the fetch join, an inner join, loses no row of the view.
+     * Selects every instance with its {@link Airport#getAirportData() airport data} fetched by the
+     * same query, and checks that the fetch join, an inner join, loses no row of the view.
      *
      * @implNote The number of instances is counted with
-     *         {@link __Persistence_TestUtils#selectEntityCount(jakarta.persistence.EntityManager, Class)},
-     *         of the view and of the table alike; the view reads every row of the table, so the
-     *         three numbers are the same.
+     *         {@link JinahyaEntityManagerUtils#selectCount(jakarta.persistence.EntityManager,
+     *         Class)}, of the view and of the table alike; the view reads every row of the table,
+     *         so the three numbers are the same.
      */
     @DisplayName("a fetch join loads the airport data with every airport")
     @Test
     void selectTargetInstances_FetchAirportData() {
-        applyEntityManagerInTransactionAndRollback(em -> {
-            final var count = __Persistence_TestUtils.selectEntityCount(em, Airport.class);
+        applyEntityManager(PERSISTENCE_UNIT_NAME, m -> applyInTransaction(m, em -> {
+            final var count = JinahyaEntityManagerUtils.selectEntityCount(em, Airport.class);
             assumeTrue(count > 0L, () -> "no row of " + Airport.class + " is installed");
-            assertThat(__Persistence_TestUtils.selectEntityCount(em, AirportData.class))
+            assertThat(JinahyaEntityManagerUtils.selectEntityCount(em, AirportData.class))
                     .as("number of airport data")
                     .isEqualTo(count);
             final var builder = em.getCriteriaBuilder();
@@ -117,7 +119,7 @@ class Airport_Persistence_IT
                         .isEqualTo(airport.getAirportCode());
             });
             return null;
-        });
+        }, true));
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -127,6 +129,7 @@ class Airport_Persistence_IT
         @Test
         void __TimeZone() {
             final var list = applyEntityManager(
+                    PERSISTENCE_UNIT_NAME,
                     em -> em.createQuery("SELECT e FROM AirportData AS e", AirportData.class)
                             .getResultList()
             );
@@ -140,6 +143,7 @@ class Airport_Persistence_IT
         @Test
         void __ZoneId() {
             final var list = applyEntityManager(
+                    PERSISTENCE_UNIT_NAME,
                     em -> em.createQuery("SELECT e FROM AirportData AS e", AirportData.class)
                             .getResultList()
             );

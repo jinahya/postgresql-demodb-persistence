@@ -28,6 +28,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -37,13 +38,12 @@ import java.util.Optional;
  * <q>Boarding passes</q>.
  * <p>
  * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of a subclass of
- * {@link MappedBoardingPassId}, {@code T}, which an extending entity names;
- * {@link #equals(Object)} compares the identifiers, and the getters of the key's attributes read
- * them. An identifier is not modified once created; a boarding pass takes another with
- * {@link #setId(MappedBoardingPassId)}.
+ * {@link MappedBoardingPassId}, {@code T}, which an extending entity names; {@link #equals(Object)}
+ * compares the identifiers, and the getters of the key's attributes read them. An identifier is not
+ * modified once created; a boarding pass takes another with {@link #setId(MappedBoardingPassId)}.
  * <p>
- * The two columns of the identifier together are also a foreign key, to the {@code segments}
- * table, see {@link MappedSegment}.
+ * The two columns of the identifier together are also a foreign key, to the {@code segments} table,
+ * see {@link MappedSegment}.
  * <p>
  * The table also keeps ({@value #COLUMN_NAME_FLIGHT_ID}, {@value #COLUMN_NAME_BOARDING_NO});
  * ({@value #COLUMN_NAME_FLIGHT_ID}, {@value #COLUMN_NAME_SEAT_NO}) unique, which an extending
@@ -72,7 +72,8 @@ public abstract class MappedBoardingPass<T extends MappedBoardingPassId> {
 
     /**
      * The name of the table column to which the
-     * {@value MappedBoardingPassId#ATTRIBUTE_NAME_TICKET_NO} attribute maps. The value is {@value}.
+     * {@value MappedBoardingPassId#ATTRIBUTE_NAME_TICKET_NO} attribute maps. The value is
+     * {@value}.
      */
     public static final String COLUMN_NAME_TICKET_NO = "ticket_no";
 
@@ -87,7 +88,8 @@ public abstract class MappedBoardingPass<T extends MappedBoardingPassId> {
 
     /**
      * The name of the table column to which the
-     * {@value MappedBoardingPassId#ATTRIBUTE_NAME_FLIGHT_ID} attribute maps. The value is {@value}.
+     * {@value MappedBoardingPassId#ATTRIBUTE_NAME_FLIGHT_ID} attribute maps. The value is
+     * {@value}.
      */
     public static final String COLUMN_NAME_FLIGHT_ID = "flight_id";
 
@@ -290,12 +292,14 @@ public abstract class MappedBoardingPass<T extends MappedBoardingPassId> {
 
     /**
      * Replaces current value of {@value #ATTRIBUTE_NAME_BOARDING_TIME} attribute with the specified
-     * value.
+     * value, truncated to microseconds, the precision of the column.
      *
      * @param boardingTime new value for {@value #ATTRIBUTE_NAME_BOARDING_TIME} attribute.
      */
     public void setBoardingTime(final Instant boardingTime) {
-        this.boardingTime = boardingTime;
+        this.boardingTime = Optional.ofNullable(boardingTime)
+                .map(v -> v.truncatedTo(ChronoUnit.MICROS))
+                .orElse(null);
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -20,7 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirportData;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,7 +61,8 @@ class AirportData_Persistence_IT
                 .setParameter(1, entityInstance.getAirportCode())
                 .getSingleResult();
         log.info("coordinates: {}, text: {}", coordinates, text);
-        assertThat(new PointAttributeConverter().convertToEntityAttribute(text))
+        assertThat(new MappedAirportData.CoordinatesAttributeConverter()
+                           .convertToEntityAttribute(text))
                 .as("coordinates of %s, as the server reads them", entityInstance)
                 .isEqualTo(coordinates);
         entityManager.clear();
@@ -98,8 +99,9 @@ class AirportData_Persistence_IT
         assertThat(entityInstance.getCoordinates()).as("coordinates of %s", entityInstance)
                 .isNotNull()
                 .satisfies(p -> {
-                    assertThat(p.longitude()).as("longitude").isBetween(-180.0d, 180.0d);
-                    assertThat(p.latitude()).as("latitude").isBetween(-90.0d, 90.0d);
+                    assertThat(p).as("longitude and latitude").hasSize(2);
+                    assertThat(p.get(0)).as("longitude").isBetween(-180.0d, 180.0d);
+                    assertThat(p.get(1)).as("latitude").isBetween(-90.0d, 90.0d);
                 });
         {
             final var timeZone = entityInstance.getTimezoneAsTimeZone();

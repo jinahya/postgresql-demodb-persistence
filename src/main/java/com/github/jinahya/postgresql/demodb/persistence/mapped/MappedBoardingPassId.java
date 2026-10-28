@@ -28,9 +28,8 @@ import jakarta.persistence.MappedSuperclass;
  * {@value MappedBoardingPass#COLUMN_NAME_FLIGHT_ID} columns.
  * <p>
  * The pair is the table's primary key and, as a whole, a foreign key to the
- * {@value MappedSegment#TABLE_NAME} table's, so this class adds nothing to
- * {@link MappedSegmentId}: the attributes, their names, the factory method and the equality are
- * all its.
+ * {@value MappedSegment#TABLE_NAME} table's, so this class adds nothing to {@link MappedSegmentId}:
+ * the attributes, their names, the factory method and the equality are all its.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see MappedBoardingPass

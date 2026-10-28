@@ -132,8 +132,7 @@ public abstract class MappedAirplaneData {
      */
     public static final String ATTRIBUTE_NAME_SPEED = "speed";
 
-    // ---------------------------------------------------------------------------------------------
-    // STATIC_FACTORY_METHODS
+    // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
     /**
      * Creates a new instance of a subclass, with the specified code.
@@ -377,7 +376,8 @@ public abstract class MappedAirplaneData {
      * {@value #ATTRIBUTE_NAME_RANGE} divided by the {@value #ATTRIBUTE_NAME_SPEED}.
      *
      * @return the time, in whole seconds, flown at the cruising speed; {@code null} when either the
-     *         {@value #ATTRIBUTE_NAME_RANGE} or the {@value #ATTRIBUTE_NAME_SPEED} is {@code null}.
+     *         {@value #ATTRIBUTE_NAME_RANGE} or the {@value #ATTRIBUTE_NAME_SPEED} is
+     *         {@code null}.
      */
     @Transient
     public Duration getEndurance() {

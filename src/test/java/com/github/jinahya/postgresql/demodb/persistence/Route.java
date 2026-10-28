@@ -26,6 +26,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedNativeQuery;
 import jakarta.persistence.Table;
 
 import java.util.Optional;
@@ -40,6 +41,12 @@ import java.util.Optional;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@NamedNativeQuery(
+        name = "selectDurationSecondsByRouteNoAndValidity",
+        query = """
+                SELECT EXTRACT(EPOCH FROM duration) FROM routes
+                WHERE route_no = ?1 AND validity = CAST(?2 AS tstzrange)"""
+)
 @Entity
 @Table(name = MappedRoute.TABLE_NAME)
 public class Route

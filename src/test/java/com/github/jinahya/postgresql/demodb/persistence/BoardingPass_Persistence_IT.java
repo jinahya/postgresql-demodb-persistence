@@ -21,6 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSegmentId_;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.github.jinahya.persistence.util.JinahyaPersistenceUtils.applyEntityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -45,6 +47,30 @@ class BoardingPass_Persistence_IT
     }
 
     // ---------------------------------------------------------------------------------------------
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param entityManager  {@inheritDoc}
+     * @param entityInstance {@inheritDoc}
+     * @implNote The pass, found again, is of a seat of the airplane of its flight's route,
+     *         which its persister made, of the segment's fare conditions.
+     */
+    @Override
+    void targetInstancePersisted(final EntityManager entityManager,
+                                 final BoardingPass entityInstance) {
+        entityManager.clear();
+        final var found = entityManager.find(BoardingPass.class, entityInstance.getId());
+        final var segment = found.getSegment();
+        final var route = segment.getFlight().getRoute();
+        assertThat(route).as("route of the flight of %s", found).isNotNull();
+        final var seat = entityManager.find(
+                Seat.class, SeatId.of(route.getAirplaneCode(), found.getSeatNo()));
+        assertThat(seat).as("seat of %s, on the airplane of its flight's route", found)
+                .isNotNull()
+                .extracting(Seat::getFareConditions)
+                .isEqualTo(segment.getFareConditions());
+    }
 
     /**
      * {@inheritDoc}
@@ -108,7 +134,7 @@ class BoardingPass_Persistence_IT
         @DisplayName("finds the pass of boarding number 1, by the named query")
         @Test
         void __NamedQuery() {
-            applyEntityManager(em -> {
+            applyEntityManager(PERSISTENCE_UNIT_NAME, em -> {
                 final var found = em.createNamedQuery("selectByFlightIdAndBoardingNo",
                                                       BoardingPass.class)
                         .setParameter("flightId", FLIGHT_ID)
@@ -132,7 +158,7 @@ class BoardingPass_Persistence_IT
         @DisplayName("finds the pass of boarding number 1, by the query language")
         @Test
         void __QueryLanguage() {
-            applyEntityManager(em -> {
+            applyEntityManager(PERSISTENCE_UNIT_NAME, em -> {
                 final var found = em.createQuery(
                                 """
                                         SELECT e
@@ -162,7 +188,7 @@ class BoardingPass_Persistence_IT
         @DisplayName("finds the pass of boarding number 1, by the Criteria API")
         @Test
         void __CriteriaApi() {
-            applyEntityManager(em -> {
+            applyEntityManager(PERSISTENCE_UNIT_NAME, em -> {
                 final var builder = em.getCriteriaBuilder();
                 final var query = builder.createQuery(BoardingPass.class);
                 final var root = query.from(BoardingPass.class);
@@ -197,7 +223,7 @@ class BoardingPass_Persistence_IT
         @DisplayName("finds the pass of seat 9C, by the named query")
         @Test
         void __NamedQuery() {
-            applyEntityManager(em -> {
+            applyEntityManager(PERSISTENCE_UNIT_NAME, em -> {
                 final var found = em.createNamedQuery("selectByFlightIdAndSeatNo",
                                                       BoardingPass.class)
                         .setParameter("flightId", FLIGHT_ID)
@@ -221,7 +247,7 @@ class BoardingPass_Persistence_IT
         @DisplayName("finds the pass of seat 9C, by the query language")
         @Test
         void __QueryLanguage() {
-            applyEntityManager(em -> {
+            applyEntityManager(PERSISTENCE_UNIT_NAME, em -> {
                 final var found = em.createQuery(
                                 """
                                         SELECT e
@@ -251,7 +277,7 @@ class BoardingPass_Persistence_IT
         @DisplayName("finds the pass of seat 9C, by the Criteria API")
         @Test
         void __CriteriaApi() {
-            applyEntityManager(em -> {
+            applyEntityManager(PERSISTENCE_UNIT_NAME, em -> {
                 final var builder = em.getCriteriaBuilder();
                 final var query = builder.createQuery(BoardingPass.class);
                 final var root = query.from(BoardingPass.class);
@@ -287,7 +313,7 @@ class BoardingPass_Persistence_IT
         @DisplayName("selects all, by boarding number, nulls last, by the named query")
         @Test
         void __NamedQuery() {
-            applyEntityManager(em -> {
+            applyEntityManager(PERSISTENCE_UNIT_NAME, em -> {
                 final var all = em.createNamedQuery("selectAllByFlightIdOrderByBoardingNoAac",
                                                     BoardingPass.class)
                         .setParameter("flightId", FLIGHT_ID)
@@ -310,7 +336,7 @@ class BoardingPass_Persistence_IT
         @DisplayName("selects all, by boarding number, nulls last, by the query language")
         @Test
         void __QueryLanguage() {
-            applyEntityManager(em -> {
+            applyEntityManager(PERSISTENCE_UNIT_NAME, em -> {
                 final var all = em.createQuery(
                                 """
                                         SELECT e
@@ -339,7 +365,7 @@ class BoardingPass_Persistence_IT
         @DisplayName("selects all, by boarding number, nulls last, by the Criteria API")
         @Test
         void __CriteriaApi() {
-            applyEntityManager(em -> {
+            applyEntityManager(PERSISTENCE_UNIT_NAME, em -> {
                 final var builder = em.getCriteriaBuilder();
                 final var query = builder.createQuery(BoardingPass.class);
                 final var root = query.from(BoardingPass.class);
@@ -374,7 +400,7 @@ class BoardingPass_Persistence_IT
         @DisplayName("selects all, by seat number, by the named query")
         @Test
         void __NamedQuery() {
-            applyEntityManager(em -> {
+            applyEntityManager(PERSISTENCE_UNIT_NAME, em -> {
                 final var all = em.createNamedQuery("selectAllByFlightIdOrderBySeatNoAsc",
                                                     BoardingPass.class)
                         .setParameter("flightId", FLIGHT_ID)
@@ -397,7 +423,7 @@ class BoardingPass_Persistence_IT
         @DisplayName("selects all, by seat number, by the query language")
         @Test
         void __QueryLanguage() {
-            applyEntityManager(em -> {
+            applyEntityManager(PERSISTENCE_UNIT_NAME, em -> {
                 final var all = em.createQuery(
                                 """
                                         SELECT e
@@ -426,7 +452,7 @@ class BoardingPass_Persistence_IT
         @DisplayName("selects all, by seat number, by the Criteria API")
         @Test
         void __CriteriaApi() {
-            applyEntityManager(em -> {
+            applyEntityManager(PERSISTENCE_UNIT_NAME, em -> {
                 final var builder = em.getCriteriaBuilder();
                 final var query = builder.createQuery(BoardingPass.class);
                 final var root = query.from(BoardingPass.class);

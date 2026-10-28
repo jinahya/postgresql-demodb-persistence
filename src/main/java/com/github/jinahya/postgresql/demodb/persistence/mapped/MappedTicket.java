@@ -145,8 +145,7 @@ public abstract class MappedTicket {
      */
     public static final String ATTRIBUTE_NAME_OUTBOUND = "outbound";
 
-    // ---------------------------------------------------------------------------------------------
-    // STATIC_FACTORY_METHODS
+    // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
     /**
      * Creates a new instance of a subclass, with the specified ticket number.
@@ -256,9 +255,9 @@ public abstract class MappedTicket {
      * value.
      *
      * @param bookRef new value for {@value #ATTRIBUTE_NAME_BOOK_REF} attribute.
-     * @apiNote The attribute is read-only, so the value is never written: an extending entity
-     *         which maps the column's writable side, an association, calls this method to keep the
-     *         attribute in step with what the association writes.
+     * @apiNote The attribute is read-only, so the value is never written: an extending
+     *         entity which maps the column's writable side, an association, calls this method to
+     *         keep the attribute in step with what the association writes.
      */
     protected void setBookRef(final String bookRef) {
         this.bookRef = bookRef;

@@ -20,7 +20,6 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter;
 import com.github.jinahya.persistence.more.converter.time.ZoneIdStringAttributeConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -28,9 +27,11 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -42,9 +43,10 @@ import java.util.TimeZone;
  * Every column is mapped read-only, the identifier too. It has no setters; nothing writes to a
  * view.
  * <p>
- * The {@value MappedAirport#COLUMN_NAME_COORDINATES} column is a {@code point}, which has no type in
- * Jakarta Persistence; it is mapped as a {@link PointAttributeConverter.Point}, the longitude as
- * {@code x} and the latitude as {@code y}, through a {@link PointAttributeConverter}.
+ * The {@value MappedAirport#COLUMN_NAME_COORDINATES} column is a {@code point}, which has no type
+ * in Jakarta Persistence; it is mapped as a list of two {@link Double}s, the longitude as {@code x}
+ * and the latitude as {@code y}, through a
+ * {@link MappedAirportData.CoordinatesAttributeConverter}.
  * <p>
  * The view reads {@code airports_data}, see {@link MappedAirportData}, with the
  * {@value #COLUMN_NAME_AIRPORT_NAME}, {@value #COLUMN_NAME_CITY} and {@value #COLUMN_NAME_COUNTRY}
@@ -213,6 +215,33 @@ public abstract class MappedAirport {
         return Objects.hashCode(getAirportCode());
     }
 
+    // ---------------------------------------------------------------------------------- VALIDATION
+
+    /**
+     * Tests whether current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute is a
+     * geolocation, as the column's comment says it holds: a longitude from {@code -180} to
+     * {@code 180} and a latitude from {@code -90} to {@code 90}, inclusive.
+     * <p>
+     * No constraint of the schema requires it, so this method carries no constraint annotation; an
+     * extending entity which wants it checked overrides it with
+     * {@link jakarta.validation.constraints.AssertTrue @AssertTrue}.
+     *
+     * @return {@code true} if the longitude and the latitude are within their ranges, or the
+     *         attribute, or either coordinate, is {@code null}, or the attribute has fewer than two
+     *         coordinates; {@code false} otherwise.
+     */
+    protected boolean isCoordinatesInRange() {
+        final var coordinates = getCoordinates();
+        if (coordinates == null || coordinates.size() < 2 || coordinates.get(0) == null
+            || coordinates.get(1) == null) {
+            return true;
+        }
+        final double longitude = coordinates.get(0);
+        final double latitude = coordinates.get(1);
+        return longitude >= -180.0d && longitude <= 180.0d
+               && latitude >= -90.0d && latitude <= 90.0d;
+    }
+
     // --------------------------------------------------------------------------------- airportCode
 
     /**
@@ -261,12 +290,12 @@ public abstract class MappedAirport {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute -- a {@code point}
-     * column, mapped as a {@link PointAttributeConverter.Point}, the longitude as {@code x} and the
-     * latitude as {@code y}.
+     * column, mapped as a list of two {@link Double}s, the longitude as {@code x} and the latitude
+     * as {@code y}.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_COORDINATES} attribute.
      */
-    public PointAttributeConverter.Point getCoordinates() {
+    public List<Double> getCoordinates() {
         return coordinates;
     }
 
@@ -321,10 +350,11 @@ public abstract class MappedAirport {
     private String country;
 
     // ---------------------------------------------------------------------------------------------
-    @Convert(converter = PointAttributeConverter.class)
+    @Size(min = 2, max = 2)
+    @Convert(converter = MappedAirportData.CoordinatesAttributeConverter.class)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_COORDINATES, nullable = true, insertable = false, updatable = false)
-    private PointAttributeConverter.Point coordinates;
+    private List<@NotNull Double> coordinates;
 
     // ---------------------------------------------------------------------------------------------
     @Convert(converter = ZoneIdStringAttributeConverter.class)

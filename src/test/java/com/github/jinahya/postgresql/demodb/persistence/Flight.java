@@ -37,8 +37,8 @@ import org.hibernate.annotations.JoinFormula;
  * An entity which maps the {@value MappedFlight#TABLE_NAME} table, extending {@link MappedFlight}
  * with what is an application's to decide: its association to the route it flies.
  * <p>
- * No foreign key declares that association: a flight's route is the
- * {@value MappedRoute#TABLE_NAME} row of its {@value MappedFlight#COLUMN_NAME_ROUTE_NO} whose
+ * No foreign key declares that association: a flight's route is the {@value MappedRoute#TABLE_NAME}
+ * row of its {@value MappedFlight#COLUMN_NAME_ROUTE_NO} whose
  * {@value MappedRoute#COLUMN_NAME_VALIDITY} contains its
  * {@value MappedFlight#COLUMN_NAME_SCHEDULED_DEPARTURE}, and the table has no
  * {@value MappedRoute#COLUMN_NAME_VALIDITY} to join on. So the association joins on the route
@@ -56,7 +56,7 @@ import org.hibernate.annotations.JoinFormula;
        uniqueConstraints = {
                @UniqueConstraint(name = "flights_route_no_scheduled_departure_key",
                                  columnNames = {MappedFlight.COLUMN_NAME_ROUTE_NO,
-                                                MappedFlight.COLUMN_NAME_SCHEDULED_DEPARTURE})
+                                         MappedFlight.COLUMN_NAME_SCHEDULED_DEPARTURE})
        }
 )
 public class Flight
@@ -76,10 +76,10 @@ public class Flight
      *
      * @return the route; {@code null} when no route of the flight's route number is valid at its
      *         scheduled departure, which no foreign key forbids.
-     * @implNote The association is optional, so that a flight without a route loads with none,
-     *         and a {@code LEFT JOIN} keeps it; an inner {@code JOIN} on it leaves such a flight
-     *         out. More than one route never matches: the table's exclusion constraint keeps the
-     *         validities of a route number apart.
+     * @implNote The association is optional, so that a flight without a route loads with
+     *         none, and a {@code LEFT JOIN} keeps it; an inner {@code JOIN} on it leaves such a
+     *         flight out. More than one route never matches: the table's exclusion constraint keeps
+     *         the validities of a route number apart.
      */
     public Route getRoute() {
         return route;

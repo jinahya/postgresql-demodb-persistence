@@ -57,6 +57,7 @@ public class Seat
     }
 
     // ---------------------------------------------------------------------------------------------
+
     /**
      * Creates a new instance.
      */
@@ -65,6 +66,7 @@ public class Seat
     }
 
     // ---------------------------------------------------------------------------------------------
+
     /**
      * Returns the airplane this seat is in, over the {@value MappedSeat#COLUMN_NAME_AIRPLANE_CODE}
      * column, which is part of the identifier and so written by it; the association is read-only.

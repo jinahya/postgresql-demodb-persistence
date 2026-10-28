@@ -20,6 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -44,10 +45,31 @@ class Flight_Persistence_IT
     /**
      * {@inheritDoc}
      *
+     * @param entityManager  {@inheritDoc}
+     * @param entityInstance {@inheritDoc}
+     * @implNote The flight, found again, flies the route its persister made for it: one
+     *         valid at its scheduled departure, whose duration is its scheduled block time.
+     */
+    @Override
+    void targetInstancePersisted(final EntityManager entityManager, final Flight entityInstance) {
+        entityManager.clear();
+        final var found = entityManager.find(Flight.class, entityInstance.getFlightId());
+        assertThat(found.getRoute()).as("route of %s", found).isNotNull().satisfies(r -> {
+            assertThat(r.getRouteNo()).isEqualTo(found.getRouteNo());
+            final var validity = r.getValidityRange(List::of);
+            assertThat(validity.get(0)).isBeforeOrEqualTo(found.getScheduledDeparture());
+            assertThat(validity.get(1)).isAfter(found.getScheduledDeparture());
+            assertThat(r.getDuration()).isEqualTo(found.getScheduledBlockTime());
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param instance {@inheritDoc}
      * @implNote The scheduled arrival is after the scheduled departure, as the check
-     *         constraint requires; and the route, joined by the route number and a formula, is
-     *         the one of the route number valid at the scheduled departure, whose duration is the
+     *         constraint requires; and the route, joined by the route number and a formula, is the
+     *         one of the route number valid at the scheduled departure, whose duration is the
      *         flight's scheduled block time.
      */
     @Override

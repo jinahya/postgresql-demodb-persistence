@@ -33,6 +33,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -42,8 +43,8 @@ import java.util.Optional;
  * <p>
  * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of a subclass of
  * {@link MappedSegmentId}, {@code T}, which an extending entity names; {@link #equals(Object)}
- * compares the identifiers, and the getters of the key's attributes read them. An identifier is
- * not modified once created; a segment takes another with {@link #setId(MappedSegmentId)}.
+ * compares the identifiers, and the getters of the key's attributes read them. An identifier is not
+ * modified once created; a segment takes another with {@link #setId(MappedSegmentId)}.
  * <p>
  * The {@value MappedSegment#COLUMN_NAME_TICKET_NO} and {@value MappedSegment#COLUMN_NAME_FLIGHT_ID}
  * columns are also foreign keys; the identifier writes them, and an association over them, if the
@@ -132,6 +133,7 @@ public abstract class MappedSegment<T extends MappedSegmentId> {
      */
     public static final String COLUMN_VALUE_FARE_CONDITIONS_BUSINESS =
             MappedSeat.COLUMN_VALUE_FARE_CONDITIONS_BUSINESS;
+
     /**
      * The regular expression which the {@value #ATTRIBUTE_NAME_FARE_CONDITIONS} attribute matches:
      * one of the values the {@code segments_fare_conditions_check} constraint allows. The value is
@@ -317,12 +319,15 @@ public abstract class MappedSegment<T extends MappedSegmentId> {
     }
 
     /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_PRICE} attribute with the specified value.
+     * Replaces current value of {@value #ATTRIBUTE_NAME_PRICE} attribute with the specified value,
+     * rounded half up to the scale of the column, as the server rounds it.
      *
      * @param price new value for {@value #ATTRIBUTE_NAME_PRICE} attribute.
      */
     public void setPrice(final BigDecimal price) {
-        this.price = price;
+        this.price = Optional.ofNullable(price)
+                .map(v -> v.setScale(COLUMN_SCALE_PRICE, RoundingMode.HALF_UP))
+                .orElse(null);
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -30,8 +30,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -246,12 +249,14 @@ public abstract class MappedBooking {
 
     /**
      * Replaces current value of {@value #ATTRIBUTE_NAME_BOOK_DATE} attribute with the specified
-     * value.
+     * value, truncated to microseconds, the precision of the column.
      *
      * @param bookDate new value for {@value #ATTRIBUTE_NAME_BOOK_DATE} attribute.
      */
     public void setBookDate(final Instant bookDate) {
-        this.bookDate = bookDate;
+        this.bookDate = Optional.ofNullable(bookDate)
+                .map(v -> v.truncatedTo(ChronoUnit.MICROS))
+                .orElse(null);
     }
 
     // --------------------------------------------------------------------------------- totalAmount
@@ -267,12 +272,14 @@ public abstract class MappedBooking {
 
     /**
      * Replaces current value of {@value #ATTRIBUTE_NAME_TOTAL_AMOUNT} attribute with the specified
-     * value.
+     * value, rounded half up to the scale of the column, as the server rounds it.
      *
      * @param totalAmount new value for {@value #ATTRIBUTE_NAME_TOTAL_AMOUNT} attribute.
      */
     public void setTotalAmount(final BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
+        this.totalAmount = Optional.ofNullable(totalAmount)
+                .map(v -> v.setScale(COLUMN_SCALE_TOTAL_AMOUNT, RoundingMode.HALF_UP))
+                .orElse(null);
     }
 
     // ---------------------------------------------------------------------------------------------

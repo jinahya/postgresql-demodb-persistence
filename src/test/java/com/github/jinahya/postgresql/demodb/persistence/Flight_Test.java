@@ -42,8 +42,8 @@ class Flight_Test
     /**
      * {@inheritDoc}
      *
-     * @implNote {@link Flight#equals(Object) equals} compares only the natural key, the route
-     *         number and the scheduled departure, not the {@code @Id}, nor the rest, which is
+     * @implNote {@link Flight#equals(Object) equals} compares only the natural key, the
+     *         route number and the scheduled departure, not the {@code @Id}, nor the rest, which is
      *         mutable state.
      */
     @Override

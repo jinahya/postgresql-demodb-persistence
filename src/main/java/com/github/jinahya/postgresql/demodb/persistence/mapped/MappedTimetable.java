@@ -194,6 +194,7 @@ public abstract class MappedTimetable {
      * {@value}.
      */
     public static final String COLUMN_VALUE_STATUS_CANCELLED = "Cancelled";
+
     /**
      * The regular expression which the {@value #ATTRIBUTE_NAME_STATUS} attribute matches: one of
      * the values of the {@code flights} table's {@code flight_status_check} constraint. The value
@@ -247,8 +248,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_SCHEDULED_DEPARTURE = "scheduledDeparture";
 
-    // ---------------------------------------------------------------------------------------------
-    // SCHEDULED_DEPARTURE_LOCAL
+    // ------------------------------------------------------------------- SCHEDULED_DEPARTURE_LOCAL
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE_LOCAL}
@@ -276,8 +276,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_ACTUAL_DEPARTURE = "actualDeparture";
 
-    // ---------------------------------------------------------------------------------------------
-    // ACTUAL_DEPARTURE_LOCAL
+    // ---------------------------------------------------------------------- ACTUAL_DEPARTURE_LOCAL
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_ACTUAL_DEPARTURE_LOCAL}
@@ -305,8 +304,7 @@ public abstract class MappedTimetable {
      */
     public static final String ATTRIBUTE_NAME_SCHEDULED_ARRIVAL = "scheduledArrival";
 
-    // ---------------------------------------------------------------------------------------------
-    // SCHEDULED_ARRIVAL_LOCAL
+    // --------------------------------------------------------------------- SCHEDULED_ARRIVAL_LOCAL
 
     /**
      * The name of the view column to which the {@value #ATTRIBUTE_NAME_SCHEDULED_ARRIVAL_LOCAL}

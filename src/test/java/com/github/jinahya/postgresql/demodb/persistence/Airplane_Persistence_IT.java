@@ -20,6 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.persistence.util.JinahyaEntityManagerUtils;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirplane;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,6 +28,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.github.jinahya.persistence.util.JinahyaEntityManagerUtils.applyInTransaction;
+import static com.github.jinahya.persistence.util.JinahyaPersistenceUtils.applyEntityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -79,17 +82,17 @@ class Airplane_Persistence_IT
      * the same query, and checks that the fetch join, an inner join, loses no row of the view.
      *
      * @implNote The number of instances is counted with
-     *         {@link __Persistence_TestUtils#selectEntityCount(jakarta.persistence.EntityManager, Class)},
-     *         of the view and of the table alike; the view reads every row of the table, so the
-     *         three numbers are the same.
+     *         {@link JinahyaEntityManagerUtils#selectCount(jakarta.persistence.EntityManager,
+     *         Class)}, of the view and of the table alike; the view reads every row of the table,
+     *         so the three numbers are the same.
      */
     @DisplayName("a fetch join loads the airplane data with every airplane")
     @Test
     void selectTargetInstances_FetchAirplaneData() {
-        applyEntityManagerInTransactionAndRollback(em -> {
-            final var count = __Persistence_TestUtils.selectEntityCount(em, Airplane.class);
+        applyEntityManager(PERSISTENCE_UNIT_NAME, m -> applyInTransaction(m, em -> {
+            final var count = JinahyaEntityManagerUtils.selectEntityCount(em, Airplane.class);
             assumeTrue(count > 0L, () -> "no row of " + Airplane.class + " is installed");
-            assertThat(__Persistence_TestUtils.selectEntityCount(em, AirplaneData.class))
+            assertThat(JinahyaEntityManagerUtils.selectEntityCount(em, AirplaneData.class))
                     .as("number of airplane data")
                     .isEqualTo(count);
             final var builder = em.getCriteriaBuilder();
@@ -111,6 +114,6 @@ class Airplane_Persistence_IT
                         .isEqualTo(airplane.getAirplaneCode());
             });
             return null;
-        });
+        }, true));
     }
 }

@@ -55,7 +55,7 @@ class ValidityConverter_Test {
      */
     @Test
     void roundTrip() {
-        final var text = converter.convertToDatabaseColumn(new Instant[] {LOWER, UPPER});
+        final var text = converter.convertToDatabaseColumn(new Instant[]{LOWER, UPPER});
         assertThat(text).isEqualTo("[\"2025-10-01 00:00:00+00\",\"2025-11-01 00:00:00+00\")");
         assertThat(converter.convertToEntityAttribute(text)).containsExactly(LOWER, UPPER);
     }
@@ -77,7 +77,7 @@ class ValidityConverter_Test {
     @Test
     void roundTrip_Fraction() {
         final var lower = Instant.parse("2025-10-01T00:00:00.123456Z");
-        final var text = converter.convertToDatabaseColumn(new Instant[] {lower, UPPER});
+        final var text = converter.convertToDatabaseColumn(new Instant[]{lower, UPPER});
         assertThat(text).startsWith("[\"2025-10-01 00:00:00.123456+00\",");
         assertThat(converter.convertToEntityAttribute(text)).containsExactly(lower, UPPER);
     }
@@ -103,9 +103,9 @@ class ValidityConverter_Test {
 
     @Test
     void convertToDatabaseColumn_IllegalArgumentException_NotTwoBounds() {
-        assertThatThrownBy(() -> converter.convertToDatabaseColumn(new Instant[] {LOWER}))
+        assertThatThrownBy(() -> converter.convertToDatabaseColumn(new Instant[]{LOWER}))
                 .isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> converter.convertToDatabaseColumn(new Instant[] {LOWER, null}))
+        assertThatThrownBy(() -> converter.convertToDatabaseColumn(new Instant[]{LOWER, null}))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

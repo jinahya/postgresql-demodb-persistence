@@ -8,10 +8,10 @@
  * names the table with {@link jakarta.persistence.Table @Table}. The persistence provider is the
  * entity's choice as well; the classes here are plain Jakarta Persistence.
  * <p>
- * The column types Jakarta Persistence has none of its own for, an {@code integer[]} and an
- * {@code interval}, are mapped through the converters of {@code ..persistence.converter}, which an
- * attribute names with {@link jakarta.persistence.Convert @Convert}; a persistence unit which
- * excludes unlisted classes has to list them.
+ * The column types Jakarta Persistence has none of its own for are mapped by Hibernate ORM's own
+ * types, or through converters nested in the classes here, which an attribute names with
+ * {@link jakarta.persistence.Convert @Convert}; a persistence unit which excludes unlisted classes
+ * has to list them.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://postgrespro.com/community/demodb">The demonstration database</a>

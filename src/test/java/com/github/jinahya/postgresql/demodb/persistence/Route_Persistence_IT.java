@@ -55,20 +55,19 @@ class Route_Persistence_IT
      *
      * @param entityManager  {@inheritDoc}
      * @param entityInstance {@inheritDoc}
-     * @implNote The duration, written as an interval, is read back as it was, by the server,
-     *         as its number of seconds, and by a new find; the validity, written as a range, is
-     *         read back as it was, from the server's text, by the converter and by
+     * @implNote The duration, written as an interval, is read back as it was, by the
+     *         server, as its number of seconds, and by a new find; the validity, written as a
+     *         range, is read back as it was, from the server's text, by the converter and by
      *         jooq-postgres-extensions alike, and by a new find, by its identifier.
      */
     @Override
     void targetInstancePersisted(final EntityManager entityManager, final Route entityInstance) {
         final var validity = new MappedRouteId.ValidityConverter()
                 .convertToDatabaseColumn(entityInstance.getValidityRange(
-                        (l, u) -> new Instant[] {l, u}));
+                        (l, u) -> new Instant[]{l, u}));
         final var duration = entityInstance.getDuration();
-        final var seconds = (Number) entityManager.createNativeQuery(
-                        "SELECT EXTRACT(EPOCH FROM duration) FROM routes"
-                        + " WHERE route_no = ?1 AND validity = CAST(?2 AS tstzrange)")
+        final var seconds = (Number) entityManager.createNamedQuery(
+                        "selectDurationSecondsByRouteNoAndValidity")
                 .setParameter(1, entityInstance.getRouteNo())
                 .setParameter(2, validity)
                 .getSingleResult();

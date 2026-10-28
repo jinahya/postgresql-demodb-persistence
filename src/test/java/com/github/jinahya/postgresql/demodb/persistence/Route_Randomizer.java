@@ -33,8 +33,8 @@ import java.util.List;
  * A randomizer which produces randomized {@link Route} instances.
  * <p>
  * The identifier, the three read-only airport and airplane columns and the three associations are
- * excluded from randomization; {@link Route_Persister} supplies the associations. The identifier,
- * a random route number and a month of the 2030s, and every other attribute are assigned after the
+ * excluded from randomization; {@link Route_Persister} supplies the associations. The identifier, a
+ * random route number and a month of the 2030s, and every other attribute are assigned after the
  * fact, within what their columns hold.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
