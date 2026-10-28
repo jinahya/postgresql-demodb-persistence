@@ -63,6 +63,7 @@ class RouteId_Randomizer
 
     @Override
     public RouteId get() {
-        return RouteId.of(__Random_TestUtils.routeNo(), __Random_TestUtils.validity());
+        final var validity = __Random_TestUtils.validity();
+        return RouteId.of(__Random_TestUtils.routeNo(), validity.get(0), validity.get(1));
     }
 }

@@ -22,9 +22,10 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -36,12 +37,12 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -62,19 +63,23 @@ import java.util.stream.Collectors;
  * {@code prePersist} only so: an extending entity which writes a column without setting its code
  * has an instance about to be inserted rejected, though the association would write the column.
  * <p>
- * The {@value MappedRoute#COLUMN_NAME_VALIDITY} column is a {@code tstzrange}, which neither
- * Jakarta Persistence nor Hibernate ORM maps; it is mapped as an array of two {@link Instant}s,
- * the lower bound, inclusive, and the upper bound, exclusive, through the
- * {@link MappedRouteId.ValidityConverter}. Every period the database holds is of that shape,
- * {@code [lower,upper)}; a range of another shape -- {@code empty}, an unbounded or an infinite
- * bound -- is not read. A bound is an instant, whatever time zone the session prints it in, so
- * neither the attribute nor {@link #equals(Object)} depends on the time zone the JVM runs in.
- * <p>
  * The table has no primary key. What keeps a row apart is the {@code routes_route_no_validity_excl}
  * exclusion constraint: no two rows share a {@value #COLUMN_NAME_ROUTE_NO} with overlapping
- * {@value #COLUMN_NAME_VALIDITY} periods. So {@link #equals(Object)} compares those two attributes,
- * and an extending entity has to choose its own identifier -- the two, as a subclass of
- * {@link MappedRouteId}, for instance -- or read the table by native queries only.
+ * {@value #COLUMN_NAME_VALIDITY} periods. So the two are the identifier, an
+ * {@link EmbeddedId @EmbeddedId} of a subclass of {@link MappedRouteId}, {@code T}, which an
+ * extending entity names; {@link #equals(Object)} compares the identifiers, and
+ * {@link #getRouteNo()} and {@link #getValidityRange(BiFunction)} read them. An identifier is not
+ * modified once created; a route takes another with {@link #setId(MappedRouteId)}.
+ * <p>
+ * The {@value MappedRoute#COLUMN_NAME_VALIDITY} column is a {@code tstzrange}, which neither
+ * Jakarta Persistence nor Hibernate ORM maps; the identifier maps it as its two bounds, the lower,
+ * inclusive, and the upper, exclusive, through {@link MappedRouteId.ValidityConverter}. A bound is
+ * an instant, whatever time zone the session prints it in, so neither the identifier nor
+ * {@link #equals(Object)} depends on the time zone the JVM runs in.
+ * <p>
+ * The specification has neither an attribute of a type variable nor
+ * {@link jakarta.persistence.Convert @Convert} on an identifier's attribute; Hibernate ORM, the
+ * only provider, maps both.
  * <p>
  * The {@value #COLUMN_NAME_DAYS_OF_WEEK} column is an {@code integer[]}, mapped as a {@link List}
  * of {@link Integer}, which Hibernate ORM binds and reads as an array; the
@@ -83,43 +88,55 @@ import java.util.stream.Collectors;
  * {@link JdbcTypeCode @JdbcTypeCode}{@code (}{@link SqlTypes#INTERVAL_SECOND}{@code )}, and as a
  * number without it. A {@link Duration} has no months; the column's values are hours and minutes.
  *
+ * @param <T> the type of the identifier.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @MappedSuperclass
-public abstract class MappedRoute {
+public abstract class MappedRoute<T extends MappedRouteId> {
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
      */
     public static final String TABLE_NAME = "routes";
 
+    // ------------------------------------------------------------------------------------------ id
+
+    /**
+     * The name of the attribute which holds the identifier, the
+     * {@value #COLUMN_NAME_ROUTE_NO} and {@value #COLUMN_NAME_VALIDITY} columns. The value is
+     * {@value}.
+     */
+    public static final String ATTRIBUTE_NAME_ID = "id";
+
     // ------------------------------------------------------------------------------------ route_no
 
     /**
-     * The name of the table column to which the {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute maps.
-     * The value is {@value}.
+     * The name of the table column to which the {@value #ATTRIBUTE_PATH_ID_ROUTE_NO} attribute
+     * maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_ROUTE_NO = "route_no";
 
     /**
-     * The name of the attribute which maps the {@value #COLUMN_NAME_ROUTE_NO} column. The value is
-     * {@value}.
+     * The path of the identifier's attribute which maps the {@value #COLUMN_NAME_ROUTE_NO} column.
+     * The value is {@value}.
      */
-    public static final String ATTRIBUTE_NAME_ROUTE_NO = "routeNo";
+    public static final String ATTRIBUTE_PATH_ID_ROUTE_NO =
+            ATTRIBUTE_NAME_ID + '.' + MappedRouteId.ATTRIBUTE_NAME_ROUTE_NO;
 
     // ------------------------------------------------------------------------------------ validity
 
     /**
-     * The name of the table column to which the {@value #ATTRIBUTE_NAME_VALIDITY} attribute maps.
-     * The value is {@value}.
+     * The name of the table column to which the {@value #ATTRIBUTE_PATH_ID_VALIDITY} attribute
+     * maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_VALIDITY = "validity";
 
     /**
-     * The name of the attribute which maps the {@value #COLUMN_NAME_VALIDITY} column. The value is
-     * {@value}.
+     * The path of the identifier's attribute which maps the {@value #COLUMN_NAME_VALIDITY} column.
+     * The value is {@value}.
      */
-    public static final String ATTRIBUTE_NAME_VALIDITY = "validity";
+    public static final String ATTRIBUTE_PATH_ID_VALIDITY =
+            ATTRIBUTE_NAME_ID + '.' + MappedRouteId.ATTRIBUTE_NAME_VALIDITY;
 
     // --------------------------------------------------------------------------- departure_airport
 
@@ -270,8 +287,7 @@ public abstract class MappedRoute {
     @Override
     public final String toString() {
         return super.toString() + '{' +
-               "routeNo=" + routeNo +
-               ",validity=" + Arrays.toString(validity) +
+               "id=" + id +
                ",departureAirport=" + departureAirport +
                ",arrivalAirport=" + arrivalAirport +
                ",airplaneCode=" + airplaneCode +
@@ -286,73 +302,82 @@ public abstract class MappedRoute {
      *
      * @param obj {@inheritDoc}
      * @return {@inheritDoc}
-     * @implSpec Equality is by {@value #ATTRIBUTE_NAME_ROUTE_NO} and
-     *         {@value #ATTRIBUTE_NAME_VALIDITY}, the latter's bounds compared as instants.
+     * @implSpec Equality is by the identifier, {@value MappedRouteId#ATTRIBUTE_NAME_ROUTE_NO}
+     *         and {@value MappedRouteId#ATTRIBUTE_NAME_VALIDITY}, the latter's bounds compared as
+     *         instants.
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (!(obj instanceof MappedRoute that)) {
+        if (!(obj instanceof MappedRoute<?> that)) {
             return false;
         }
-        return Objects.equals(getRouteNo(), that.getRouteNo())
-               && Arrays.equals(getValidity(), that.getValidity());
+        return Objects.equals(getId(), that.getId());
     }
 
     /**
      * {@inheritDoc}
      *
      * @return {@inheritDoc}
-     * @implSpec The hash is over {@value #ATTRIBUTE_NAME_ROUTE_NO} and
-     *         {@value #ATTRIBUTE_NAME_VALIDITY}, consistent with {@link #equals(Object)}.
+     * @implSpec The hash is the identifier's, consistent with {@link #equals(Object)}.
      */
     @Override
     public final int hashCode() {
-        return Objects.hash(getRouteNo(), Arrays.hashCode(getValidity()));
+        return Objects.hashCode(getId());
+    }
+
+    // ------------------------------------------------------------------------------------------ id
+
+    /**
+     * Returns current value of the identifier.
+     *
+     * @return current value of the identifier; {@code null} until set or loaded.
+     */
+    public T getId() {
+        return id;
+    }
+
+    /**
+     * Replaces current value of the identifier with the specified value.
+     *
+     * @param id new value for the identifier.
+     */
+    public void setId(final T id) {
+        this.id = id;
     }
 
     // ------------------------------------------------------------------------------------- routeNo
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
+     * Returns the {@value MappedRouteId#ATTRIBUTE_NAME_ROUTE_NO} of the identifier.
      *
-     * @return current value of {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
+     * @return the {@value MappedRouteId#ATTRIBUTE_NAME_ROUTE_NO} of the identifier; {@code null}
+     *         when the identifier is {@code null}.
      */
     public String getRouteNo() {
-        return routeNo;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute with the specified
-     * value.
-     *
-     * @param routeNo new value for {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
-     */
-    public void setRouteNo(final String routeNo) {
-        this.routeNo = routeNo;
+        return Optional.ofNullable(getId())
+                .map(MappedRouteId::getRouteNo)
+                .orElse(null);
     }
 
     // ------------------------------------------------------------------------------------ validity
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_VALIDITY} attribute -- a {@code tstzrange}
-     * column, such as {@code ["2025-10-01 00:00:00+00","2025-11-01 00:00:00+00")}, mapped as its
-     * lower bound, inclusive, and its upper bound, exclusive.
+     * Applies the specified function to the bounds of the
+     * {@value MappedRouteId#ATTRIBUTE_NAME_VALIDITY} of the identifier, and returns the result.
      *
-     * @return current value of {@value #ATTRIBUTE_NAME_VALIDITY} attribute.
+     * @param <R>      the type of the result.
+     * @param function a function of the lower bound, inclusive, and the upper bound, exclusive.
+     * @return the result of {@code function}; or {@code null} when the identifier, or its
+     *         {@value MappedRouteId#ATTRIBUTE_NAME_VALIDITY}, is {@code null}.
      */
-    public Instant[] getValidity() {
-        return validity;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_VALIDITY} attribute with the specified
-     * value.
-     *
-     * @param validity new value for {@value #ATTRIBUTE_NAME_VALIDITY} attribute; the lower bound,
-     *                 inclusive, and the upper bound, exclusive.
-     */
-    public void setValidity(final Instant[] validity) {
-        this.validity = validity;
+    public <R> R getValidityRange(
+            final BiFunction<? super Instant, ? super Instant, ? extends R> function) {
+        Objects.requireNonNull(function, "function is null");
+        final var id = getId();
+        if (id == null) {
+            return null;
+        }
+        return id.getValidityRange(function);
     }
 
     // ---------------------------------------------------------------------------- departureAirport
@@ -539,19 +564,10 @@ public abstract class MappedRoute {
     }
 
     // ---------------------------------------------------------------------------------------------
+    @Valid
     @NotNull
-    @Basic(optional = false)
-    @Column(name = COLUMN_NAME_ROUTE_NO, nullable = false, insertable = true, updatable = true)
-    private String routeNo;
-
-    // ---------------------------------------------------------------------------------------------
-    @Size(min = 2, max = 2)
-    @NotNull
-    @Basic(optional = false)
-    @Convert(converter = MappedRouteId.ValidityConverter.class)
-    @Column(name = COLUMN_NAME_VALIDITY, nullable = false, insertable = true, updatable = true,
-            columnDefinition = "tstzrange")
-    private Instant[] validity;
+    @EmbeddedId
+    private T id;
 
     // ---------------------------------------------------------------------------------------------
     // read-only: the extending entity owns the writable mapping; see the class documentation

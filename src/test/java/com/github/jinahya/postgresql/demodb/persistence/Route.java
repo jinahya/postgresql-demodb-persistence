@@ -22,9 +22,6 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -37,32 +34,16 @@ import java.util.Optional;
  * An entity which maps the {@value MappedRoute#TABLE_NAME} table, extending {@link MappedRoute}
  * with what is an application's to decide: its associations, their fetch types and their cascades.
  * <p>
- * The table has no primary key, so the entity names one of its own: {@link RouteId}, the
- * {@value MappedRoute#COLUMN_NAME_ROUTE_NO} and {@value MappedRoute#COLUMN_NAME_VALIDITY} columns
- * as an {@link EmbeddedId @EmbeddedId}. The identifier is what writes the two columns, a provider
- * writing an identifier's columns whatever their {@code insertable} says, so the inherited
- * attributes over the same columns are overridden to read-only; the two have to agree, see
- * {@link #setId(RouteId)}.
+ * The table has no primary key, so the entity names the identifier {@link MappedRoute} takes:
+ * {@link RouteId}, the {@value MappedRoute#COLUMN_NAME_ROUTE_NO} and
+ * {@value MappedRoute#COLUMN_NAME_VALIDITY} columns.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-// the identifier writes route_no and validity -- a provider writes an identifier's columns whatever
-// their insertable says -- so the inherited attributes over the same two columns are made read-only
-@AttributeOverride(name = MappedRoute.ATTRIBUTE_NAME_ROUTE_NO,
-                   column = @Column(name = MappedRoute.COLUMN_NAME_ROUTE_NO,
-                                    nullable = false,
-                                    insertable = false,
-                                    updatable = false))
-@AttributeOverride(name = MappedRoute.ATTRIBUTE_NAME_VALIDITY,
-                   column = @Column(name = MappedRoute.COLUMN_NAME_VALIDITY,
-                                    nullable = false,
-                                    insertable = false,
-                                    updatable = false,
-                                    columnDefinition = "tstzrange"))
 @Entity
 @Table(name = MappedRoute.TABLE_NAME)
 public class Route
-        extends MappedRoute {
+        extends MappedRoute<RouteId> {
 
     // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
@@ -85,29 +66,6 @@ public class Route
      */
     protected Route() {
         super();
-    }
-
-    // ------------------------------------------------------------------------------------------ id
-
-    /**
-     * Replaces the identifier of this route with the specified value, which has to agree with the
-     * {@value MappedRoute#COLUMN_NAME_ROUTE_NO} and {@value MappedRoute#COLUMN_NAME_VALIDITY} the
-     * inherited attributes hold: the identifier is what is written, the inherited attributes are
-     * read-only here.
-     *
-     * @param id new value for the identifier.
-     */
-    public void setId(final RouteId id) {
-        this.id = id;
-    }
-
-    /**
-     * Returns the identifier of this route.
-     *
-     * @return the identifier of this route.
-     */
-    public RouteId getId() {
-        return id;
     }
 
     // ------------------------------------------------------------------------ departureAirportData
@@ -193,10 +151,6 @@ public class Route
                         .orElse(null)
         );
     }
-
-    // ---------------------------------------------------------------------------------------------
-    @EmbeddedId
-    private RouteId id;
 
     // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

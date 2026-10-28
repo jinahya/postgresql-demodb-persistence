@@ -22,6 +22,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -54,10 +56,10 @@ class Flight_Persistence_IT
                 .isAfter(instance.getScheduledDeparture());
         assertThat(instance.getRoute()).as("route of %s", instance).isNotNull().satisfies(r -> {
             assertThat(r.getId().getRouteNo()).isEqualTo(instance.getRouteNo());
-            final var validity = r.getId().getValidity();
+            final var validity = r.getId().getValidityRange(List::of);
             final var departure = instance.getScheduledDeparture();
-            assertThat(validity[0]).isBeforeOrEqualTo(departure);
-            assertThat(validity[1]).isAfter(departure);
+            assertThat(validity.get(0)).isBeforeOrEqualTo(departure);
+            assertThat(validity.get(1)).isAfter(departure);
             assertThat(r.getDuration()).isEqualTo(instance.getScheduledBlockTime());
         });
     }

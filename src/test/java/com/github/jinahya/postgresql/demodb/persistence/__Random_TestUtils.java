@@ -135,13 +135,11 @@ final class __Random_TestUtils {
      * installed route's validity, so that no random route overlaps an installed one with the same
      * number.
      */
-    static Instant[] validity() {
+    static List<Instant> validity() {
         final var month = YearMonth.of(ThreadLocalRandom.current().nextInt(2030, 2040),
                                        ThreadLocalRandom.current().nextInt(1, 13));
-        return new Instant[] {
-                month.atDay(1).atStartOfDay(ZoneOffset.UTC).toInstant(),
-                month.plusMonths(1).atDay(1).atStartOfDay(ZoneOffset.UTC).toInstant()
-        };
+        return List.of(month.atDay(1).atStartOfDay(ZoneOffset.UTC).toInstant(),
+                       month.plusMonths(1).atDay(1).atStartOfDay(ZoneOffset.UTC).toInstant());
     }
 
     /**

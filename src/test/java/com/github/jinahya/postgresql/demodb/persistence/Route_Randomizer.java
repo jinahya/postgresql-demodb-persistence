@@ -33,9 +33,9 @@ import java.util.List;
  * A randomizer which produces randomized {@link Route} instances.
  * <p>
  * The identifier, the three read-only airport and airplane columns and the three associations are
- * excluded from randomization; {@link Route_Persister} supplies the associations. Every other
- * attribute is assigned after the fact, within what its column holds, and the identifier is derived
- * from two of them.
+ * excluded from randomization; {@link Route_Persister} supplies the associations. The identifier,
+ * a random route number and a month of the 2030s, and every other attribute are assigned after the
+ * fact, within what their columns hold.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -74,12 +74,11 @@ class Route_Randomizer
     @Override
     public Route get() {
         final var instance = super.get();
-        instance.setRouteNo(__Random_TestUtils.routeNo());
-        instance.setValidity(__Random_TestUtils.validity());
+        final var validity = __Random_TestUtils.validity();
+        instance.setId(RouteId.of(__Random_TestUtils.routeNo(), validity.get(0), validity.get(1)));
         instance.setDaysOfWeekSet(__Random_TestUtils.daysOfWeek());
         instance.setScheduledTime(__Random_TestUtils.time());
         instance.setDuration(__Random_TestUtils.duration());
-        instance.setId(RouteId.of(instance.getRouteNo(), instance.getValidity()));
         return instance;
     }
 }

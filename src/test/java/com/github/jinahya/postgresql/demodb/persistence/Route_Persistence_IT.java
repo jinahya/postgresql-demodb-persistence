@@ -27,7 +27,8 @@ import org.jooq.postgres.extensions.converters.OffsetDateTimeRangeConverter;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,6 +40,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class Route_Persistence_IT
         extends _Entity_Persistence_IT<Route> {
+
+    // the bounds of a validity, as a list to assert on
+    private static final BiFunction<Instant, Instant, List<Instant>> BOUNDS = List::of;
 
     Route_Persistence_IT() {
         super(Route.class);
@@ -59,7 +63,8 @@ class Route_Persistence_IT
     @Override
     void targetInstancePersisted(final EntityManager entityManager, final Route entityInstance) {
         final var validity = new MappedRouteId.ValidityConverter()
-                .convertToDatabaseColumn(entityInstance.getValidity());
+                .convertToDatabaseColumn(entityInstance.getValidityRange(
+                        (l, u) -> new Instant[] {l, u}));
         final var duration = entityInstance.getDuration();
         final var seconds = (Number) entityManager.createNativeQuery(
                         "SELECT EXTRACT(EPOCH FROM duration) FROM routes"
@@ -78,27 +83,26 @@ class Route_Persistence_IT
                 .setParameter(2, validity)
                 .getSingleResult();
         log.info("validity: {}, written: {}, the server's text: {}",
-                 Arrays.toString(entityInstance.getValidity()), validity, text);
-        assertThat(new MappedRouteId.ValidityConverter().convertToEntityAttribute(text))
+                 entityInstance.getValidityRange(BOUNDS), validity, text);
+        assertThat(List.of(new MappedRouteId.ValidityConverter().convertToEntityAttribute(text)))
                 .as("validity of %s, from the server's text, by the converter", entityInstance)
-                .containsExactly(entityInstance.getValidity());
+                .isEqualTo(entityInstance.getValidityRange(BOUNDS));
         final var range = new OffsetDateTimeRangeConverter().from(text);
         assertThat(range.lowerIncluding()).as("lower inclusive").isTrue();
         assertThat(range.upperIncluding()).as("upper inclusive").isFalse();
-        assertThat(new Instant[] {range.lower().toInstant(), range.upper().toInstant()})
+        assertThat(List.of(range.lower().toInstant(), range.upper().toInstant()))
                 .as("validity of %s, from the server's text, by jooq-postgres-extensions",
                     entityInstance)
-                .containsExactly(entityInstance.getValidity());
+                .isEqualTo(entityInstance.getValidityRange(BOUNDS));
         entityManager.clear();
         final var found = entityManager.find(Route.class, entityInstance.getId());
         assertThat(found).as("%s, found by its identifier", entityInstance)
                 .isNotNull()
                 .isNotSameAs(entityInstance)
                 .isEqualTo(entityInstance);
-        assertThat(found.getValidity())
+        assertThat(found.getValidityRange(BOUNDS))
                 .as("validity of %s, found", entityInstance)
-                .isNotSameAs(entityInstance.getValidity())
-                .containsExactly(entityInstance.getValidity());
+                .isEqualTo(entityInstance.getValidityRange(BOUNDS));
         assertThat(found.getDuration())
                 .as("duration of %s, found", entityInstance)
                 .isNotSameAs(duration)
@@ -116,7 +120,7 @@ class Route_Persistence_IT
     void randomTargetInstanceSelected(final Route instance) {
         assertThat(instance.getId()).as("id of %s", instance).isNotNull().satisfies(id -> {
             assertThat(id.getRouteNo()).isEqualTo(instance.getRouteNo());
-            assertThat(id.getValidity()).containsExactly(instance.getValidity());
+            assertThat(id.getValidityRange(BOUNDS)).isEqualTo(instance.getValidityRange(BOUNDS));
         });
         // DayOfWeek.of, in getDaysOfWeekSet(), throws for a number other than 1 to 7
         assertThat(instance.getDaysOfWeekSet()).as("days of week of %s", instance).isNotEmpty();
@@ -127,10 +131,10 @@ class Route_Persistence_IT
         assertThat(instance.getArrivalAirportData()).as("arrival of %s", instance).isNotNull();
         assertThat(instance.getAirplaneData()).as("airplane of %s", instance).isNotNull();
         { // the validity, the bounds of [lower,upper)
-            final var validity = instance.getValidity();
-            log.info("validity: {}", Arrays.toString(validity));
+            final var validity = instance.getValidityRange(BOUNDS);
+            log.info("validity: {}", validity);
             assertThat(validity).as("validity of %s", instance).hasSize(2).doesNotContainNull();
-            assertThat(validity[0]).as("lower").isBefore(validity[1]);
+            assertThat(validity.get(0)).as("lower").isBefore(validity.get(1));
         }
     }
 }

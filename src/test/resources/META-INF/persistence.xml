@@ -53,10 +53,11 @@
     <properties>
       <!-- a plain PostgreSQL container, which Testcontainers starts from the URL alone; the unit generates its -->
       <!-- schema, so the image needs no data; TC_DAEMON=true keeps the container for the whole test JVM -->
-      <!-- stringtype=unspecified: a String bound for the tstzrange column, the one the generated schema types -->
-      <!-- natively, by its columnDefinition, is sent untyped, so that the server casts it -->
       <!-- https://java.testcontainers.org/modules/databases/jdbc/ -->
       <property name="jakarta.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver"/>
+      <!-- stringtype=unspecified: a String bound for the tstzrange column, which the generated schema types -->
+      <!-- natively, by its columnDefinition, for Flight's join formula, is sent untyped, so that the server -->
+      <!-- casts it -->
       <property name="jakarta.persistence.jdbc.url"
                 value="jdbc:tc:postgresql:18-alpine:///test?TC_DAEMON=true&amp;stringtype=unspecified"/>
       <property name="jakarta.persistence.jdbc.user" value="test"/>

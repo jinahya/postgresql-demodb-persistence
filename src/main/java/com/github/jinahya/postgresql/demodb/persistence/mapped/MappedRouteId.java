@@ -37,6 +37,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -50,7 +51,7 @@ import java.util.regex.Pattern;
  * identifier's columns whatever their {@code insertable} says.
  * <p>
  * The {@value MappedRoute#COLUMN_NAME_VALIDITY} attribute is converted by
- * {@link ValidityConverter}, which {@link MappedRoute} uses too. The specification does not have
+ * {@link ValidityConverter}, the one mapping of the column. The specification does not have
  * {@link Convert @Convert} on an identifier's attribute, so an identifier of this class is not
  * portable; Hibernate ORM, the only provider, applies it.
  *
@@ -112,9 +113,9 @@ public abstract class MappedRouteId {
          *         prints it, {@code 2025-10-01 00:00:00+00}; or {@code null} if {@code attribute}
          *         is {@code null}.
          * @throws IllegalArgumentException if {@code attribute} is not two bounds.
-         * @implNote The text is the one {@link #convertToEntityAttribute(String)} reads, as it
-         *         has to be: Hibernate ORM copies an attribute it deems mutable, an array, through
-         *         both methods.
+         * @implNote The text is the one {@link #convertToEntityAttribute(String)} reads, as
+         *         it has to be: Hibernate ORM copies an attribute it deems mutable, an array,
+         *         through both methods.
          */
         @Override
         public String convertToDatabaseColumn(final Instant[] attribute) {
@@ -124,8 +125,11 @@ public abstract class MappedRouteId {
             if (attribute.length != 2 || attribute[0] == null || attribute[1] == null) {
                 throw new IllegalArgumentException("not two bounds: " + Arrays.toString(attribute));
             }
-            return "[\"" + BOUND.format(attribute[0].atOffset(ZoneOffset.UTC)) + "\",\""
-                   + BOUND.format(attribute[1].atOffset(ZoneOffset.UTC)) + "\")";
+            return "[\""
+                   + BOUND.format(attribute[0].atOffset(ZoneOffset.UTC))
+                   + "\",\""
+                   + BOUND.format(attribute[1].atOffset(ZoneOffset.UTC))
+                   + "\")";
         }
 
         /**
@@ -147,7 +151,7 @@ public abstract class MappedRouteId {
                 throw new IllegalArgumentException("not a range of [lower,upper): " + dbData);
             }
             try {
-                return new Instant[] {
+                return new Instant[]{
                         OffsetDateTime.parse(matcher.group(1), BOUND).toInstant(),
                         OffsetDateTime.parse(matcher.group(2), BOUND).toInstant()
                 };
@@ -163,7 +167,7 @@ public abstract class MappedRouteId {
      * The name of the attribute which maps the {@value MappedRoute#COLUMN_NAME_ROUTE_NO} column.
      * The value is {@value}.
      */
-    public static final String ATTRIBUTE_NAME_ROUTE_NO = MappedRoute.ATTRIBUTE_NAME_ROUTE_NO;
+    public static final String ATTRIBUTE_NAME_ROUTE_NO = "routeNo";
 
     // ---------------------------------------------------------------------------------------------
 
@@ -171,31 +175,62 @@ public abstract class MappedRouteId {
      * The name of the attribute which maps the {@value MappedRoute#COLUMN_NAME_VALIDITY} column.
      * The value is {@value}.
      */
-    public static final String ATTRIBUTE_NAME_VALIDITY = MappedRoute.ATTRIBUTE_NAME_VALIDITY;
+    public static final String ATTRIBUTE_NAME_VALIDITY = "validity";
 
-    // ---------------------------------------------------------------------------------------------
-    // STATIC_FACTORY_METHODS
+    // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
     /**
-     * Creates a new instance of a subclass, with the specified values.
+     * Creates a new instance of a subclass, with the specified values. The instance is not modified
+     * afterwards: an identifier has no setter.
      *
-     * @param <T>          the type of the identifier.
-     * @param instantiator a supplier of a new, empty instance of {@code T}.
-     * @param routeNo      a value for the {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
-     * @param validity     a value for the {@value #ATTRIBUTE_NAME_VALIDITY} attribute.
+     * @param <T>           the type of the identifier.
+     * @param instantiator  a supplier of a new, empty instance of {@code T}.
+     * @param routeNo       a value for the {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
+     * @param fromInclusive the lower bound of the {@value #ATTRIBUTE_NAME_VALIDITY} attribute,
+     *                      inclusive.
+     * @param toExclusive   the upper bound of the {@value #ATTRIBUTE_NAME_VALIDITY} attribute,
+     *                      exclusive.
      * @return the instance supplied by {@code instantiator}, with its attributes set.
-     * @throws NullPointerException if {@code instantiator} is {@code null}, or it supplies
-     *                              {@code null}.
+     * @throws NullPointerException     if {@code instantiator} is {@code null}, or it supplies
+     *                                  {@code null}; or if either bound is {@code null}.
+     * @throws IllegalArgumentException if {@code fromInclusive} is not before {@code toExclusive}.
      */
     protected static <T extends MappedRouteId> T of(final Supplier<? extends T> instantiator,
                                                     final String routeNo,
-                                                    final Instant[] validity) {
+                                                    final Instant fromInclusive,
+                                                    final Instant toExclusive) {
         Objects.requireNonNull(instantiator, "instantiator is null");
-        final var instance =
+        final var validity = validity(fromInclusive, toExclusive);
+        final T instance =
                 Objects.requireNonNull(instantiator.get(), "instantiator.get() is null");
-        instance.setRouteNo(routeNo);
-        instance.setValidity(validity);
+        // a private field is not accessed through a type variable
+        final MappedRouteId id = instance;
+        id.routeNo = routeNo;
+        id.validity = validity;
         return instance;
+    }
+
+    /**
+     * Returns a new value of the {@value #ATTRIBUTE_NAME_VALIDITY} attribute, of the specified
+     * bounds.
+     *
+     * @param fromInclusive the lower bound, inclusive.
+     * @param toExclusive   the upper bound, exclusive.
+     * @return a new array of {@code fromInclusive} and {@code toExclusive}.
+     * @throws NullPointerException     if either bound is {@code null}.
+     * @throws IllegalArgumentException if {@code fromInclusive} is not before {@code toExclusive};
+     *                                  the server would store the range as {@code empty}, which is
+     *                                  not read back.
+     */
+    private static Instant[] validity(final Instant fromInclusive, final Instant toExclusive) {
+        Objects.requireNonNull(fromInclusive, "fromInclusive is null");
+        Objects.requireNonNull(toExclusive, "toExclusive is null");
+        if (!fromInclusive.isBefore(toExclusive)) {
+            throw new IllegalArgumentException(
+                    "fromInclusive(" + fromInclusive + ") is not before toExclusive(" + toExclusive
+                    + ")");
+        }
+        return new Instant[] {fromInclusive, toExclusive};
     }
 
     // -------------------------------------------------------------------------------- CONSTRUCTORS
@@ -231,7 +266,7 @@ public abstract class MappedRouteId {
             return false;
         }
         return Objects.equals(getRouteNo(), that.getRouteNo())
-               && Arrays.equals(getValidity(), that.getValidity());
+               && Arrays.equals(validity, that.validity);
     }
 
     /**
@@ -243,7 +278,7 @@ public abstract class MappedRouteId {
      */
     @Override
     public final int hashCode() {
-        return Objects.hash(getRouteNo(), Arrays.hashCode(getValidity()));
+        return Objects.hash(getRouteNo(), Arrays.hashCode(validity));
     }
 
     // ------------------------------------------------------------------------------------- routeNo
@@ -257,37 +292,23 @@ public abstract class MappedRouteId {
         return routeNo;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute with the specified
-     * value.
-     *
-     * @param routeNo new value for {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
-     */
-    protected void setRouteNo(final String routeNo) {
-        this.routeNo = routeNo;
-    }
-
     // ------------------------------------------------------------------------------------ validity
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_VALIDITY} attribute -- the lower bound,
-     * inclusive, and the upper bound, exclusive.
+     * Applies the specified function to the bounds of the {@value #ATTRIBUTE_NAME_VALIDITY}
+     * attribute, and returns the result.
      *
-     * @return current value of {@value #ATTRIBUTE_NAME_VALIDITY} attribute.
+     * @param <R>      the type of the result.
+     * @param function a function of the lower bound, inclusive, and the upper bound, exclusive.
+     * @return the result of {@code function}; or {@code null} if the attribute is {@code null}.
      */
-    public Instant[] getValidity() {
-        return validity;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_VALIDITY} attribute with the specified
-     * value.
-     *
-     * @param validity new value for {@value #ATTRIBUTE_NAME_VALIDITY} attribute; the lower bound,
-     *                 inclusive, and the upper bound, exclusive.
-     */
-    protected void setValidity(final Instant[] validity) {
-        this.validity = validity;
+    public <R> R getValidityRange(
+            final BiFunction<? super Instant, ? super Instant, ? extends R> function) {
+        Objects.requireNonNull(function, "function is null");
+        if (validity == null) {
+            return null;
+        }
+        return function.apply(validity[0], validity[1]);
     }
 
     // ---------------------------------------------------------------------------------------------

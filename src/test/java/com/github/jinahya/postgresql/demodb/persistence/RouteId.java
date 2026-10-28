@@ -32,10 +32,8 @@ import java.time.Instant;
 /**
  * The identifier {@link Route} gives the {@value MappedRoute#TABLE_NAME} table, which has none of
  * its own: {@link MappedRouteId} made concrete, {@link Serializable} and {@link Embeddable}, as an
- * {@link jakarta.persistence.EmbeddedId @EmbeddedId} has to be. This is the mapping which writes
- * the two columns, since a provider writes an identifier's columns whatever their
- * {@code insertable} says; {@link Route} overrides the inherited attributes over the same columns
- * to read-only.
+ * {@link jakarta.persistence.EmbeddedId @EmbeddedId} has to be; {@link Route} takes it as
+ * {@link MappedRoute}'s type argument.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -53,12 +51,16 @@ public class RouteId
     /**
      * Creates a new instance of the specified values.
      *
-     * @param routeNo  a value for the {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
-     * @param validity a value for the {@value #ATTRIBUTE_NAME_VALIDITY} attribute.
+     * @param routeNo       a value for the {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
+     * @param fromInclusive the lower bound of the {@value #ATTRIBUTE_NAME_VALIDITY} attribute,
+     *                      inclusive.
+     * @param toExclusive   the upper bound of the {@value #ATTRIBUTE_NAME_VALIDITY} attribute,
+     *                      exclusive.
      * @return a new instance.
      */
-    public static RouteId of(final String routeNo, final Instant[] validity) {
-        return of(RouteId::new, routeNo, validity);
+    public static RouteId of(final String routeNo, final Instant fromInclusive,
+                             final Instant toExclusive) {
+        return of(RouteId::new, routeNo, fromInclusive, toExclusive);
     }
 
     // -------------------------------------------------------------------------------- CONSTRUCTORS

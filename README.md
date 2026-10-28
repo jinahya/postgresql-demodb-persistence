@@ -113,7 +113,7 @@ What else this module does:
   `[lower,upper)`, so `MappedRouteId.ValidityConverter`, a plain `AttributeConverter<Instant[], String>`, converts that
   shape only, and rejects any other -- `empty`, an unbounded or an infinite bound -- rather than read it as a
   different range. A bound reads back in the session's time zone, `+09` in Seoul, and is read as an instant, so
-  neither the attribute nor `Route`'s identifier, of which it is part, depends on the zone the JVM runs in; the
+  neither the attribute nor the identifier, of which it is part, depends on the zone the JVM runs in; the
   converter writes UTC, in the server's own text, which it has to read back too: Hibernate copies an array, a mutable
   value to it, through the converter both ways. The write needs `stringtype=unspecified` on the JDBC URL.
 - `point` holds an airport's geolocation, the longitude as `x` and the latitude as `y`, as the columns' comments say;
@@ -213,7 +213,7 @@ $ ./_mvn_verify_notests.sh    # no database needed
 
 The entities live in `src/test`, one per table and view, extending the mapped superclasses with what an
 application decides: the associations, lazy, with no cascade; `of(...)` factories where an association is part of
-the identifier; the identifier `Route` gives a table which has none. The persistence units are there too,
+the identifier; `RouteId`, the `MappedRouteId` `Route` gives `MappedRoute<T>` for a table which has none. The persistence units are there too,
 `test` on a PostgreSQL container Testcontainers starts, whose schema the provider generates, and `it` on the
 database above.
 
