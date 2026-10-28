@@ -45,7 +45,8 @@ class FlightStatusConverter_Test {
     @ParameterizedTest
     @ValueSource(strings = {"Scheduled", "On Time", "Delayed", "Boarding", "Departed", "Arrived", "Cancelled"})
     void convertToEntityAttribute_Constant_ConstraintValue(final String text) {
-        assertThat(new FlightStatusConverter().convertToEntityAttribute(text).text()).isEqualTo(text);
+        assertThat(new FlightStatusConverter().convertToEntityAttribute(text).attributeValue())
+                .isEqualTo(text);
     }
 
     @ParameterizedTest

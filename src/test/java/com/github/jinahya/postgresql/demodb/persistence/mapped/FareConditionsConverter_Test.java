@@ -45,7 +45,8 @@ class FareConditionsConverter_Test {
     @ParameterizedTest
     @ValueSource(strings = {"Economy", "Comfort", "Business"})
     void convertToEntityAttribute_Constant_ConstraintValue(final String text) {
-        assertThat(new FareConditionsConverter().convertToEntityAttribute(text).text()).isEqualTo(text);
+        assertThat(new FareConditionsConverter().convertToEntityAttribute(text).attributeValue())
+                .isEqualTo(text);
     }
 
     @ParameterizedTest
