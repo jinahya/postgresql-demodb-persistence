@@ -22,6 +22,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter.Point;
 
+import io.hypersistence.utils.hibernate.type.range.Range;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
@@ -29,6 +31,8 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,15 +132,15 @@ final class __Random_TestUtils {
     }
 
     /**
-     * Returns a {@code tstzrange} literal of one calendar month, {@code [start,end)}, in UTC, in a
-     * year after every installed route's validity, so that no random route overlaps an installed
-     * one with the same number.
+     * Returns a range of one calendar month, {@code [start,end)}, in UTC, in a year after every
+     * installed route's validity, so that no random route overlaps an installed one with the same
+     * number.
      */
-    static String validity() {
+    static Range<ZonedDateTime> validity() {
         final var month = YearMonth.of(ThreadLocalRandom.current().nextInt(2030, 2040),
                                        ThreadLocalRandom.current().nextInt(1, 13));
-        return "[" + month.atDay(1) + " 00:00:00+00," + month.plusMonths(1).atDay(1) +
-               " 00:00:00+00)";
+        return Range.closedOpen(month.atDay(1).atStartOfDay(ZoneOffset.UTC),
+                                month.plusMonths(1).atDay(1).atStartOfDay(ZoneOffset.UTC));
     }
 
     /**

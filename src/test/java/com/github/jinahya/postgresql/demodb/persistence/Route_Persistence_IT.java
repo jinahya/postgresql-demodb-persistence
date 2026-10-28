@@ -65,7 +65,7 @@ class Route_Persistence_IT
                         "SELECT EXTRACT(EPOCH FROM duration) FROM routes"
                         + " WHERE route_no = ?1 AND validity = CAST(?2 AS tstzrange)")
                 .setParameter(1, entityInstance.getRouteNo())
-                .setParameter(2, entityInstance.getValidity())
+                .setParameter(2, entityInstance.getValidity().asString())
                 .getSingleResult();
         log.info("duration: {}, seconds: {}", duration, seconds);
         assertThat(seconds.longValue())
@@ -101,7 +101,7 @@ class Route_Persistence_IT
         assertThat(instance.getArrivalAirportData()).as("arrival of %s", instance).isNotNull();
         assertThat(instance.getAirplaneData()).as("airplane of %s", instance).isNotNull();
         { // the validity's text, read by hypersistence-utils
-            final var validity = Range.zonedDateTimeRange(instance.getValidity());
+            final var validity = instance.getValidity();
             log.info("hypersistence-utils: {} -> {} ({})", instance.getValidity(), validity,
                      validity.getClass().getName());
             log.info("  lower: {} ({}, zone {}, instant {}), closed: {}, has: {}",
@@ -122,6 +122,9 @@ class Route_Persistence_IT
                             .format(HYPERSISTENCE_TIMESTAMP) + "\")");
             log.info("  the same range in UTC: {}, equal: {}, its text: {}", utc,
                      validity.equals(utc), validity.asString());
+            assertThat(validity)
+                    .as("validity, read in the session's time zone, UTC, equal to the same in UTC")
+                    .isEqualTo(utc);
             assertThat(validity.isEmpty()).as("empty").isFalse();
             assertThat(validity.hasLowerBound()).as("lower bound").isTrue();
             assertThat(validity.hasUpperBound()).as("upper bound").isTrue();
@@ -131,7 +134,7 @@ class Route_Persistence_IT
         }
         { // the validity's text, read by jooq-postgres-extensions
             final var converter = new OffsetDateTimeRangeConverter();
-            final var validity = converter.from(instance.getValidity());
+            final var validity = converter.from(instance.getValidity().asString());
             log.info("jooq-postgres-extensions: {} -> {} ({})", instance.getValidity(), validity,
                      validity.getClass().getName());
             log.info("  lower: {} ({}, offset {}, instant {}), including: {}", validity.lower(),

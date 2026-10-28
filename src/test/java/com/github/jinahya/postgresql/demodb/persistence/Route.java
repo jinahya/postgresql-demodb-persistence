@@ -55,7 +55,8 @@ import jakarta.persistence.Table;
                    column = @Column(name = MappedRoute.COLUMN_NAME_VALIDITY,
                                     nullable = false,
                                     insertable = false,
-                                    updatable = false))
+                                    updatable = false,
+                                    columnDefinition = "tstzrange"))
 @Entity
 @Table(name = MappedRoute.TABLE_NAME)
 public class Route

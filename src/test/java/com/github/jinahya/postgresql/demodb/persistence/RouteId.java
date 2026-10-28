@@ -22,12 +22,16 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute;
 
+import io.hypersistence.utils.hibernate.type.range.PostgreSQLRangeType;
+import io.hypersistence.utils.hibernate.type.range.Range;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import org.hibernate.annotations.Type;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 /**
@@ -57,7 +61,7 @@ public class RouteId
      * @param validity a value for the {@code validity} attribute.
      * @return a new instance.
      */
-    public static RouteId of(final String routeNo, final String validity) {
+    public static RouteId of(final String routeNo, final Range<ZonedDateTime> validity) {
         final var instance = new RouteId();
         instance.setRouteNo(routeNo);
         instance.setValidity(validity);
@@ -125,7 +129,7 @@ public class RouteId
      *
      * @return current value of {@code validity} attribute.
      */
-    public String getValidity() {
+    public Range<ZonedDateTime> getValidity() {
         return validity;
     }
 
@@ -134,7 +138,7 @@ public class RouteId
      *
      * @param validity new value for {@code validity} attribute.
      */
-    protected void setValidity(final String validity) {
+    protected void setValidity(final Range<ZonedDateTime> validity) {
         this.validity = validity;
     }
 
@@ -145,8 +149,9 @@ public class RouteId
     private String routeNo;
 
     // ---------------------------------------------------------------------------------------------
+    @Type(PostgreSQLRangeType.class)
     @Basic(optional = false)
     @Column(name = MappedRoute.COLUMN_NAME_VALIDITY, nullable = false, insertable = true,
-            updatable = false)
-    private String validity;
+            updatable = false, columnDefinition = "tstzrange")
+    private Range<ZonedDateTime> validity;
 }

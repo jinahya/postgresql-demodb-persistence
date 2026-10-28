@@ -337,9 +337,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <!-- at its minimum: for the tstzrange column alone, MappedRoute.validity, a Range, which nothing else maps -->
       <groupId>io.hypersistence</groupId>
       <artifactId>hypersistence-utils-hibernate-73</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.github.jinahya</groupId>
@@ -646,6 +646,9 @@
             <!--            <exclude>**/*IT.java</exclude> &lt;!&ndash; 이게 왜 필요한지 확인 필요 &ndash;&gt;-->
           </excludes>
           <skipAfterFailureCount>1</skipAfterFailureCount>
+          <!-- UTC: the driver sets the session's time zone to the JVM's, and a tstzrange reads back in it;
+               see MappedRoute. @{argLine} is jacoco's agent, prepare-agent's -->
+          <argLine>@{argLine} -Duser.timezone=UTC</argLine>
           <trimStackTrace>false</trimStackTrace>
         </configuration>
       </plugin>
@@ -826,6 +829,8 @@
                 <include>**/*IT.java</include>
               </includes>
               <skipAfterFailureCount>1</skipAfterFailureCount>
+              <!-- UTC, as surefire's; see there -->
+              <argLine>@{argLine} -Duser.timezone=UTC</argLine>
               <trimStackTrace>false</trimStackTrace>
             </configuration>
           </plugin>

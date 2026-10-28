@@ -21,16 +21,20 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  */
 
 
+import io.hypersistence.utils.hibernate.type.range.PostgreSQLRangeType;
+import io.hypersistence.utils.hibernate.type.range.Range;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,11 +55,15 @@ import java.util.Objects;
  * has none there, and the column's {@code NOT NULL} is the database's to enforce, on whatever the
  * association writes.
  * <p>
- * The {@value MappedRoute#COLUMN_NAME_VALIDITY} column has no type in Jakarta Persistence
- * ({@code tstzrange}), so it is mapped as {@link String}, the text form the driver reads it as.
- * Writing such a text back needs the driver to leave its type to the server,
- * {@code stringtype=unspecified} on the JDBC URL, or a provider-specific type the extending entity
- * may choose instead.
+ * The {@value MappedRoute#COLUMN_NAME_VALIDITY} column is a {@code tstzrange}, which neither
+ * Jakarta Persistence nor Hibernate ORM maps; it is mapped as a hypersistence-utils {@link Range} of
+ * {@link ZonedDateTime}s, through its {@link PostgreSQLRangeType}, the one use of the library.
+ * <p>
+ * A bound reads back in the session's time zone, which the PostgreSQL driver sets to the JVM's
+ * default, over any {@code -c TimeZone} of the URL's; and {@link ZonedDateTime#equals(Object)}
+ * compares the zone. So a range equals itself across sessions only if the bounds it is built with
+ * are in the JVM's default zone, or the JVM runs in the zone they are in: the tests run in UTC,
+ * {@code -Duser.timezone=UTC}, and build their ranges in UTC.
  * <p>
  * The table has no primary key. What keeps a row apart is the {@code routes_route_no_validity_excl}
  * exclusion constraint: no two rows share a {@value #COLUMN_NAME_ROUTE_NO} with overlapping
@@ -328,7 +336,7 @@ public abstract class MappedRoute {
      *
      * @return current value of {@value #ATTRIBUTE_NAME_VALIDITY} attribute.
      */
-    public String getValidity() {
+    public Range<ZonedDateTime> getValidity() {
         return validity;
     }
 
@@ -338,7 +346,7 @@ public abstract class MappedRoute {
      *
      * @param validity new value for {@value #ATTRIBUTE_NAME_VALIDITY} attribute.
      */
-    public void setValidity(final String validity) {
+    public void setValidity(final Range<ZonedDateTime> validity) {
         this.validity = validity;
     }
 
@@ -457,8 +465,10 @@ public abstract class MappedRoute {
     // ---------------------------------------------------------------------------------------------
     @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_VALIDITY, nullable = false, insertable = true, updatable = true)
-    private String validity;
+    @Type(PostgreSQLRangeType.class)
+    @Column(name = COLUMN_NAME_VALIDITY, nullable = false, insertable = true, updatable = true,
+            columnDefinition = "tstzrange")
+    private Range<ZonedDateTime> validity;
 
     // ---------------------------------------------------------------------------------------------
     // read-only: the extending entity owns the writable mapping; see the class documentation
