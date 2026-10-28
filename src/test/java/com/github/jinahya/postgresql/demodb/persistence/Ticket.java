@@ -106,6 +106,7 @@ public class Ticket
 
     // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = COLUMN_NAME_BOOK_REF, nullable = false)
+    @JoinColumn(name = COLUMN_NAME_BOOK_REF, nullable = false, insertable = true,
+                updatable = true)
     private Booking booking;
 }

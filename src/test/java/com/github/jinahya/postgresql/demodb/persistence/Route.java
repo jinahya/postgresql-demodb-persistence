@@ -167,15 +167,19 @@ public class Route
     @EmbeddedId
     private RouteId id;
 
+    // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = COLUMN_NAME_DEPARTURE_AIRPORT, nullable = false)
+    @JoinColumn(name = COLUMN_NAME_DEPARTURE_AIRPORT, nullable = false, insertable = true,
+                updatable = true)
     private AirportData departureAirportData;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = COLUMN_NAME_ARRIVAL_AIRPORT, nullable = false)
+    @JoinColumn(name = COLUMN_NAME_ARRIVAL_AIRPORT, nullable = false, insertable = true,
+                updatable = true)
     private AirportData arrivalAirportData;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = COLUMN_NAME_AIRPLANE_CODE, nullable = false)
+    @JoinColumn(name = COLUMN_NAME_AIRPLANE_CODE, nullable = false, insertable = true,
+                updatable = true)
     private AirplaneData airplaneData;
 }
