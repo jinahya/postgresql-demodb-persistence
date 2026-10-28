@@ -111,10 +111,19 @@ What else this module does:
   A `Duration` has no months; every duration of the schema is hours and minutes, 35 minutes to 19 hours 55 minutes.
 - `tstzrange` is a `Range<ZonedDateTime>` of hypersistence-utils, the library's one use; neither Jakarta Persistence
   nor Hibernate gives the type a Java type
-  ([Vlad Mihalcea, How to map a PostgreSQL Range column type with JPA and Hibernate](https://vladmihalcea.com/map-postgresql-range-column-type-jpa-hibernate/)). It is part of `Route`'s identifier. A bound reads back in the session's
-  time zone, which the driver sets to the JVM's default, over any `-c TimeZone` of the URL's, and a `ZonedDateTime`
-  equals another only in the same zone; so the tests run in UTC, `-Duser.timezone=UTC`, and build their ranges in
-  UTC, and a range read back equals the one written.
+  ([Vlad Mihalcea, How to map a PostgreSQL Range column type with JPA and Hibernate](https://vladmihalcea.com/map-postgresql-range-column-type-jpa-hibernate/)).
+  It is part of `Route`'s identifier.
+  **The JVM has to run in UTC**, `-Duser.timezone=UTC`, or each connection has to `SET TIME ZONE 'UTC'`; a
+  `-c TimeZone` in the URL's `options` has no effect, the driver setting the session's zone to the JVM's at connect.
+  A bound reads back in the session's zone: in a zone with daylight saving time, a period which spans a change of
+  offset reads back with two offsets, which `Range` rejects
+  ([#78](https://github.com/vladmihalcea/hypersistence-utils/issues/78),
+  [#312](https://github.com/vladmihalcea/hypersistence-utils/issues/312)), and in any zone, `Range.equals` and
+  `Range.contains` compare `ZonedDateTime`s, zone and all, not instants
+  ([#655](https://github.com/vladmihalcea/hypersistence-utils/issues/655)). The tests run in UTC, and
+  `JvmTimeZone_Test` fails first if they do not. A bound is never `-infinity` or `infinity`, which a `ZonedDateTime`
+  cannot hold, and a `Range` is bound as a query parameter, never written as a literal
+  ([#670](https://github.com/vladmihalcea/hypersistence-utils/issues/670)).
 - `point` holds an airport's geolocation, the longitude as `x` and the latitude as `y`, as the columns' comments say;
   `PointAttributeConverter`, a plain `AttributeConverter<Point, String>`, prints `(longitude,latitude)` and reads the
   text as the server does. No provider maps a native `point`: Hibernate Spatial and geolatte need PostGIS `geometry`,

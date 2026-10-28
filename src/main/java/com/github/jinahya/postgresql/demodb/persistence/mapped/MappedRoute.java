@@ -67,11 +67,20 @@ import java.util.stream.Collectors;
  * Jakarta Persistence nor Hibernate ORM maps; it is mapped as a hypersistence-utils {@link Range}
  * of {@link ZonedDateTime}s, through its {@link PostgreSQLRangeType}, the one use of the library.
  * <p>
- * A bound reads back in the session's time zone, which the PostgreSQL driver sets to the JVM's
- * default, over any {@code -c TimeZone} of the URL's; and {@link ZonedDateTime#equals(Object)}
- * compares the zone. So a range equals itself across sessions only if the bounds it is built with
- * are in the JVM's default zone, or the JVM runs in the zone they are in: the tests run in UTC,
- * {@code -Duser.timezone=UTC}, and build their ranges in UTC.
+ * <strong>The JVM has to run in UTC</strong>, {@code -Duser.timezone=UTC}, or each connection has
+ * to set its session's zone, {@code SET TIME ZONE 'UTC'}, and ranges have to be built in UTC. A
+ * bound reads back in the session's time zone, which the PostgreSQL driver sets to the JVM's
+ * default at connect; a {@code -c TimeZone} in the URL's {@code options} has no effect. In a zone
+ * with daylight saving time, a period which spans a change of offset reads back with two offsets,
+ * which {@link Range} rejects, so the route cannot be loaded; in any other zone than the one a
+ * range is built in, {@link Range#equals(Object)} and {@link Range#contains(Comparable)} compare
+ * {@link ZonedDateTime}s, zone and all, not instants. The tests run in UTC.
+ * <p>
+ * A bound is a value or unbounded, never {@code -infinity} or {@code infinity}, which a
+ * {@link ZonedDateTime} cannot hold: {@link Range} reads such a bound as unbounded, and writes it
+ * back so, a different range. And a {@link Range} is bound as a query parameter, never written as
+ * a literal: {@link PostgreSQLRangeType} renders a literal as its {@code toString()}, which is no
+ * SQL.
  * <p>
  * The table has no primary key. What keeps a row apart is the {@code routes_route_no_validity_excl}
  * exclusion constraint: no two rows share a {@value #COLUMN_NAME_ROUTE_NO} with overlapping
