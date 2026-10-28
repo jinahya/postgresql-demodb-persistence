@@ -1,0 +1,250 @@
+= Hibernate ORM only: dropping EclipseLink from this module
+:toc:
+:toclevels: 2
+
+A plan, not yet carried out. It drops EclipseLink from `postgresql-demodb-persistence`, so that Hibernate ORM is the
+only provider, and remaps the column types whose mappings are shaped by EclipseLink, with Hibernate's own features
+and hypersistence-utils, at its minimum, for the one type nothing else maps.
+
+== Why
+
+EclipseLink is the second provider the tests run against. It keeps the mappings portable, but it also shapes them:
+
+* it maps no array, and serializes one to `bytea`;
+* it hands an `AttributeConverter` the driver's raw object, `java.sql.Array`, `PGInterval` or `PGpoint`, whatever
+  the converter declares, so a converter whose database side is `String` fails on a cast before it runs; hence the
+  type-variable `Y` and the nested `OfString` of `IntegerListArrayAttributeConverter`,
+  `IntervalPostgresAttributeConverter` and `PointAttributeConverter`, and the reflection on `PGInterval` and
+  `PGpoint`;
+* it rejects a read-only `@Id` (EclipseLink-46), hence `insertable = true` on the views' identifiers;
+* it needs weaving for `LAZY`, and woven, it fails `getReference` on an `@EmbeddedId` and EqualsVerifier on the
+  woven fields, hence the skips of the `jakarta-ee-11-eclipselink-weaving` profile.
+
+Without it, those workarounds go, and the exotic types can use Hibernate's mappings.
+
+== Dependencies
+
+[cols="1,3"]
+|===
+| Change | What
+
+| Removed
+| `org.eclipse.persistence:org.eclipse.persistence.jpa` and `version.org.eclipse.persistence`; the
+`jakarta-ee-11-eclipselink` and `jakarta-ee-11-eclipselink-weaving` profiles; the managed
+`staticweave-maven-plugin`; the `eclipselink.woven` property and its surefire system property.
+`com.h2database:h2` and `version.com.h2database`: the test unit runs on PostgreSQL; see <<test-unit>>.
+
+| Added
+| The Testcontainers PostgreSQL module, test scope, with its JDBC driver, `ContainerDatabaseDriver`, for the test
+unit; see <<test-unit>>.
+
+| Scope changed
+| `org.hibernate.orm:hibernate-core`, from a test dependency of the `jakarta-ee-11-hibernate-orm` profile to
+`provided` at the top level: the main code uses `@JdbcTypeCode` and `SqlTypes`. Provided, the published jar does not
+force Hibernate on a consumer; a missing annotation class is ignored where an annotation is read.
+
+| Scope changed
+| `io.hypersistence:hypersistence-utils-hibernate-73`, from `test` to `compile`, used at its minimum: for the
+`tstzrange` column alone, which nothing else maps. `Range` is the type of `MappedRoute.validity`, which a class has
+to load. Its only runtime dependency is `jakarta.xml.bind-api`; `hibernate-core` is `provided` to it.
+
+| Unchanged
+| `jinahya-persistence-more` (the JSON-P and `ZoneId` converters), `hibernate-jpamodelgen`, the `postgresql` driver
+(runtime and test only), Yasson.
+
+| Not added
+| geolatte-geom and Hibernate Spatial: both need PostGIS `geometry`, and the image has no PostGIS, not even as an
+available extension. The column is PostgreSQL's native `point`.
+|===
+
+== The column types
+
+Only the types whose mappings converters shaped change. Every other column keeps its mapping: `integer`, `boolean`,
+`character(n)`, `text`, `numeric(10,2)` as `BigDecimal`, `time` as `LocalTime`, `timestamptz` as `Instant`,
+`timestamp` as `LocalDateTime`, and the converters that have no provider problem: `FlightStatusConverter`,
+`FareConditionsConverter`, `ZoneIdStringAttributeConverter`.
+
+[cols="1,1,1,2"]
+|===
+| PostgreSQL | Columns | Now | Hibernate only
+
+| `integer[]`
+| `routes.days_of_week`
+| `List<Integer>`, `IntegerListArrayAttributeConverter.OfString`
+| `List<Integer>`, *no converter*: Hibernate maps an array natively, reading and writing it with no cast.
+`IntegerListArrayAttributeConverter` is deleted.
+
+| `interval`
+| `routes.duration`
+| `PostgresInterval`, `IntervalPostgresAttributeConverter.OfString`; `IntervalStyle=postgres` on the URL
+| `Duration` with `@JdbcTypeCode(SqlTypes.INTERVAL_SECOND)`, *no converter*: Hibernate binds and reads a real
+`interval`. `IntervalPostgresAttributeConverter`, `PostgresInterval` and `IntervalStyle=postgres` go. A `Duration`
+has no months; every duration here is hours and minutes, 35 minutes to 19 hours 55 minutes.
+
+| `point`
+| `airports_data.coordinates`, `airports.coordinates`
+| `PointAttributeConverter.Point`, `PointAttributeConverter.OfString`, the type variable, `PGpoint` read by reflection
+| `Point(longitude, latitude)` with a *plain* `AttributeConverter<Point, String>`: printed `(x,y)`, parsed with a
+regular expression. The converter stays: no provider maps native `point`; Hibernate Spatial and geolatte need
+PostGIS, hypersistence-utils has no point type.
+
+| `tstzrange`
+| `routes.validity`, in `MappedRoute` and in the `@EmbeddedId` `RouteId`
+| `String`, no converter: none applies to an identifier's attribute
+| `Range<ZonedDateTime>` with hypersistence-utils' `@Type(PostgreSQLRangeType.class)`, the one use of the library;
+the spike below settles the identifier.
+
+| `jsonb`
+| `airplanes_data.model`, `airports_data.airport_name`, `city`, `country`
+| `JsonObject`, `JsonpStringAttributeConverter.OfJsonObject`
+| *Unchanged*. `@JdbcTypeCode(SqlTypes.JSON)` binds `jsonb`, but a `Map` would fix the keys and the values, which
+the column does not; hypersistence-utils' JSON types are Jackson's, not JSON-P's.
+|===
+
+=== `point`, the converter
+
+Both `point` columns are airport geolocations, `x` the longitude and `y` the latitude:
+
+* the database says so, each column's comment being `Airport coordinates (longitude and latitude)`;
+* the 5,501 values are in range, longitudes from -179.877 to 179.951, latitudes from -62.1908 to 82.5178;
+* known airports land where they are, `CDG` at `(2.55,49.0128)`, `JFK` at `(-73.7789,40.6398)`, `SYD` at
+`(151.177,-33.9461)`;
+* the installed `earthdistance` extension reads a `point` the same way: `a.coordinates <@> b.coordinates` is the
+great-circle distance in statute miles.
+
+A native `point` holds two `double precision` numbers and nothing else: no third dimension, no SRID. The datum is a
+convention, WGS 84 as GPS gives it, not data. So the attribute is a record which names the two,
+`Point(double longitude, double latitude)`, or `Coordinates`, and the converter keeps the order, longitude first.
+
+A `double[]` attribute was considered, with an `AttributeConverter<double[], String>`; it works, but:
+
+* `[0]` and `[1]` name nothing, which of the two is the longitude is in the documentation only;
+* its length is not in its type, `@Size(min = 2, max = 2)` and a check in the converter would stand for it;
+* it is mutable, so the accessors have to copy it, and Hibernate deep-copies it for dirty checking;
+* its `equals` is identity, `Arrays.equals` has to stand for it.
+
+The record has none of these.
+
+[source,java]
+----
+private static final Pattern POINT = Pattern.compile(
+        "\\s*\\(?\\s*([^\\s,()]+)\\s*,\\s*([^\\s,()]+)\\s*\\)?\\s*");
+
+@Override
+public String convertToDatabaseColumn(final Point attribute) {
+    return attribute == null
+           ? null
+           : "(" + attribute.longitude() + "," + attribute.latitude() + ")";
+}
+
+@Override
+public Point convertToEntityAttribute(final String dbData) {
+    if (dbData == null) {
+        return null;
+    }
+    final var matcher = POINT.matcher(dbData);
+    if (!matcher.matches()) {
+        throw new IllegalArgumentException("not a point: " + dbData);
+    }
+    return new Point(Double.parseDouble(matcher.group(1)), Double.parseDouble(matcher.group(2)));
+}
+----
+
+The expression takes what PostgreSQL takes, `(1,2)`, `1,2`, `( 1 , 2 )`; `Double.parseDouble` validates each number
+and reads `1e+16`, `1e-06`, `NaN` and `Infinity`, as PostgreSQL prints them. The driver sets `extra_float_digits` to
+3, so a value reads back exactly.
+
+=== `tstzrange`, the spike
+
+[source,java]
+----
+@Type(PostgreSQLRangeType.class)
+@Column(name = MappedRoute.COLUMN_NAME_VALIDITY, columnDefinition = "tstzrange")
+private Range<ZonedDateTime> validity;
+----
+
+To settle before it is taken:
+
+* *Equality in the key.* `ZonedDateTime.equals` compares the zone, and PostgreSQL prints a range in the session's
+time zone, the JVM's as the driver sets it. `options=-c TimeZone=UTC` on the URL pins it, so every bound reads back
+in UTC; the randomizer creates its ranges in UTC too.
+* *A custom type in an `@EmbeddedId`.* `find`, `getReference`, `merge`, and the equality and `HashSet` tests of
+`Route_Persistence_Test`, have to pass.
+* *The test unit.* None: it runs on PostgreSQL, see <<test-unit>>.
+
+[[test-unit]]
+== The test unit: PostgreSQL, not H2
+
+The `test` unit generates its schema, and runs today on an in-memory H2 in PostgreSQL mode. H2 carried two merits:
+no Docker for `test`, and a second dialect next to a second provider. With EclipseLink gone the second dialect is
+moot, and H2 holds the plan back: it has no `tstzrange` and no `point`, it takes no `PGobject`, which
+hypersistence-utils binds, and it makes `SqlTypes.OTHER` a `JAVA_OBJECT`. Every exotic column is a `varchar` in H2
+today only because each mapping writes text.
+
+So the `test` unit runs on PostgreSQL too, in a container Testcontainers starts from the JDBC URL alone:
+
+[source,xml]
+----
+<property name="jakarta.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver"/>
+<property name="jakarta.persistence.jdbc.url" value="jdbc:tc:postgresql:18-alpine:///test?TC_DAEMON=true"/>
+----
+
+* A plain PostgreSQL image, not the demo one: the unit generates its schema, `create-drop`, and needs no data, so
+it starts in seconds; the `it` unit stays on the installed `demo` database of `compose.yaml`.
+* `TC_DAEMON=true` keeps the container for the whole test JVM, instead of one per connection.
+* Every type of the plan is tested against the real thing, the range, the interval, the array, the point, and the
+same `NULL` ordering and collation as the `it` unit's.
+
+What goes with H2: `MODE=PostgreSQL`, `DATABASE_TO_LOWER` and `DEFAULT_NULL_ORDERING=HIGH` on the URL, the H2
+credentials, and every note which explains H2: in `README.md`, the H2 platform EclipseLink could not run on, and in the
+tests, the ordering note of `BoardingPass_Persistence_Test`.
+
+What it costs: `test` needs Docker, as `verify` already does for the `it` unit, and the first test waits for the
+container.
+
+== hypersistence-utils, at its minimum
+
+The library is used for one thing, `PostgreSQLRangeType` and `Range`, for `routes.validity`: no other mapping, of
+Hibernate's or of the converters', gives a `tstzrange` a type. Everything else it offers stays out:
+
+* `PostgreSQLIntervalType`: Hibernate's own `SqlTypes.INTERVAL_SECOND` maps `interval` to `Duration`.
+* `ListArrayType`, `IntArrayType`: Hibernate maps `integer[]` natively.
+* `JsonBinaryType` and the other JSON types: Jackson's, while `jsonb` stays JSON-P, `JsonObject`.
+* `ZoneIdType`: `ZoneIdStringAttributeConverter` stays.
+* `TsidGenerator`, `BatchSequenceGenerator`: `flight_id` is an identity, the other keys are assigned.
+* `SQLStatementCountValidator`, the result transformers, `ClassImportIntegrator`: useful in tests and queries, but
+nothing requires them.
+
+== Cleanup
+
+* The three `_mvn_jakarta_ee_11_*_eclipselink.sh` scripts go; `jakarta-ee-11-hibernate-orm` becomes the only
+provider profile, or the plain default.
+* `persistence.xml`: the `eclipselink.*` properties go, `IntervalStyle=postgres` leaves the URL, and the `test`
+unit's H2 driver, URL and credentials give way to the container's; see <<test-unit>>.
+`stringtype=unspecified` stays while a converter writes text a column has to cast: `point`, and the JSON-P `jsonb`.
+* The views' `@Id` back to read-only, `insertable = false`: `insertable = true` was for EclipseLink-46.
+* Tests: `__Object_TestUtils.isWovenByEclipseLink` and its skips in `_Entity_Test` and `_NonEntity_Test`, the
+`getReference` skips of `Route_Persistence_Test`, the `HIBERNATE` branch of `Route_Persistence_IT`.
+* Javadoc and `README.md`: what explains EclipseLink's behavior, the provider tables, the converters' notes,
+`package-info`, `MappedFlight.equals`.
+
+== Risks
+
+* *Docker for `test`.* With H2 gone, every persistence test needs a container runtime, not only the ITs; a
+machine without one can still run the plain unit tests, which touch no database.
+* *Portability.* The mapped superclasses are no longer plain Jakarta Persistence; they carry Hibernate annotations,
+and, with `Range`, a hypersistence-utils type.
+* *The book.* Chapters 1, 3 and 4 explain EclipseLink's behavior, and quote the converters and the mappings this
+plan changes; each such block has to be resynced to the sources, and its prose rewritten.
+
+== Steps
+
+Each step on a branch, merged after a green `clean verify`.
+
+. Remove EclipseLink from the build, and its workarounds from the tests; `clean verify` passes unchanged.
+. Move the `test` unit from H2 to a PostgreSQL container, and remove H2; `clean verify` passes unchanged.
+. `integer[]` as `List<Integer>`, `interval` as `Duration`.
+. `PointAttributeConverter`, plain.
+. `tstzrange` as `Range<ZonedDateTime>`, with hypersistence-utils; the spike first.
+. `README.md`, then the book.
+
