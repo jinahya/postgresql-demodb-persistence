@@ -2,9 +2,10 @@
 :toc:
 :toclevels: 2
 
-A plan, not yet carried out. It drops EclipseLink from `postgresql-demodb-persistence`, so that Hibernate ORM is the
-only provider, and remaps the column types whose mappings are shaped by EclipseLink, with Hibernate's own features
-and hypersistence-utils, at its minimum, for the one type nothing else maps.
+A plan, carried out on the `hibernate-only` branch; what the work found is noted where it changed the plan. It drops
+EclipseLink from `postgresql-demodb-persistence`, so that Hibernate ORM is the only provider, and remaps the column
+types whose mappings are shaped by EclipseLink, with Hibernate's own features and hypersistence-utils, at its minimum,
+for the one type nothing else maps.
 
 == Why
 
@@ -166,10 +167,11 @@ private Range<ZonedDateTime> validity;
 To settle before it is taken:
 
 * *Equality in the key.* `ZonedDateTime.equals` compares the zone, and PostgreSQL prints a range in the session's
-time zone, the JVM's as the driver sets it. `options=-c TimeZone=UTC` on the URL pins it, so every bound reads back
-in UTC; the randomizer creates its ranges in UTC too.
+time zone. The driver sets that zone to the JVM's default, in a startup parameter of its own which takes precedence
+over `options=-c TimeZone=UTC` on the URL: tried, the session stayed in the JVM's zone. So the tests run in UTC,
+`-Duser.timezone=UTC` on surefire's and failsafe's `argLine`, and the randomizer builds its ranges in UTC.
 * *A custom type in an `@EmbeddedId`.* `find`, `getReference`, `merge`, and the equality and `HashSet` tests of
-`Route_Persistence_Test`, have to pass.
+`Route_Persistence_Test`, pass; they failed only while the session was not in UTC.
 * *The test unit.* None: it runs on PostgreSQL, see <<test-unit>>.
 
 [[test-unit]]
@@ -239,7 +241,7 @@ plan changes; each such block has to be resynced to the sources, and its prose r
 
 == Steps
 
-Each step on a branch, merged after a green `clean verify`.
+Each step a commit of the `hibernate-only` branch, after a green `clean verify`; all six are done but the book.
 
 . Remove EclipseLink from the build, and its workarounds from the tests; `clean verify` passes unchanged.
 . Move the `test` unit from H2 to a PostgreSQL container, and remove H2; `clean verify` passes unchanged.

@@ -52,156 +52,122 @@ one per table and view, three groups, and the whole schema; a table shows its ke
 | `_airplanes_and_airports.svg`, `_routes_and_flights.svg`, `_bookings.svg` | a group of tables and the foreign keys between them only; the header comment names the group |
 | `__demo.svg` | the whole schema as the [official diagram](https://postgrespro.com/community/demodb) draws it: every table, each view as an enclosure around the tables it reads, the foreign keys, and, dashed, the join of `flights` to `routes` on `route_no` and the validity period, which no foreign key declares |
 
-## Column types the providers differ on
+## The column types
 
 The schema uses five PostgreSQL types Jakarta Persistence has no basic type for: `integer[]` (`routes.days_of_week`),
 `interval` (`routes.duration`), `tstzrange` (`routes.validity`), `point` (`airports_data.coordinates`) and `jsonb`
-(`airplanes_data.model`, `airports_data.airport_name`, `city`, `country`). The table below is what each provider does
-with an attribute mapped by a plain `@Column` and no converter, measured against the database above with
-Hibernate ORM 7.4.12.Final, EclipseLink 5.0.2 and PostgreSQL JDBC 42.7.14: a row is read, then the column is updated
-and the transaction rolled back. "With cast" means the write works only with `stringtype=unspecified` on the JDBC
-URL, which makes the driver send a string parameter untyped so that the server casts it; without it PostgreSQL
-answers
-`column "x" is of type integer[] but expression is of type character varying`.
+(`airplanes_data.model`, `airports_data.airport_name`, `city`, `country`). Hibernate ORM is the only provider, so
+each is mapped with what maps it best: Hibernate's own types, a converter, or, for the one type nothing else maps, a
+type of [hypersistence-utils](https://github.com/vladmihalcea/hypersistence-utils).
 
-| Column | Attribute type | Hibernate ORM | EclipseLink |
+| PostgreSQL | Columns | Attribute | How |
 |---|---|---|---|
-| `integer[]` | `Integer[]`, `int[]`, `List<Integer>` | reads as declared; writes natively, no cast needed | fails both ways: it serializes the value, reads `Integer[]` as `byte[]` and writes `bytea` |
-| `integer[]` | `String` | reads `{"4","7"}`, the elements quoted, not the server's literal; writes with cast | reads `[Ljava.lang.Integer;@…`, the array's `toString()`; writes with cast |
-| `interval` | `Duration` | fails both ways: it maps `Duration` as a number, `Bad value for type BigDecimal : 05:05:00` | fails both ways: the driver's `PGInterval` is not converted |
-| `interval` | `String` | reads `05:05:00`, the server's text; writes with cast | reads `5 hours 5 mins`, the driver's `PGInterval.toString()`; writes with cast |
-| `tstzrange` | `String` | reads the server's text, `["2025-10-01 09:00:00+09","2025-11-01 09:00:00+09")`; writes with cast | the same |
-| `point` | `String` | reads `(-145.51,-17.3526)`; writes with cast | the same |
-| `jsonb` | `String` | reads the JSON text; writes with cast | the same |
-| `timestamptz` | `OffsetDateTime`, `Instant` | fine both ways, the offset normalized to UTC | fine both ways, the offset the JVM's default zone's |
+| `integer[]` | `routes.days_of_week` | `List<Integer>` | Hibernate's, `@JdbcTypeCode(SqlTypes.ARRAY)` |
+| `interval` | `routes.duration` | `Duration` | Hibernate's, `@JdbcTypeCode(SqlTypes.INTERVAL_SECOND)` |
+| `tstzrange` | `routes.validity` | `Range<ZonedDateTime>` | hypersistence-utils' `PostgreSQLRangeType`, its one use |
+| `point` | `airports_data.coordinates`, the `airports` view's | `PointAttributeConverter.Point` | `PointAttributeConverter`, through the text `(x,y)` |
+| `jsonb` | `airplanes_data.model`, `airports_data.airport_name`, `city`, `country` | `JsonObject` | `JsonpStringAttributeConverter.OfJsonObject`, through the JSON text |
 
-Behind that table is what each provider hands over before any mapping is applied, read through a native query from
-the same database. Neither adds anything of its own to the exotic types: both pass on what the PostgreSQL driver
-returns. They part only on `jsonb`, and on which generation of date and time classes they prefer.
+What Hibernate does with each of the five, mapped by a plain `@Column` and no converter, measured against the database
+above with Hibernate ORM 7.4.12.Final and PostgreSQL JDBC 42.7.14, a row read and the column updated and rolled back;
+"with cast" means the write works only with `stringtype=unspecified` on the JDBC URL, which makes the driver send a
+string untyped so that the server casts it:
 
-| Column | PostgreSQL type | Hibernate ORM | EclipseLink |
-|---|---|---|---|
-| `routes.days_of_week` | `integer[]` | `Integer[]` | `Integer[]` |
-| `routes.duration` | `interval` | `org.postgresql.util.PGInterval` | `PGInterval` |
-| `routes.validity` | `tstzrange` | `org.postgresql.util.PGobject` | `PGobject` |
-| `airports_data.coordinates` | `point` | `org.postgresql.geometric.PGpoint` | `PGpoint` |
-| `airports_data.airport_name` | `jsonb` | `String` | `PGobject` |
-| `routes.scheduled_time` | `time` | `java.time.LocalTime` | `java.sql.Time` |
-| `bookings.book_date` | `timestamptz` | `java.time.Instant` | `java.sql.Timestamp` |
-| `airports_data.airport_code` | `character(3)` | `String` | `String` |
-| `bookings.total_amount` | `numeric(10,2)` | `BigDecimal` | `BigDecimal` |
-| `tickets.outbound` | `boolean` | `Boolean` | `Boolean` |
+| Column | Attribute type | Hibernate ORM |
+|---|---|---|
+| `integer[]` | `Integer[]`, `int[]`, `List<Integer>` | reads as declared; writes natively, no cast needed |
+| `integer[]` | `String` | reads `{"4","7"}`, the elements quoted, not the server's literal; writes with cast |
+| `interval` | `Duration` | fails both ways without `INTERVAL_SECOND`: a `Duration` is a number to it, `Bad value for type BigDecimal : 05:05:00` |
+| `interval` | `String` | reads `05:05:00`, the server's text; writes with cast |
+| `tstzrange` | `String` | reads the server's text, `["2025-10-01 09:00:00+09","2025-11-01 09:00:00+09")`; writes with cast |
+| `point` | `String` | reads `(-145.51,-17.3526)`; writes with cast |
+| `jsonb` | `String` | reads the JSON text; writes with cast |
 
-From there each provider converts to the attribute's type, which is where the differences above come from: Hibernate
-has a conversion for arrays and reads a `String` attribute with `getString`; EclipseLink falls back to `toString()`
-for a `String` attribute, which is `[Ljava.lang.Integer;@…` for the array and `5 hours 5 mins` for the interval, and
-to Java serialization for any other type it does not know, which fails.
+And what it hands over before any mapping is applied, read through a native query: what the driver returns, but for
+`jsonb`, which it reads as text, and the date and time types, which it reads as `java.time`.
 
-What follows from it, and what this module does:
+| Column | PostgreSQL type | Hibernate ORM |
+|---|---|---|
+| `routes.days_of_week` | `integer[]` | `Integer[]` |
+| `routes.duration` | `interval` | `org.postgresql.util.PGInterval` |
+| `routes.validity` | `tstzrange` | `org.postgresql.util.PGobject` |
+| `airports_data.coordinates` | `point` | `org.postgresql.geometric.PGpoint` |
+| `airports_data.airport_name` | `jsonb` | `String` |
+| `routes.scheduled_time` | `time` | `java.time.LocalTime` |
+| `bookings.book_date` | `timestamptz` | `java.time.Instant` |
+| `airports_data.airport_code` | `character(3)` | `String` |
+| `bookings.total_amount` | `numeric(10,2)` | `BigDecimal` |
+| `tickets.outbound` | `boolean` | `Boolean` |
 
-- `integer[]` and `interval` go through an `AttributeConverter` each, `IntegerListArrayAttributeConverter.OfString` (`List<Integer>`) and
-  `IntervalPostgresAttributeConverter.OfString` (`PostgresInterval`), whose database side is `String`, so that both providers bind the
-  text on a write. The catch is the read: Hibernate hands a converter the column the way its database side says,
-  EclipseLink hands it the driver's raw object whatever it says, and a method declared on `String` casts, and fails,
-  before the converter runs. So each converter declares the database side as a type variable -- its method takes an
-  `Object` once erased, and accepts text or object alike -- and its nested `OfString` binds `Y` to `String` without
-  overriding the methods, which is what keeps the cast out. A database side declared as `Object`
-  was tried first: reads work, but neither provider can write through it, Hibernate having no JDBC type to bind and
-  EclipseLink guessing one from the attribute.
-- `IntegerListArrayAttributeConverter` holds all of it in one file: the integer array literal -- braces, commas,
-  `NULL`; an integer never needs quotes -- and the shapes an array arrives in, a `java.sql.Array` or a Java array
-  included. It cannot be a plain class bound to `String`, for the cast above, so it declares the database side as a
-  type variable itself, and its nested `OfString` binds it to `String`; an attribute names
-  `IntegerListArrayAttributeConverter.OfString`.
-- `flights.flight_id` is `GENERATED ALWAYS AS IDENTITY`, which `information_schema.columns` shows as `is_identity`,
-  not as a default; it is `@GeneratedValue(IDENTITY)`, and the only generated identifier in the schema.
-- A read-only foreign-key attribute, and the generated identifier, carry no `@NotNull`: the units validate on
-  `prePersist`, when neither can have a value yet, so with it no row could ever be inserted. The column's
-  `nullable = false` stays, and the database enforces it on what the association writes.
-- `point` goes through a converter of the same kind. `PointAttributeConverter.OfString` maps it as
-  `PointAttributeConverter.Point`, written `(x,y)`; EclipseLink's `PGpoint` is read through its fields, by reflection.
+Until this module dropped EclipseLink, a second provider shaped these mappings: it maps no array, and hands a converter
+the driver's own object whatever the converter declares. Its measurements, and the converters it called for, are in
+[`HIBERNATE_ONLY.adoc`](HIBERNATE_ONLY.adoc), and in this file as it was at `9ef856e`, before the provider went.
+
+What else this module does:
+
+- `integer[]` is a `List<Integer>` and `interval` a `Duration`, each with `@JdbcTypeCode`: Hibernate maps a typed
+  array or collection of a basic type to a SQL array since 6.1, and a `Duration` to an `interval` since 6.2, the
+  latter for `SqlTypes.INTERVAL_SECOND` only ([migration guide](https://docs.hibernate.org/orm/6.1/migration-guide/)).
+  A `Duration` has no months; every duration of the schema is hours and minutes, 35 minutes to 19 hours 55 minutes.
+- `tstzrange` is a `Range<ZonedDateTime>` of hypersistence-utils, the library's one use; neither Jakarta Persistence
+  nor Hibernate gives the type a Java type. It is part of `Route`'s identifier. A bound reads back in the session's
+  time zone, which the driver sets to the JVM's default, over any `-c TimeZone` of the URL's, and a `ZonedDateTime`
+  equals another only in the same zone; so the tests run in UTC, `-Duser.timezone=UTC`, and build their ranges in
+  UTC, and a range read back equals the one written.
+- `point` holds an airport's geolocation, the longitude as `x` and the latitude as `y`, as the columns' comments say;
+  `PointAttributeConverter`, a plain `AttributeConverter<Point, String>`, prints `(longitude,latitude)` and reads the
+  text as the server does. No provider maps a native `point`: Hibernate Spatial and geolatte need PostGIS `geometry`,
+  which the database does not have.
 - Each `jsonb` column, an object of one name per language, is mapped as a JSON-P `JsonObject` through
-  `JsonpStringAttributeConverter.OfJsonObject`, whose database side is a plain `String`, not a type variable; the attributes
-  have package-private accessors, and are read and written a name at a time, by the language of a `Locale`.
-  `JsonpStringAttributeConverter`, from `jinahya-persistence-more`, has a converter for each JSON-P type, `OfJsonValue`, `OfJsonStructure`, `OfJsonObject`,
+  `JsonpStringAttributeConverter.OfJsonObject`; the attributes have package-private accessors, and are read and
+  written a name at a time, by the language of a `Locale`. `JsonpStringAttributeConverter`, from
+  `jinahya-persistence-more`, has a converter for each JSON-P type, `OfJsonValue`, `OfJsonStructure`, `OfJsonObject`,
   `OfJsonArray`, `OfJsonString` and `OfJsonNumber`; each reads one JSON value, rejects anything after it, and rejects
-  a value of another type. EclipseLink hands it the column as a `String` too, not the driver's `PGobject`.
+  a value of another type.
+- Writing a `point` or a `jsonb`, as text through its converter, needs `stringtype=unspecified` on the JDBC URL.
+  Reading needs nothing.
 - Three `text` columns go through converters too, for a type the text has no room for: `flights.status`, and the
   `timetable` view's, as a `MappedFlight.FlightStatus` (`On Time` is no Java identifier, which is why `@Enumerated`
   cannot map it), `seats.fare_conditions` and `segments.fare_conditions` as a `MappedSeat.FareConditions`, both enums
   of the values the check constraints allow, and `airports_data.timezone`, and the `airports` view's, as a `ZoneId`,
-  through `MappedFlight.FlightStatusConverter`, `MappedSeat.FareConditionsConverter` and `ZoneIdStringAttributeConverter`, from `jinahya-persistence-more`. An enum
-  and its converter, specific to a column, are nested in the mapped class of the column's table.
-- `tstzrange` stays `String`, the text both providers read alike: the test entity over `routes` writes the column
-  through its embedded identifier, and the specification has no conversion applied to an identifier's attributes,
-  so a converted `validity` would leave the entity the same value twice, once converted and once as text.
+  through `MappedFlight.FlightStatusConverter`, `MappedSeat.FareConditionsConverter` and
+  `ZoneIdStringAttributeConverter`, from `jinahya-persistence-more`. An enum and its converter, specific to a column,
+  are nested in the mapped class of the column's table.
 - Each `timestamptz` column -- the four of `flights`, `bookings.book_date`, `boarding_passes.boarding_time` and the
   `timetable` view's four -- is mapped as an `Instant`, a basic type since Jakarta Persistence 3.2. The column holds a
-  moment and no offset; an `OffsetDateTime` would carry an offset the database never stored, the provider's own -- UTC
-  under Hibernate ORM, the JVM's default zone's under EclipseLink, as the table above shows -- so the same row would
-  read back as a different value by provider, and `MappedFlight`'s natural key, the route number and the scheduled
-  departure, would need the departure compared as an instant. A local time is the airport's: `airports_data.timezone`,
-  a `ZoneId`, or the `timetable` view's `*_local` columns, `timestamp without time zone`, mapped as `LocalDateTime`.
-- Writing any of the five needs `stringtype=unspecified` on the JDBC URL. Reading needs nothing.
-- A persistence unit with `exclude-unlisted-classes` has to list the converters; EclipseLink does not find them
-  otherwise.
-- The in-memory unit generates its schema, and a converter with an `Object` database side gives Hibernate no column
-  type to generate; the test entity over `routes` overrides the two columns with `columnDefinition = "varchar"`.
+  moment and no offset; an `OffsetDateTime` would carry an offset the database never stored. A local time is the
+  airport's: `airports_data.timezone`, a `ZoneId`, or the `timetable` view's `*_local` columns,
+  `timestamp without time zone`, mapped as `LocalDateTime`.
+- `flights.flight_id` is `GENERATED ALWAYS AS IDENTITY`, which `information_schema.columns` shows as `is_identity`,
+  not as a default; it is `@GeneratedValue(IDENTITY)`, and the only generated identifier in the schema. A flight's
+  equality is by its natural key, the route number and the scheduled departure, which the table holds unique.
+- A read-only foreign-key attribute, and the generated identifier, carry no `@NotNull`: the units validate on
+  `prePersist`, when neither can have a value yet, so with it no row could ever be inserted. The column's
+  `nullable = false` stays, and the database enforces it on what the association writes.
+- The test unit generates its schema on a PostgreSQL container, and the exotic columns are their own types there:
+  `integer array`, `interval second(6)`, `tstzrange`; the `point` and `jsonb` columns, written through converters as
+  text, are generated as text.
 
-### What else was tried for `interval` and `integer[]`
-
-Every attribute type the web suggests for the two, measured the same way, a row read and the column updated and
-rolled back, with `stringtype=unspecified` on. `byte[]` is left out: it is the type of a `bytea` column, not of
-either of these.
-
-| Column | Attribute type | Hibernate ORM | EclipseLink |
-|---|---|---|---|
-| `interval` | `Duration`, as is | fails: `Duration` is a number to it, `Bad value for type BigDecimal` | fails: the driver's `PGInterval` is not converted |
-| `interval` | `Duration` with `hibernate.type.preferred_duration_jdbc_type=INTERVAL_SECOND` | reads `PT5H5M`, writes `02:05:00` | no such setting |
-| `interval` | `org.postgresql.util.PGInterval` | fails: serialized, `StreamCorruptedException` | fails: serialized to `bytea` |
-| `interval` | `PostgresInterval` through `IntervalPostgresAttributeConverter.OfString` | works | works |
-| `integer[]` | `Integer[]`, `int[]`, `long[]`, `List<Integer>`, `Set<Integer>` | reads and writes natively, no cast needed | fails: serialized to `bytea` |
-| `integer[]` | `Number[]` | reads; the write sends `bytea[]` | fails |
-| `integer[]` | `Object[]` | fails both ways, `UnsupportedOperationException` | fails |
-| `integer[]` | `List<Integer>` through `IntegerListArrayAttributeConverter.OfString` | works | works |
-
-So Hibernate maps `Duration` to a real `interval` behind one property, since 6.2, and any typed array or collection
-of a basic type to a SQL array, since 6.1 ([migration guide](https://docs.hibernate.org/orm/6.1/migration-guide/));
-the untyped shapes, `Object[]` and the driver's own classes, fail on both. EclipseLink maps none of it; its documented
-route is `@Array` over `java.sql.Array` inside object-relational structures
-([FAQ](https://wiki.eclipse.org/EclipseLink/FAQ/JPA/PostgreSQL),
-[ELUG](https://wiki.eclipse.org/Configuring_an_Object-Relational_Data_Type_Array_Mapping_(ELUG))), not a column of an
-entity. No portable converter exists off the shelf: [threeten-jpa](https://github.com/marschall/threeten-jpa) has none
-for PostgreSQL intervals, the driver has no `Duration` support of its own, and the Hibernate-only
-[Hypersistence type](https://vladmihalcea.com/map-postgresql-interval-java-duration-hibernate/) is a `@Type`, not a
-converter.
-
-### The shapes an `interval` arrives in
+### The text of an `interval`
 
 The text of an `interval` depends on the server's `IntervalStyle`, which a JDBC session runs with at the server
-default, `postgres`; the driver does not change it. Hibernate hands a `String`-typed attribute or converter the text,
-`getString`; EclipseLink hands it the driver's `PGInterval`, whose `toString()` is the driver's own form and does not
-depend on the style:
+default, `postgres`; the driver does not change it, and its own `PGInterval` misreads one of the four styles:
 
-| `IntervalStyle` | Hibernate (`getString`) | EclipseLink (`PGInterval.toString()`) |
+| `IntervalStyle` | the server's text | `PGInterval` |
 |---|---|---|
 | `postgres`, the default | `1 day 02:05:00`, `-1 days -02:05:00` | `1 days 2 hours 5 mins`, `-1 days -2 hours -5 mins` |
 | `postgres_verbose` | `@ 1 day 2 hours 5 mins`, `@ 1 day 2 hours 5 mins ago` | as above |
 | `sql_standard` | `1 2:05:00`, `-1 2:05:00`, `+1-2 +3 +4:05:06.5` | `0 secs`, the driver misreads the style |
 | `iso_8601` | `P1DT2H5M`, `P-1DT-2H-5M` | as above |
 
-`routes.duration` is mapped as `IntervalPostgresAttributeConverter.PostgresInterval`, a record of the months, the
-days and the microseconds, as the column keeps them, through `IntervalPostgresAttributeConverter.OfString`, with no
-class of the driver's in the code. It reads, and writes, the text of the `postgres` style only, which the JDBC URL
-pins, `options=-c IntervalStyle=postgres`, whatever the server's, the database's or the role's default. EclipseLink
-still hands the converter the driver's `PGInterval`, which it reads through the object's getters, by reflection, so
-the driver is needed at run time only; the pinned `postgres` is what keeps the driver from misreading.
+The demo database runs with the default; a database set to `sql_standard` would need the session pinned back,
+`options=-c IntervalStyle=postgres` on the JDBC URL.
 
 ### `jsonb`, and why not `@Lob`
 
 The four `jsonb` columns are `JsonObject` attributes over the text, `@Basic` and `@Column` with no `length` and no
-`@Lob`. Both providers read them as the JSON text, which the converter parses, and write them back, the write
-with `stringtype=unspecified` like every other exotic column.
+`@Lob`. Hibernate reads them as the JSON text, which the converter parses, and writes them back, the write with
+`stringtype=unspecified`.
 A `jsonb` value is at most 268,435,455 bytes, one short of 256 MB -- the 28-bit offsets of its binary
 form, not a setting, see [BUG #15079](https://www.postgresql.org/message-id/151933308143.1365.3106046996770708952%40wrigleys.postgresql.org)
 and its [reply](https://www.postgresql.org/message-id/CAKFQuwZZ95W5JxQ_fgzdPONeCenUJ59-RB_zQtSQ8puKUJEJiQ%40mail.gmail.com)
@@ -214,9 +180,8 @@ PostgreSQL's LOB type is the large object, a value kept outside the table and re
 its own API and its own garbage collection ([pgjdbc, Storing Binary Data](https://jdbc.postgresql.org/documentation/binary-data/)).
 `jsonb`, like `text`, is an ordinary column, read with `getString`; `getClob` is for large objects only
 ([pgjdbc](https://lightrun.com/answers/pgjdbc-pgjdbc-error-in-pgresultsetgetblobint)). So `@Lob` on a `String` over a
-`jsonb` or `text` column mismatches the type on both providers, whose default for a `String` is `CLOB`
-([EclipseLink](https://wiki.eclipse.org/EclipseLink/UserGuide/JPA/Basic_JPA_Development/Mapping/Basic_Mappings/Lob)):
-a read calls `getClob`, the driver parses the text as an `oid` and fails with `Bad value for type long`
+`jsonb` or `text` column mismatches the type, the default for a `String` being `CLOB`: a read calls `getClob`, the
+driver parses the text as an `oid` and fails with `Bad value for type long`
 ([Red Hat](https://access.redhat.com/solutions/2945101), [pgsql-jdbc](https://www.postgresql.org/message-id/201102070001.22259.andreak%40officenet.no));
 a write creates a large object and stores its `oid` in the column, where `vacuumlo` cannot see it and may delete the
 data, which is why Hibernate asks for such columns to be `oid`
@@ -224,10 +189,11 @@ data, which is why Hibernate asks for such columns to be `oid`
 [JBPM-9939](https://issues.redhat.com/browse/JBPM-9939)). `@Lob` would not even buy streaming: PostgreSQL has none for
 `jsonb`, the driver delivers the whole value either way.
 
-The one provider-native improvement is Hibernate's `@JdbcTypeCode(SqlTypes.JSON)`, which it uses "only if explicitly
-configured" ([Thorben Janssen](https://thorben-janssen.com/?p=3224),
+Hibernate's `@JdbcTypeCode(SqlTypes.JSON)` would bind `jsonb` as itself, with no `stringtype=unspecified`
+([Thorben Janssen](https://thorben-janssen.com/?p=3224),
 [Hibernate javadoc](https://docs.hibernate.org/orm/6.6/javadocs/org/hibernate/dialect/PostgreSQLJsonPGObjectJsonbType.html)),
-and which EclipseLink has no counterpart to; so it is an extending entity's choice, not the mapped superclass's.
+but it serializes a value through Jackson or JSON-B into a type whose shape it fixes, a record or a `Map`; the
+columns' objects have no fixed keys and values, so they stay JSON-P `JsonObject`s.
 
 ## Building
 
