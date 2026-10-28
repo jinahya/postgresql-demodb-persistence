@@ -141,9 +141,10 @@ What else this module does:
 - `flights.flight_id` is `GENERATED ALWAYS AS IDENTITY`, which `information_schema.columns` shows as `is_identity`,
   not as a default; it is `@GeneratedValue(IDENTITY)`, and the only generated identifier in the schema. A flight's
   equality is by its natural key, the route number and the scheduled departure, which the table holds unique.
-- A read-only foreign-key attribute, and the generated identifier, carry no `@NotNull`: the units validate on
-  `prePersist`, when neither can have a value yet, so with it no row could ever be inserted. The column's
-  `nullable = false` stays, and the database enforces it on what the association writes.
+- The units validate on `prePersist`. The generated identifier carries no `@NotNull`, for it has no value yet then.
+  `MappedRoute`'s three read-only foreign-key codes do carry one: `Route`'s association setters set each code with
+  the association which writes its column, so a route about to be inserted has them. `MappedTicket`'s `bookRef`,
+  which `Ticket.setBooking` keeps in step the same way, carries none yet.
 - The test unit generates its schema on a PostgreSQL container, and the exotic columns are their own types there:
   `integer array`, `interval second(6)`, `tstzrange`; the `point` and `jsonb` columns, written through converters as
   text, are generated as text.

@@ -20,13 +20,13 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-
 import io.hypersistence.utils.hibernate.type.range.PostgreSQLRangeType;
 import io.hypersistence.utils.hibernate.type.range.Range;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
@@ -51,9 +51,10 @@ import java.util.Objects;
  * by an association's {@link jakarta.persistence.JoinColumn @JoinColumn} or by an
  * {@link jakarta.persistence.AttributeOverride @AttributeOverride}. <strong>An extending entity
  * which maps neither never writes them.</strong> Being read-only, they are populated by a load or a
- * refresh only, which is also why they carry no {@code @NotNull}: an instance about to be inserted
- * has none there, and the column's {@code NOT NULL} is the database's to enforce, on whatever the
- * association writes.
+ * refresh, or by the extending entity, which sets them through their {@code protected} setters in
+ * step with the associations which write the columns. They carry {@code @NotNull}, which holds at
+ * {@code prePersist} only so: an extending entity which writes a column without setting its code
+ * has an instance about to be inserted rejected, though the association would write the column.
  * <p>
  * The {@value MappedRoute#COLUMN_NAME_VALIDITY} column is a {@code tstzrange}, which neither
  * Jakarta Persistence nor Hibernate ORM maps; it is mapped as a hypersistence-utils {@link Range}
@@ -368,9 +369,9 @@ public abstract class MappedRoute {
      * specified value.
      *
      * @param departureAirport new value for {@value #ATTRIBUTE_NAME_DEPARTURE_AIRPORT} attribute.
-     * @apiNote The attribute is read-only, so the value is never written: an extending entity
-     *         which maps the column's writable side, an association, calls this method to keep the
-     *         attribute in step with what the association writes.
+     * @apiNote The attribute is read-only, so the value is never written: an extending
+     *         entity which maps the column's writable side, an association, calls this method to
+     *         keep the attribute in step with what the association writes.
      */
     protected void setDepartureAirport(final String departureAirport) {
         this.departureAirport = departureAirport;
@@ -394,9 +395,9 @@ public abstract class MappedRoute {
      * specified value.
      *
      * @param arrivalAirport new value for {@value #ATTRIBUTE_NAME_ARRIVAL_AIRPORT} attribute.
-     * @apiNote The attribute is read-only, so the value is never written: an extending entity
-     *         which maps the column's writable side, an association, calls this method to keep the
-     *         attribute in step with what the association writes.
+     * @apiNote The attribute is read-only, so the value is never written: an extending
+     *         entity which maps the column's writable side, an association, calls this method to
+     *         keep the attribute in step with what the association writes.
      */
     protected void setArrivalAirport(final String arrivalAirport) {
         this.arrivalAirport = arrivalAirport;
@@ -420,9 +421,9 @@ public abstract class MappedRoute {
      * value.
      *
      * @param airplaneCode new value for {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
-     * @apiNote The attribute is read-only, so the value is never written: an extending entity
-     *         which maps the column's writable side, an association, calls this method to keep the
-     *         attribute in step with what the association writes.
+     * @apiNote The attribute is read-only, so the value is never written: an extending
+     *         entity which maps the column's writable side, an association, calls this method to
+     *         keep the attribute in step with what the association writes.
      */
     protected void setAirplaneCode(final String airplaneCode) {
         this.airplaneCode = airplaneCode;
@@ -509,6 +510,7 @@ public abstract class MappedRoute {
     // ---------------------------------------------------------------------------------------------
     // read-only: the extending entity owns the writable mapping; see the class documentation
     @Size(min = SIZE_MIN_DEPARTURE_AIRPORT, max = SIZE_MAX_DEPARTURE_AIRPORT)
+    @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_DEPARTURE_AIRPORT,
             nullable = false,
@@ -521,24 +523,20 @@ public abstract class MappedRoute {
     // ---------------------------------------------------------------------------------------------
     // read-only: the extending entity owns the writable mapping; see the class documentation
     @Size(min = SIZE_MIN_ARRIVAL_AIRPORT, max = SIZE_MAX_ARRIVAL_AIRPORT)
+    @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_ARRIVAL_AIRPORT,
-            nullable = false,
-            insertable = false,
-            updatable = false,
-            length = COLUMN_LENGTH_ARRIVAL_AIRPORT
+    @Column(name = COLUMN_NAME_ARRIVAL_AIRPORT, nullable = false, insertable = false,
+            updatable = false, length = COLUMN_LENGTH_ARRIVAL_AIRPORT
     )
     private String arrivalAirport;
 
     // ---------------------------------------------------------------------------------------------
     // read-only: the extending entity owns the writable mapping; see the class documentation
     @Size(min = SIZE_MIN_AIRPLANE_CODE, max = SIZE_MAX_AIRPLANE_CODE)
+    @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_AIRPLANE_CODE,
-            nullable = false,
-            insertable = false,
-            updatable = false,
-            length = COLUMN_LENGTH_AIRPLANE_CODE
+    @Column(name = COLUMN_NAME_AIRPLANE_CODE, nullable = false, insertable = false,
+            updatable = false, length = COLUMN_LENGTH_AIRPLANE_CODE
     )
     private String airplaneCode;
 

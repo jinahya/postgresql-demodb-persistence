@@ -132,12 +132,15 @@ public class Route
      */
     public void setDepartureAirportData(final AirportData departureAirportData) {
         this.departureAirportData = departureAirportData;
-        setDepartureAirport(Optional.ofNullable(departureAirportData)
-                .map(AirportData::getAirportCode)
-                .orElse(null));
+        setDepartureAirport(
+                Optional.ofNullable(departureAirportData)
+                        .map(AirportData::getAirportCode)
+                        .orElse(null)
+        );
     }
 
     // -------------------------------------------------------------------------- arrivalAirportData
+
     /**
      * Returns the airport of arrival, over the {@value MappedRoute#COLUMN_NAME_ARRIVAL_AIRPORT}
      * column; the column's writable mapping.
@@ -158,9 +161,11 @@ public class Route
      */
     public void setArrivalAirportData(final AirportData arrivalAirportData) {
         this.arrivalAirportData = arrivalAirportData;
-        setArrivalAirport(Optional.ofNullable(arrivalAirportData)
-                .map(AirportData::getAirportCode)
-                .orElse(null));
+        setArrivalAirport(
+                Optional.ofNullable(arrivalAirportData)
+                        .map(AirportData::getAirportCode)
+                        .orElse(null)
+        );
     }
 
     /**
@@ -182,9 +187,11 @@ public class Route
      */
     public void setAirplaneData(final AirplaneData airplaneData) {
         this.airplaneData = airplaneData;
-        setAirplaneCode(Optional.ofNullable(airplaneData)
-                .map(AirplaneData::getAirplaneCode)
-                .orElse(null));
+        setAirplaneCode(
+                Optional.ofNullable(airplaneData)
+                        .map(AirplaneData::getAirplaneCode)
+                        .orElse(null)
+        );
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -197,11 +204,13 @@ public class Route
                 updatable = true)
     private AirportData departureAirportData;
 
+    // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = COLUMN_NAME_ARRIVAL_AIRPORT, nullable = false, insertable = true,
                 updatable = true)
     private AirportData arrivalAirportData;
 
+    // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = COLUMN_NAME_AIRPLANE_CODE, nullable = false, insertable = true,
                 updatable = true)
