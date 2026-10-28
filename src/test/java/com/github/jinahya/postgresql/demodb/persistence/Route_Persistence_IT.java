@@ -20,13 +20,13 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter;
 import io.hypersistence.utils.hibernate.type.range.Range;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.postgres.extensions.converters.OffsetDateTimeRangeConverter;
 import org.jooq.postgres.extensions.types.OffsetDateTimeRange;
 
+import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
@@ -55,22 +55,22 @@ class Route_Persistence_IT
      *
      * @param entityManager  {@inheritDoc}
      * @param entityInstance {@inheritDoc}
-     * @implNote The duration, written as an interval, is read back as it was, by the server
-     *         and by a new find.
+     * @implNote The duration, written as an interval, is read back as it was, by the server,
+     *         as its number of seconds, and by a new find.
      */
     @Override
     void targetInstancePersisted(final EntityManager entityManager, final Route entityInstance) {
         final var duration = entityInstance.getDuration();
-        final var text = (String) entityManager.createNativeQuery(
-                        "SELECT duration::text FROM routes"
+        final var seconds = (Number) entityManager.createNativeQuery(
+                        "SELECT EXTRACT(EPOCH FROM duration) FROM routes"
                         + " WHERE route_no = ?1 AND validity = CAST(?2 AS tstzrange)")
                 .setParameter(1, entityInstance.getRouteNo())
                 .setParameter(2, entityInstance.getValidity())
                 .getSingleResult();
-        log.info("duration: {}, text: {}", duration, text);
-        assertThat(new IntervalPostgresAttributeConverter.OfString().convertToEntityAttribute(text))
+        log.info("duration: {}, seconds: {}", duration, seconds);
+        assertThat(seconds.longValue())
                 .as("duration of %s, as the server reads it", entityInstance)
-                .isEqualTo(duration);
+                .isEqualTo(duration.toSeconds());
         entityManager.clear();
         final var found = entityManager.find(Route.class, entityInstance.getId());
         assertThat(found.getDuration())
@@ -95,11 +95,8 @@ class Route_Persistence_IT
         assertThat(instance.getDaysOfWeek()).as("days of week of %s", instance).isNotEmpty()
                 .allSatisfy(d -> assertThat(d).isBetween(1, 7));
         assertThat(instance.getDuration()).as("duration of %s", instance).isNotNull()
-                .satisfies(d -> {
-                    assertThat(d.months()).as("months").isZero();
-                    assertThat(d.days()).as("days").isZero();
-                    assertThat(d.microseconds()).as("microseconds").isPositive();
-                });
+                .isPositive()
+                .isLessThan(Duration.ofDays(1));
         assertThat(instance.getDepartureAirportData()).as("departure of %s", instance).isNotNull();
         assertThat(instance.getArrivalAirportData()).as("arrival of %s", instance).isNotNull();
         assertThat(instance.getAirplaneData()).as("airplane of %s", instance).isNotNull();

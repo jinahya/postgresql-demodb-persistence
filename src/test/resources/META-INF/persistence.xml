@@ -28,8 +28,6 @@
     <description>Persistence Unit for a PostgreSQL Container</description>
     <!--        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter$OfString</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter$OfString</class>
     <class>com.github.jinahya.persistence.more.converter.json.JsonpStringAttributeConverter$OfJsonObject</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter$OfString</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
@@ -72,8 +70,6 @@
     <description>Persistence Unit for a Physical Database</description>
     <!--    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter$OfString</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter$OfString</class>
     <class>com.github.jinahya.persistence.more.converter.json.JsonpStringAttributeConverter$OfJsonObject</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter$OfString</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
@@ -100,15 +96,12 @@
       <!-- the database from compose.yaml; see _docker-compose-up.sh -->
       <!-- the dump creates database `demo` and puts everything in schema `bookings`, which it also makes the -->
       <!-- database's search_path, so unqualified table names resolve there -->
-      <!-- stringtype=unspecified: a String bound for a tstzrange, point, jsonb, integer[] or interval column is sent -->
-      <!-- untyped, so that the server casts it; see README.md, "Column types the providers differ on" -->
-      <!-- options=-c IntervalStyle=postgres: an interval is printed in the postgres style whatever the server's, -->
-      <!-- database's or role's default; the driver's own PGInterval, which is what EclipseLink hands a converter, -->
-      <!-- misreads sql_standard, and IntervalPostgresAttributeConverter reads the postgres style only -->
+      <!-- stringtype=unspecified: a String bound for a tstzrange, point or jsonb column is sent untyped, so that the -->
+      <!-- server casts it; see README.md, "Column types the providers differ on" -->
       <!-- options=-c bookings.lang=...: the language the views read their names in, bookings.lang(); the -->
       <!-- bookings-lang-en (default) and bookings-lang-ru profiles in pom.xml choose it -->
       <property name="jakarta.persistence.jdbc.url"
-                value="jdbc:postgresql://localhost:5432/demo?stringtype=unspecified&amp;options=-c%20IntervalStyle=postgres%20-c%20bookings.lang=${bookings.lang}"/>
+                value="jdbc:postgresql://localhost:5432/demo?stringtype=unspecified&amp;options=-c%20bookings.lang=${bookings.lang}"/>
       <property name="jakarta.persistence.jdbc.user" value="postgres"/>
       <property name="jakarta.persistence.jdbc.password" value="password"/>
       <!-- /////////////////////////////////////////////////////////////////////////////////////////////// hibernate -->

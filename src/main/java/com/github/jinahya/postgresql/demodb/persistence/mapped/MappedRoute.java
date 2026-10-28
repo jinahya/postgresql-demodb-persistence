@@ -20,16 +20,16 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter;
-import com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
@@ -64,16 +64,12 @@ import java.util.Objects;
  * {@link jakarta.persistence.IdClass @IdClass} over the two, for instance -- or read the table by
  * native queries only.
  * <p>
- * The {@value #COLUMN_NAME_DAYS_OF_WEEK} column is an {@code integer[]} and the
- * {@value #COLUMN_NAME_DURATION} column an {@code interval}, neither a type of Jakarta Persistence.
- Each is mapped through a converter of this package,
- * {@link IntegerListArrayAttributeConverter.OfString} and
- * {@link IntervalPostgresAttributeConverter.OfString}, which carries it as the column's text form,
- * so that no provider feature is relied on; writing the text back needs the driver to leave its type
- * to the server, {@code stringtype=unspecified} on the JDBC URL. The interval is mapped as a
- * {@link IntervalPostgresAttributeConverter.PostgresInterval}, which holds the months, the days and the time apart, as the column does; its
- * text is read in the {@code postgres} {@code IntervalStyle}, which the JDBC URL pins,
- * {@code options=-c IntervalStyle=postgres}.
+ * The {@value #COLUMN_NAME_DAYS_OF_WEEK} column is an {@code integer[]}, mapped as a {@link List}
+ * of {@link Integer}, which Hibernate ORM binds and reads as an array; the
+ * {@value #COLUMN_NAME_DURATION} column is an {@code interval}, mapped as a {@link Duration}, which
+ * Hibernate ORM binds and reads as an interval for
+ * {@link JdbcTypeCode @JdbcTypeCode}{@code (}{@link SqlTypes#INTERVAL_SECOND}{@code )}, and as a
+ * number without it. A {@link Duration} has no months; the column's values are hours and minutes.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -434,11 +430,11 @@ public abstract class MappedRoute {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_DURATION} attribute -- an {@code interval}
-     * column, mapped as a {@link IntervalPostgresAttributeConverter.PostgresInterval}.
+     * column, mapped as a {@link Duration}.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_DURATION} attribute.
      */
-    public IntervalPostgresAttributeConverter.PostgresInterval getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 
@@ -448,7 +444,7 @@ public abstract class MappedRoute {
      *
      * @param duration new value for {@value #ATTRIBUTE_NAME_DURATION} attribute.
      */
-    public void setDuration(final IntervalPostgresAttributeConverter.PostgresInterval duration) {
+    public void setDuration(final Duration duration) {
         this.duration = duration;
     }
 
@@ -502,7 +498,7 @@ public abstract class MappedRoute {
 
     // ---------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = IntegerListArrayAttributeConverter.OfString.class)
+    @JdbcTypeCode(SqlTypes.ARRAY)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_DAYS_OF_WEEK, nullable = false, insertable = true, updatable = true)
     private List<Integer> daysOfWeek;
@@ -516,8 +512,8 @@ public abstract class MappedRoute {
 
     // ---------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = IntervalPostgresAttributeConverter.OfString.class)
+    @JdbcTypeCode(SqlTypes.INTERVAL_SECOND)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_DURATION, nullable = false, insertable = true, updatable = true)
-    private IntervalPostgresAttributeConverter.PostgresInterval duration;
+    private Duration duration;
 }

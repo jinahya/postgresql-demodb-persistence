@@ -21,10 +21,10 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter.Point;
-import com.github.jinahya.postgresql.demodb.persistence.converter.IntervalPostgresAttributeConverter.PostgresInterval;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.YearMonth;
@@ -112,9 +112,8 @@ final class __Random_TestUtils {
     /**
      * Returns an interval of hours and minutes only, from half an hour to fifteen hours.
      */
-    static PostgresInterval duration() {
-        final var minutes = ThreadLocalRandom.current().nextInt(30, 900);
-        return new PostgresInterval(0, 0, minutes * 60_000_000L);
+    static Duration duration() {
+        return Duration.ofMinutes(ThreadLocalRandom.current().nextInt(30, 900));
     }
 
     /**
