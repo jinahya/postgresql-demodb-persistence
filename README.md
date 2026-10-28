@@ -110,7 +110,8 @@ What else this module does:
   latter for `SqlTypes.INTERVAL_SECOND` only ([migration guide](https://docs.hibernate.org/orm/6.1/migration-guide/)).
   A `Duration` has no months; every duration of the schema is hours and minutes, 35 minutes to 19 hours 55 minutes.
 - `tstzrange` is a `Range<ZonedDateTime>` of hypersistence-utils, the library's one use; neither Jakarta Persistence
-  nor Hibernate gives the type a Java type. It is part of `Route`'s identifier. A bound reads back in the session's
+  nor Hibernate gives the type a Java type
+  ([Vlad Mihalcea, How to map a PostgreSQL Range column type with JPA and Hibernate](https://vladmihalcea.com/map-postgresql-range-column-type-jpa-hibernate/)). It is part of `Route`'s identifier. A bound reads back in the session's
   time zone, which the driver sets to the JVM's default, over any `-c TimeZone` of the URL's, and a `ZonedDateTime`
   equals another only in the same zone; so the tests run in UTC, `-Duser.timezone=UTC`, and build their ranges in
   UTC, and a range read back equals the one written.
