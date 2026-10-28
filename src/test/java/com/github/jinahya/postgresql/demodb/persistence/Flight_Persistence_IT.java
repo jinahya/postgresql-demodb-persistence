@@ -44,11 +44,21 @@ class Flight_Persistence_IT
      *
      * @param instance {@inheritDoc}
      * @implNote The scheduled arrival is after the scheduled departure, as the check
-     *         constraint requires.
+     *         constraint requires; and the route, joined by the route number and a formula, is
+     *         the one of the route number valid at the scheduled departure, whose duration is the
+     *         flight's scheduled block time.
      */
     @Override
     void randomTargetInstanceSelected(final Flight instance) {
         assertThat(instance.getScheduledArrival()).as("scheduled arrival of %s", instance)
                 .isAfter(instance.getScheduledDeparture());
+        assertThat(instance.getRoute()).as("route of %s", instance).isNotNull().satisfies(r -> {
+            assertThat(r.getId().getRouteNo()).isEqualTo(instance.getRouteNo());
+            final var validity = r.getId().getValidity();
+            final var departure = instance.getScheduledDeparture();
+            assertThat(validity.lower().toInstant()).isBeforeOrEqualTo(departure);
+            assertThat(validity.upper().toInstant()).isAfter(departure);
+            assertThat(r.getDuration()).isEqualTo(instance.getScheduledBlockTime());
+        });
     }
 }
