@@ -242,14 +242,26 @@ public abstract class MappedTicket {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_BOOK_REF} attribute, which is {@code null}
-     * until this instance is loaded.
+     * until this instance is loaded, or until an extending entity sets it with the association
+     * which writes the column.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_BOOK_REF} attribute.
-     * @apiNote This method is {@code protected}, not package-private, so that a lazy proxy,
-     *         which is a subclass in another package, can override it.
      */
-    protected String getBookRef() {
+    public String getBookRef() {
         return bookRef;
+    }
+
+    /**
+     * Replaces current value of {@value #ATTRIBUTE_NAME_BOOK_REF} attribute with the specified
+     * value.
+     *
+     * @param bookRef new value for {@value #ATTRIBUTE_NAME_BOOK_REF} attribute.
+     * @apiNote The attribute is read-only, so the value is never written: an extending entity
+     *         which maps the column's writable side, an association, calls this method to keep the
+     *         attribute in step with what the association writes.
+     */
+    protected void setBookRef(final String bookRef) {
+        this.bookRef = bookRef;
     }
 
     // --------------------------------------------------------------------------------- passengerId

@@ -117,12 +117,18 @@ public class Route
     }
 
     /**
-     * Replaces the departureAirportData with the specified value.
+     * Replaces the departureAirportData with the specified value, and the inherited, read-only
+     * attribute over the {@value MappedRoute#COLUMN_NAME_DEPARTURE_AIRPORT} column with its airport
+     * code, which is what this association writes.
      *
-     * @param departureAirportData new value for the departureAirportData.
+     * @param departureAirportData new value for the departureAirportData; {@code null} clears the
+     *         code too.
      */
     public void setDepartureAirportData(final AirportData departureAirportData) {
         this.departureAirportData = departureAirportData;
+        setDepartureAirport(departureAirportData == null
+                ? null
+                : departureAirportData.getAirportCode());
     }
 
     /**
@@ -136,12 +142,16 @@ public class Route
     }
 
     /**
-     * Replaces the arrivalAirportData with the specified value.
+     * Replaces the arrivalAirportData with the specified value, and the inherited, read-only
+     * attribute over the {@value MappedRoute#COLUMN_NAME_ARRIVAL_AIRPORT} column with its airport
+     * code, which is what this association writes.
      *
-     * @param arrivalAirportData new value for the arrivalAirportData.
+     * @param arrivalAirportData new value for the arrivalAirportData; {@code null} clears the code
+     *         too.
      */
     public void setArrivalAirportData(final AirportData arrivalAirportData) {
         this.arrivalAirportData = arrivalAirportData;
+        setArrivalAirport(arrivalAirportData == null ? null : arrivalAirportData.getAirportCode());
     }
 
     /**
@@ -155,12 +165,15 @@ public class Route
     }
 
     /**
-     * Replaces the airplaneData with the specified value.
+     * Replaces the airplaneData with the specified value, and the inherited, read-only attribute
+     * over the {@value MappedRoute#COLUMN_NAME_AIRPLANE_CODE} column with its airplane code, which
+     * is what this association writes.
      *
-     * @param airplaneData new value for the airplaneData.
+     * @param airplaneData new value for the airplaneData; {@code null} clears the code too.
      */
     public void setAirplaneData(final AirplaneData airplaneData) {
         this.airplaneData = airplaneData;
+        setAirplaneCode(airplaneData == null ? null : airplaneData.getAirplaneCode());
     }
 
     // ---------------------------------------------------------------------------------------------

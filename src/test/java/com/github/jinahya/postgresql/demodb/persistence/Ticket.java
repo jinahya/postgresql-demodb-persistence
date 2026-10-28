@@ -96,12 +96,15 @@ public class Ticket
     }
 
     /**
-     * Replaces the booking with the specified value.
+     * Replaces the booking with the specified value, and the inherited, read-only attribute over
+     * the {@value MappedTicket#COLUMN_NAME_BOOK_REF} column with its reference, which is what this
+     * association writes.
      *
-     * @param booking new value for the booking.
+     * @param booking new value for the booking; {@code null} clears the reference too.
      */
     public void setBooking(final Booking booking) {
         this.booking = booking;
+        setBookRef(booking == null ? null : booking.getBookRef());
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -56,8 +56,8 @@ import java.util.Objects;
  * association writes.
  * <p>
  * The {@value MappedRoute#COLUMN_NAME_VALIDITY} column is a {@code tstzrange}, which neither
- * Jakarta Persistence nor Hibernate ORM maps; it is mapped as a hypersistence-utils {@link Range} of
- * {@link ZonedDateTime}s, through its {@link PostgreSQLRangeType}, the one use of the library.
+ * Jakarta Persistence nor Hibernate ORM maps; it is mapped as a hypersistence-utils {@link Range}
+ * of {@link ZonedDateTime}s, through its {@link PostgreSQLRangeType}, the one use of the library.
  * <p>
  * A bound reads back in the session's time zone, which the PostgreSQL driver sets to the JVM's
  * default, over any {@code -c TimeZone} of the URL's; and {@link ZonedDateTime#equals(Object)}
@@ -354,42 +354,78 @@ public abstract class MappedRoute {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_DEPARTURE_AIRPORT} attribute, which is
-     * {@code null} until this instance is loaded.
+     * {@code null} until this instance is loaded, or until an extending entity sets it with the
+     * association which writes the column.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_DEPARTURE_AIRPORT} attribute.
-     * @apiNote This method is {@code protected}, not package-private, so that a lazy proxy,
-     *         which is a subclass in another package, can override it.
      */
-    protected String getDepartureAirport() {
+    public String getDepartureAirport() {
         return departureAirport;
+    }
+
+    /**
+     * Replaces current value of {@value #ATTRIBUTE_NAME_DEPARTURE_AIRPORT} attribute with the
+     * specified value.
+     *
+     * @param departureAirport new value for {@value #ATTRIBUTE_NAME_DEPARTURE_AIRPORT} attribute.
+     * @apiNote The attribute is read-only, so the value is never written: an extending entity
+     *         which maps the column's writable side, an association, calls this method to keep the
+     *         attribute in step with what the association writes.
+     */
+    protected void setDepartureAirport(final String departureAirport) {
+        this.departureAirport = departureAirport;
     }
 
     // ------------------------------------------------------------------------------ arrivalAirport
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_ARRIVAL_AIRPORT} attribute, which is
-     * {@code null} until this instance is loaded.
+     * {@code null} until this instance is loaded, or until an extending entity sets it with the
+     * association which writes the column.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_ARRIVAL_AIRPORT} attribute.
-     * @apiNote This method is {@code protected}, not package-private, so that a lazy proxy,
-     *         which is a subclass in another package, can override it.
      */
-    protected String getArrivalAirport() {
+    public String getArrivalAirport() {
         return arrivalAirport;
+    }
+
+    /**
+     * Replaces current value of {@value #ATTRIBUTE_NAME_ARRIVAL_AIRPORT} attribute with the
+     * specified value.
+     *
+     * @param arrivalAirport new value for {@value #ATTRIBUTE_NAME_ARRIVAL_AIRPORT} attribute.
+     * @apiNote The attribute is read-only, so the value is never written: an extending entity
+     *         which maps the column's writable side, an association, calls this method to keep the
+     *         attribute in step with what the association writes.
+     */
+    protected void setArrivalAirport(final String arrivalAirport) {
+        this.arrivalAirport = arrivalAirport;
     }
 
     // -------------------------------------------------------------------------------- airplaneCode
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute, which is
-     * {@code null} until this instance is loaded.
+     * {@code null} until this instance is loaded, or until an extending entity sets it with the
+     * association which writes the column.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
-     * @apiNote This method is {@code protected}, not package-private, so that a lazy proxy,
-     *         which is a subclass in another package, can override it.
      */
-    protected String getAirplaneCode() {
+    public String getAirplaneCode() {
         return airplaneCode;
+    }
+
+    /**
+     * Replaces current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute with the specified
+     * value.
+     *
+     * @param airplaneCode new value for {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
+     * @apiNote The attribute is read-only, so the value is never written: an extending entity
+     *         which maps the column's writable side, an association, calls this method to keep the
+     *         attribute in step with what the association writes.
+     */
+    protected void setAirplaneCode(final String airplaneCode) {
+        this.airplaneCode = airplaneCode;
     }
 
     // ---------------------------------------------------------------------------------- daysOfWeek
