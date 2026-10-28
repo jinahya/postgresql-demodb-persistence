@@ -24,53 +24,6 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence ${persistence.schemaLocation}"
              version="${persistence.version}">
-  <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
-    <description>Persistence Unit for a PostgreSQL Container</description>
-    <!--        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
-    <provider>${persistence-unit.provider}</provider>
-    <class>com.github.jinahya.persistence.more.converter.json.JsonpStringAttributeConverter$OfJsonObject</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRouteId$ValidityConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
-    <class>com.github.jinahya.persistence.more.converter.time.ZoneIdStringAttributeConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.AirplaneData</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.AirportData</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.Booking</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.Ticket</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.Flight</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.Route</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.RouteId</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.Seat</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.Segment</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.BoardingPass</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.Airplane</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.Airport</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.Timetable</class>
-    <exclude-unlisted-classes>true</exclude-unlisted-classes>
-    <shared-cache-mode>NONE</shared-cache-mode>
-    <validation-mode>CALLBACK</validation-mode>
-    <properties>
-      <!-- a plain PostgreSQL container, which Testcontainers starts from the URL alone; the unit generates its -->
-      <!-- schema, so the image needs no data; TC_DAEMON=true keeps the container for the whole test JVM -->
-      <!-- https://java.testcontainers.org/modules/databases/jdbc/ -->
-      <property name="jakarta.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver"/>
-      <!-- stringtype=unspecified: a String bound for the tstzrange column, which the generated schema types -->
-      <!-- natively, by its columnDefinition, for Flight's join formula, is sent untyped, so that the server -->
-      <!-- casts it -->
-      <property name="jakarta.persistence.jdbc.url"
-                value="jdbc:tc:postgresql:18-alpine:///test?TC_DAEMON=true&amp;stringtype=unspecified"/>
-      <property name="jakarta.persistence.jdbc.user" value="test"/>
-      <property name="jakarta.persistence.jdbc.password" value="test"/>
-      <!-- /////////////////////////////////////////////////////////////////////////////////////////////// hibernate -->
-      <!--      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>-->
-      <property name="hibernate.format_sql" value="true"/>
-      <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
-      <property name="hibernate.highlight_sql" value="true"/>
-      <property name="hibernate.show_sql" value="true"/>
-      <property name="hibernate.use_sql_comment" value="true"/>
-    </properties>
-  </persistence-unit>
   <persistence-unit name="it" transaction-type="RESOURCE_LOCAL">
     <description>Persistence Unit for a Physical Database</description>
     <!--    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->

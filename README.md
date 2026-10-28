@@ -147,9 +147,6 @@ What else this module does:
   `MappedRoute`'s three read-only foreign-key codes do carry one: `Route`'s association setters set each code with
   the association which writes its column, so a route about to be inserted has them. `MappedTicket`'s `bookRef`,
   which `Ticket.setBooking` keeps in step the same way, carries none yet.
-- The test unit generates its schema on a PostgreSQL container, and the exotic columns are their own types there:
-  `integer array`, `interval second(6)`, `tstzrange`; the `point` and `jsonb` columns, written through converters as
-  text, are generated as text.
 
 ### The text of an `interval`
 
@@ -204,7 +201,7 @@ Hibernate ORM is the persistence provider; see [`HIBERNATE_ONLY.adoc`](HIBERNATE
 dropped.
 
 ```shell
-$ ./_mvn_test.sh              # unit tests, on a PostgreSQL container
+$ ./_mvn_test.sh              # unit tests, no database needed
 $ ./_mvn_verify.sh            # + integration tests, against the database above
 $ ./_mvn_verify_notests.sh    # no database needed
 ```
@@ -213,18 +210,17 @@ $ ./_mvn_verify_notests.sh    # no database needed
 
 The entities live in `src/test`, one per table and view, extending the mapped superclasses with what an
 application decides: the associations, lazy, with no cascade; `of(...)` factories where an association is part of
-the identifier; `RouteId`, the `MappedRouteId` `Route` gives `MappedRoute<T>` for a table which has none. The persistence units are there too,
-`test` on a PostgreSQL container Testcontainers starts, whose schema the provider generates, and `it` on the
-database above.
+the identifier; `RouteId`, the `MappedRouteId` `Route` gives `MappedRoute<T>` for a table which has none. The
+persistence unit is there too, `it`, on the database above.
 
 Per entity, after `mysql-sakila-persistence`: a `*_Randomizer`, podam with the constrained attributes assigned after
 the fact; a `*_Persister`, which persists what the entity references first; a `*_Test`, without a persistence
-context; a `*_Persistence_Test`, against the test unit; and a `*_Persistence_IT`, against the database, which
+context; and a `*_Persistence_IT`, against the database, which
 `find`s a random installed row, asserts what the entity promises of it, and inserts a randomized row inside a
 transaction it rolls back. The composite identifiers have a `*_Randomizer` and a `*_Test` of their own.
 
 ```shell
-$ ./_mvn_test.sh      # 169 unit tests
+$ ./_mvn_test.sh      # 111 unit tests
 $ ./_mvn_verify.sh    # + 52 integration tests, the database up
 ```
 
