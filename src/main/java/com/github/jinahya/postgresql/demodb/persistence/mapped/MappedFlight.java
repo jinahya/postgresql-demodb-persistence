@@ -23,8 +23,8 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.Converter;
 import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -117,7 +117,8 @@ public abstract class MappedFlight {
             return Arrays.stream(values())
                     .filter(v -> v.text.equals(text))
                     .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("no constant for '" + text + "'"));
+                    .orElseThrow(
+                            () -> new IllegalArgumentException("no constant for '" + text + "'"));
         }
 
         FlightStatus(final String text) {
@@ -137,8 +138,8 @@ public abstract class MappedFlight {
     }
 
     /**
-     * Converts between a {@link FlightStatus} and its column value, {@link FlightStatus#text()}. The
-     * column is text, so both providers hand the converter a {@link String}.
+     * Converts between a {@link FlightStatus} and its column value, {@link FlightStatus#text()}.
+     * The column is text, so both providers hand the converter a {@link String}.
      * <p>
      * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
      * {@link jakarta.persistence.Convert @Convert}.
@@ -256,6 +257,7 @@ public abstract class MappedFlight {
      * {@value}.
      */
     public static final String COLUMN_VALUE_STATUS_CANCELLED = "Cancelled";
+
     /**
      * The regular expression which the {@value #ATTRIBUTE_NAME_STATUS} attribute matches: one of
      * the values the {@code flight_status_check} constraint allows. The value is {@value}.
@@ -348,10 +350,11 @@ public abstract class MappedFlight {
      *
      * @param obj {@inheritDoc}
      * @return {@inheritDoc}
-     * @implSpec Equality is by the natural key, the {@value #ATTRIBUTE_NAME_ROUTE_NO} and the
-     *         {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE}, which the table holds unique; not by
-     *         the {@link Id @Id} attribute, {@value #ATTRIBUTE_NAME_FLIGHT_ID}, an identity which
-     *         a new instance does not have until it is persisted, or, under EclipseLink, flushed.
+     * @implSpec Equality is by the natural key, the {@value #ATTRIBUTE_NAME_ROUTE_NO} and
+     *         the {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE}, which the table holds unique; not
+     *         by the {@link Id @Id} attribute, {@value #ATTRIBUTE_NAME_FLIGHT_ID}, an identity
+     *         which a new instance does not have until it is persisted, or, under EclipseLink,
+     *         flushed.
      * @implNote The {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE} is compared as an
      *         {@link Instant}, not as an {@link OffsetDateTime}, whose equality takes the offset
      *         in: a provider reads a {@code timestamptz} back in an offset of its own, UTC under
@@ -372,8 +375,9 @@ public abstract class MappedFlight {
      * {@inheritDoc}
      *
      * @return {@inheritDoc}
-     * @implSpec The hash is over the natural key, the {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE}
-     *         as an {@link Instant}, consistent with {@link #equals(Object)}.
+     * @implSpec The hash is over the natural key, the
+     *         {@value #ATTRIBUTE_NAME_SCHEDULED_DEPARTURE} as an {@link Instant}, consistent with
+     *         {@link #equals(Object)}.
      */
     @Override
     public final int hashCode() {
@@ -627,6 +631,12 @@ public abstract class MappedFlight {
     private OffsetDateTime actualArrival;
 
     // -----------------------------------------------------------------------------------------------------------------
+    private static Duration between(final OffsetDateTime from, final OffsetDateTime to) {
+        if (from == null || to == null) {
+            return null;
+        }
+        return Duration.between(from, to);
+    }
 
     /**
      * Returns the scheduled block time of this flight, from the
@@ -675,12 +685,5 @@ public abstract class MappedFlight {
     @Transient
     public Duration getArrivalDelay() {
         return between(scheduledArrival, actualArrival);
-    }
-
-    private static Duration between(final OffsetDateTime from, final OffsetDateTime to) {
-        if (from == null || to == null) {
-            return null;
-        }
-        return Duration.between(from, to);
     }
 }

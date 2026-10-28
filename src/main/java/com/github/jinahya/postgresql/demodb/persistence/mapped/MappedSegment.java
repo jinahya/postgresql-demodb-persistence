@@ -27,9 +27,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -165,6 +165,19 @@ public abstract class MappedSegment {
      * value is {@value}.
      */
     public static final int ATTRIBUTE_DIGITS_FRACTION_PRICE = COLUMN_SCALE_PRICE;
+
+    /**
+     * The minimum value of the {@value #ATTRIBUTE_NAME_PRICE} attribute, inclusive; the column's
+     * check, {@code price >= 0}. The value is {@value}.
+     */
+    public static final String ATTRIBUTE_DECIMAL_MIN_PRICE = "0";
+
+    /**
+     * The maximum value of the {@value #ATTRIBUTE_NAME_PRICE} attribute, inclusive; the most a
+     * {@code numeric(}{@value #COLUMN_PRECISION_PRICE}{@code ,}
+     * {@value #COLUMN_SCALE_PRICE}{@code )} holds. The value is {@value}.
+     */
+    public static final String ATTRIBUTE_DECIMAL_MAX_PRICE = "99999999.99";
 
     // -------------------------------------------------------------------------------- CONSTRUCTORS
 
@@ -322,8 +335,12 @@ public abstract class MappedSegment {
     private FareConditions fareConditions;
 
     // ---------------------------------------------------------------------------------------------
-    @PositiveOrZero
-    @Digits(integer = ATTRIBUTE_DIGITS_INTEGER_PRICE, fraction = ATTRIBUTE_DIGITS_FRACTION_PRICE)
+    @DecimalMin(ATTRIBUTE_DECIMAL_MIN_PRICE)
+    @DecimalMax(ATTRIBUTE_DECIMAL_MAX_PRICE)
+    // @Digits counts digits differently by provider;
+    // https://github.com/jakartaee/validation-spec/issues/346
+    // @jakarta.validation.constraints.Digits(integer = ATTRIBUTE_DIGITS_INTEGER_PRICE,
+    //                                        fraction = ATTRIBUTE_DIGITS_FRACTION_PRICE)
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_PRICE,

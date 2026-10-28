@@ -24,7 +24,8 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -127,8 +128,22 @@ public abstract class MappedBooking {
      */
     public static final int ATTRIBUTE_DIGITS_FRACTION_TOTAL_AMOUNT = COLUMN_SCALE_TOTAL_AMOUNT;
 
-    // ---------------------------------------------------------------------------------------------
-    // STATIC_FACTORY_METHODS
+    /**
+     * The minimum value of the {@value #ATTRIBUTE_NAME_TOTAL_AMOUNT} attribute, inclusive; the
+     * least a {@code numeric(}{@value #COLUMN_PRECISION_TOTAL_AMOUNT}{@code ,}
+     * {@value #COLUMN_SCALE_TOTAL_AMOUNT}{@code )} holds, the column having no check of its own.
+     * The value is {@value}.
+     */
+    public static final String ATTRIBUTE_DECIMAL_MIN_TOTAL_AMOUNT = "-99999999.99";
+
+    /**
+     * The maximum value of the {@value #ATTRIBUTE_NAME_TOTAL_AMOUNT} attribute, inclusive; the most
+     * a {@code numeric(}{@value #COLUMN_PRECISION_TOTAL_AMOUNT}{@code ,}
+     * {@value #COLUMN_SCALE_TOTAL_AMOUNT}{@code )} holds. The value is {@value}.
+     */
+    public static final String ATTRIBUTE_DECIMAL_MAX_TOTAL_AMOUNT = "+99999999.99";
+
+    // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
     /**
      * Creates a new instance of a subclass, with the specified booking reference.
@@ -280,8 +295,12 @@ public abstract class MappedBooking {
     private OffsetDateTime bookDate;
 
     // ---------------------------------------------------------------------------------------------
-    @Digits(integer = ATTRIBUTE_DIGITS_INTEGER_TOTAL_AMOUNT,
-            fraction = ATTRIBUTE_DIGITS_FRACTION_TOTAL_AMOUNT)
+    // @Digits counts digits differently by provider;
+    // https://github.com/jakartaee/validation-spec/issues/346
+    // @jakarta.validation.constraints.Digits(integer = ATTRIBUTE_DIGITS_INTEGER_TOTAL_AMOUNT,
+    //                                        fraction = ATTRIBUTE_DIGITS_FRACTION_TOTAL_AMOUNT)
+    @DecimalMax(ATTRIBUTE_DECIMAL_MAX_TOTAL_AMOUNT)
+    @DecimalMin(ATTRIBUTE_DECIMAL_MIN_TOTAL_AMOUNT)
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_TOTAL_AMOUNT,

@@ -48,11 +48,12 @@ import jakarta.persistence.UniqueConstraint;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @NamedQuery(
-        name = "selectByFlightIdAndSeatNo",
+        name = "selectAllByFlightIdOrderByBoardingNoAac",
         query = """
                 SELECT e
                 FROM BoardingPass AS e
-                WHERE e.flightId = :flightId AND e.seatNo = :seatNo"""
+                WHERE e.flightId = :flightId
+                ORDER BY e.boardingNo ASC"""
 )
 @NamedQuery(
         name = "selectByFlightIdAndBoardingNo",
@@ -60,6 +61,21 @@ import jakarta.persistence.UniqueConstraint;
                 SELECT e
                 FROM BoardingPass AS e
                 WHERE e.flightId = :flightId AND e.boardingNo = :boardingNo"""
+)
+@NamedQuery(
+        name = "selectAllByFlightIdOrderBySeatNoAsc",
+        query = """
+                SELECT e
+                FROM BoardingPass AS e
+                WHERE e.flightId = :flightId
+                ORDER BY e.seatNo ASC"""
+)
+@NamedQuery(
+        name = "selectByFlightIdAndSeatNo",
+        query = """
+                SELECT e
+                FROM BoardingPass AS e
+                WHERE e.flightId = :flightId AND e.seatNo = :seatNo"""
 )
 @IdClass(BoardingPassId.class)
 @Entity

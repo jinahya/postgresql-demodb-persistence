@@ -22,10 +22,11 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -93,63 +94,378 @@ class BoardingPass_Persistence_IT
     // ---------------------------------------------------------------------------------------------
 
     /**
-     * Verifies that the {@code selectByFlightIdAndBoardingNo} named query finds a randomly
-     * selected row by its flight id and boarding number, a unique pair.
-     *
-     * @implNote The context is cleared after the selection, so the instance found is read
-     *         from the database, not answered from the context. The boarding number is nullable,
-     *         and a row without one cannot be found by it, {@code = NULL} matching no row; rows are
-     *         drawn until one has it, a few times at most, for nearly all of them do.
+     * The flight the named queries are tested with, one of the installed {@code 3m} edition with
+     * {@value #COUNT_OF_FLIGHT} boarding passes, three of them without a boarding number.
      */
-    @DisplayName("selectByFlightIdAndBoardingNo finds a randomly selected row")
-    @Test
-    void selectByFlightIdAndBoardingNo__() {
-        applyEntityManagerInTransactionAndRollback(em -> {
-            final var optional = Stream.generate(
-                            () -> __Persistence_TestUtils.selectRandomEntity(em, targetClass))
-                    .limit(10)
-                    .flatMap(Optional::stream)
-                    .filter(e -> e.getBoardingNo() != null)
-                    .findFirst();
-            assumeTrue(optional.isPresent(),
-                       () -> "no row of " + targetClass + " with a boarding number was drawn");
-            final var selected = optional.get();
-            em.clear();
-            final var found = em.createNamedQuery("selectByFlightIdAndBoardingNo",
-                                                  BoardingPass.class)
-                    .setParameter("flightId", selected.getFlightId())
-                    .setParameter("boardingNo", selected.getBoardingNo())
-                    .getSingleResult();
-            assertThat(found).as("found by flight id and boarding number of %s", selected)
-                    .isNotSameAs(selected)
-                    .isEqualTo(selected);
-            return null;
-        });
+    private static final int FLIGHT_ID = 8767;
+
+    /**
+     * The number of the boarding passes of {@value #FLIGHT_ID}.
+     */
+    private static final int COUNT_OF_FLIGHT = 15;
+
+    /**
+     * The ticket number of the pass of boarding number {@code 1}, seat {@code 9C}, of
+     * {@value #FLIGHT_ID}.
+     */
+    private static final String TICKET_NO_OF_BOARDING_NO_1 = "0005434546074";
+
+    /**
+     * The boarding numbers of {@value #FLIGHT_ID}, in an ascending order, the three {@code NULL}s
+     * last.
+     */
+    private static final List<Integer> BOARDING_NOS_ASC =
+            Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, null, null, null);
+
+    /**
+     * The seat numbers of {@value #FLIGHT_ID}, in an ascending order of the text.
+     */
+    private static final List<String> SEAT_NOS_ASC = List.of(
+            "13C", "13D", "14A", "14B", "15A", "15C", "16A", "17A", "19B", "21A", "21C", "7C", "7D",
+            "8B", "9C");
+
+    /**
+     * Tests the {@code selectByFlightIdAndBoardingNo} named query.
+     */
+    @DisplayName("selectByFlightIdAndBoardingNo")
+    @Nested
+    class SelectByFlightIdAndBoardingNo_IT {
+
+        /**
+         * Verifies that the named query finds the pass of boarding number {@code 1} of the flight,
+         * the one of ticket {@code 0005434546074}, seat {@code 9C}.
+         */
+        @DisplayName("finds the pass of boarding number 1, by the named query")
+        @Test
+        void __NamedQuery() {
+            applyEntityManager(em -> {
+                final var found = em.createNamedQuery("selectByFlightIdAndBoardingNo",
+                                                      BoardingPass.class)
+                        .setParameter("flightId", FLIGHT_ID)
+                        .setParameter("boardingNo", 1)
+                        .getSingleResult();
+                assertThat(found).as("pass of boarding number 1 of flight %s", FLIGHT_ID)
+                        .satisfies(p -> {
+                            assertThat(p.getFlightId()).isEqualTo(FLIGHT_ID);
+                            assertThat(p.getTicketNo()).isEqualTo(TICKET_NO_OF_BOARDING_NO_1);
+                            assertThat(p.getSeatNo()).isEqualTo("9C");
+                        });
+                return null;
+            });
+        }
+
+        /**
+         * Verifies that the same query, written in the Jakarta Persistence Query Language, finds
+         * the pass of boarding number {@code 1} of the flight, the one of ticket
+         * {@code 0005434546074}, seat {@code 9C}.
+         */
+        @DisplayName("finds the pass of boarding number 1, by the query language")
+        @Test
+        void __QueryLanguage() {
+            applyEntityManager(em -> {
+                final var found = em.createQuery(
+                                """
+                                        SELECT e
+                                        FROM BoardingPass AS e
+                                        WHERE e.flightId = :flightId
+                                          AND e.boardingNo = :boardingNo""",
+                                BoardingPass.class
+                        )
+                        .setParameter("flightId", FLIGHT_ID)
+                        .setParameter("boardingNo", 1)
+                        .getSingleResult();
+                assertThat(found).as("pass of boarding number 1 of flight %s", FLIGHT_ID)
+                        .satisfies(p -> {
+                            assertThat(p.getFlightId()).isEqualTo(FLIGHT_ID);
+                            assertThat(p.getTicketNo()).isEqualTo(TICKET_NO_OF_BOARDING_NO_1);
+                            assertThat(p.getSeatNo()).isEqualTo("9C");
+                        });
+                return null;
+            });
+        }
+
+        /**
+         * Verifies that the same query, built with the Criteria API over the static metamodel,
+         * finds the pass of boarding number {@code 1} of the flight, the one of ticket
+         * {@code 0005434546074}, seat {@code 9C}.
+         */
+        @DisplayName("finds the pass of boarding number 1, by the Criteria API")
+        @Test
+        void __CriteriaApi() {
+            applyEntityManager(em -> {
+                final var builder = em.getCriteriaBuilder();
+                final var query = builder.createQuery(BoardingPass.class);
+                final var root = query.from(BoardingPass.class);
+                query.select(root).where(
+                        builder.equal(root.get(BoardingPass_.flightId), FLIGHT_ID),
+                        builder.equal(root.get(BoardingPass_.boardingNo), 1));
+                final var found = em.createQuery(query).getSingleResult();
+                assertThat(found).as("pass of boarding number 1 of flight %s", FLIGHT_ID)
+                        .satisfies(p -> {
+                            assertThat(p.getFlightId()).isEqualTo(FLIGHT_ID);
+                            assertThat(p.getTicketNo()).isEqualTo(TICKET_NO_OF_BOARDING_NO_1);
+                            assertThat(p.getSeatNo()).isEqualTo("9C");
+                        });
+                return null;
+            });
+        }
     }
 
     /**
-     * Verifies that the {@code selectByFlightIdAndSeatNo} named query finds a randomly selected
-     * row by its flight id and seat number, a unique pair.
-     *
-     * @implNote The context is cleared after the selection, so the instance found is read
-     *         from the database, not answered from the context.
+     * Tests the {@code selectByFlightIdAndSeatNo} named query.
      */
-    @DisplayName("selectByFlightIdAndSeatNo finds a randomly selected row")
-    @Test
-    void selectByFlightIdAndSeatNo__() {
-        applyEntityManagerInTransactionAndRollback(em -> {
-            final var optional = __Persistence_TestUtils.selectRandomEntity(em, targetClass);
-            assumeTrue(optional.isPresent(), () -> "no row of " + targetClass + " is installed");
-            final var selected = optional.get();
-            em.clear();
-            final var found = em.createNamedQuery("selectByFlightIdAndSeatNo", BoardingPass.class)
-                    .setParameter("flightId", selected.getFlightId())
-                    .setParameter("seatNo", selected.getSeatNo())
-                    .getSingleResult();
-            assertThat(found).as("found by flight id and seat number of %s", selected)
-                    .isNotSameAs(selected)
-                    .isEqualTo(selected);
-            return null;
-        });
+    @DisplayName("selectByFlightIdAndSeatNo")
+    @Nested
+    class SelectByFlightIdAndSeatNo_IT {
+
+        /**
+         * Verifies that the named query finds the pass of seat {@code 9C} of the flight, the one of
+         * ticket {@code 0005434546074}, boarding number {@code 1}.
+         */
+        @DisplayName("finds the pass of seat 9C, by the named query")
+        @Test
+        void __NamedQuery() {
+            applyEntityManager(em -> {
+                final var found = em.createNamedQuery("selectByFlightIdAndSeatNo",
+                                                      BoardingPass.class)
+                        .setParameter("flightId", FLIGHT_ID)
+                        .setParameter("seatNo", "9C")
+                        .getSingleResult();
+                assertThat(found).as("pass of seat 9C of flight %s", FLIGHT_ID)
+                        .satisfies(p -> {
+                            assertThat(p.getFlightId()).isEqualTo(FLIGHT_ID);
+                            assertThat(p.getTicketNo()).isEqualTo(TICKET_NO_OF_BOARDING_NO_1);
+                            assertThat(p.getBoardingNo()).isEqualTo(1);
+                        });
+                return null;
+            });
+        }
+
+        /**
+         * Verifies that the same query, written in the Jakarta Persistence Query Language, finds
+         * the pass of seat {@code 9C} of the flight, the one of ticket {@code 0005434546074},
+         * boarding number {@code 1}.
+         */
+        @DisplayName("finds the pass of seat 9C, by the query language")
+        @Test
+        void __QueryLanguage() {
+            applyEntityManager(em -> {
+                final var found = em.createQuery(
+                                """
+                                        SELECT e
+                                        FROM BoardingPass AS e
+                                        WHERE e.flightId = :flightId
+                                          AND e.seatNo = :seatNo""",
+                                BoardingPass.class
+                        )
+                        .setParameter("flightId", FLIGHT_ID)
+                        .setParameter("seatNo", "9C")
+                        .getSingleResult();
+                assertThat(found).as("pass of seat 9C of flight %s", FLIGHT_ID)
+                        .satisfies(p -> {
+                            assertThat(p.getFlightId()).isEqualTo(FLIGHT_ID);
+                            assertThat(p.getTicketNo()).isEqualTo(TICKET_NO_OF_BOARDING_NO_1);
+                            assertThat(p.getBoardingNo()).isEqualTo(1);
+                        });
+                return null;
+            });
+        }
+
+        /**
+         * Verifies that the same query, built with the Criteria API over the static metamodel,
+         * finds the pass of seat {@code 9C} of the flight, the one of ticket {@code 0005434546074},
+         * boarding number {@code 1}.
+         */
+        @DisplayName("finds the pass of seat 9C, by the Criteria API")
+        @Test
+        void __CriteriaApi() {
+            applyEntityManager(em -> {
+                final var builder = em.getCriteriaBuilder();
+                final var query = builder.createQuery(BoardingPass.class);
+                final var root = query.from(BoardingPass.class);
+                query.select(root).where(
+                        builder.equal(root.get(BoardingPass_.flightId), FLIGHT_ID),
+                        builder.equal(root.get(BoardingPass_.seatNo), "9C"));
+                final var found = em.createQuery(query).getSingleResult();
+                assertThat(found).as("pass of seat 9C of flight %s", FLIGHT_ID)
+                        .satisfies(p -> {
+                            assertThat(p.getFlightId()).isEqualTo(FLIGHT_ID);
+                            assertThat(p.getTicketNo()).isEqualTo(TICKET_NO_OF_BOARDING_NO_1);
+                            assertThat(p.getBoardingNo()).isEqualTo(1);
+                        });
+                return null;
+            });
+        }
+    }
+
+    /**
+     * Tests the {@code selectAllByFlightIdOrderByBoardingNoAac} named query.
+     */
+    @DisplayName("selectAllByFlightIdOrderByBoardingNoAac")
+    @Nested
+    class SelectAllByFlightIdOrderByBoardingNo_IT {
+
+        /**
+         * Verifies that the named query selects the 15 passes of the flight, by boarding number,
+         * {@code 1} to {@code 12} and then the three without one, as PostgreSQL orders a
+         * {@code NULL} last in an ascending order.
+         */
+        @DisplayName("selects all, by boarding number, nulls last, by the named query")
+        @Test
+        void __NamedQuery() {
+            applyEntityManager(em -> {
+                final var all = em.createNamedQuery("selectAllByFlightIdOrderByBoardingNoAac",
+                                                    BoardingPass.class)
+                        .setParameter("flightId", FLIGHT_ID)
+                        .getResultList();
+                assertThat(all).as("passes of flight %s", FLIGHT_ID)
+                        .hasSize(COUNT_OF_FLIGHT)
+                        .allSatisfy(p -> assertThat(p.getFlightId()).isEqualTo(FLIGHT_ID));
+                assertThat(all).extracting(BoardingPass::getBoardingNo)
+                        .as("boarding numbers of flight %s", FLIGHT_ID)
+                        .containsExactlyElementsOf(BOARDING_NOS_ASC);
+                return null;
+            });
+        }
+
+        /**
+         * Verifies that the same query, written in the Jakarta Persistence Query Language, selects
+         * the 15 passes of the flight, by boarding number, {@code 1} to {@code 12} and then the
+         * three without one, as PostgreSQL orders a {@code NULL} last in an ascending order.
+         */
+        @DisplayName("selects all, by boarding number, nulls last, by the query language")
+        @Test
+        void __QueryLanguage() {
+            applyEntityManager(em -> {
+                final var all = em.createQuery(
+                                """
+                                        SELECT e
+                                        FROM BoardingPass AS e
+                                        WHERE e.flightId = :flightId
+                                        ORDER BY e.boardingNo ASC""",
+                                BoardingPass.class
+                        )
+                        .setParameter("flightId", FLIGHT_ID)
+                        .getResultList();
+                assertThat(all).as("passes of flight %s", FLIGHT_ID)
+                        .hasSize(COUNT_OF_FLIGHT)
+                        .allSatisfy(p -> assertThat(p.getFlightId()).isEqualTo(FLIGHT_ID));
+                assertThat(all).extracting(BoardingPass::getBoardingNo)
+                        .as("boarding numbers of flight %s", FLIGHT_ID)
+                        .containsExactlyElementsOf(BOARDING_NOS_ASC);
+                return null;
+            });
+        }
+
+        /**
+         * Verifies that the same query, built with the Criteria API over the static metamodel,
+         * selects the 15 passes of the flight, by boarding number, {@code 1} to {@code 12} and then
+         * the three without one, as PostgreSQL orders a {@code NULL} last in an ascending order.
+         */
+        @DisplayName("selects all, by boarding number, nulls last, by the Criteria API")
+        @Test
+        void __CriteriaApi() {
+            applyEntityManager(em -> {
+                final var builder = em.getCriteriaBuilder();
+                final var query = builder.createQuery(BoardingPass.class);
+                final var root = query.from(BoardingPass.class);
+                query.select(root)
+                        .where(builder.equal(root.get(BoardingPass_.flightId), FLIGHT_ID))
+                        .orderBy(builder.asc(root.get(BoardingPass_.boardingNo)));
+                final var all = em.createQuery(query).getResultList();
+                assertThat(all).as("passes of flight %s", FLIGHT_ID)
+                        .hasSize(COUNT_OF_FLIGHT)
+                        .allSatisfy(p -> assertThat(p.getFlightId()).isEqualTo(FLIGHT_ID));
+                assertThat(all).extracting(BoardingPass::getBoardingNo)
+                        .as("boarding numbers of flight %s", FLIGHT_ID)
+                        .containsExactlyElementsOf(BOARDING_NOS_ASC);
+                return null;
+            });
+        }
+    }
+
+    /**
+     * Tests the {@code selectAllByFlightIdOrderBySeatNoAsc} named query.
+     */
+    @DisplayName("selectAllByFlightIdOrderBySeatNoAsc")
+    @Nested
+    class SelectAllByFlightIdOrderBySeatNo_IT {
+
+        /**
+         * Verifies that the named query selects the 15 passes of the flight, by seat number, in the
+         * order of the text, not of the row: {@code 21C} before {@code 7C}.
+         */
+        @DisplayName("selects all, by seat number, by the named query")
+        @Test
+        void __NamedQuery() {
+            applyEntityManager(em -> {
+                final var all = em.createNamedQuery("selectAllByFlightIdOrderBySeatNoAsc",
+                                                    BoardingPass.class)
+                        .setParameter("flightId", FLIGHT_ID)
+                        .getResultList();
+                assertThat(all).as("passes of flight %s", FLIGHT_ID)
+                        .hasSize(COUNT_OF_FLIGHT)
+                        .allSatisfy(p -> assertThat(p.getFlightId()).isEqualTo(FLIGHT_ID));
+                assertThat(all).extracting(BoardingPass::getSeatNo)
+                        .as("seat numbers of flight %s", FLIGHT_ID)
+                        .containsExactlyElementsOf(SEAT_NOS_ASC);
+                return null;
+            });
+        }
+
+        /**
+         * Verifies that the same query, written in the Jakarta Persistence Query Language, selects
+         * the 15 passes of the flight, by seat number, in the order of the text, not of the row:
+         * {@code 21C} before {@code 7C}.
+         */
+        @DisplayName("selects all, by seat number, by the query language")
+        @Test
+        void __QueryLanguage() {
+            applyEntityManager(em -> {
+                final var all = em.createQuery(
+                                """
+                                        SELECT e
+                                        FROM BoardingPass AS e
+                                        WHERE e.flightId = :flightId
+                                        ORDER BY e.seatNo ASC""",
+                                BoardingPass.class
+                        )
+                        .setParameter("flightId", FLIGHT_ID)
+                        .getResultList();
+                assertThat(all).as("passes of flight %s", FLIGHT_ID)
+                        .hasSize(COUNT_OF_FLIGHT)
+                        .allSatisfy(p -> assertThat(p.getFlightId()).isEqualTo(FLIGHT_ID));
+                assertThat(all).extracting(BoardingPass::getSeatNo)
+                        .as("seat numbers of flight %s", FLIGHT_ID)
+                        .containsExactlyElementsOf(SEAT_NOS_ASC);
+                return null;
+            });
+        }
+
+        /**
+         * Verifies that the same query, built with the Criteria API over the static metamodel,
+         * selects the 15 passes of the flight, by seat number, in the order of the text, not of the
+         * row: {@code 21C} before {@code 7C}.
+         */
+        @DisplayName("selects all, by seat number, by the Criteria API")
+        @Test
+        void __CriteriaApi() {
+            applyEntityManager(em -> {
+                final var builder = em.getCriteriaBuilder();
+                final var query = builder.createQuery(BoardingPass.class);
+                final var root = query.from(BoardingPass.class);
+                query.select(root)
+                        .where(builder.equal(root.get(BoardingPass_.flightId), FLIGHT_ID))
+                        .orderBy(builder.asc(root.get(BoardingPass_.seatNo)));
+                final var all = em.createQuery(query).getResultList();
+                assertThat(all).as("passes of flight %s", FLIGHT_ID)
+                        .hasSize(COUNT_OF_FLIGHT)
+                        .allSatisfy(p -> assertThat(p.getFlightId()).isEqualTo(FLIGHT_ID));
+                assertThat(all).extracting(BoardingPass::getSeatNo)
+                        .as("seat numbers of flight %s", FLIGHT_ID)
+                        .containsExactlyElementsOf(SEAT_NOS_ASC);
+                return null;
+            });
+        }
     }
 }
