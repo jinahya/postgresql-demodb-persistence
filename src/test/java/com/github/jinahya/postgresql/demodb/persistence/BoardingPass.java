@@ -25,7 +25,6 @@ import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSegment;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
@@ -38,8 +37,7 @@ import jakarta.persistence.UniqueConstraint;
  * {@link MappedBoardingPass} with what is an application's to decide: its associations, their fetch
  * types and their cascades.
  * <p>
- * The identifier is the inherited pair of {@code @Id} attributes, named by {@link BoardingPassId}
- * through {@link IdClass @IdClass}.
+ * The identifier is {@link BoardingPassId}, {@link MappedBoardingPass}'s type argument.
  * <p>
  * The table's two unique constraints, a boarding number and a seat each once per flight, are
  * declared with {@link UniqueConstraint @UniqueConstraint}, under the names the database gives
@@ -52,7 +50,7 @@ import jakarta.persistence.UniqueConstraint;
         query = """
                 SELECT e
                 FROM BoardingPass AS e
-                WHERE e.flightId = :flightId
+                WHERE e.id.flightId = :flightId
                 ORDER BY e.boardingNo ASC"""
 )
 @NamedQuery(
@@ -60,14 +58,14 @@ import jakarta.persistence.UniqueConstraint;
         query = """
                 SELECT e
                 FROM BoardingPass AS e
-                WHERE e.flightId = :flightId AND e.boardingNo = :boardingNo"""
+                WHERE e.id.flightId = :flightId AND e.boardingNo = :boardingNo"""
 )
 @NamedQuery(
         name = "selectAllByFlightIdOrderBySeatNoAsc",
         query = """
                 SELECT e
                 FROM BoardingPass AS e
-                WHERE e.flightId = :flightId
+                WHERE e.id.flightId = :flightId
                 ORDER BY e.seatNo ASC"""
 )
 @NamedQuery(
@@ -75,9 +73,8 @@ import jakarta.persistence.UniqueConstraint;
         query = """
                 SELECT e
                 FROM BoardingPass AS e
-                WHERE e.flightId = :flightId AND e.seatNo = :seatNo"""
+                WHERE e.id.flightId = :flightId AND e.seatNo = :seatNo"""
 )
-@IdClass(BoardingPassId.class)
 @Entity
 @Table(name = MappedBoardingPass.TABLE_NAME,
        uniqueConstraints = {
@@ -90,7 +87,7 @@ import jakarta.persistence.UniqueConstraint;
        }
 )
 public class BoardingPass
-        extends MappedBoardingPass {
+        extends MappedBoardingPass<BoardingPassId> {
 
     /**
      * Creates a new instance of the specified segment, whose identifier becomes the identifier.
@@ -100,8 +97,7 @@ public class BoardingPass
      */
     public static BoardingPass of(final Segment segment) {
         final var instance = new BoardingPass();
-        instance.setTicketNo(segment.getTicketNo());
-        instance.setFlightId(segment.getFlightId());
+        instance.setId(BoardingPassId.of(segment.getTicketNo(), segment.getFlightId()));
         instance.segment = segment;
         return instance;
     }

@@ -44,6 +44,7 @@ class Segment_Randomizer
 
     Segment_Randomizer() {
         super(Segment.class, List.of(
+                MappedSegment.ATTRIBUTE_NAME_ID,
                 "ticket",
                 "flight"
         ));

@@ -21,6 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.object.randomizer.PodamObjectRandomizer;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat.FareConditions;
 
 import uk.co.jemos.podam.api.ClassInfoStrategy;
@@ -42,6 +43,7 @@ class Seat_Randomizer
 
     Seat_Randomizer() {
         super(Seat.class, List.of(
+                MappedSeat.ATTRIBUTE_NAME_ID,
                 "airplaneData"
         ));
     }
@@ -65,6 +67,7 @@ class Seat_Randomizer
     @Override
     public Seat get() {
         final var instance = super.get();
+        instance.setId(SeatId.of(__Random_TestUtils.code(3), __Random_TestUtils.seatNo()));
         instance.setFareConditions(__Random_TestUtils.pick(FareConditions.values()));
         return instance;
     }

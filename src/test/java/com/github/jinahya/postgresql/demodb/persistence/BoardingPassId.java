@@ -22,15 +22,19 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedBoardingPassId;
 
+import jakarta.persistence.Embeddable;
+
 import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * The id class of {@link BoardingPass}: {@link MappedBoardingPassId} made concrete and
- * {@link Serializable}, as an {@link jakarta.persistence.IdClass @IdClass} has to be.
+ * The identifier of {@link BoardingPass}: {@link MappedBoardingPassId} made concrete,
+ * {@link Serializable} and {@link Embeddable}, as an
+ * {@link jakarta.persistence.EmbeddedId @EmbeddedId} has to be.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Embeddable
 public class BoardingPassId
         extends MappedBoardingPassId
         implements Serializable {

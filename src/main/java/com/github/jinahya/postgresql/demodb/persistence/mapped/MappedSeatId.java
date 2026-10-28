@@ -72,7 +72,8 @@ public abstract class MappedSeatId {
     // STATIC_FACTORY_METHODS
 
     /**
-     * Creates a new instance of a subclass, with the specified values.
+     * Creates a new instance of a subclass, with the specified values. The instance is not modified
+     * afterwards: an identifier has no setter.
      *
      * @param <T>          the type of the identifier.
      * @param instantiator a supplier of a new, empty instance of {@code T}.
@@ -85,10 +86,12 @@ public abstract class MappedSeatId {
     protected static <T extends MappedSeatId> T of(final Supplier<? extends T> instantiator,
                                                    final String airplaneCode, final String seatNo) {
         Objects.requireNonNull(instantiator, "instantiator is null");
-        final var instance =
+        final T instance =
                 Objects.requireNonNull(instantiator.get(), "instantiator.get() is null");
-        instance.setAirplaneCode(airplaneCode);
-        instance.setSeatNo(seatNo);
+        // a private field is not accessed through a type variable
+        final MappedSeatId id = instance;
+        id.airplaneCode = airplaneCode;
+        id.seatNo = seatNo;
         return instance;
     }
 
@@ -151,16 +154,6 @@ public abstract class MappedSeatId {
         return airplaneCode;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute with the specified
-     * value.
-     *
-     * @param airplaneCode new value for {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
-     */
-    protected void setAirplaneCode(final String airplaneCode) {
-        this.airplaneCode = airplaneCode;
-    }
-
     // -------------------------------------------------------------------------------------- seatNo
 
     /**
@@ -170,16 +163,6 @@ public abstract class MappedSeatId {
      */
     public String getSeatNo() {
         return seatNo;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_SEAT_NO} attribute with the specified
-     * value.
-     *
-     * @param seatNo new value for {@value #ATTRIBUTE_NAME_SEAT_NO} attribute.
-     */
-    protected void setSeatNo(final String seatNo) {
-        this.seatNo = seatNo;
     }
 
     // ---------------------------------------------------------------------------------------------

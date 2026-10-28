@@ -24,7 +24,6 @@ import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSegment;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -33,17 +32,14 @@ import jakarta.persistence.Table;
  * An entity which maps the {@value MappedSegment#TABLE_NAME} table, extending {@link MappedSegment}
  * with what is an application's to decide: its associations, their fetch types and their cascades.
  * <p>
- * The identifier is the inherited pair of {@code @Id} attributes, named by {@link SegmentId}
- * through {@link IdClass
+ * The identifier is {@link SegmentId}, {@link MappedSegment}'s type argument.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @IdClass}.
  */
-@IdClass(SegmentId.class)
 @Entity
 @Table(name = MappedSegment.TABLE_NAME)
 public class Segment
-        extends MappedSegment {
+        extends MappedSegment<SegmentId> {
 
     /**
      * Creates a new instance of the specified ticket and flight, whose identifiers become the two
@@ -55,8 +51,7 @@ public class Segment
      */
     public static Segment of(final Ticket ticket, final Flight flight) {
         final var instance = new Segment();
-        instance.setTicketNo(ticket.getTicketNo());
-        instance.setFlightId(flight.getFlightId());
+        instance.setId(SegmentId.of(ticket.getTicketNo(), flight.getFlightId()));
         instance.ticket = ticket;
         instance.flight = flight;
         return instance;

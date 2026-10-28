@@ -21,6 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.object.randomizer.PodamObjectRandomizer;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedBoardingPass;
 
 import uk.co.jemos.podam.api.ClassInfoStrategy;
 import uk.co.jemos.podam.api.DataProviderStrategy;
@@ -42,6 +43,7 @@ class BoardingPass_Randomizer
 
     BoardingPass_Randomizer() {
         super(BoardingPass.class, List.of(
+                MappedBoardingPass.ATTRIBUTE_NAME_ID,
                 "segment"
         ));
     }

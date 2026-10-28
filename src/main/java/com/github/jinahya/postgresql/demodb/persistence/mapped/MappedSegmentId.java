@@ -59,7 +59,8 @@ public abstract class MappedSegmentId {
     // STATIC_FACTORY_METHODS
 
     /**
-     * Creates a new instance of a subclass, with the specified values.
+     * Creates a new instance of a subclass, with the specified values. The instance is not modified
+     * afterwards: an identifier has no setter.
      *
      * @param <T>          the type of the identifier.
      * @param instantiator a supplier of a new, empty instance of {@code T}.
@@ -73,10 +74,12 @@ public abstract class MappedSegmentId {
                                                       final String ticketNo,
                                                       final Integer flightId) {
         Objects.requireNonNull(instantiator, "instantiator is null");
-        final var instance =
+        final T instance =
                 Objects.requireNonNull(instantiator.get(), "instantiator.get() is null");
-        instance.setTicketNo(ticketNo);
-        instance.setFlightId(flightId);
+        // a private field is not accessed through a type variable
+        final MappedSegmentId id = instance;
+        id.ticketNo = ticketNo;
+        id.flightId = flightId;
         return instance;
     }
 
@@ -143,16 +146,6 @@ public abstract class MappedSegmentId {
         return ticketNo;
     }
 
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute with the specified
-     * value.
-     *
-     * @param ticketNo new value for {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
-     */
-    protected void setTicketNo(final String ticketNo) {
-        this.ticketNo = ticketNo;
-    }
-
     // ------------------------------------------------------------------------------------ flightId
 
     /**
@@ -162,16 +155,6 @@ public abstract class MappedSegmentId {
      */
     public Integer getFlightId() {
         return flightId;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute with the specified
-     * value.
-     *
-     * @param flightId new value for {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
-     */
-    protected void setFlightId(final Integer flightId) {
-        this.flightId = flightId;
     }
 
     // ---------------------------------------------------------------------------------------------

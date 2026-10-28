@@ -22,69 +22,81 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.Id;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A mapped superclass which holds the mappings of the {@value MappedBoardingPass#TABLE_NAME}
  * table,
- * <q>Boarding passes</q>, including the {@link Id @Id} attributes of its composite primary key.
+ * <q>Boarding passes</q>.
  * <p>
- * The identifier is mapped with an {@link jakarta.persistence.IdClass @IdClass}: an extending
- * entity names its id class, a subclass of {@link MappedBoardingPassId}, with {@code @IdClass} and
- * inherits the {@code @Id} attributes from here.
+ * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of a subclass of
+ * {@link MappedBoardingPassId}, {@code T}, which an extending entity names;
+ * {@link #equals(Object)} compares the identifiers, and the getters of the key's attributes read
+ * them. An identifier is not modified once created; a boarding pass takes another with
+ * {@link #setId(MappedBoardingPassId)}.
  * <p>
- * The two {@code @Id} columns together are also a foreign key, to the {@code segments} table, see
- * {@link MappedSegment}.
+ * The two columns of the identifier together are also a foreign key, to the {@code segments}
+ * table, see {@link MappedSegment}.
  * <p>
  * The table also keeps ({@value #COLUMN_NAME_FLIGHT_ID}, {@value #COLUMN_NAME_BOARDING_NO});
  * ({@value #COLUMN_NAME_FLIGHT_ID}, {@value #COLUMN_NAME_SEAT_NO}) unique, which an extending
  * entity may state in its {@link jakarta.persistence.Table @Table}.
  *
+ * @param <T> the type of the identifier.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see MappedBoardingPassId
  */
 @MappedSuperclass
-public abstract class MappedBoardingPass {
+public abstract class MappedBoardingPass<T extends MappedBoardingPassId> {
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
      */
     public static final String TABLE_NAME = "boarding_passes";
 
+    // ------------------------------------------------------------------------------------------ id
+
+    /**
+     * The name of the attribute which holds the identifier. The value is {@value}.
+     */
+    public static final String ATTRIBUTE_NAME_ID = "id";
+
     // ----------------------------------------------------------------------------------- ticket_no
 
     /**
-     * The name of the table column to which the {@value #ATTRIBUTE_NAME_TICKET_NO} attribute maps.
-     * The value is {@value}.
+     * The name of the table column to which the
+     * {@value MappedBoardingPassId#ATTRIBUTE_NAME_TICKET_NO} attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_TICKET_NO = "ticket_no";
 
     /**
-     * The name of the {@link Id @Id} attribute which maps the {@value #COLUMN_NAME_TICKET_NO}
-     * column. The value is {@value}.
+     * The path of the identifier's attribute which maps the {@value #COLUMN_NAME_TICKET_NO} column.
+     * The value is {@value}.
      */
-    public static final String ATTRIBUTE_NAME_TICKET_NO =
-            MappedBoardingPassId.ATTRIBUTE_NAME_TICKET_NO;
+    public static final String ATTRIBUTE_PATH_ID_TICKET_NO =
+            ATTRIBUTE_NAME_ID + '.' + MappedBoardingPassId.ATTRIBUTE_NAME_TICKET_NO;
 
     // ----------------------------------------------------------------------------------- flight_id
 
     /**
-     * The name of the table column to which the {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute maps.
-     * The value is {@value}.
+     * The name of the table column to which the
+     * {@value MappedBoardingPassId#ATTRIBUTE_NAME_FLIGHT_ID} attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_FLIGHT_ID = "flight_id";
 
     /**
-     * The name of the {@link Id @Id} attribute which maps the {@value #COLUMN_NAME_FLIGHT_ID}
-     * column. The value is {@value}.
+     * The path of the identifier's attribute which maps the {@value #COLUMN_NAME_FLIGHT_ID} column.
+     * The value is {@value}.
      */
-    public static final String ATTRIBUTE_NAME_FLIGHT_ID =
-            MappedBoardingPassId.ATTRIBUTE_NAME_FLIGHT_ID;
+    public static final String ATTRIBUTE_PATH_ID_FLIGHT_ID =
+            ATTRIBUTE_NAME_ID + '.' + MappedBoardingPassId.ATTRIBUTE_NAME_FLIGHT_ID;
 
     // ------------------------------------------------------------------------------------- seat_no
 
@@ -142,8 +154,7 @@ public abstract class MappedBoardingPass {
     @Override
     public final String toString() {
         return super.toString() + '{' +
-               "ticketNo=" + ticketNo +
-               ",flightId=" + flightId +
+               "id=" + id +
                ",seatNo=" + seatNo +
                ",boardingNo=" + boardingNo +
                ",boardingTime=" + boardingTime +
@@ -155,70 +166,73 @@ public abstract class MappedBoardingPass {
      *
      * @param obj {@inheritDoc}
      * @return {@inheritDoc}
-     * @implSpec Equality is by the two {@link Id @Id} attributes,
-     *         {@value #ATTRIBUTE_NAME_TICKET_NO} and {@value #ATTRIBUTE_NAME_FLIGHT_ID}, alone.
+     * @implSpec Equality is by the identifier alone.
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (!(obj instanceof MappedBoardingPass that)) {
+        if (!(obj instanceof MappedBoardingPass<?> that)) {
             return false;
         }
-        return Objects.equals(getTicketNo(), that.getTicketNo())
-               && Objects.equals(getFlightId(), that.getFlightId());
+        return Objects.equals(getId(), that.getId());
     }
 
     /**
      * {@inheritDoc}
      *
      * @return {@inheritDoc}
-     * @implSpec The hash is over the two {@link Id @Id} attributes, consistent with
-     *         {@link #equals(Object)}.
+     * @implSpec The hash is the identifier's, consistent with {@link #equals(Object)}.
      */
     @Override
     public final int hashCode() {
-        return Objects.hash(getTicketNo(), getFlightId());
+        return Objects.hashCode(getId());
+    }
+
+    // ------------------------------------------------------------------------------------------ id
+
+    /**
+     * Returns current value of the identifier.
+     *
+     * @return current value of the identifier; {@code null} until set or loaded.
+     */
+    public T getId() {
+        return id;
+    }
+
+    /**
+     * Replaces current value of the identifier with the specified value.
+     *
+     * @param id new value for the identifier.
+     */
+    public void setId(final T id) {
+        this.id = id;
     }
 
     // ------------------------------------------------------------------------------------ ticketNo
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
+     * Returns the {@value MappedBoardingPassId#ATTRIBUTE_NAME_TICKET_NO} of the identifier.
      *
-     * @return current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
+     * @return the {@value MappedBoardingPassId#ATTRIBUTE_NAME_TICKET_NO} of the identifier;
+     *         {@code null} when the identifier is {@code null}.
      */
     public String getTicketNo() {
-        return ticketNo;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute with the specified
-     * value.
-     *
-     * @param ticketNo new value for {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
-     */
-    protected void setTicketNo(final String ticketNo) {
-        this.ticketNo = ticketNo;
+        return Optional.ofNullable(getId())
+                .map(MappedBoardingPassId::getTicketNo)
+                .orElse(null);
     }
 
     // ------------------------------------------------------------------------------------ flightId
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
+     * Returns the {@value MappedBoardingPassId#ATTRIBUTE_NAME_FLIGHT_ID} of the identifier.
      *
-     * @return current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
+     * @return the {@value MappedBoardingPassId#ATTRIBUTE_NAME_FLIGHT_ID} of the identifier;
+     *         {@code null} when the identifier is {@code null}.
      */
     public Integer getFlightId() {
-        return flightId;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute with the specified
-     * value.
-     *
-     * @param flightId new value for {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
-     */
-    protected void setFlightId(final Integer flightId) {
-        this.flightId = flightId;
+        return Optional.ofNullable(getId())
+                .map(MappedBoardingPassId::getFlightId)
+                .orElse(null);
     }
 
     // -------------------------------------------------------------------------------------- seatNo
@@ -285,18 +299,10 @@ public abstract class MappedBoardingPass {
     }
 
     // ---------------------------------------------------------------------------------------------
+    @Valid
     @NotNull
-    @Id
-    @Basic(optional = false)
-    @Column(name = COLUMN_NAME_TICKET_NO, nullable = false, insertable = true, updatable = false)
-    private String ticketNo;
-
-    // ---------------------------------------------------------------------------------------------
-    @NotNull
-    @Id
-    @Basic(optional = false)
-    @Column(name = COLUMN_NAME_FLIGHT_ID, nullable = false, insertable = true, updatable = false)
-    private Integer flightId;
+    @EmbeddedId
+    private T id;
 
     // ---------------------------------------------------------------------------------------------
     @NotNull

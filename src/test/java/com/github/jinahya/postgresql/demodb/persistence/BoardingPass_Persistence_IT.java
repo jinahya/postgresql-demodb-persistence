@@ -20,6 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSegmentId_;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,7 +30,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Verifies the mappings of {@link BoardingPass} against the installed {@code demo} database.
@@ -45,36 +45,6 @@ class BoardingPass_Persistence_IT
     }
 
     // ---------------------------------------------------------------------------------------------
-
-    /**
-     * {@inheritDoc}
-     *
-     * @implNote {@link BoardingPass} is mapped with an
-     *         {@link jakarta.persistence.IdClass IdClass}, which the generic test does not
-     *         assemble; this one builds the {@link BoardingPassId} from the ticket number and the
-     *         flight id of the selected row.
-     */
-    @DisplayName("find reaches a randomly selected row once the context is cleared")
-    @Test
-    @Override
-    void find_RandomlySelected_ContextCleared() {
-        applyEntityManagerInTransactionAndRollback(em -> {
-            final var optional = __Persistence_TestUtils.selectRandomEntity(em, targetClass);
-            assumeTrue(optional.isPresent(), () -> "no row of " + targetClass + " is installed");
-            final var selected = optional.get();
-            final var identifier =
-                    BoardingPassId.of(selected.getTicketNo(), selected.getFlightId());
-            em.clear();
-            final var found = em.find(targetClass, identifier);
-            assertThat(found)
-                    .as("the %s found by %s, from the database", targetClass.getSimpleName(),
-                        identifier)
-                    .isNotNull()
-                    .isNotSameAs(selected)
-                    .isEqualTo(selected);
-            return null;
-        });
-    }
 
     /**
      * {@inheritDoc}
@@ -167,7 +137,7 @@ class BoardingPass_Persistence_IT
                                 """
                                         SELECT e
                                         FROM BoardingPass AS e
-                                        WHERE e.flightId = :flightId
+                                        WHERE e.id.flightId = :flightId
                                           AND e.boardingNo = :boardingNo""",
                                 BoardingPass.class
                         )
@@ -197,7 +167,9 @@ class BoardingPass_Persistence_IT
                 final var query = builder.createQuery(BoardingPass.class);
                 final var root = query.from(BoardingPass.class);
                 query.select(root).where(
-                        builder.equal(root.get(BoardingPass_.flightId), FLIGHT_ID),
+                        builder.equal(
+                                root.get(BoardingPass_.id).get(MappedSegmentId_.flightId),
+                                FLIGHT_ID),
                         builder.equal(root.get(BoardingPass_.boardingNo), 1));
                 final var found = em.createQuery(query).getSingleResult();
                 assertThat(found).as("pass of boarding number 1 of flight %s", FLIGHT_ID)
@@ -254,7 +226,7 @@ class BoardingPass_Persistence_IT
                                 """
                                         SELECT e
                                         FROM BoardingPass AS e
-                                        WHERE e.flightId = :flightId
+                                        WHERE e.id.flightId = :flightId
                                           AND e.seatNo = :seatNo""",
                                 BoardingPass.class
                         )
@@ -284,7 +256,9 @@ class BoardingPass_Persistence_IT
                 final var query = builder.createQuery(BoardingPass.class);
                 final var root = query.from(BoardingPass.class);
                 query.select(root).where(
-                        builder.equal(root.get(BoardingPass_.flightId), FLIGHT_ID),
+                        builder.equal(
+                                root.get(BoardingPass_.id).get(MappedSegmentId_.flightId),
+                                FLIGHT_ID),
                         builder.equal(root.get(BoardingPass_.seatNo), "9C"));
                 final var found = em.createQuery(query).getSingleResult();
                 assertThat(found).as("pass of seat 9C of flight %s", FLIGHT_ID)
@@ -341,7 +315,7 @@ class BoardingPass_Persistence_IT
                                 """
                                         SELECT e
                                         FROM BoardingPass AS e
-                                        WHERE e.flightId = :flightId
+                                        WHERE e.id.flightId = :flightId
                                         ORDER BY e.boardingNo ASC""",
                                 BoardingPass.class
                         )
@@ -370,7 +344,9 @@ class BoardingPass_Persistence_IT
                 final var query = builder.createQuery(BoardingPass.class);
                 final var root = query.from(BoardingPass.class);
                 query.select(root)
-                        .where(builder.equal(root.get(BoardingPass_.flightId), FLIGHT_ID))
+                        .where(builder.equal(
+                                root.get(BoardingPass_.id).get(MappedSegmentId_.flightId),
+                                FLIGHT_ID))
                         .orderBy(builder.asc(root.get(BoardingPass_.boardingNo)));
                 final var all = em.createQuery(query).getResultList();
                 assertThat(all).as("passes of flight %s", FLIGHT_ID)
@@ -426,7 +402,7 @@ class BoardingPass_Persistence_IT
                                 """
                                         SELECT e
                                         FROM BoardingPass AS e
-                                        WHERE e.flightId = :flightId
+                                        WHERE e.id.flightId = :flightId
                                         ORDER BY e.seatNo ASC""",
                                 BoardingPass.class
                         )
@@ -455,7 +431,9 @@ class BoardingPass_Persistence_IT
                 final var query = builder.createQuery(BoardingPass.class);
                 final var root = query.from(BoardingPass.class);
                 query.select(root)
-                        .where(builder.equal(root.get(BoardingPass_.flightId), FLIGHT_ID))
+                        .where(builder.equal(
+                                root.get(BoardingPass_.id).get(MappedSegmentId_.flightId),
+                                FLIGHT_ID))
                         .orderBy(builder.asc(root.get(BoardingPass_.seatNo)));
                 final var all = em.createQuery(query).getResultList();
                 assertThat(all).as("passes of flight %s", FLIGHT_ID)

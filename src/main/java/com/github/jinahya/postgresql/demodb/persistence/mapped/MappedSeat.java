@@ -26,31 +26,34 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Convert;
-import jakarta.persistence.Id;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A mapped superclass which holds the mappings of the {@value MappedSeat#TABLE_NAME} table,
- * <q>Seats</q>, including the {@link Id @Id} attributes of its composite primary key.
+ * <q>Seats</q>.
  * <p>
- * The identifier is mapped with an {@link jakarta.persistence.IdClass @IdClass}: an extending
- * entity names its id class, a subclass of {@link MappedSeatId}, with {@code @IdClass} and inherits
- * the {@code @Id} attributes from here.
+ * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of a subclass of
+ * {@link MappedSeatId}, {@code T}, which an extending entity names; {@link #equals(Object)}
+ * compares the identifiers, and the getters of the key's attributes read them. An identifier is
+ * not modified once created; a seat takes another with {@link #setId(MappedSeatId)}.
  * <p>
- * The {@value MappedSeat#COLUMN_NAME_AIRPLANE_CODE} {@code @Id} column is also a foreign key; being
- * part of the identifier, it stays insertable, and an association over it, if the extending entity
- * maps one, is read-only ({@link jakarta.persistence.MapsId @MapsId} or
- * {@code insertable = false, updatable = false}).
+ * The {@value MappedSeat#COLUMN_NAME_AIRPLANE_CODE} column is also a foreign key; the identifier
+ * writes it, and an association over it, if the extending entity maps one, is read-only
+ * ({@code insertable = false, updatable = false}).
  *
+ * @param <T> the type of the identifier.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see MappedSeatId
  */
 @MappedSuperclass
-public abstract class MappedSeat {
+public abstract class MappedSeat<T extends MappedSeatId> {
 
     /**
      * The fare conditions, the travel class, the value of a {@code seats.fare_conditions} column and
@@ -120,11 +123,18 @@ public abstract class MappedSeat {
      */
     public static final String TABLE_NAME = "seats";
 
+    // ------------------------------------------------------------------------------------------ id
+
+    /**
+     * The name of the attribute which holds the identifier. The value is {@value}.
+     */
+    public static final String ATTRIBUTE_NAME_ID = "id";
+
     // ------------------------------------------------------------------------------- airplane_code
 
     /**
-     * The name of the table column to which the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute
-     * maps. The value is {@value}.
+     * The name of the table column to which the {@value MappedSeatId#ATTRIBUTE_NAME_AIRPLANE_CODE}
+     * attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_AIRPLANE_CODE = "airplane_code";
 
@@ -134,37 +144,38 @@ public abstract class MappedSeat {
     public static final int COLUMN_LENGTH_AIRPLANE_CODE = 3;
 
     /**
-     * The name of the {@link Id @Id} attribute which maps the {@value #COLUMN_NAME_AIRPLANE_CODE}
+     * The path of the identifier's attribute which maps the {@value #COLUMN_NAME_AIRPLANE_CODE}
      * column. The value is {@value}.
      */
-    public static final String ATTRIBUTE_NAME_AIRPLANE_CODE =
-            MappedSeatId.ATTRIBUTE_NAME_AIRPLANE_CODE;
+    public static final String ATTRIBUTE_PATH_ID_AIRPLANE_CODE =
+            ATTRIBUTE_NAME_ID + '.' + MappedSeatId.ATTRIBUTE_NAME_AIRPLANE_CODE;
 
     /**
-     * The minimum size of the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute. The value is
-     * {@value}.
+     * The minimum size of the {@value MappedSeatId#ATTRIBUTE_NAME_AIRPLANE_CODE} attribute. The
+     * value is {@value}.
      */
     public static final int SIZE_MIN_AIRPLANE_CODE = 0;
 
     /**
-     * The maximum size of the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute. The value is
-     * {@value}.
+     * The maximum size of the {@value MappedSeatId#ATTRIBUTE_NAME_AIRPLANE_CODE} attribute. The
+     * value is {@value}.
      */
     public static final int SIZE_MAX_AIRPLANE_CODE = COLUMN_LENGTH_AIRPLANE_CODE;
 
     // ------------------------------------------------------------------------------------- seat_no
 
     /**
-     * The name of the table column to which the {@value #ATTRIBUTE_NAME_SEAT_NO} attribute maps.
-     * The value is {@value}.
+     * The name of the table column to which the {@value MappedSeatId#ATTRIBUTE_NAME_SEAT_NO}
+     * attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_SEAT_NO = "seat_no";
 
     /**
-     * The name of the {@link Id @Id} attribute which maps the {@value #COLUMN_NAME_SEAT_NO} column.
+     * The path of the identifier's attribute which maps the {@value #COLUMN_NAME_SEAT_NO} column.
      * The value is {@value}.
      */
-    public static final String ATTRIBUTE_NAME_SEAT_NO = MappedSeatId.ATTRIBUTE_NAME_SEAT_NO;
+    public static final String ATTRIBUTE_PATH_ID_SEAT_NO =
+            ATTRIBUTE_NAME_ID + '.' + MappedSeatId.ATTRIBUTE_NAME_SEAT_NO;
 
     // ----------------------------------------------------------------------------- fare_conditions
 
@@ -218,8 +229,7 @@ public abstract class MappedSeat {
     @Override
     public final String toString() {
         return super.toString() + '{' +
-               "airplaneCode=" + airplaneCode +
-               ",seatNo=" + seatNo +
+               "id=" + id +
                ",fareConditions=" + fareConditions +
                '}';
     }
@@ -229,70 +239,73 @@ public abstract class MappedSeat {
      *
      * @param obj {@inheritDoc}
      * @return {@inheritDoc}
-     * @implSpec Equality is by the two {@link Id @Id} attributes,
-     *         {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} and {@value #ATTRIBUTE_NAME_SEAT_NO}, alone.
+     * @implSpec Equality is by the identifier alone.
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (!(obj instanceof MappedSeat that)) {
+        if (!(obj instanceof MappedSeat<?> that)) {
             return false;
         }
-        return Objects.equals(getAirplaneCode(), that.getAirplaneCode())
-               && Objects.equals(getSeatNo(), that.getSeatNo());
+        return Objects.equals(getId(), that.getId());
     }
 
     /**
      * {@inheritDoc}
      *
      * @return {@inheritDoc}
-     * @implSpec The hash is over the two {@link Id @Id} attributes, consistent with
-     *         {@link #equals(Object)}.
+     * @implSpec The hash is the identifier's, consistent with {@link #equals(Object)}.
      */
     @Override
     public final int hashCode() {
-        return Objects.hash(getAirplaneCode(), getSeatNo());
+        return Objects.hashCode(getId());
+    }
+
+    // ------------------------------------------------------------------------------------------ id
+
+    /**
+     * Returns current value of the identifier.
+     *
+     * @return current value of the identifier; {@code null} until set or loaded.
+     */
+    public T getId() {
+        return id;
+    }
+
+    /**
+     * Replaces current value of the identifier with the specified value.
+     *
+     * @param id new value for the identifier.
+     */
+    public void setId(final T id) {
+        this.id = id;
     }
 
     // -------------------------------------------------------------------------------- airplaneCode
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
+     * Returns the {@value MappedSeatId#ATTRIBUTE_NAME_AIRPLANE_CODE} of the identifier.
      *
-     * @return current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
+     * @return the {@value MappedSeatId#ATTRIBUTE_NAME_AIRPLANE_CODE} of the identifier;
+     *         {@code null} when the identifier is {@code null}.
      */
     public String getAirplaneCode() {
-        return airplaneCode;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute with the specified
-     * value.
-     *
-     * @param airplaneCode new value for {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
-     */
-    protected void setAirplaneCode(final String airplaneCode) {
-        this.airplaneCode = airplaneCode;
+        return Optional.ofNullable(getId())
+                .map(MappedSeatId::getAirplaneCode)
+                .orElse(null);
     }
 
     // -------------------------------------------------------------------------------------- seatNo
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_SEAT_NO} attribute.
+     * Returns the {@value MappedSeatId#ATTRIBUTE_NAME_SEAT_NO} of the identifier.
      *
-     * @return current value of {@value #ATTRIBUTE_NAME_SEAT_NO} attribute.
+     * @return the {@value MappedSeatId#ATTRIBUTE_NAME_SEAT_NO} of the identifier; {@code null} when
+     *         the identifier is {@code null}.
      */
     public String getSeatNo() {
-        return seatNo;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_SEAT_NO} attribute with the specified
-     * value.
-     *
-     * @param seatNo new value for {@value #ATTRIBUTE_NAME_SEAT_NO} attribute.
-     */
-    protected void setSeatNo(final String seatNo) {
-        this.seatNo = seatNo;
+        return Optional.ofNullable(getId())
+                .map(MappedSeatId::getSeatNo)
+                .orElse(null);
     }
 
     // ------------------------------------------------------------------------------ fareConditions
@@ -317,24 +330,10 @@ public abstract class MappedSeat {
     }
 
     // ---------------------------------------------------------------------------------------------
-    @Size(min = SIZE_MIN_AIRPLANE_CODE, max = SIZE_MAX_AIRPLANE_CODE)
+    @Valid
     @NotNull
-    @Id
-    @Basic(optional = false)
-    @Column(name = COLUMN_NAME_AIRPLANE_CODE,
-            nullable = false,
-            insertable = true,
-            updatable = false,
-            length = COLUMN_LENGTH_AIRPLANE_CODE
-    )
-    private String airplaneCode;
-
-    // ---------------------------------------------------------------------------------------------
-    @NotNull
-    @Id
-    @Basic(optional = false)
-    @Column(name = COLUMN_NAME_SEAT_NO, nullable = false, insertable = true, updatable = false)
-    private String seatNo;
+    @EmbeddedId
+    private T id;
 
     // ---------------------------------------------------------------------------------------------
     @Convert(converter = FareConditionsConverter.class)

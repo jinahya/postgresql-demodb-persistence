@@ -25,67 +25,78 @@ import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat.FareCo
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
-import jakarta.persistence.Id;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A mapped superclass which holds the mappings of the {@value MappedSegment#TABLE_NAME} table,
- * <q>Flight segment (leg)</q>, including the {@link Id @Id} attributes of its composite primary
- * key.
+ * <q>Flight segment (leg)</q>.
  * <p>
- * The identifier is mapped with an {@link jakarta.persistence.IdClass @IdClass}: an extending
- * entity names its id class, a subclass of {@link MappedSegmentId}, with {@code @IdClass} and
- * inherits the {@code @Id} attributes from here.
+ * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of a subclass of
+ * {@link MappedSegmentId}, {@code T}, which an extending entity names; {@link #equals(Object)}
+ * compares the identifiers, and the getters of the key's attributes read them. An identifier is
+ * not modified once created; a segment takes another with {@link #setId(MappedSegmentId)}.
  * <p>
  * The {@value MappedSegment#COLUMN_NAME_TICKET_NO} and {@value MappedSegment#COLUMN_NAME_FLIGHT_ID}
- * {@code @Id} columns are also foreign keys; being part of the identifier, they stay insertable,
- * and an association over them, if the extending entity maps one, is read-only
- * ({@link jakarta.persistence.MapsId @MapsId} or {@code insertable = false, updatable = false}).
+ * columns are also foreign keys; the identifier writes them, and an association over them, if the
+ * extending entity maps one, is read-only ({@code insertable = false, updatable = false}).
  *
+ * @param <T> the type of the identifier.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see MappedSegmentId
  */
 @MappedSuperclass
-public abstract class MappedSegment {
+public abstract class MappedSegment<T extends MappedSegmentId> {
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
      */
     public static final String TABLE_NAME = "segments";
 
+    // ------------------------------------------------------------------------------------------ id
+
+    /**
+     * The name of the attribute which holds the identifier. The value is {@value}.
+     */
+    public static final String ATTRIBUTE_NAME_ID = "id";
+
     // ----------------------------------------------------------------------------------- ticket_no
 
     /**
-     * The name of the table column to which the {@value #ATTRIBUTE_NAME_TICKET_NO} attribute maps.
-     * The value is {@value}.
+     * The name of the table column to which the {@value MappedSegmentId#ATTRIBUTE_NAME_TICKET_NO}
+     * attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_TICKET_NO = "ticket_no";
 
     /**
-     * The name of the {@link Id @Id} attribute which maps the {@value #COLUMN_NAME_TICKET_NO}
-     * column. The value is {@value}.
+     * The path of the identifier's attribute which maps the {@value #COLUMN_NAME_TICKET_NO} column.
+     * The value is {@value}.
      */
-    public static final String ATTRIBUTE_NAME_TICKET_NO = MappedSegmentId.ATTRIBUTE_NAME_TICKET_NO;
+    public static final String ATTRIBUTE_PATH_ID_TICKET_NO =
+            ATTRIBUTE_NAME_ID + '.' + MappedSegmentId.ATTRIBUTE_NAME_TICKET_NO;
 
     // ----------------------------------------------------------------------------------- flight_id
 
     /**
-     * The name of the table column to which the {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute maps.
-     * The value is {@value}.
+     * The name of the table column to which the {@value MappedSegmentId#ATTRIBUTE_NAME_FLIGHT_ID}
+     * attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_FLIGHT_ID = "flight_id";
 
     /**
-     * The name of the {@link Id @Id} attribute which maps the {@value #COLUMN_NAME_FLIGHT_ID}
-     * column. The value is {@value}.
+     * The path of the identifier's attribute which maps the {@value #COLUMN_NAME_FLIGHT_ID} column.
+     * The value is {@value}.
      */
-    public static final String ATTRIBUTE_NAME_FLIGHT_ID = MappedSegmentId.ATTRIBUTE_NAME_FLIGHT_ID;
+    public static final String ATTRIBUTE_PATH_ID_FLIGHT_ID =
+            ATTRIBUTE_NAME_ID + '.' + MappedSegmentId.ATTRIBUTE_NAME_FLIGHT_ID;
 
     // ----------------------------------------------------------------------------- fare_conditions
 
@@ -193,8 +204,7 @@ public abstract class MappedSegment {
     @Override
     public final String toString() {
         return super.toString() + '{' +
-               "ticketNo=" + ticketNo +
-               ",flightId=" + flightId +
+               "id=" + id +
                ",fareConditions=" + fareConditions +
                ",price=" + price +
                '}';
@@ -205,70 +215,73 @@ public abstract class MappedSegment {
      *
      * @param obj {@inheritDoc}
      * @return {@inheritDoc}
-     * @implSpec Equality is by the two {@link Id @Id} attributes,
-     *         {@value #ATTRIBUTE_NAME_TICKET_NO} and {@value #ATTRIBUTE_NAME_FLIGHT_ID}, alone.
+     * @implSpec Equality is by the identifier alone.
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (!(obj instanceof MappedSegment that)) {
+        if (!(obj instanceof MappedSegment<?> that)) {
             return false;
         }
-        return Objects.equals(getTicketNo(), that.getTicketNo())
-               && Objects.equals(getFlightId(), that.getFlightId());
+        return Objects.equals(getId(), that.getId());
     }
 
     /**
      * {@inheritDoc}
      *
      * @return {@inheritDoc}
-     * @implSpec The hash is over the two {@link Id @Id} attributes, consistent with
-     *         {@link #equals(Object)}.
+     * @implSpec The hash is the identifier's, consistent with {@link #equals(Object)}.
      */
     @Override
     public final int hashCode() {
-        return Objects.hash(getTicketNo(), getFlightId());
+        return Objects.hashCode(getId());
+    }
+
+    // ------------------------------------------------------------------------------------------ id
+
+    /**
+     * Returns current value of the identifier.
+     *
+     * @return current value of the identifier; {@code null} until set or loaded.
+     */
+    public T getId() {
+        return id;
+    }
+
+    /**
+     * Replaces current value of the identifier with the specified value.
+     *
+     * @param id new value for the identifier.
+     */
+    public void setId(final T id) {
+        this.id = id;
     }
 
     // ------------------------------------------------------------------------------------ ticketNo
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
+     * Returns the {@value MappedSegmentId#ATTRIBUTE_NAME_TICKET_NO} of the identifier.
      *
-     * @return current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
+     * @return the {@value MappedSegmentId#ATTRIBUTE_NAME_TICKET_NO} of the identifier; {@code null}
+     *         when the identifier is {@code null}.
      */
     public String getTicketNo() {
-        return ticketNo;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_TICKET_NO} attribute with the specified
-     * value.
-     *
-     * @param ticketNo new value for {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
-     */
-    protected void setTicketNo(final String ticketNo) {
-        this.ticketNo = ticketNo;
+        return Optional.ofNullable(getId())
+                .map(MappedSegmentId::getTicketNo)
+                .orElse(null);
     }
 
     // ------------------------------------------------------------------------------------ flightId
 
     /**
-     * Returns current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
+     * Returns the {@value MappedSegmentId#ATTRIBUTE_NAME_FLIGHT_ID} of the identifier.
      *
-     * @return current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
+     * @return the {@value MappedSegmentId#ATTRIBUTE_NAME_FLIGHT_ID} of the identifier; {@code null}
+     *         when the identifier is {@code null}.
      */
     public Integer getFlightId() {
-        return flightId;
-    }
-
-    /**
-     * Replaces current value of {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute with the specified
-     * value.
-     *
-     * @param flightId new value for {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
-     */
-    protected void setFlightId(final Integer flightId) {
-        this.flightId = flightId;
+        return Optional.ofNullable(getId())
+                .map(MappedSegmentId::getFlightId)
+                .orElse(null);
     }
 
     // ------------------------------------------------------------------------------ fareConditions
@@ -313,18 +326,10 @@ public abstract class MappedSegment {
     }
 
     // ---------------------------------------------------------------------------------------------
+    @Valid
     @NotNull
-    @Id
-    @Basic(optional = false)
-    @Column(name = COLUMN_NAME_TICKET_NO, nullable = false, insertable = true, updatable = false)
-    private String ticketNo;
-
-    // ---------------------------------------------------------------------------------------------
-    @NotNull
-    @Id
-    @Basic(optional = false)
-    @Column(name = COLUMN_NAME_FLIGHT_ID, nullable = false, insertable = true, updatable = false)
-    private Integer flightId;
+    @EmbeddedId
+    private T id;
 
     // ---------------------------------------------------------------------------------------------
     @Convert(converter = FareConditionsConverter.class)

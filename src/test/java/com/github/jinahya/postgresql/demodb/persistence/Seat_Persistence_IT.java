@@ -21,11 +21,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Verifies the mappings of {@link Seat} against the installed {@code demo} database.
@@ -41,34 +38,6 @@ class Seat_Persistence_IT
     }
 
     // ---------------------------------------------------------------------------------------------
-
-    /**
-     * {@inheritDoc}
-     *
-     * @implNote {@link Seat} is mapped with an {@link jakarta.persistence.IdClass IdClass},
-     *         which the generic test does not assemble; this one builds the {@link SeatId} from the
-     *         airplane code and the seat number of the selected row.
-     */
-    @DisplayName("find reaches a randomly selected row once the context is cleared")
-    @Test
-    @Override
-    void find_RandomlySelected_ContextCleared() {
-        applyEntityManagerInTransactionAndRollback(em -> {
-            final var optional = __Persistence_TestUtils.selectRandomEntity(em, targetClass);
-            assumeTrue(optional.isPresent(), () -> "no row of " + targetClass + " is installed");
-            final var selected = optional.get();
-            final var identifier = SeatId.of(selected.getAirplaneCode(), selected.getSeatNo());
-            em.clear();
-            final var found = em.find(targetClass, identifier);
-            assertThat(found)
-                    .as("the %s found by %s, from the database", targetClass.getSimpleName(),
-                        identifier)
-                    .isNotNull()
-                    .isNotSameAs(selected)
-                    .isEqualTo(selected);
-            return null;
-        });
-    }
 
     /**
      * {@inheritDoc}

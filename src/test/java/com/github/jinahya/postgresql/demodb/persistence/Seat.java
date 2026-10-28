@@ -24,28 +24,22 @@ import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
-import java.util.Optional;
 
 /**
  * An entity which maps the {@value MappedSeat#TABLE_NAME} table, extending {@link MappedSeat} with
  * what is an application's to decide: its associations, their fetch types and their cascades.
  * <p>
- * The identifier is the inherited pair of {@code @Id} attributes, named by {@link SeatId} through
- * {@link IdClass
+ * The identifier is {@link SeatId}, {@link MappedSeat}'s type argument.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @IdClass}.
  */
-@IdClass(SeatId.class)
 @Entity
 @Table(name = MappedSeat.TABLE_NAME)
 public class Seat
-        extends MappedSeat {
+        extends MappedSeat<SeatId> {
 
     /**
      * Creates a new instance of the specified airplane and seat number.
@@ -57,8 +51,8 @@ public class Seat
      */
     public static Seat of(final AirplaneData airplaneData, final String seatNo) {
         final var instance = new Seat();
-        instance.setAirplaneData(airplaneData);
-        instance.setSeatNo(seatNo);
+        instance.airplaneData = airplaneData;
+        instance.setId(SeatId.of(airplaneData.getAirplaneCode(), seatNo));
         return instance;
     }
 
@@ -73,27 +67,12 @@ public class Seat
     // ---------------------------------------------------------------------------------------------
     /**
      * Returns the airplane this seat is in, over the {@value MappedSeat#COLUMN_NAME_AIRPLANE_CODE}
-     * column, which is part of the identifier and so already writable through
-     * {@link #setAirplaneCode(String)}; the association is read-only.
+     * column, which is part of the identifier and so written by it; the association is read-only.
      *
      * @return the airplaneData.
      */
     public AirplaneData getAirplaneData() {
         return airplaneData;
-    }
-
-    /**
-     * Replaces the airplane this seat is in with the specified value, and the
-     * {@value MappedSeat#COLUMN_NAME_AIRPLANE_CODE} part of the identifier with its code; the
-     * association itself writes nothing, so the code is what reaches the column.
-     *
-     * @param airplaneData new value for the airplaneData; {@code null} clears the code too.
-     */
-    void setAirplaneData(final AirplaneData airplaneData) {
-        this.airplaneData = airplaneData;
-        setAirplaneCode(Optional.ofNullable(airplaneData)
-                .map(AirplaneData::getAirplaneCode)
-                .orElse(null));
     }
 
     // ---------------------------------------------------------------------------------------------
