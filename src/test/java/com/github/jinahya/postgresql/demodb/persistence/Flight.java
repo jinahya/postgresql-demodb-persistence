@@ -74,14 +74,19 @@ public class Flight
     /**
      * Returns the route this flight flies, the one valid at its scheduled departure; read-only.
      *
-     * @return the route.
+     * @return the route; {@code null} when no route of the flight's route number is valid at its
+     *         scheduled departure, which no foreign key forbids.
+     * @implNote The association is optional, so that a flight without a route loads with none,
+     *         and a {@code LEFT JOIN} keeps it; an inner {@code JOIN} on it leaves such a flight
+     *         out. More than one route never matches: the table's exclusion constraint keeps the
+     *         validities of a route number apart.
      */
     public Route getRoute() {
         return route;
     }
 
     // ---------------------------------------------------------------------------------------------
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumnsOrFormulas({
             @JoinColumnOrFormula(column = @JoinColumn(
                     name = MappedFlight.COLUMN_NAME_ROUTE_NO,
