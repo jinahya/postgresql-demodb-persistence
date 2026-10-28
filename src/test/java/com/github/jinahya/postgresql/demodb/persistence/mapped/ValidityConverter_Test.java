@@ -20,7 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute.ValidityConverter;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRouteId.ValidityConverter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

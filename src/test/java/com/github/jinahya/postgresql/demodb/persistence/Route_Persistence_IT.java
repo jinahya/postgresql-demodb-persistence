@@ -20,7 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRouteId;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.postgres.extensions.converters.OffsetDateTimeRangeConverter;
@@ -58,7 +58,7 @@ class Route_Persistence_IT
      */
     @Override
     void targetInstancePersisted(final EntityManager entityManager, final Route entityInstance) {
-        final var validity = new MappedRoute.ValidityConverter()
+        final var validity = new MappedRouteId.ValidityConverter()
                 .convertToDatabaseColumn(entityInstance.getValidity());
         final var duration = entityInstance.getDuration();
         final var seconds = (Number) entityManager.createNativeQuery(
@@ -79,7 +79,7 @@ class Route_Persistence_IT
                 .getSingleResult();
         log.info("validity: {}, written: {}, the server's text: {}",
                  Arrays.toString(entityInstance.getValidity()), validity, text);
-        assertThat(new MappedRoute.ValidityConverter().convertToEntityAttribute(text))
+        assertThat(new MappedRouteId.ValidityConverter().convertToEntityAttribute(text))
                 .as("validity of %s, from the server's text, by the converter", entityInstance)
                 .containsExactly(entityInstance.getValidity());
         final var range = new OffsetDateTimeRangeConverter().from(text);

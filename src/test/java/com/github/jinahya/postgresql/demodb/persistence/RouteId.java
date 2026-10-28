@@ -21,30 +21,27 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRouteId;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * The identifier {@link Route} gives the {@value MappedRoute#TABLE_NAME} table, which has none of
- * its own: the {@value MappedRoute#COLUMN_NAME_ROUTE_NO} and
- * {@value MappedRoute#COLUMN_NAME_VALIDITY} columns, the pair the table's exclusion constraint
- * keeps apart. This is the mapping which writes the two columns, since a provider writes an
- * identifier's columns whatever their {@code insertable} says; {@link Route} overrides the
- * inherited attributes over the same columns to read-only.
+ * its own: {@link MappedRouteId} made concrete, {@link Serializable} and {@link Embeddable}, as an
+ * {@link jakarta.persistence.EmbeddedId @EmbeddedId} has to be. This is the mapping which writes
+ * the two columns, since a provider writes an identifier's columns whatever their
+ * {@code insertable} says; {@link Route} overrides the inherited attributes over the same columns
+ * to read-only.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Embeddable
 public class RouteId
+        extends MappedRouteId
         implements Serializable {
 
     @Serial
@@ -56,15 +53,12 @@ public class RouteId
     /**
      * Creates a new instance of the specified values.
      *
-     * @param routeNo  a value for the {@code routeNo} attribute.
-     * @param validity a value for the {@code validity} attribute.
+     * @param routeNo  a value for the {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
+     * @param validity a value for the {@value #ATTRIBUTE_NAME_VALIDITY} attribute.
      * @return a new instance.
      */
     public static RouteId of(final String routeNo, final Instant[] validity) {
-        final var instance = new RouteId();
-        instance.setRouteNo(routeNo);
-        instance.setValidity(validity);
-        return instance;
+        return of(RouteId::new, routeNo, validity);
     }
 
     // -------------------------------------------------------------------------------- CONSTRUCTORS
@@ -76,83 +70,4 @@ public class RouteId
     public RouteId() {
         super();
     }
-
-    // ---------------------------------------------------------------------------- java.lang.Object
-
-    @Override
-    public final String toString() {
-        return super.toString() + '{' +
-               "routeNo=" + routeNo +
-               ",validity=" + Arrays.toString(validity) +
-               '}';
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (!(obj instanceof RouteId that)) {
-            return false;
-        }
-        return Objects.equals(routeNo, that.routeNo)
-               && Arrays.equals(validity, that.validity);
-    }
-
-    @Override
-    public final int hashCode() {
-        return Objects.hash(routeNo, Arrays.hashCode(validity));
-    }
-
-    // ------------------------------------------------------------------------------------- routeNo
-
-    /**
-     * Returns current value of {@code routeNo} attribute.
-     *
-     * @return current value of {@code routeNo} attribute.
-     */
-    public String getRouteNo() {
-        return routeNo;
-    }
-
-    /**
-     * Replaces current value of {@code routeNo} attribute with the specified value.
-     *
-     * @param routeNo new value for {@code routeNo} attribute.
-     */
-    protected void setRouteNo(final String routeNo) {
-        this.routeNo = routeNo;
-    }
-
-    // ------------------------------------------------------------------------------------ validity
-
-    /**
-     * Returns current value of {@code validity} attribute.
-     *
-     * @return current value of {@code validity} attribute.
-     */
-    public Instant[] getValidity() {
-        return validity;
-    }
-
-    /**
-     * Replaces current value of {@code validity} attribute with the specified value.
-     *
-     * @param validity new value for {@code validity} attribute.
-     */
-    protected void setValidity(final Instant[] validity) {
-        this.validity = validity;
-    }
-
-    // ---------------------------------------------------------------------------------------------
-    @Basic(optional = false)
-    @Column(name = MappedRoute.COLUMN_NAME_ROUTE_NO, nullable = false, insertable = true,
-            updatable = false)
-    private String routeNo;
-
-    // ---------------------------------------------------------------------------------------------
-    // the specification does not have @Convert on an identifier's attribute, so this is not
-    // portable; Hibernate ORM, the only provider, applies it
-    @Convert(converter = MappedRoute.ValidityConverter.class)
-    @Basic(optional = false)
-    @Column(name = MappedRoute.COLUMN_NAME_VALIDITY, nullable = false, insertable = true,
-            updatable = false, columnDefinition = "tstzrange")
-    private Instant[] validity;
 }

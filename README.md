@@ -63,7 +63,7 @@ each is mapped with what maps it best: Hibernate's own types, or a converter.
 |---|---|---|---|
 | `integer[]` | `routes.days_of_week` | `List<Integer>` | Hibernate's, `@JdbcTypeCode(SqlTypes.ARRAY)` |
 | `interval` | `routes.duration` | `Duration` | Hibernate's, `@JdbcTypeCode(SqlTypes.INTERVAL_SECOND)` |
-| `tstzrange` | `routes.validity` | `Instant[]`, the lower and the upper bound | `MappedRoute.ValidityConverter`, through the text `["lower","upper")` |
+| `tstzrange` | `routes.validity` | `Instant[]`, the lower and the upper bound | `MappedRouteId.ValidityConverter`, through the text `["lower","upper")` |
 | `point` | `airports_data.coordinates`, the `airports` view's | `PointAttributeConverter.Point` | `PointAttributeConverter`, through the text `(x,y)` |
 | `jsonb` | `airplanes_data.model`, `airports_data.airport_name`, `city`, `country` | `JsonObject` | `JsonpStringAttributeConverter.OfJsonObject`, through the JSON text |
 
@@ -110,7 +110,7 @@ What else this module does:
   A `Duration` has no months; every duration of the schema is hours and minutes, 35 minutes to 19 hours 55 minutes.
 - `tstzrange` is an `Instant[]` of two, the lower bound, inclusive, and the upper bound, exclusive; neither Jakarta
   Persistence nor Hibernate gives the type a Java type. Every period the database holds is of that shape,
-  `[lower,upper)`, so `MappedRoute.ValidityConverter`, a plain `AttributeConverter<Instant[], String>`, converts that
+  `[lower,upper)`, so `MappedRouteId.ValidityConverter`, a plain `AttributeConverter<Instant[], String>`, converts that
   shape only, and rejects any other -- `empty`, an unbounded or an infinite bound -- rather than read it as a
   different range. A bound reads back in the session's time zone, `+09` in Seoul, and is read as an instant, so
   neither the attribute nor `Route`'s identifier, of which it is part, depends on the zone the JVM runs in; the

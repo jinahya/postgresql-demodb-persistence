@@ -20,11 +20,9 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
-import jakarta.persistence.Converter;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
@@ -37,11 +35,6 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -49,7 +42,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -73,7 +65,7 @@ import java.util.stream.Collectors;
  * The {@value MappedRoute#COLUMN_NAME_VALIDITY} column is a {@code tstzrange}, which neither
  * Jakarta Persistence nor Hibernate ORM maps; it is mapped as an array of two {@link Instant}s,
  * the lower bound, inclusive, and the upper bound, exclusive, through the
- * {@link ValidityConverter}. Every period the database holds is of that shape,
+ * {@link MappedRouteId.ValidityConverter}. Every period the database holds is of that shape,
  * {@code [lower,upper)}; a range of another shape -- {@code empty}, an unbounded or an infinite
  * bound -- is not read. A bound is an instant, whatever time zone the session prints it in, so
  * neither the attribute nor {@link #equals(Object)} depends on the time zone the JVM runs in.
@@ -81,9 +73,8 @@ import java.util.stream.Collectors;
  * The table has no primary key. What keeps a row apart is the {@code routes_route_no_validity_excl}
  * exclusion constraint: no two rows share a {@value #COLUMN_NAME_ROUTE_NO} with overlapping
  * {@value #COLUMN_NAME_VALIDITY} periods. So {@link #equals(Object)} compares those two attributes,
- * and an extending entity has to choose its own identifier -- an
- * {@link jakarta.persistence.IdClass @IdClass} over the two, for instance -- or read the table by
- * native queries only.
+ * and an extending entity has to choose its own identifier -- the two, as a subclass of
+ * {@link MappedRouteId}, for instance -- or read the table by native queries only.
  * <p>
  * The {@value #COLUMN_NAME_DAYS_OF_WEEK} column is an {@code integer[]}, mapped as a {@link List}
  * of {@link Integer}, which Hibernate ORM binds and reads as an array; the
@@ -96,103 +87,6 @@ import java.util.stream.Collectors;
  */
 @MappedSuperclass
 public abstract class MappedRoute {
-
-    /**
-     * Converts between the {@value #ATTRIBUTE_NAME_VALIDITY} attribute, an array of two
-     * {@link Instant}s, {@code [lower, upper]}, and the {@value #COLUMN_NAME_VALIDITY} column, a
-     * {@code tstzrange} of the shape {@code [lower,upper)}, through its text.
-     * <p>
-     * Only that shape is converted: both bounds present, the lower inclusive and the upper
-     * exclusive, the shape of every period the database holds. A range of any other shape --
-     * {@code empty}, an unbounded or an {@code -infinity} or {@code infinity} bound, an exclusive
-     * lower or an inclusive upper -- is rejected, not read as a different range.
-     * <p>
-     * A bound is read as an instant, whatever offset the server prints it with, which is the
-     * session's time zone; so the attribute does not depend on the time zone the JVM, or the
-     * session, runs in.
-     * <p>
-     * Hibernate ORM reads the column for this converter as its text, and binds the text this
-     * converter writes as a {@link String}, which the server casts for the
-     * {@code stringtype=unspecified} on the JDBC URL.
-     * <p>
-     * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
-     * {@link jakarta.persistence.Convert @Convert}.
-     */
-    @Converter(autoApply = false)
-    public static class ValidityConverter
-            implements AttributeConverter<Instant[], String> {
-
-        // ["lower","upper"), as the server prints a bounded range; the bounds quoted, for the space
-        private static final Pattern PATTERN = Pattern.compile("\\[\"([^\"]+)\",\"([^\"]+)\"\\)");
-
-        // 2025-10-01 00:00:00+00, as the server prints a timestamptz; the fraction and the offset's
-        // minutes and seconds only when non-zero
-        private static final DateTimeFormatter BOUND = new DateTimeFormatterBuilder()
-                .append(DateTimeFormatter.ISO_LOCAL_DATE)
-                .appendLiteral(' ')
-                .append(DateTimeFormatter.ISO_LOCAL_TIME)
-                .appendOffset("+HH:mm:ss", "+00")
-                .toFormatter();
-
-        /**
-         * Creates a new instance.
-         */
-        public ValidityConverter() {
-            super();
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @param attribute {@inheritDoc} -- the lower bound and the upper bound.
-         * @return {@code attribute} as {@code ["lower","upper")}, each bound in UTC, as the server
-         *         prints it, {@code 2025-10-01 00:00:00+00}; or {@code null} if {@code attribute}
-         *         is {@code null}.
-         * @throws IllegalArgumentException if {@code attribute} is not two bounds.
-         * @implNote The text is the one {@link #convertToEntityAttribute(String)} reads, as it
-         *         has to be: Hibernate ORM copies an attribute it deems mutable, an array, through
-         *         both methods.
-         */
-        @Override
-        public String convertToDatabaseColumn(final Instant[] attribute) {
-            if (attribute == null) {
-                return null;
-            }
-            if (attribute.length != 2 || attribute[0] == null || attribute[1] == null) {
-                throw new IllegalArgumentException("not two bounds: " + Arrays.toString(attribute));
-            }
-            return "[\"" + BOUND.format(attribute[0].atOffset(ZoneOffset.UTC)) + "\",\""
-                   + BOUND.format(attribute[1].atOffset(ZoneOffset.UTC)) + "\")";
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @param dbData {@inheritDoc} -- the column's text, {@code ["lower","upper")}.
-         * @return the lower bound and the upper bound {@code dbData} denotes, or {@code null} if
-         *         {@code dbData} is {@code null}.
-         * @throws IllegalArgumentException if {@code dbData} is not a range of the shape
-         *                                  {@code [lower,upper)}.
-         */
-        @Override
-        public Instant[] convertToEntityAttribute(final String dbData) {
-            if (dbData == null) {
-                return null;
-            }
-            final var matcher = PATTERN.matcher(dbData);
-            if (!matcher.matches()) {
-                throw new IllegalArgumentException("not a range of [lower,upper): " + dbData);
-            }
-            try {
-                return new Instant[] {
-                        OffsetDateTime.parse(matcher.group(1), BOUND).toInstant(),
-                        OffsetDateTime.parse(matcher.group(2), BOUND).toInstant()
-                };
-            } catch (final DateTimeParseException dtpe) {
-                throw new IllegalArgumentException("not a range of [lower,upper): " + dbData, dtpe);
-            }
-        }
-    }
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -654,7 +548,7 @@ public abstract class MappedRoute {
     @Size(min = 2, max = 2)
     @NotNull
     @Basic(optional = false)
-    @Convert(converter = ValidityConverter.class)
+    @Convert(converter = MappedRouteId.ValidityConverter.class)
     @Column(name = COLUMN_NAME_VALIDITY, nullable = false, insertable = true, updatable = true,
             columnDefinition = "tstzrange")
     private Instant[] validity;
