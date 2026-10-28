@@ -29,6 +29,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
+import java.util.Optional;
+
 /**
  * An entity which maps the {@value MappedTicket#TABLE_NAME} table, extending {@link MappedTicket}
  * with what is an application's to decide: its associations, their fetch types and their cascades.
@@ -104,7 +106,9 @@ public class Ticket
      */
     public void setBooking(final Booking booking) {
         this.booking = booking;
-        setBookRef(booking == null ? null : booking.getBookRef());
+        setBookRef(Optional.ofNullable(booking)
+                .map(Booking::getBookRef)
+                .orElse(null));
     }
 
     // ---------------------------------------------------------------------------------------------

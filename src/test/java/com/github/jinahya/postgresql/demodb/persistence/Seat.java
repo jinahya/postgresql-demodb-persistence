@@ -29,6 +29,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.util.Optional;
+
 /**
  * An entity which maps the {@value MappedSeat#TABLE_NAME} table, extending {@link MappedSeat} with
  * what is an application's to decide: its associations, their fetch types and their cascades.
@@ -89,7 +91,9 @@ public class Seat
      */
     void setAirplaneData(final AirplaneData airplaneData) {
         this.airplaneData = airplaneData;
-        setAirplaneCode(airplaneData == null ? null : airplaneData.getAirplaneCode());
+        setAirplaneCode(Optional.ofNullable(airplaneData)
+                .map(AirplaneData::getAirplaneCode)
+                .orElse(null));
     }
 
     // ---------------------------------------------------------------------------------------------

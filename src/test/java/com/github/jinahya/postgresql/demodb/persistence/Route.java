@@ -31,6 +31,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.util.Optional;
+
 /**
  * An entity which maps the {@value MappedRoute#TABLE_NAME} table, extending {@link MappedRoute}
  * with what is an application's to decide: its associations, their fetch types and their cascades.
@@ -85,6 +87,8 @@ public class Route
         super();
     }
 
+    // ------------------------------------------------------------------------------------------ id
+
     /**
      * Replaces the identifier of this route with the specified value, which has to agree with the
      * {@value MappedRoute#COLUMN_NAME_ROUTE_NO} and {@value MappedRoute#COLUMN_NAME_VALIDITY} the
@@ -106,6 +110,8 @@ public class Route
         return id;
     }
 
+    // ------------------------------------------------------------------------ departureAirportData
+
     /**
      * Returns the airport of departure, over the {@value MappedRoute#COLUMN_NAME_DEPARTURE_AIRPORT}
      * column; the column's writable mapping.
@@ -122,15 +128,16 @@ public class Route
      * code, which is what this association writes.
      *
      * @param departureAirportData new value for the departureAirportData; {@code null} clears the
-     *         code too.
+     *                             code too.
      */
     public void setDepartureAirportData(final AirportData departureAirportData) {
         this.departureAirportData = departureAirportData;
-        setDepartureAirport(departureAirportData == null
-                ? null
-                : departureAirportData.getAirportCode());
+        setDepartureAirport(Optional.ofNullable(departureAirportData)
+                .map(AirportData::getAirportCode)
+                .orElse(null));
     }
 
+    // -------------------------------------------------------------------------- arrivalAirportData
     /**
      * Returns the airport of arrival, over the {@value MappedRoute#COLUMN_NAME_ARRIVAL_AIRPORT}
      * column; the column's writable mapping.
@@ -147,11 +154,13 @@ public class Route
      * code, which is what this association writes.
      *
      * @param arrivalAirportData new value for the arrivalAirportData; {@code null} clears the code
-     *         too.
+     *                           too.
      */
     public void setArrivalAirportData(final AirportData arrivalAirportData) {
         this.arrivalAirportData = arrivalAirportData;
-        setArrivalAirport(arrivalAirportData == null ? null : arrivalAirportData.getAirportCode());
+        setArrivalAirport(Optional.ofNullable(arrivalAirportData)
+                .map(AirportData::getAirportCode)
+                .orElse(null));
     }
 
     /**
@@ -173,7 +182,9 @@ public class Route
      */
     public void setAirplaneData(final AirplaneData airplaneData) {
         this.airplaneData = airplaneData;
-        setAirplaneCode(airplaneData == null ? null : airplaneData.getAirplaneCode());
+        setAirplaneCode(Optional.ofNullable(airplaneData)
+                .map(AirplaneData::getAirplaneCode)
+                .orElse(null));
     }
 
     // ---------------------------------------------------------------------------------------------
