@@ -236,15 +236,13 @@ and which EclipseLink has no counterpart to; so it is an extending entity's choi
 
 ## Building
 
-Two persistence providers, one profile each; `jakarta-ee-11-hibernate-orm` is active by default.
+Hibernate ORM is the persistence provider; see [`HIBERNATE_ONLY.adoc`](HIBERNATE_ONLY.adoc) for why EclipseLink was
+dropped.
 
 ```shell
-$ ./_mvn_jakarta_ee_11_test_hibernate-orm.sh              # unit tests, H2 in PostgreSQL mode
-$ ./_mvn_jakarta_ee_11_test_eclipselink.sh
-$ ./_mvn_jakarta_ee_11_verify_hibernate-orm.sh            # + integration tests, against the database above
-$ ./_mvn_jakarta_ee_11_verify_eclipselink.sh
-$ ./_mvn_jakarta_ee_11_verify_notests_hibernate-orm.sh    # no database needed
-$ ./_mvn_jakarta_ee_11_verify_notests_eclipselink.sh
+$ ./_mvn_test.sh              # unit tests, H2 in PostgreSQL mode
+$ ./_mvn_verify.sh            # + integration tests, against the database above
+$ ./_mvn_verify_notests.sh    # no database needed
 ```
 
 ## The tests
@@ -262,13 +260,11 @@ context; a `*_Persistence_Test`, against the in-memory unit; and a `*_Persistenc
 transaction it rolls back. The composite identifiers have a `*_Randomizer` and a `*_Test` of their own.
 
 ```shell
-$ ./_mvn_jakarta_ee_11_test_hibernate-orm.sh        # 127 unit tests
-$ ./_mvn_jakarta_ee_11_test_eclipselink.sh
-$ ./_mvn_jakarta_ee_11_verify_hibernate-orm.sh      # + 36 integration tests, the database up
-$ ./_mvn_jakarta_ee_11_verify_eclipselink.sh
+$ ./_mvn_test.sh      # 169 unit tests
+$ ./_mvn_verify.sh    # + 52 integration tests, the database up
 ```
 
-All of them pass on both providers. Random codes are lower-case and random validity periods lie in the 2030s, so
+All of them pass. Random codes are lower-case and random validity periods lie in the 2030s, so
 that a randomized row never collides with an installed one.
 
 ## The exercises

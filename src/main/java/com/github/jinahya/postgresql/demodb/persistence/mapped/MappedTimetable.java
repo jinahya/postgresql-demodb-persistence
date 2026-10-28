@@ -37,8 +37,8 @@ import java.util.Objects;
  * A mapped superclass which holds the mappings of the {@value MappedTimetable#TABLE_NAME} view,
  * <q>Detailed info about flights</q>.
  * <p>
- * Every column is mapped read-only; only the identifier stays insertable, which EclipseLink
- * requires of an {@link Id @Id}. It has no setters; nothing writes to a view.
+ * Every column is mapped read-only, the identifier too. It has no setters; nothing writes to a
+ * view.
  * <p>
  * The view joins {@code flights}, see {@link MappedFlight}, with the {@code routes} row valid at
  * the scheduled departure and with the two airports, and adds each time in its airport's time zone,
@@ -565,9 +565,7 @@ public abstract class MappedTimetable {
     // ---------------------------------------------------------------------------------------------
     @Id
     @Basic(optional = true)
-    // insertable=false on an @Id -- "There should be one non-read-only mapping defined for the
-    // primary key field", EclipseLink-46. Nothing writes to a view anyway.
-    @Column(name = COLUMN_NAME_FLIGHT_ID, nullable = true, insertable = true, updatable = false)
+    @Column(name = COLUMN_NAME_FLIGHT_ID, nullable = true, insertable = false, updatable = false)
     private Integer flightId;
 
     // ---------------------------------------------------------------------------------------------

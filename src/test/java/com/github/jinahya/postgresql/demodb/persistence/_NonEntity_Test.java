@@ -32,7 +32,6 @@ import java.beans.IntrospectionException;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * An abstract base class for testing a value class -- an id class, an embeddable, a mapped JSON
@@ -96,18 +95,9 @@ abstract class _NonEntity_Test<T> {
     /**
      * Verifies the {@code equals}/{@code hashCode} contract of {@link #targetClass}, using the
      * verifier which {@link #equals_verifier_()} returns.
-     *
-     * @implNote Skipped when {@link #targetClass} is woven by EclipseLink (the
-     *         {@code jakarta-ee-11-eclipselink-weaving} profile), as an embeddable is; an id class
-     *         is not. The weaver adds {@code _persistence_*} fields, which the verifier tries to
-     *         fill, and fails on, though {@code equals} and {@code hashCode} do not read them. The
-     *         unwoven runs verify the same methods.
-     * @see __Object_TestUtils#isWovenByEclipseLink(Class)
      */
     @Test
     void equals_verify_() {
-        assumeFalse(__Object_TestUtils.isWovenByEclipseLink(targetClass),
-                    "woven by EclipseLink; the verifier fails on the _persistence_* fields");
         final var verifier = equals_verifier_();
         verifier.verify();
     }

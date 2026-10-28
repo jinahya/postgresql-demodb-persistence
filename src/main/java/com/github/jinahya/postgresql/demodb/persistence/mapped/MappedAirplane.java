@@ -32,8 +32,8 @@ import java.util.Objects;
  * A mapped superclass which holds the mappings of the {@value MappedAirplane#TABLE_NAME} view,
  * <q>Airplanes</q>.
  * <p>
- * Every column is mapped read-only; only the identifier stays insertable, which EclipseLink
- * requires of an {@link Id @Id}. It has no setters; nothing writes to a view.
+ * Every column is mapped read-only, the identifier too. It has no setters; nothing writes to a
+ * view.
  * <p>
  * The view reads {@code airplanes_data}, see {@link MappedAirplaneData}, with the
  * {@value #COLUMN_NAME_MODEL} taken out of its {@code jsonb} for the session's language, the
@@ -219,11 +219,9 @@ public abstract class MappedAirplane {
     @Size(min = SIZE_MIN_AIRPLANE_CODE, max = SIZE_MAX_AIRPLANE_CODE)
     @Id
     @Basic(optional = true)
-    // insertable=false on an @Id -- "There should be one non-read-only mapping defined for the
-    // primary key field", EclipseLink-46. Nothing writes to a view anyway.
     @Column(name = COLUMN_NAME_AIRPLANE_CODE,
             nullable = true,
-            insertable = true,
+            insertable = false,
             updatable = false,
             length = COLUMN_LENGTH_AIRPLANE_CODE
     )

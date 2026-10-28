@@ -26,7 +26,6 @@
              version="${persistence.version}">
   <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
     <description>Persistence Unit for an In-Memory DB</description>
-    <!--    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
     <!--        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter$OfString</class>
@@ -59,20 +58,6 @@
                 value="jdbc:h2:mem:;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH"/>
       <property name="jakarta.persistence.jdbc.user" value="sa"/>
       <property name="jakarta.persistence.jdbc.password" value="password"/>
-      <!-- ///////////////////////////////////////////////////////////////////////////////////////////// eclipselink -->
-      <!-- https://wiki.eclipse.org/EclipseLink/Examples/JPA/Logging -->
-      <!--      <property name="eclipselink.logging.level" value="FINE"/>-->
-      <property name="eclipselink.logging.level.sql" value="FINE"/>
-      <property name="eclipselink.logging.parameters" value="true"/>
-      <!--      <property name="eclipselink.weaving" value="true"/>-->
-      <!-- https://wiki.eclipse.org/EclipseLink/Examples/JPA/DDL -->
-      <!-- the PostgreSQL platform, not the H2 one, for H2 in PostgreSQL mode: H2Platform spells an identity column as -->
-      <!-- the legacy `INTEGER IDENTITY` and reads a generated key with `CALL IDENTITY()`, neither of which H2 2.x -->
-      <!-- accepts in this mode, so the flights table was never created; PostgreSQLPlatform spells it `SERIAL` and -->
-      <!-- reads it back with `select lastval()`, both of which H2's PostgreSQL mode accepts -->
-      <property name="eclipselink.target-database"
-                value="org.eclipse.persistence.platform.database.PostgreSQLPlatform"/>
-      <property name="eclipselink.ddl-generation" value="create-tables"/>
       <!-- /////////////////////////////////////////////////////////////////////////////////////////////// hibernate -->
       <!--      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>-->
       <property name="hibernate.format_sql" value="true"/>
@@ -84,7 +69,6 @@
   </persistence-unit>
   <persistence-unit name="it" transaction-type="RESOURCE_LOCAL">
     <description>Persistence Unit for a Physical Database</description>
-    <!--    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
     <!--    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.IntegerListArrayAttributeConverter$OfString</class>
@@ -126,16 +110,6 @@
                 value="jdbc:postgresql://localhost:5432/demo?stringtype=unspecified&amp;options=-c%20IntervalStyle=postgres%20-c%20bookings.lang=${bookings.lang}"/>
       <property name="jakarta.persistence.jdbc.user" value="postgres"/>
       <property name="jakarta.persistence.jdbc.password" value="password"/>
-      <!-- ///////////////////////////////////////////////////////////////////////////////////////////// eclipselink -->
-      <!-- https://wiki.eclipse.org/EclipseLink/Examples/JPA/Logging -->
-      <!--      <property name="eclipselink.logging.level" value="FINE"/>-->
-      <property name="eclipselink.ddl-generation" value="none"/>
-      <property name="eclipselink.logging.level.sql" value="FINE"/>
-      <property name="eclipselink.logging.parameters" value="true"/>
-      <!--      <property name="eclipselink.weaving" value="true"/>-->
-      <!-- https://wiki.eclipse.org/EclipseLink/Examples/JPA/DDL -->
-      <property name="eclipselink.target-database"
-                value="org.eclipse.persistence.platform.database.PostgreSQLPlatform"/>
       <!-- /////////////////////////////////////////////////////////////////////////////////////////////// hibernate -->
       <!--      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>-->
       <property name="hibernate.format_sql" value="true"/>

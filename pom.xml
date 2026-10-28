@@ -92,7 +92,7 @@
     <!-- profile can move the platform out from under the implementations. -->
     <persistence.version>3.2</persistence.version>
     <persistence.schemaLocation>https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd</persistence.schemaLocation>
-    <!-- the Jakarta Persistence provider; overridden by jakarta-ee-11-eclipselink -->
+    <!-- the Jakarta Persistence provider, the only one -->
     <persistence-unit.provider>org.hibernate.jpa.HibernatePersistenceProvider</persistence-unit.provider>
     <metamodel.generator.groupId>org.hibernate.orm</metamodel.generator.groupId>
     <metamodel.generator.artifactId>hibernate-jpamodelgen</metamodel.generator.artifactId>
@@ -124,10 +124,6 @@
     <version.nl.jqno.equalsverifier>4.5.2</version.nl.jqno.equalsverifier>
     <!-- https://central.sonatype.com/artifact/org.assertj/assertj-core/versions -->
     <version.org.assertj>4.0.0-M1</version.org.assertj>
-    <!-- https://github.com/eclipse-ee4j/eclipselink/releases -->
-    <!-- https://eclipse.dev/eclipselink/releases/index.html -->
-    <!-- https://central.sonatype.com/artifact/org.eclipse.persistence/org.eclipse.persistence.jpa/versions -->
-    <version.org.eclipse.persistence>5.0.2</version.org.eclipse.persistence>
     <!-- https://central.sonatype.com/artifact/org.eclipse.yasson/yasson/versions -->
     <version.org.eclipse.yasson>3.0.5</version.org.eclipse.yasson>
     <!-- https://docs.jboss.org/hibernate/validator/9.1/reference/en-US/html_single/#validator-gettingstarted-uel -->
@@ -155,7 +151,6 @@
     <version.org.projectlombok>1.18.48</version.org.projectlombok>
     <!-- https://central.sonatype.com/artifact/org.slf4j/slf4j-bom/versions -->
     <version.org.slf4j>2.0.20</version.org.slf4j>
-    <eclipselink.woven>false</eclipselink.woven>
     <!-- the session's bookings.lang, which bookings.lang() returns and the views read their names in; -->
     <!-- the defaults are bookings-lang-en's, see that profile -->
     <bookings.lang>en</bookings.lang>
@@ -211,11 +206,6 @@
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
         <version>${version.org.assertj}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.persistence</groupId>
-        <artifactId>org.eclipse.persistence.jpa</artifactId>
-        <version>${version.org.eclipse.persistence}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.yasson</groupId>
@@ -337,6 +327,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <!-- the only provider; provided, for the main code's Hibernate annotations, which a consumer without
+           Hibernate ORM does not need: an annotation whose class is missing is not read -->
+      <groupId>org.hibernate.orm</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>io.hypersistence</groupId>
       <artifactId>hypersistence-utils-hibernate-73</artifactId>
       <scope>test</scope>
@@ -431,11 +428,6 @@
     </testResources>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>de.empulse.eclipselink</groupId>
-          <artifactId>staticweave-maven-plugin</artifactId>
-          <version>1.0.0</version>
-        </plugin>
         <plugin>
           <groupId>com.mysema.maven</groupId>
           <artifactId>apt-maven-plugin</artifactId>
@@ -628,9 +620,8 @@
           </execution>
           <execution>
             <!-- a -P naming a profile that does not exist is silently ignored by Maven; this turns
-                 that into a build failure. The provider profile ids are named from
-                 _mvn_jakarta_ee_11.sh and from the CI matrix, so a rename that misses one of them
-                 would otherwise just run the default provider twice and look green. -->
+                 that into a build failure, so that a misspelled failsafe or bookings-lang-* profile, or one
+                 removed, such as the provider profiles were, is not quietly a run without it. -->
             <id>enforce-require-profile-ids-exist</id>
             <goals>
               <goal>enforce</goal>
@@ -652,9 +643,6 @@
             <!--            <exclude>**/*IT.java</exclude> &lt;!&ndash; 이게 왜 필요한지 확인 필요 &ndash;&gt;-->
           </excludes>
           <skipAfterFailureCount>1</skipAfterFailureCount>
-          <systemPropertyVariables>
-            <eclipselink.woven>${eclipselink.woven}</eclipselink.woven>
-          </systemPropertyVariables>
           <trimStackTrace>false</trimStackTrace>
         </configuration>
       </plugin>
@@ -842,100 +830,11 @@
       </build>
     </profile>
 
-    <!-- ============================================================== persistence provider ==== -->
-    <!-- The only implementation axis in this build. The other specs have a single implementation
-         each (Hibernate Validator + Expressly for Jakarta Validation, Weld for CDI), pinned to
-         their Jakarta EE 11 aligned release in <properties>; there is nothing to choose there, so
-         they have no profiles.
-         These two profiles do not choose a VERSION either: both provider versions live in
-         <properties>, one per provider. A profile decides only which provider is on the test
-         classpath, and which metamodel generator the annotation processor path uses. -->
-    <profile>
-      <id>jakarta-ee-11-hibernate-orm</id>
-      <!-- https://hibernate.org/orm/releases/ -->
-      <!-- Jakarta Persistence: 3.2 / Jakarta EE: 11; version: version.org.hibernate.orm -->
-      <!-- the provider defaults in <properties> are this profile's; it only adds the dependency -->
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.hibernate.orm</groupId>
-          <artifactId>hibernate-core</artifactId>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>jakarta-ee-11-eclipselink</id>
-      <!-- https://eclipse.dev/eclipselink/releases/index.html -->
-      <!-- Jakarta Persistence: 3.2 / Jakarta EE: 11; version: version.org.eclipse.persistence -->
-      <properties>
-        <persistence-unit.provider>org.eclipse.persistence.jpa.PersistenceProvider</persistence-unit.provider>
-        <!--
-          This profile deliberately does NOT override the metamodel generator: it inherits
-          hibernate-jpamodelgen from the root <properties>, and EclipseLink is the runtime provider only.
-
-          EclipseLink's own processor is commented out below. It works, but it reads a persistence.xml at
-          annotation-processing time and generates nothing without one — and the annotation processor path
-          sees main resources, not test resources. Using it therefore forces the persistence.xml
-          into src/main/resources/META-INF, which is also what gets packaged: the published jars then carry
-          the test descriptor, with the H2 datasource, the sa/root credentials, hbm2ddl.auto=create-drop
-          and whichever <provider> the releasing profile happened to bake in. Spring's
-          DefaultPersistenceUnitManager reads classpath*:META-INF/persistence.xml — every jar — so that
-          descriptor is in scope for any consumer, which is the opposite of what a mapping library should
-          ship. Keeping the descriptor under src/test/resources keeps the jars to entities and metamodel.
-
-          hibernate-jpamodelgen reads @Entity directly and needs no descriptor, and the canonical static
-          metamodel is defined by the specification (Jakarta Persistence 3.2, 6.2), so the Flights_ classes
-          it emits are provider-neutral and EclipseLink runs against them unchanged. Verified in the sibling
-          oracle-sample-schemas-persistence: both providers green, with the descriptors in src/test/resources.
-
-          What this costs: the EclipseLink profile no longer exercises EclipseLink's metamodel processor.
-          It still exercises EclipseLink as the persistence provider — every *_Persistence_Test and
-          *_Persistence_IT runs against it — which is the behavioural difference this profile exists for.
-
-          To go back, uncomment the three properties AND move META-INF back to
-          src/main/resources; neither half works without the other.
-        -->
-        <!--        <metamodel.generator.groupId>org.eclipse.persistence</metamodel.generator.groupId>-->
-        <!--        <metamodel.generator.artifactId>org.eclipse.persistence.jpa.modelgen.processor</metamodel.generator.artifactId>-->
-        <!--        <metamodel.generator.version>${version.org.eclipse.persistence}</metamodel.generator.version>-->
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.eclipse.persistence</groupId>
-          <artifactId>org.eclipse.persistence.jpa</artifactId>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <!-- Weaves the entities for EclipseLink as they are loaded, with no plugin: the EclipseLink jar is itself a
-         Java agent (its Premain-Class is JavaSECMPInitializerAgent), handed to the test JVM on the argLine.
-         Without weaving EclipseLink ignores LAZY on a to-one association and on a basic attribute, and reads
-         them at once; with it, LAZY is honoured, as under Hibernate ORM.
-         An add-on, not a provider: it is named together with jakarta-ee-11-eclipselink,
-           ./mvnw -Pjakarta-ee-11-eclipselink,jakarta-ee-11-eclipselink-weaving clean test
-         and on its own it would hand the agent to a JVM which has no EclipseLink to run it.
-         Nothing on disk is rewritten, so what is packaged stays unwoven whichever profiles built it.
-         The agent goes into the argLine property, which surefire and failsafe read by default;
-         jacoco:prepare-agent adds its own agent to the same property, so both run.
-         For demonstration only, of LAZY under EclipseLink: woven, the equals_verify_ tests skip the classes the
-         weaver touched, whose _persistence_* fields EqualsVerifier cannot fill, and Route_Persistence_Test skips
-         the getReference tests EclipseLink fails with an EmbeddedId; see those tests. -->
-    <profile>
-      <id>jakarta-ee-11-eclipselink-weaving</id>
-      <properties>
-        <argLine>-javaagent:${settings.localRepository}/org/eclipse/persistence/org.eclipse.persistence.jpa/${version.org.eclipse.persistence}/org.eclipse.persistence.jpa-${version.org.eclipse.persistence}.jar</argLine>
-        <eclipselink.woven>true</eclipselink.woven>
-      </properties>
-    </profile>
     <!-- The language the views (airplanes, airports, timetable) read their names in: the `it`
          unit passes it to the server as bookings.lang on the JDBC URL. The demo database's own default is
          en; the names are there in en and ru only, and any other language reads as NULL.
          Naming any profile on the command line deactivates every activeByDefault profile, so the defaults
-         in <properties> are bookings-lang-en's, as the provider's are jakarta-ee-11-hibernate-orm's; a run
-         which names only the provider still reads en. -->
+         in <properties> are bookings-lang-en's; a run which names only the failsafe profile still reads en. -->
     <profile>
       <id>bookings-lang-en</id>
       <activation>
