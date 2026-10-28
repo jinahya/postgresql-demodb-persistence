@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------------------- airplane_code
+-- ----------------------------------------------------------------------------------- airplane_code
 -- how many rows, and the smallest and the largest airplane_code; 10 airplanes, 32N to E70.
 SELECT COUNT(*), MIN(airplane_code), MAX(airplane_code)
 FROM airplanes_data
@@ -46,7 +46,7 @@ WHERE a.airplane_code IS NULL
 ;
 
 
--- --------------------------------------------------------------------------------------------------------------- model
+-- ------------------------------------------------------------------------------------------- model
 -- model is jsonb; what it holds, and in which languages. Every row an object, with an en and a ru name.
 SELECT k AS language, COUNT(*) AS airplanes
 FROM airplanes_data,
@@ -69,21 +69,21 @@ FROM airplanes_data
 ;
 
 
--- --------------------------------------------------------------------------------------------------------------- range
+-- ------------------------------------------------------------------------------------------- range
 -- the smallest and the largest range, in km; 3100 to 16700. A check constraint keeps it above zero.
 SELECT MIN(range), MAX(range)
 FROM airplanes_data
 ;
 
 
--- --------------------------------------------------------------------------------------------------------------- speed
+-- ------------------------------------------------------------------------------------------- speed
 -- the slowest and the fastest cruise speed, in km/h; 800 to 913. A check constraint keeps it above zero.
 SELECT MIN(speed), MAX(speed)
 FROM airplanes_data
 ;
 
 
--- ---------------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------
 -- an airplane with no seats; two, 35X and 76F.
 SELECT a.airplane_code, a.model ->> 'en' AS model
 FROM airplanes_data a

@@ -370,7 +370,7 @@ public abstract class MappedAirplaneData {
     @Column(name = COLUMN_NAME_SPEED, nullable = false, insertable = true, updatable = true)
     private Integer speed;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * Returns how long this airplane flies at its cruising speed until its range runs out; the

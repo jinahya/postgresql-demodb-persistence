@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------------------- airplane_code
+-- ----------------------------------------------------------------------------------- airplane_code
 -- how many rows, and of how many airplanes; 1741 seats on 8 of the 10 airplanes.
 SELECT COUNT(*), COUNT(DISTINCT airplane_code)
 FROM seats
@@ -49,7 +49,7 @@ ORDER BY seats DESC, airplane_code ASC
 ;
 
 
--- ------------------------------------------------------------------------------------------------------------- seat_no
+-- ----------------------------------------------------------------------------------------- seat_no
 -- a seat_no which is not a row number and a letter, A to L without I.
 -- no rows: every seat is one.
 SELECT airplane_code, seat_no
@@ -64,7 +64,7 @@ ORDER BY letter
 ;
 
 
--- ----------------------------------------------------------------------------------------------------- fare_conditions
+-- --------------------------------------------------------------------------------- fare_conditions
 -- the classes and how many seats in each; a check constraint allows these three.
 -- Economy 1425, Business 207, Comfort 109.
 SELECT fare_conditions, COUNT(*) AS seats

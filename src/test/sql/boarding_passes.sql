@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------------ ticket_no, flight_id
+-- ---------------------------------------------------------------------------- ticket_no, flight_id
 -- how many rows, and of how many flights; 2463832 passes on 11445 flights.
 SELECT COUNT(*), COUNT(DISTINCT flight_id)
 FROM boarding_passes
@@ -53,7 +53,7 @@ ORDER BY f.status
 ;
 
 
--- ------------------------------------------------------------------------------------------------------------- seat_no
+-- ----------------------------------------------------------------------------------------- seat_no
 -- a seat_no which is not a row number and a letter, A to L without I.
 -- no rows: every seat is one.
 SELECT ticket_no, flight_id, seat_no
@@ -66,7 +66,7 @@ WHERE seat_no !~ '^[0-9]{1,2}[A-HJ-L]$'
 SELECT b.ticket_no, b.flight_id, b.seat_no, r.airplane_code
 FROM boarding_passes b
          JOIN flights f ON f.flight_id = b.flight_id
-         JOIN routes r ON r.route_no = f.route_no AND r.validity @ > f.scheduled_departure
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
 WHERE NOT EXISTS (SELECT 1
                   FROM seats s
                   WHERE s.airplane_code = r.airplane_code
@@ -74,7 +74,7 @@ WHERE NOT EXISTS (SELECT 1
 ;
 
 
--- ------------------------------------------------------------------------------------------ boarding_no, boarding_time
+-- ---------------------------------------------------------------------- boarding_no, boarding_time
 -- the two are nullable, and go together; how many passes have neither, and how many one without the other.
 -- 30360 have neither, none has one of the two.
 SELECT COUNT(*) FILTER (WHERE boarding_no IS NULL)                              AS no_number,

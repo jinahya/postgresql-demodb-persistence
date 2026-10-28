@@ -26,7 +26,7 @@
 --
 
 
--- ---------------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------
 -- the view reads airports_data, with the name, the city and the country in the session's language, bookings.lang().
 -- what the view defines; a row per airport.
 SELECT view_definition
@@ -36,7 +36,7 @@ WHERE table_schema = 'bookings'
 ;
 
 
--- -------------------------------------------------------------------------------------------------------- airport_code
+-- ------------------------------------------------------------------------------------ airport_code
 -- how many rows, and the smallest and the largest airport_code; 5501 rows, AAA to ZZU, as many as airports_data has.
 SELECT COUNT(*),
        MIN(airport_code),
@@ -46,7 +46,7 @@ FROM airports
 ;
 
 
--- ------------------------------------------------------------------ airport_name, city, country, coordinates, timezone
+-- ---------------------------------------------- airport_name, city, country, coordinates, timezone
 -- a row whose name, city or country is not its airport's en one, or whose coordinates or timezone differ.
 -- no rows: the view copies the five.
 SELECT v.airport_code, v.airport_name, d.airport_name ->> 'en' AS en

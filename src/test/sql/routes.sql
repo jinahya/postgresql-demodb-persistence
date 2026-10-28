@@ -26,7 +26,7 @@
 --
 
 
--- -------------------------------------------------------------------------------------------------- route_no, validity
+-- ------------------------------------------------------------------------------ route_no, validity
 -- how many rows, how many route numbers, and the smallest and the largest; 1162 rows of 704 routes, PG0001 to PG0704.
 -- The table has no primary key: a route is a route_no with a validity period, and an exclusion constraint keeps a
 -- number's periods from overlapping.
@@ -76,7 +76,7 @@ WHERE LOWER(validity) IS NULL
 ;
 
 
--- ---------------------------------------------------------------------------------- departure_airport, arrival_airport
+-- -------------------------------------------------------------- departure_airport, arrival_airport
 -- an airport which refers to no airports_data row; the foreign keys forbid it.
 -- no rows: every airport is there.
 SELECT route_no, validity, departure_airport, arrival_airport
@@ -121,7 +121,7 @@ WHERE NOT EXISTS (SELECT 1
 ;
 
 
--- ------------------------------------------------------------------------------------------------------- airplane_code
+-- ----------------------------------------------------------------------------------- airplane_code
 -- an airplane_code which refers to no airplane; the foreign key forbids it.
 -- no rows: every airplane is there.
 SELECT route_no, validity, airplane_code
@@ -140,7 +140,7 @@ LIMIT 5
 ;
 
 
--- -------------------------------------------------------------------------------------------------------- days_of_week
+-- ------------------------------------------------------------------------------------ days_of_week
 -- days_of_week is an integer[]; the fewest and the most days a route flies; 1 to 7.
 SELECT MIN(CARDINALITY(days_of_week)), MAX(CARDINALITY(days_of_week))
 FROM routes
@@ -165,7 +165,7 @@ ORDER BY days
 ;
 
 
--- ------------------------------------------------------------------------------------------------------ scheduled_time
+-- ---------------------------------------------------------------------------------- scheduled_time
 -- the earliest and the latest scheduled_time, the local time of departure; 00:00 to 23:55.
 SELECT MIN(scheduled_time), MAX(scheduled_time)
 FROM routes
@@ -180,7 +180,7 @@ WHERE EXTRACT(SECOND FROM scheduled_time) <> 0
 ;
 
 
--- ------------------------------------------------------------------------------------------------------------ duration
+-- ---------------------------------------------------------------------------------------- duration
 -- duration is an interval; the shortest and the longest; 35 minutes and 19 hours 55 minutes.
 SELECT MIN(duration), MAX(duration)
 FROM routes

@@ -617,7 +617,7 @@ public abstract class MappedFlight {
     @Column(name = COLUMN_NAME_ACTUAL_ARRIVAL, nullable = true, insertable = true, updatable = true)
     private Instant actualArrival;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     private static Duration between(final Instant from, final Instant to) {
         if (from == null || to == null) {
             return null;

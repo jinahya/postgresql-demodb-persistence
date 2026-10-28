@@ -26,7 +26,7 @@
 --
 
 
--- ----------------------------------------------------------------------------------------------------------- flight_id
+-- --------------------------------------------------------------------------------------- flight_id
 -- how many rows, and the smallest and the largest flight_id; 21758 flights, 1 to 21758.
 SELECT COUNT(*), MIN(flight_id), MAX(flight_id)
 FROM flights
@@ -43,7 +43,7 @@ WHERE a.flight_id < (SELECT MAX(flight_id) FROM flights)
 ;
 
 
--- ------------------------------------------------------------------------------------------------------------ route_no
+-- ---------------------------------------------------------------------------------------- route_no
 -- how many routes the flights fly; 704, every route_no routes has.
 SELECT COUNT(DISTINCT route_no)
 FROM flights
@@ -61,10 +61,8 @@ WHERE route_no !~ '^PG[0-9]{4}$'
 -- no rows: every flight has its route.
 SELECT f.flight_id, f.route_no, f.scheduled_departure
 FROM flights f
-WHERE NOT EXISTS (SELECT 1
-                  FROM routes r
-                  WHERE r.route_no = f.route_no
-                    AND r.validity @ > f.scheduled_departure)
+         LEFT OUTER JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+WHERE r.route_no IS NULL
 ;
 
 -- the routes with the most flights; 121, a flight a day over the four months, on several.
@@ -76,7 +74,7 @@ LIMIT 5
 ;
 
 
--- -------------------------------------------------------------------------------------------------------------- status
+-- ------------------------------------------------------------------------------------------ status
 -- the statuses and how many flights in each; a check constraint allows these seven. Arrived 10966, Scheduled 10480,
 -- On Time 157, Cancelled 121, Departed 20, Delayed 10, Boarding 4.
 SELECT status, COUNT(*) AS flights
@@ -86,7 +84,7 @@ ORDER BY flights DESC, status ASC
 ;
 
 
--- ------------------------------------------------------------------------------ scheduled_departure, scheduled_arrival
+-- ---------------------------------------------------------- scheduled_departure, scheduled_arrival
 -- the earliest and the latest of each; departures from 2025-10-01 00:00 to 2026-01-29 23:55, arrivals from
 -- 2025-10-01 01:40 to 2026-01-30 11:50, four months of flights.
 SELECT MIN(scheduled_departure),
@@ -117,7 +115,7 @@ HAVING COUNT(*) > 1
 ;
 
 
--- ------------------------------------------------------------------------------------ actual_departure, actual_arrival
+-- ---------------------------------------------------------------- actual_departure, actual_arrival
 -- which statuses have the two; Arrived has both, Departed the departure only, every other status neither.
 SELECT status,
        COUNT(*) FILTER (WHERE actual_departure IS NULL) AS no_departure,
@@ -147,7 +145,7 @@ FROM flights
 ;
 
 
--- ---------------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------
 -- how many flights have no segment sold; 965.
 SELECT COUNT(*)
 FROM flights f

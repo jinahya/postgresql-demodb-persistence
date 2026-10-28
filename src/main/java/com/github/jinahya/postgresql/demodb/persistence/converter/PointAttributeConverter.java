@@ -87,7 +87,7 @@ public abstract class PointAttributeConverter<Y>
     private static final Pattern PATTERN = Pattern.compile(
             "\\(\\s*(?<x>[^,()\\s]+)\\s*,\\s*(?<y>[^,()\\s]+)\\s*\\)");
 
-    // ---------------------------------------------------------------------------------------------------- CONSTRUCTORS
+    // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
      * Creates a new instance.
@@ -96,7 +96,7 @@ public abstract class PointAttributeConverter<Y>
         super();
     }
 
-    // ---------------------------------------------------------------------------------------------- AttributeConverter
+    // -------------------------------------------------------------------------- AttributeConverter
 
     /**
      * {@inheritDoc}
@@ -148,7 +148,7 @@ public abstract class PointAttributeConverter<Y>
         }
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * The name of the driver's own point class, which EclipseLink hands a converter.

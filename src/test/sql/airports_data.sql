@@ -26,7 +26,7 @@
 --
 
 
--- -------------------------------------------------------------------------------------------------------- airport_code
+-- ------------------------------------------------------------------------------------ airport_code
 -- how many rows, and the smallest and the largest airport_code; 5501 airports, AAA to ZZU.
 SELECT COUNT(*), MIN(airport_code), MAX(airport_code)
 FROM airports_data
@@ -40,7 +40,7 @@ WHERE airport_code !~ '^[A-Z]{3}$'
 ;
 
 
--- ----------------------------------------------------------------------------------------- airport_name, city, country
+-- --------------------------------------------------------------------- airport_name, city, country
 -- the three are jsonb; in which languages. Every row an object, with an en and a ru name.
 SELECT k AS language, COUNT(*) AS airports
 FROM airports_data,
@@ -88,7 +88,7 @@ LIMIT 5
 ;
 
 
--- --------------------------------------------------------------------------------------------------------- coordinates
+-- ------------------------------------------------------------------------------------- coordinates
 -- coordinates is a point, (longitude,latitude); the extremes. -179.877 to 179.951 east, -62.1908 to 82.5178 north.
 SELECT MIN(coordinates[0]),
        MAX(coordinates[0]),
@@ -106,7 +106,7 @@ WHERE coordinates[0] NOT BETWEEN -180 AND 180
 ;
 
 
--- ------------------------------------------------------------------------------------------------------------ timezone
+-- ---------------------------------------------------------------------------------------- timezone
 -- how many time zones; 311.
 SELECT COUNT(DISTINCT timezone)
 FROM airports_data
@@ -130,7 +130,7 @@ LIMIT 5
 ;
 
 
--- ---------------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------
 -- how many airports no route departs from or arrives at; 5428 of the 5501, the routes touching 73.
 SELECT COUNT(*)
 FROM airports_data a

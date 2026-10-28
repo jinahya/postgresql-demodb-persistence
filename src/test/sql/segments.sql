@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------------ ticket_no, flight_id
+-- ---------------------------------------------------------------------------- ticket_no, flight_id
 -- how many rows, of how many tickets and flights; 3941249 segments, every one of the 2973937 tickets, 20793 flights.
 SELECT COUNT(*), COUNT(DISTINCT ticket_no), COUNT(DISTINCT flight_id)
 FROM segments
@@ -52,7 +52,7 @@ FROM (SELECT COUNT(*) AS segments
 ;
 
 
--- ----------------------------------------------------------------------------------------------------- fare_conditions
+-- --------------------------------------------------------------------------------- fare_conditions
 -- the classes, how many segments in each, and the prices; a check constraint allows these three.
 -- Economy 3221773, 1750.00 to 59750.00; Business 417644, 3500.00 to 119500.00; Comfort 301832, 2275.00 to 65325.00.
 SELECT fare_conditions, COUNT(*) AS segments, MIN(price), MAX(price)
@@ -66,7 +66,7 @@ ORDER BY segments DESC
 SELECT s.ticket_no, s.flight_id, s.fare_conditions, r.airplane_code
 FROM segments s
          JOIN flights f ON f.flight_id = s.flight_id
-         JOIN routes r ON r.route_no = f.route_no AND r.validity @ > f.scheduled_departure
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
 WHERE NOT EXISTS (SELECT 1
                   FROM seats st
                   WHERE st.airplane_code = r.airplane_code
@@ -74,7 +74,7 @@ WHERE NOT EXISTS (SELECT 1
 ;
 
 
--- --------------------------------------------------------------------------------------------------------------- price
+-- ------------------------------------------------------------------------------------------- price
 -- a price which is not a positive whole number of currency units; a check constraint keeps it from being negative.
 -- no rows: every price is positive, with a zero fraction.
 SELECT ticket_no, flight_id, price

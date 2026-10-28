@@ -10,7 +10,7 @@ Run a file as a whole:
 
 [source,sh]
 ----
-docker exec -i postgresql-demodb psql -U postgres -d demo < src/test/sql/<file>.sql
+docker exec -i postgresql-demodb psql -U postgres -d demo < src/test/sql/exercises/<file>.sql
 ----
 
 == airplanes_data

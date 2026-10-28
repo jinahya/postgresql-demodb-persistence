@@ -26,7 +26,7 @@
 --
 
 
--- ---------------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------
 -- the view reads airplanes_data, with the model in the session's language, bookings.lang(); en.
 -- what the view defines; a row per airplane.
 SELECT view_definition
@@ -40,7 +40,7 @@ SELECT bookings.lang() AS lang, bookings.now() AS now
 ;
 
 
--- ------------------------------------------------------------------------------------------------------- airplane_code
+-- ----------------------------------------------------------------------------------- airplane_code
 -- how many rows, and the smallest and the largest airplane_code; 10 rows, 32N to E70, as many as airplanes_data has.
 SELECT COUNT(*),
        MIN(airplane_code),
@@ -50,7 +50,7 @@ FROM airplanes
 ;
 
 
--- ------------------------------------------------------------------------------------------------- model, range, speed
+-- ----------------------------------------------------------------------------- model, range, speed
 -- a row whose model is not its airplane's en name, or whose range or speed differs.
 -- no rows: the view copies the three.
 SELECT v.airplane_code, v.model, d.model ->> 'en' AS en

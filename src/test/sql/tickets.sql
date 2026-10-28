@@ -26,7 +26,7 @@
 --
 
 
--- ----------------------------------------------------------------------------------------------------------- ticket_no
+-- --------------------------------------------------------------------------------------- ticket_no
 -- how many rows, and the smallest and the largest ticket_no; 2973937 tickets, 0005432000000 to 0005434990767.
 SELECT COUNT(*), MIN(ticket_no), MAX(ticket_no)
 FROM tickets
@@ -40,7 +40,7 @@ WHERE ticket_no !~ '^[0-9]{13}$'
 ;
 
 
--- ------------------------------------------------------------------------------------------------------------ book_ref
+-- ---------------------------------------------------------------------------------------- book_ref
 -- a book_ref which refers to no booking; the foreign key forbids it.
 -- no rows: every book_ref refers to a booking.
 SELECT t.ticket_no, t.book_ref
@@ -51,7 +51,7 @@ WHERE NOT EXISTS (SELECT 1
 ;
 
 
--- -------------------------------------------------------------------------------------------------------- passenger_id
+-- ------------------------------------------------------------------------------------ passenger_id
 -- a passenger_id which is not a two-letter country code, a space and digits; 16 characters, every one.
 -- no rows: every id has that shape.
 SELECT ticket_no, passenger_id
@@ -73,7 +73,7 @@ FROM tickets
 ;
 
 
--- ------------------------------------------------------------------------------------------------------ passenger_name
+-- ---------------------------------------------------------------------------------- passenger_name
 -- the shortest and the longest passenger_name; 5 and 27 characters.
 SELECT MIN(LENGTH(passenger_name)), MAX(LENGTH(passenger_name))
 FROM tickets
@@ -96,7 +96,7 @@ HAVING COUNT(DISTINCT passenger_name) > 1
 ;
 
 
--- ------------------------------------------------------------------------------------------------------------ outbound
+-- ---------------------------------------------------------------------------------------- outbound
 -- how many tickets each way; 1805086 outbound, 1168851 return.
 SELECT outbound, COUNT(*) AS tickets
 FROM tickets
@@ -113,7 +113,7 @@ HAVING COUNT(*) > 2
 ;
 
 
--- ---------------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------
 -- a ticket with no segment.
 -- no rows: every ticket has at least one.
 SELECT t.ticket_no

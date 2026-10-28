@@ -26,7 +26,7 @@
 --
 
 
--- ------------------------------------------------------------------------------------------------------------ book_ref
+-- ---------------------------------------------------------------------------------------- book_ref
 -- how many rows, and the smallest and the largest book_ref; 1292893 bookings, 0000EG to ZZZZP8.
 SELECT COUNT(*), MIN(book_ref), MAX(book_ref)
 FROM bookings
@@ -40,7 +40,7 @@ WHERE book_ref !~ '^[A-Z0-9]{6}$'
 ;
 
 
--- ----------------------------------------------------------------------------------------------------------- book_date
+-- --------------------------------------------------------------------------------------- book_date
 -- the earliest and the latest book_date; 2025-09-01 to 2025-11-30, the three months before the database's today.
 SELECT MIN(book_date), MAX(book_date)
 FROM bookings
@@ -54,7 +54,7 @@ WHERE book_date > bookings.now()
 ;
 
 
--- -------------------------------------------------------------------------------------------------------- total_amount
+-- ------------------------------------------------------------------------------------ total_amount
 -- the smallest, the largest and the average total_amount; 1750.00 to 915250.00, 19006.93 on average.
 SELECT MIN(total_amount), MAX(total_amount), ROUND(AVG(total_amount), 2)
 FROM bookings
@@ -79,7 +79,7 @@ HAVING b.total_amount <> SUM(s.price)
 ;
 
 
--- ---------------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------
 -- a booking with no ticket.
 -- no rows: every booking has at least one ticket.
 SELECT b.book_ref

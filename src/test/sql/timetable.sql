@@ -26,7 +26,7 @@
 --
 
 
--- ---------------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------
 -- the view joins flights with the route valid at the scheduled departure and with the two airports, and adds each
 -- time in its airport's time zone.
 -- what the view defines; a row per flight.
@@ -61,13 +61,13 @@ WHERE NOT EXISTS (SELECT 1
 ;
 
 
--- -------------------------------------------------- departure_airport, arrival_airport, airplane_code, the local times
+-- ------------------------------ departure_airport, arrival_airport, airplane_code, the local times
 -- a row whose airports, airplane or local times are not those of the flight's route and airports.
 -- no rows: the view computes them as it says.
 SELECT t.flight_id, t.scheduled_departure, t.scheduled_departure_local, dep.timezone
 FROM timetable t
          JOIN flights f ON f.flight_id = t.flight_id
-         JOIN routes r ON r.route_no = f.route_no AND r.validity @ > f.scheduled_departure
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
          JOIN airports_data dep ON dep.airport_code = r.departure_airport
          JOIN airports_data arr ON arr.airport_code = r.arrival_airport
 WHERE t.departure_airport <> r.departure_airport
