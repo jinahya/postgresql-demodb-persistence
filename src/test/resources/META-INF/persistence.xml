@@ -29,7 +29,7 @@
     <!--        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.persistence.more.converter.json.JsonpStringAttributeConverter$OfJsonObject</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter$OfString</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
     <class>com.github.jinahya.persistence.more.converter.time.ZoneIdStringAttributeConverter</class>
@@ -71,7 +71,7 @@
     <!--    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.persistence.more.converter.json.JsonpStringAttributeConverter$OfJsonObject</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter$OfString</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
     <class>com.github.jinahya.persistence.more.converter.time.ZoneIdStringAttributeConverter</class>

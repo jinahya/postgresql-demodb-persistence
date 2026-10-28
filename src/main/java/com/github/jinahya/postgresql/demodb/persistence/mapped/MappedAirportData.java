@@ -54,7 +54,7 @@ import java.util.function.Supplier;
  * <p>
  * The {@value MappedAirportData#COLUMN_NAME_COORDINATES} column is a {@code point}, which has no type
  * in Jakarta Persistence; it is mapped as a {@link PointAttributeConverter.Point}, the longitude as
- * {@code x} and the latitude as {@code y}, through a {@link PointAttributeConverter.OfString}.
+ * {@code x} and the latitude as {@code y}, through a {@link PointAttributeConverter}.
  * <p>
  * Writing a text back, the names' or the point's, needs the driver to leave its type to the server,
  * {@code stringtype=unspecified} on the JDBC URL.
@@ -592,7 +592,7 @@ public abstract class MappedAirportData {
 
     // ---------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = PointAttributeConverter.OfString.class)
+    @Convert(converter = PointAttributeConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_COORDINATES, nullable = false, insertable = true, updatable = true)
     private PointAttributeConverter.Point coordinates;

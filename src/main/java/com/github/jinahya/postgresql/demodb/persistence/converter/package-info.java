@@ -5,12 +5,9 @@
  * {@code jinahya-persistence-more}; an {@code integer[]} and an {@code interval} need none, Hibernate
  * ORM mapping them natively.
  * <p>
- * Each carries its column as text towards the database and accepts, from the database, whatever the
- * provider hands over -- the text, or the driver's own object, since Hibernate and EclipseLink
- * differ there -- so that no provider feature is relied on. The mapped superclasses of
- * {@code ..persistence.mapped} name them with {@link jakarta.persistence.Convert @Convert}; none is
- * auto-applied. A persistence unit which excludes unlisted classes has to list them, as EclipseLink
- * requires.
+ * The converter carries its column as text, both ways, so that it relies on no class of the
+ * driver's. The mapped superclasses of {@code ..persistence.mapped} name it with
+ * {@link jakarta.persistence.Convert @Convert}; it is not auto-applied.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

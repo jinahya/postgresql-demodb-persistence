@@ -61,7 +61,7 @@ class AirportData_Persistence_IT
                 .setParameter(1, entityInstance.getAirportCode())
                 .getSingleResult();
         log.info("coordinates: {}, text: {}", coordinates, text);
-        assertThat(new PointAttributeConverter.OfString().convertToEntityAttribute(text))
+        assertThat(new PointAttributeConverter().convertToEntityAttribute(text))
                 .as("coordinates of %s, as the server reads them", entityInstance)
                 .isEqualTo(coordinates);
         entityManager.clear();
@@ -98,8 +98,8 @@ class AirportData_Persistence_IT
         assertThat(entityInstance.getCoordinates()).as("coordinates of %s", entityInstance)
                 .isNotNull()
                 .satisfies(p -> {
-                    assertThat(p.x()).as("longitude").isBetween(-180.0d, 180.0d);
-                    assertThat(p.y()).as("latitude").isBetween(-90.0d, 90.0d);
+                    assertThat(p.longitude()).as("longitude").isBetween(-180.0d, 180.0d);
+                    assertThat(p.latitude()).as("latitude").isBetween(-90.0d, 90.0d);
                 });
         {
             final var timeZone = entityInstance.getTimezoneAsTimeZone();
