@@ -26,6 +26,7 @@ import io.hypersistence.utils.hibernate.type.range.Range;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
@@ -34,8 +35,9 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -144,18 +146,18 @@ final class __Random_TestUtils {
     }
 
     /**
-     * Returns a non-empty, ascending subset of the days of the week, {@code 1} to {@code 7}.
+     * Returns a non-empty subset of the days of the week.
      */
-    static List<Integer> daysOfWeek() {
+    static Set<DayOfWeek> daysOfWeek() {
         final var random = ThreadLocalRandom.current();
-        final var days = new ArrayList<Integer>();
-        for (var day = 1; day <= 7; day++) {
+        final var days = EnumSet.noneOf(DayOfWeek.class);
+        for (final var day : DayOfWeek.values()) {
             if (random.nextBoolean()) {
                 days.add(day);
             }
         }
         if (days.isEmpty()) {
-            days.add(random.nextInt(1, 8));
+            days.add(DayOfWeek.of(random.nextInt(1, 8)));
         }
         return days;
     }

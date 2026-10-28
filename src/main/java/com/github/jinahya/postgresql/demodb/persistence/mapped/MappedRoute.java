@@ -25,6 +25,7 @@ import io.hypersistence.utils.hibernate.type.range.Range;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -32,11 +33,17 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A mapped superclass which holds the mappings of the {@value MappedRoute#TABLE_NAME} table,
@@ -435,8 +442,10 @@ public abstract class MappedRoute {
      * Returns current value of {@value #ATTRIBUTE_NAME_DAYS_OF_WEEK} attribute.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_DAYS_OF_WEEK} attribute.
+     * @apiNote This method is {@code protected}: the attribute is the column's numbers, and the
+     *         days are read as {@link DayOfWeek}s with {@link #getDaysOfWeekSet()}.
      */
-    public List<Integer> getDaysOfWeek() {
+    protected List<Integer> getDaysOfWeek() {
         return daysOfWeek;
     }
 
@@ -445,9 +454,48 @@ public abstract class MappedRoute {
      * value.
      *
      * @param daysOfWeek new value for {@value #ATTRIBUTE_NAME_DAYS_OF_WEEK} attribute.
+     * @apiNote This method is {@code protected}: the attribute is the column's numbers, and the
+     *         days are written as {@link DayOfWeek}s with {@link #setDaysOfWeekSet(Set)}.
      */
-    public void setDaysOfWeek(final List<Integer> daysOfWeek) {
+    protected void setDaysOfWeek(final List<Integer> daysOfWeek) {
         this.daysOfWeek = daysOfWeek;
+    }
+
+    /**
+     * Returns the days of the week of the {@value #ATTRIBUTE_NAME_DAYS_OF_WEEK} attribute, as the
+     * column numbers them: {@code 1} for {@link DayOfWeek#MONDAY} to {@code 7} for
+     * {@link DayOfWeek#SUNDAY}, as {@link DayOfWeek#of(int)} reads them.
+     *
+     * @return a new set of the days, from Monday to Sunday; {@code null} when the attribute is
+     *         {@code null}. Changing the set does not change the attribute.
+     * @throws java.time.DateTimeException when the attribute holds a number other than {@code 1}
+     *                                     to {@code 7}, which no check constraint of the column
+     *                                     forbids.
+     */
+    @Transient
+    public Set<DayOfWeek> getDaysOfWeekSet() {
+        return Optional.ofNullable(getDaysOfWeek())
+                .map(l -> l.stream()
+                        .map(DayOfWeek::of)
+                        .collect(Collectors.toCollection(() -> EnumSet.noneOf(DayOfWeek.class))))
+                .orElse(null);
+    }
+
+    /**
+     * Replaces the {@value #ATTRIBUTE_NAME_DAYS_OF_WEEK} attribute with the numbers of the
+     * specified days, {@link DayOfWeek#getValue()}, in ascending order, as the column keeps them.
+     *
+     * @param daysOfWeekSet the days of the week; {@code null} for a {@code null} attribute.
+     */
+    public void setDaysOfWeekSet(final Set<DayOfWeek> daysOfWeekSet) {
+        setDaysOfWeek(
+                Optional.ofNullable(daysOfWeekSet)
+                        .map(v -> v.stream()
+                                .map(DayOfWeek::getValue)
+                                .sorted()
+                                .collect(Collectors.toCollection(ArrayList::new)))
+                        .orElse(null)
+        );
     }
 
     // ------------------------------------------------------------------------------- scheduledTime
@@ -545,7 +593,7 @@ public abstract class MappedRoute {
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_DAYS_OF_WEEK, nullable = false, insertable = true, updatable = true)
-    private List<Integer> daysOfWeek;
+    private List<@Positive @NotNull Integer> daysOfWeek;
 
     // ---------------------------------------------------------------------------------------------
     @NotNull

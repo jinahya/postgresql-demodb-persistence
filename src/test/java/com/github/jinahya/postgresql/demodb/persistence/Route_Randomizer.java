@@ -76,7 +76,7 @@ class Route_Randomizer
         final var instance = super.get();
         instance.setRouteNo(__Random_TestUtils.routeNo());
         instance.setValidity(__Random_TestUtils.validity());
-        instance.setDaysOfWeek(__Random_TestUtils.daysOfWeek());
+        instance.setDaysOfWeekSet(__Random_TestUtils.daysOfWeek());
         instance.setScheduledTime(__Random_TestUtils.time());
         instance.setDuration(__Random_TestUtils.duration());
         instance.setId(RouteId.of(instance.getRouteNo(), instance.getValidity()));

@@ -92,8 +92,8 @@ class Route_Persistence_IT
             assertThat(id.getRouteNo()).isEqualTo(instance.getRouteNo());
             assertThat(id.getValidity()).isEqualTo(instance.getValidity());
         });
-        assertThat(instance.getDaysOfWeek()).as("days of week of %s", instance).isNotEmpty()
-                .allSatisfy(d -> assertThat(d).isBetween(1, 7));
+        // DayOfWeek.of, in getDaysOfWeekSet(), throws for a number other than 1 to 7
+        assertThat(instance.getDaysOfWeekSet()).as("days of week of %s", instance).isNotEmpty();
         assertThat(instance.getDuration()).as("duration of %s", instance).isNotNull()
                 .isPositive()
                 .isLessThan(Duration.ofDays(1));
