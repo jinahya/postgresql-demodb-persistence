@@ -109,8 +109,6 @@
     <!-- https://central.sonatype.com/artifact/ch.qos.logback/logback-classic/versions -->
     <!-- https://central.sonatype.com/artifact/ch.qos.logback/logback-parent -->
     <version.ch.qus.logback>1.6.5</version.ch.qus.logback>
-    <!-- https://central.sonatype.com/artifact/com.h2database/h2/versions -->
-    <version.com.h2database>2.5.252</version.com.h2database>
     <!-- https://github.com/vladmihalcea/hypersistence-utils -->
     <!-- https://central.sonatype.com/artifact/io.hypersistence/hypersistence-utils-hibernate-73/versions -->
     <!-- -hibernate-73 is the newest; it takes hibernate-core as provided, so it runs on the 7.4 this module uses -->
@@ -151,6 +149,8 @@
     <version.org.projectlombok>1.18.48</version.org.projectlombok>
     <!-- https://central.sonatype.com/artifact/org.slf4j/slf4j-bom/versions -->
     <version.org.slf4j>2.0.20</version.org.slf4j>
+    <!-- https://central.sonatype.com/artifact/org.testcontainers/testcontainers-bom/versions -->
+    <version.org.testcontainers>2.0.5</version.org.testcontainers>
     <!-- the session's bookings.lang, which bookings.lang() returns and the views read their names in; -->
     <!-- the defaults are bookings-lang-en's, see that profile -->
     <bookings.lang>en</bookings.lang>
@@ -179,11 +179,6 @@
         <version>2.22.3</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-        <version>${version.com.h2database}</version>
       </dependency>
       <dependency>
         <groupId>io.hypersistence</groupId>
@@ -266,6 +261,13 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers-bom</artifactId>
+        <version>${version.org.testcontainers}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
@@ -322,8 +324,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
+      <!-- the test unit's database: a PostgreSQL container, started from the unit's JDBC URL alone -->
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-postgresql</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

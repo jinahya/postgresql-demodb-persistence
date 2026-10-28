@@ -27,8 +27,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * Verifies the mappings of {@link Airplane} against the schema generated into the in-memory
- * database.
+ * Verifies the mappings of {@link Airplane} against the schema generated into the test unit's
+ * database, a PostgreSQL container.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -44,8 +44,8 @@ class Airplane_Persistence_Test
 
     /**
      * Does nothing; {@value MappedAirplane#TABLE_NAME} is a view, so there is nothing to insert a
-     * randomized instance into. The provider generates a table for it into the in-memory database,
-     * which would make this pass for the wrong reason, and the real object is read-only.
+     * randomized instance into. The provider generates a table for it into the test unit's
+     * database, which would make this pass for the wrong reason, and the real object is read-only.
      */
     @Disabled("a view: nothing is inserted into it")
     @Override

@@ -23,8 +23,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Verifies the mappings of {@link AirportData} against the schema generated into the in-memory
- * database.
+ * Verifies the mappings of {@link AirportData} against the schema generated into the test unit's
+ * database, a PostgreSQL container.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

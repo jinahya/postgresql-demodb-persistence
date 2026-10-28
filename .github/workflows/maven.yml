@@ -33,9 +33,9 @@ jobs:
         distribution: 'temurin'
         cache: maven
     # `verify`, not `package`: it runs everything bound up to and including verify -- the unit
-    # tests against the `test` persistence unit (H2, in-memory, schema generated
-    # from the mappings), jacoco and the licence check -- so a green run here means that path is
-    # verified end to end.
+    # tests against the `test` persistence unit (a PostgreSQL container Testcontainers starts, the
+    # runner's Docker, its schema generated from the mappings), jacoco and the licence check -- so a
+    # green run here means that path is verified end to end.
     #
     # The integration tests on the `it` unit are NOT run, and cannot be: maven-failsafe-plugin is declared
     # only inside the `failsafe` profile, so `verify` without -Pfailsafe never reaches an *_IT

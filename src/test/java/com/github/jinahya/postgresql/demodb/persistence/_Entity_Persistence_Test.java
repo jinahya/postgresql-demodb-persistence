@@ -43,10 +43,10 @@ import static org.assertj.core.api.Assertions.assertThatCode;
  * persistence unit.
  * <p>
  * The unit is the one named {@value #PERSISTENCE_UNIT_NAME}, bootstrapped the Java SE way; each
- * {@code apply...} method opens a factory of it, on an in-memory database whose schema the provider
- * generates, and closes it once done.
+ * {@code apply...} method opens a factory of it, on a PostgreSQL container whose schema the
+ * provider generates, and closes it once done.
  * <p>
- * Nothing here reaches the PostgreSQL database; a test which needs the real data extends
+ * Nothing here reaches the installed demo database; a test which needs the real data extends
  * {@link _Entity_Persistence_IT} and is named {@code *_IT} so that failsafe, not surefire, runs
  * it.
  *
@@ -326,7 +326,7 @@ abstract class _Entity_Persistence_Test<T> {
      * @param <R>      the type of the result.
      * @return the result of the {@code function}.
      * @implNote What this writes survives the transaction, but not the factory: the schema
-     *         is generated per factory and the in-memory database goes with it.
+     *         is generated per factory and dropped with it.
      * @see __Persistence_TestUtils#applyEntityManagerInTransactionAndCommit(String, Function)
      */
     <R> R applyEntityManagerInTransactionAndCommit(

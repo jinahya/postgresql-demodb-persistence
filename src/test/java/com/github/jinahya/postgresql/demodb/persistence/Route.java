@@ -36,7 +36,7 @@ import jakarta.persistence.Table;
  * with what is an application's to decide: its associations, their fetch types and their cascades.
  * <p>
  * The {@value MappedRoute#COLUMN_NAME_DAYS_OF_WEEK} and {@value MappedRoute#COLUMN_NAME_DURATION}
- * columns are overridden with a column definition, {@code varchar}, for the in-memory unit's
+ * columns are overridden with a column definition, {@code varchar}, for the test unit's
  * generated schema alone; their converters carry them as text either way.
  * <p>
  * The table has no primary key, so the entity names one of its own: {@link RouteId}, the
@@ -62,7 +62,7 @@ import jakarta.persistence.Table;
                                     nullable = false,
                                     insertable = false,
                                     updatable = false))
-// the in-memory unit generates its schema from the mappings, and a converter whose database side
+// the test unit generates its schema from the mappings, and a converter whose database side
 // is Object
 // gives the generator no type for the column; the overrides supply one. The physical database's
 // own DDL is

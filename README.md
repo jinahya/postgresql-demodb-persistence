@@ -118,11 +118,6 @@ What follows from it, and what this module does:
 - A read-only foreign-key attribute, and the generated identifier, carry no `@NotNull`: the units validate on
   `prePersist`, when neither can have a value yet, so with it no row could ever be inserted. The column's
   `nullable = false` stays, and the database enforces it on what the association writes.
-- The in-memory unit runs EclipseLink on its PostgreSQL platform, not its H2 one: on H2 2.x in PostgreSQL mode
-  the H2 platform spells an identity column as the legacy `INTEGER IDENTITY` and reads a generated key with
-  `CALL IDENTITY()`, neither of which the mode accepts, so the `flights` table was never created. The PostgreSQL
-  platform's `SERIAL` and `select lastval()` are. A column definition cannot reach the read-back query, so the
-  platform is the switch that has to flip.
 - `point` goes through a converter of the same kind. `PointAttributeConverter.OfString` maps it as
   `PointAttributeConverter.Point`, written `(x,y)`; EclipseLink's `PGpoint` is read through its fields, by reflection.
 - Each `jsonb` column, an object of one name per language, is mapped as a JSON-P `JsonObject` through
@@ -240,7 +235,7 @@ Hibernate ORM is the persistence provider; see [`HIBERNATE_ONLY.adoc`](HIBERNATE
 dropped.
 
 ```shell
-$ ./_mvn_test.sh              # unit tests, H2 in PostgreSQL mode
+$ ./_mvn_test.sh              # unit tests, on a PostgreSQL container
 $ ./_mvn_verify.sh            # + integration tests, against the database above
 $ ./_mvn_verify_notests.sh    # no database needed
 ```
@@ -250,12 +245,12 @@ $ ./_mvn_verify_notests.sh    # no database needed
 The entities live in `src/test`, one per table and view, extending the mapped superclasses with what an
 application decides: the associations, lazy, with no cascade; `of(...)` factories where an association is part of
 the identifier; the identifier `Route` gives a table which has none. The persistence units are there too,
-`test` on H2 in PostgreSQL mode, whose schema the provider generates, and `it` on the
+`test` on a PostgreSQL container Testcontainers starts, whose schema the provider generates, and `it` on the
 database above.
 
 Per entity, after `mysql-sakila-persistence`: a `*_Randomizer`, podam with the constrained attributes assigned after
 the fact; a `*_Persister`, which persists what the entity references first; a `*_Test`, without a persistence
-context; a `*_Persistence_Test`, against the in-memory unit; and a `*_Persistence_IT`, against the database, which
+context; a `*_Persistence_Test`, against the test unit; and a `*_Persistence_IT`, against the database, which
 `find`s a random installed row, asserts what the entity promises of it, and inserts a randomized row inside a
 transaction it rolls back. The composite identifiers have a `*_Randomizer` and a `*_Test` of their own.
 

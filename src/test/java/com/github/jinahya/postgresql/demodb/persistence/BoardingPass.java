@@ -43,7 +43,7 @@ import jakarta.persistence.UniqueConstraint;
  * <p>
  * The table's two unique constraints, a boarding number and a seat each once per flight, are
  * declared with {@link UniqueConstraint @UniqueConstraint}, under the names the database gives
- * them, so that a schema generated from the mapping, the in-memory one, has them too.
+ * them, so that a schema generated from the mapping, the test unit's, has them too.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

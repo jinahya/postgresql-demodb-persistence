@@ -35,8 +35,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies the mappings of {@link BoardingPass} against the schema generated into the in-memory
- * database.
+ * Verifies the mappings of {@link BoardingPass} against the schema generated into the test unit's
+ * database, a PostgreSQL container.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -315,8 +315,8 @@ class BoardingPass_Persistence_Test
          * Verifies that the named query selects every pass of a flight, ordered by the boarding
          * number, ascending, with those without one last.
          *
-         * @implNote The in-memory database orders a {@code NULL} last in an ascending
-         *         order, {@code DEFAULT_NULL_ORDERING=HIGH} on its URL, as PostgreSQL does.
+         * @implNote The test unit's database is PostgreSQL, which orders a {@code NULL} last in
+         *         an ascending order.
          */
         @DisplayName(
                 "selects every pass of the flight, by boarding number, nulls last, by the named " +
@@ -346,8 +346,8 @@ class BoardingPass_Persistence_Test
          * every pass of a flight, ordered by the boarding number, ascending, with those without one
          * last.
          *
-         * @implNote The in-memory database orders a {@code NULL} last in an ascending
-         *         order, {@code DEFAULT_NULL_ORDERING=HIGH} on its URL, as PostgreSQL does.
+         * @implNote The test unit's database is PostgreSQL, which orders a {@code NULL} last in
+         *         an ascending order.
          */
         @DisplayName(
                 "selects every pass of the flight, by boarding number, nulls last, by the query " +
@@ -383,8 +383,8 @@ class BoardingPass_Persistence_Test
          * selects every pass of a flight, ordered by the boarding number, ascending, with those
          * without one last.
          *
-         * @implNote The in-memory database orders a {@code NULL} last in an ascending
-         *         order, {@code DEFAULT_NULL_ORDERING=HIGH} on its URL, as PostgreSQL does.
+         * @implNote The test unit's database is PostgreSQL, which orders a {@code NULL} last in
+         *         an ascending order.
          */
         @DisplayName(
                 "selects every pass of the flight, by boarding number, nulls last, by the " +

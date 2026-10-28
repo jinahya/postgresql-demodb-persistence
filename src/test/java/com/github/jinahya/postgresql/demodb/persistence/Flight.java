@@ -33,7 +33,7 @@ import jakarta.persistence.UniqueConstraint;
  * <p>
  * The table's unique constraint, one flight of a route per scheduled departure, is declared with
  * {@link UniqueConstraint @UniqueConstraint}, under the name the database gives it, so that a
- * schema generated from the mapping, the in-memory one, has it too.
+ * schema generated from the mapping, the test unit's, has it too.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
