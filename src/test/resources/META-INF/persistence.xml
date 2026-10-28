@@ -30,6 +30,7 @@
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.persistence.more.converter.json.JsonpStringAttributeConverter$OfJsonObject</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute$ValidityConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
     <class>com.github.jinahya.persistence.more.converter.time.ZoneIdStringAttributeConverter</class>
@@ -52,9 +53,12 @@
     <properties>
       <!-- a plain PostgreSQL container, which Testcontainers starts from the URL alone; the unit generates its -->
       <!-- schema, so the image needs no data; TC_DAEMON=true keeps the container for the whole test JVM -->
+      <!-- stringtype=unspecified: a String bound for the tstzrange column, the one the generated schema types -->
+      <!-- natively, by its columnDefinition, is sent untyped, so that the server casts it -->
       <!-- https://java.testcontainers.org/modules/databases/jdbc/ -->
       <property name="jakarta.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver"/>
-      <property name="jakarta.persistence.jdbc.url" value="jdbc:tc:postgresql:18-alpine:///test?TC_DAEMON=true"/>
+      <property name="jakarta.persistence.jdbc.url"
+                value="jdbc:tc:postgresql:18-alpine:///test?TC_DAEMON=true&amp;stringtype=unspecified"/>
       <property name="jakarta.persistence.jdbc.user" value="test"/>
       <property name="jakarta.persistence.jdbc.password" value="test"/>
       <!-- /////////////////////////////////////////////////////////////////////////////////////////////// hibernate -->
@@ -72,6 +76,7 @@
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.persistence.more.converter.json.JsonpStringAttributeConverter$OfJsonObject</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.converter.PointAttributeConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute$ValidityConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
     <class>com.github.jinahya.persistence.more.converter.time.ZoneIdStringAttributeConverter</class>

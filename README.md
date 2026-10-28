@@ -57,14 +57,13 @@ one per table and view, three groups, and the whole schema; a table shows its ke
 The schema uses five PostgreSQL types Jakarta Persistence has no basic type for: `integer[]` (`routes.days_of_week`),
 `interval` (`routes.duration`), `tstzrange` (`routes.validity`), `point` (`airports_data.coordinates`) and `jsonb`
 (`airplanes_data.model`, `airports_data.airport_name`, `city`, `country`). Hibernate ORM is the only provider, so
-each is mapped with what maps it best: Hibernate's own types, a converter, or, for the one type nothing else maps, a
-type of [hypersistence-utils](https://github.com/vladmihalcea/hypersistence-utils).
+each is mapped with what maps it best: Hibernate's own types, or a converter.
 
 | PostgreSQL | Columns | Attribute | How |
 |---|---|---|---|
 | `integer[]` | `routes.days_of_week` | `List<Integer>` | Hibernate's, `@JdbcTypeCode(SqlTypes.ARRAY)` |
 | `interval` | `routes.duration` | `Duration` | Hibernate's, `@JdbcTypeCode(SqlTypes.INTERVAL_SECOND)` |
-| `tstzrange` | `routes.validity` | `Range<ZonedDateTime>` | hypersistence-utils' `PostgreSQLRangeType`, its one use |
+| `tstzrange` | `routes.validity` | `Instant[]`, the lower and the upper bound | `MappedRoute.ValidityConverter`, through the text `["lower","upper")` |
 | `point` | `airports_data.coordinates`, the `airports` view's | `PointAttributeConverter.Point` | `PointAttributeConverter`, through the text `(x,y)` |
 | `jsonb` | `airplanes_data.model`, `airports_data.airport_name`, `city`, `country` | `JsonObject` | `JsonpStringAttributeConverter.OfJsonObject`, through the JSON text |
 
@@ -109,21 +108,14 @@ What else this module does:
   array or collection of a basic type to a SQL array since 6.1, and a `Duration` to an `interval` since 6.2, the
   latter for `SqlTypes.INTERVAL_SECOND` only ([migration guide](https://docs.hibernate.org/orm/6.1/migration-guide/)).
   A `Duration` has no months; every duration of the schema is hours and minutes, 35 minutes to 19 hours 55 minutes.
-- `tstzrange` is a `Range<ZonedDateTime>` of hypersistence-utils, the library's one use; neither Jakarta Persistence
-  nor Hibernate gives the type a Java type
-  ([Vlad Mihalcea, How to map a PostgreSQL Range column type with JPA and Hibernate](https://vladmihalcea.com/map-postgresql-range-column-type-jpa-hibernate/)).
-  It is part of `Route`'s identifier.
-  **The JVM has to run in UTC**, `-Duser.timezone=UTC`, or each connection has to `SET TIME ZONE 'UTC'`; a
-  `-c TimeZone` in the URL's `options` has no effect, the driver setting the session's zone to the JVM's at connect.
-  A bound reads back in the session's zone: in a zone with daylight saving time, a period which spans a change of
-  offset reads back with two offsets, which `Range` rejects
-  ([#78](https://github.com/vladmihalcea/hypersistence-utils/issues/78),
-  [#312](https://github.com/vladmihalcea/hypersistence-utils/issues/312)), and in any zone, `Range.equals` and
-  `Range.contains` compare `ZonedDateTime`s, zone and all, not instants
-  ([#655](https://github.com/vladmihalcea/hypersistence-utils/issues/655)). The tests run in UTC, and
-  `JvmTimeZone_Test` fails first if they do not. A bound is never `-infinity` or `infinity`, which a `ZonedDateTime`
-  cannot hold, and a `Range` is bound as a query parameter, never written as a literal
-  ([#670](https://github.com/vladmihalcea/hypersistence-utils/issues/670)).
+- `tstzrange` is an `Instant[]` of two, the lower bound, inclusive, and the upper bound, exclusive; neither Jakarta
+  Persistence nor Hibernate gives the type a Java type. Every period the database holds is of that shape,
+  `[lower,upper)`, so `MappedRoute.ValidityConverter`, a plain `AttributeConverter<Instant[], String>`, converts that
+  shape only, and rejects any other -- `empty`, an unbounded or an infinite bound -- rather than read it as a
+  different range. A bound reads back in the session's time zone, `+09` in Seoul, and is read as an instant, so
+  neither the attribute nor `Route`'s identifier, of which it is part, depends on the zone the JVM runs in; the
+  converter writes UTC, in the server's own text, which it has to read back too: Hibernate copies an array, a mutable
+  value to it, through the converter both ways. The write needs `stringtype=unspecified` on the JDBC URL.
 - `point` holds an airport's geolocation, the longitude as `x` and the latitude as `y`, as the columns' comments say;
   `PointAttributeConverter`, a plain `AttributeConverter<Point, String>`, prints `(longitude,latitude)` and reads the
   text as the server does. No provider maps a native `point`: Hibernate Spatial and geolatte need PostGIS `geometry`,

@@ -22,16 +22,15 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute;
 
-import io.hypersistence.utils.hibernate.type.range.PostgreSQLRangeType;
-import io.hypersistence.utils.hibernate.type.range.Range;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
-import org.hibernate.annotations.Type;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.time.Instant;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -61,7 +60,7 @@ public class RouteId
      * @param validity a value for the {@code validity} attribute.
      * @return a new instance.
      */
-    public static RouteId of(final String routeNo, final Range<ZonedDateTime> validity) {
+    public static RouteId of(final String routeNo, final Instant[] validity) {
         final var instance = new RouteId();
         instance.setRouteNo(routeNo);
         instance.setValidity(validity);
@@ -84,7 +83,7 @@ public class RouteId
     public final String toString() {
         return super.toString() + '{' +
                "routeNo=" + routeNo +
-               ",validity=" + validity +
+               ",validity=" + Arrays.toString(validity) +
                '}';
     }
 
@@ -94,12 +93,12 @@ public class RouteId
             return false;
         }
         return Objects.equals(routeNo, that.routeNo)
-               && Objects.equals(validity, that.validity);
+               && Arrays.equals(validity, that.validity);
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(routeNo, validity);
+        return Objects.hash(routeNo, Arrays.hashCode(validity));
     }
 
     // ------------------------------------------------------------------------------------- routeNo
@@ -129,7 +128,7 @@ public class RouteId
      *
      * @return current value of {@code validity} attribute.
      */
-    public Range<ZonedDateTime> getValidity() {
+    public Instant[] getValidity() {
         return validity;
     }
 
@@ -138,7 +137,7 @@ public class RouteId
      *
      * @param validity new value for {@code validity} attribute.
      */
-    protected void setValidity(final Range<ZonedDateTime> validity) {
+    protected void setValidity(final Instant[] validity) {
         this.validity = validity;
     }
 
@@ -149,9 +148,11 @@ public class RouteId
     private String routeNo;
 
     // ---------------------------------------------------------------------------------------------
-    @Type(PostgreSQLRangeType.class)
+    // the specification does not have @Convert on an identifier's attribute, so this is not
+    // portable; Hibernate ORM, the only provider, applies it
+    @Convert(converter = MappedRoute.ValidityConverter.class)
     @Basic(optional = false)
     @Column(name = MappedRoute.COLUMN_NAME_VALIDITY, nullable = false, insertable = true,
             updatable = false, columnDefinition = "tstzrange")
-    private Range<ZonedDateTime> validity;
+    private Instant[] validity;
 }

@@ -56,8 +56,8 @@ class Flight_Persistence_IT
             assertThat(r.getId().getRouteNo()).isEqualTo(instance.getRouteNo());
             final var validity = r.getId().getValidity();
             final var departure = instance.getScheduledDeparture();
-            assertThat(validity.lower().toInstant()).isBeforeOrEqualTo(departure);
-            assertThat(validity.upper().toInstant()).isAfter(departure);
+            assertThat(validity[0]).isBeforeOrEqualTo(departure);
+            assertThat(validity[1]).isAfter(departure);
             assertThat(r.getDuration()).isEqualTo(instance.getScheduledBlockTime());
         });
     }

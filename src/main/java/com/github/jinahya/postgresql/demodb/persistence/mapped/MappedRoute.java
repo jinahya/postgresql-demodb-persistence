@@ -20,29 +20,36 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import io.hypersistence.utils.hibernate.type.range.PostgreSQLRangeType;
-import io.hypersistence.utils.hibernate.type.range.Range;
+import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -64,23 +71,12 @@ import java.util.stream.Collectors;
  * has an instance about to be inserted rejected, though the association would write the column.
  * <p>
  * The {@value MappedRoute#COLUMN_NAME_VALIDITY} column is a {@code tstzrange}, which neither
- * Jakarta Persistence nor Hibernate ORM maps; it is mapped as a hypersistence-utils {@link Range}
- * of {@link ZonedDateTime}s, through its {@link PostgreSQLRangeType}, the one use of the library.
- * <p>
- * <strong>The JVM has to run in UTC</strong>, {@code -Duser.timezone=UTC}, or each connection has
- * to set its session's zone, {@code SET TIME ZONE 'UTC'}, and ranges have to be built in UTC. A
- * bound reads back in the session's time zone, which the PostgreSQL driver sets to the JVM's
- * default at connect; a {@code -c TimeZone} in the URL's {@code options} has no effect. In a zone
- * with daylight saving time, a period which spans a change of offset reads back with two offsets,
- * which {@link Range} rejects, so the route cannot be loaded; in any other zone than the one a
- * range is built in, {@link Range#equals(Object)} and {@link Range#contains(Comparable)} compare
- * {@link ZonedDateTime}s, zone and all, not instants. The tests run in UTC.
- * <p>
- * A bound is a value or unbounded, never {@code -infinity} or {@code infinity}, which a
- * {@link ZonedDateTime} cannot hold: {@link Range} reads such a bound as unbounded, and writes it
- * back so, a different range. And a {@link Range} is bound as a query parameter, never written as
- * a literal: {@link PostgreSQLRangeType} renders a literal as its {@code toString()}, which is no
- * SQL.
+ * Jakarta Persistence nor Hibernate ORM maps; it is mapped as an array of two {@link Instant}s,
+ * the lower bound, inclusive, and the upper bound, exclusive, through the
+ * {@link ValidityConverter}. Every period the database holds is of that shape,
+ * {@code [lower,upper)}; a range of another shape -- {@code empty}, an unbounded or an infinite
+ * bound -- is not read. A bound is an instant, whatever time zone the session prints it in, so
+ * neither the attribute nor {@link #equals(Object)} depends on the time zone the JVM runs in.
  * <p>
  * The table has no primary key. What keeps a row apart is the {@code routes_route_no_validity_excl}
  * exclusion constraint: no two rows share a {@value #COLUMN_NAME_ROUTE_NO} with overlapping
@@ -100,6 +96,103 @@ import java.util.stream.Collectors;
  */
 @MappedSuperclass
 public abstract class MappedRoute {
+
+    /**
+     * Converts between the {@value #ATTRIBUTE_NAME_VALIDITY} attribute, an array of two
+     * {@link Instant}s, {@code [lower, upper]}, and the {@value #COLUMN_NAME_VALIDITY} column, a
+     * {@code tstzrange} of the shape {@code [lower,upper)}, through its text.
+     * <p>
+     * Only that shape is converted: both bounds present, the lower inclusive and the upper
+     * exclusive, the shape of every period the database holds. A range of any other shape --
+     * {@code empty}, an unbounded or an {@code -infinity} or {@code infinity} bound, an exclusive
+     * lower or an inclusive upper -- is rejected, not read as a different range.
+     * <p>
+     * A bound is read as an instant, whatever offset the server prints it with, which is the
+     * session's time zone; so the attribute does not depend on the time zone the JVM, or the
+     * session, runs in.
+     * <p>
+     * Hibernate ORM reads the column for this converter as its text, and binds the text this
+     * converter writes as a {@link String}, which the server casts for the
+     * {@code stringtype=unspecified} on the JDBC URL.
+     * <p>
+     * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
+     * {@link jakarta.persistence.Convert @Convert}.
+     */
+    @Converter(autoApply = false)
+    public static class ValidityConverter
+            implements AttributeConverter<Instant[], String> {
+
+        // ["lower","upper"), as the server prints a bounded range; the bounds quoted, for the space
+        private static final Pattern PATTERN = Pattern.compile("\\[\"([^\"]+)\",\"([^\"]+)\"\\)");
+
+        // 2025-10-01 00:00:00+00, as the server prints a timestamptz; the fraction and the offset's
+        // minutes and seconds only when non-zero
+        private static final DateTimeFormatter BOUND = new DateTimeFormatterBuilder()
+                .append(DateTimeFormatter.ISO_LOCAL_DATE)
+                .appendLiteral(' ')
+                .append(DateTimeFormatter.ISO_LOCAL_TIME)
+                .appendOffset("+HH:mm:ss", "+00")
+                .toFormatter();
+
+        /**
+         * Creates a new instance.
+         */
+        public ValidityConverter() {
+            super();
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @param attribute {@inheritDoc} -- the lower bound and the upper bound.
+         * @return {@code attribute} as {@code ["lower","upper")}, each bound in UTC, as the server
+         *         prints it, {@code 2025-10-01 00:00:00+00}; or {@code null} if {@code attribute}
+         *         is {@code null}.
+         * @throws IllegalArgumentException if {@code attribute} is not two bounds.
+         * @implNote The text is the one {@link #convertToEntityAttribute(String)} reads, as it
+         *         has to be: Hibernate ORM copies an attribute it deems mutable, an array, through
+         *         both methods.
+         */
+        @Override
+        public String convertToDatabaseColumn(final Instant[] attribute) {
+            if (attribute == null) {
+                return null;
+            }
+            if (attribute.length != 2 || attribute[0] == null || attribute[1] == null) {
+                throw new IllegalArgumentException("not two bounds: " + Arrays.toString(attribute));
+            }
+            return "[\"" + BOUND.format(attribute[0].atOffset(ZoneOffset.UTC)) + "\",\""
+                   + BOUND.format(attribute[1].atOffset(ZoneOffset.UTC)) + "\")";
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @param dbData {@inheritDoc} -- the column's text, {@code ["lower","upper")}.
+         * @return the lower bound and the upper bound {@code dbData} denotes, or {@code null} if
+         *         {@code dbData} is {@code null}.
+         * @throws IllegalArgumentException if {@code dbData} is not a range of the shape
+         *                                  {@code [lower,upper)}.
+         */
+        @Override
+        public Instant[] convertToEntityAttribute(final String dbData) {
+            if (dbData == null) {
+                return null;
+            }
+            final var matcher = PATTERN.matcher(dbData);
+            if (!matcher.matches()) {
+                throw new IllegalArgumentException("not a range of [lower,upper): " + dbData);
+            }
+            try {
+                return new Instant[] {
+                        OffsetDateTime.parse(matcher.group(1), BOUND).toInstant(),
+                        OffsetDateTime.parse(matcher.group(2), BOUND).toInstant()
+                };
+            } catch (final DateTimeParseException dtpe) {
+                throw new IllegalArgumentException("not a range of [lower,upper): " + dbData, dtpe);
+            }
+        }
+    }
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -284,7 +377,7 @@ public abstract class MappedRoute {
     public final String toString() {
         return super.toString() + '{' +
                "routeNo=" + routeNo +
-               ",validity=" + validity +
+               ",validity=" + Arrays.toString(validity) +
                ",departureAirport=" + departureAirport +
                ",arrivalAirport=" + arrivalAirport +
                ",airplaneCode=" + airplaneCode +
@@ -300,7 +393,7 @@ public abstract class MappedRoute {
      * @param obj {@inheritDoc}
      * @return {@inheritDoc}
      * @implSpec Equality is by {@value #ATTRIBUTE_NAME_ROUTE_NO} and
-     *         {@value #ATTRIBUTE_NAME_VALIDITY}.
+     *         {@value #ATTRIBUTE_NAME_VALIDITY}, the latter's bounds compared as instants.
      */
     @Override
     public final boolean equals(final Object obj) {
@@ -308,7 +401,7 @@ public abstract class MappedRoute {
             return false;
         }
         return Objects.equals(getRouteNo(), that.getRouteNo())
-               && Objects.equals(getValidity(), that.getValidity());
+               && Arrays.equals(getValidity(), that.getValidity());
     }
 
     /**
@@ -320,7 +413,7 @@ public abstract class MappedRoute {
      */
     @Override
     public final int hashCode() {
-        return Objects.hash(getRouteNo(), getValidity());
+        return Objects.hash(getRouteNo(), Arrays.hashCode(getValidity()));
     }
 
     // ------------------------------------------------------------------------------------- routeNo
@@ -348,12 +441,12 @@ public abstract class MappedRoute {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_VALIDITY} attribute -- a {@code tstzrange}
-     * column, mapped as its text form, such as
-     * {@code ["2025-10-01 00:00:00+00","2025-11-01 00:00:00+00")}.
+     * column, such as {@code ["2025-10-01 00:00:00+00","2025-11-01 00:00:00+00")}, mapped as its
+     * lower bound, inclusive, and its upper bound, exclusive.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_VALIDITY} attribute.
      */
-    public Range<ZonedDateTime> getValidity() {
+    public Instant[] getValidity() {
         return validity;
     }
 
@@ -361,9 +454,10 @@ public abstract class MappedRoute {
      * Replaces current value of {@value #ATTRIBUTE_NAME_VALIDITY} attribute with the specified
      * value.
      *
-     * @param validity new value for {@value #ATTRIBUTE_NAME_VALIDITY} attribute.
+     * @param validity new value for {@value #ATTRIBUTE_NAME_VALIDITY} attribute; the lower bound,
+     *                 inclusive, and the upper bound, exclusive.
      */
-    public void setValidity(final Range<ZonedDateTime> validity) {
+    public void setValidity(final Instant[] validity) {
         this.validity = validity;
     }
 
@@ -557,12 +651,13 @@ public abstract class MappedRoute {
     private String routeNo;
 
     // ---------------------------------------------------------------------------------------------
+    @Size(min = 2, max = 2)
     @NotNull
     @Basic(optional = false)
-    @Type(PostgreSQLRangeType.class)
+    @Convert(converter = ValidityConverter.class)
     @Column(name = COLUMN_NAME_VALIDITY, nullable = false, insertable = true, updatable = true,
             columnDefinition = "tstzrange")
-    private Range<ZonedDateTime> validity;
+    private Instant[] validity;
 
     // ---------------------------------------------------------------------------------------------
     // read-only: the extending entity owns the writable mapping; see the class documentation

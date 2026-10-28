@@ -109,10 +109,6 @@
     <!-- https://central.sonatype.com/artifact/ch.qos.logback/logback-classic/versions -->
     <!-- https://central.sonatype.com/artifact/ch.qos.logback/logback-parent -->
     <version.ch.qus.logback>1.6.5</version.ch.qus.logback>
-    <!-- https://github.com/vladmihalcea/hypersistence-utils -->
-    <!-- https://central.sonatype.com/artifact/io.hypersistence/hypersistence-utils-hibernate-73/versions -->
-    <!-- -hibernate-73 is the newest; it takes hibernate-core as provided, so it runs on the 7.4 this module uses -->
-    <version.io.hypersistence>3.16.0</version.io.hypersistence>
     <!-- https://jakarta.ee/specifications/platform/11/ -->
     <!-- https://central.sonatype.com/artifact/jakarta.platform/jakarta.jakartaee-bom/versions -->
     <!-- 11.0.0 manages: jakarta.persistence-api 3.2.0, jakarta.validation-api 3.1.1, -->
@@ -179,11 +175,6 @@
         <version>2.22.3</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>io.hypersistence</groupId>
-        <artifactId>hypersistence-utils-hibernate-73</artifactId>
-        <version>${version.io.hypersistence}</version>
       </dependency>
       <dependency><!-- https://central.sonatype.com/artifact/jakarta.platform/jakarta.jakartaee-bom/versions -->
         <groupId>jakarta.platform</groupId>
@@ -335,11 +326,6 @@
       <groupId>org.hibernate.orm</groupId>
       <artifactId>hibernate-core</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <!-- at its minimum: for the tstzrange column alone, MappedRoute.validity, a Range, which nothing else maps -->
-      <groupId>io.hypersistence</groupId>
-      <artifactId>hypersistence-utils-hibernate-73</artifactId>
     </dependency>
     <dependency>
       <groupId>io.github.jinahya</groupId>
