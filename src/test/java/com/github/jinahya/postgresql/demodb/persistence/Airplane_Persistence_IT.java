@@ -82,7 +82,7 @@ class Airplane_Persistence_IT
      * the same query, and checks that the fetch join, an inner join, loses no row of the view.
      *
      * @implNote The number of instances is counted with
-     *         {@link JinahyaEntityManagerUtils#selectCount(jakarta.persistence.EntityManager,
+     *         {@link JinahyaEntityManagerUtils#selectEntityCount(jakarta.persistence.EntityManager,
      *         Class)}, of the view and of the table alike; the view reads every row of the table,
      *         so the three numbers are the same.
      */

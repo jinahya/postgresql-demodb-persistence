@@ -92,7 +92,7 @@ abstract class _Entity_Persistence_IT<T> {
      *         <p>
      *         The identifier is read with
      *         {@link jakarta.persistence.PersistenceUnitUtil#getIdentifier(Object)}; see
-     *         {@link JinahyaEntityManagerUtils#getIdentifier(EntityManager, Object)}.
+     *         {@link JinahyaEntityManagerUtils#getEntityIdentifier(EntityManager, Object)}.
      * @implSpec The identifier has to be a single attribute, basic or an
      *         {@link jakarta.persistence.EmbeddedId EmbeddedId}; a subclass whose entity is mapped
      *         with an {@link jakarta.persistence.IdClass IdClass} overrides this method, without
