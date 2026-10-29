@@ -11,9 +11,9 @@
 <!-- tickets -->
 <g id="node1" class="node">
 <title>tickets</title>
-<polygon fill="#1f4e79" stroke="none" points="344.25,-151 344.25,-173 419,-173 419,-151 344.25,-151"/>
+<polygon fill="#d9e2ec" stroke="none" points="344.25,-151 344.25,-173 419,-173 419,-151 344.25,-151"/>
 <polygon fill="none" stroke="black" points="344.25,-151 344.25,-173 419,-173 419,-151 344.25,-151"/>
-<text xml:space="preserve" text-anchor="start" x="364.38" y="-158.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">tickets</text>
+<text xml:space="preserve" text-anchor="start" x="364.38" y="-158.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">tickets</text>
 <polygon fill="none" stroke="black" points="344.25,-129 344.25,-151 397,-151 397,-129 344.25,-129"/>
 <text xml:space="preserve" text-anchor="start" x="349.25" y="-136.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">ticket_no</text>
 <polygon fill="none" stroke="black" points="397,-129 397,-151 419,-151 419,-129 397,-129"/>
@@ -26,9 +26,9 @@
 <!-- flights -->
 <g id="node2" class="node">
 <title>flights</title>
-<polygon fill="#1f4e79" stroke="none" points="344.25,-48 344.25,-70 419,-70 419,-48 344.25,-48"/>
+<polygon fill="#d9e2ec" stroke="none" points="344.25,-48 344.25,-70 419,-70 419,-48 344.25,-48"/>
 <polygon fill="none" stroke="black" points="344.25,-48 344.25,-70 419,-70 419,-48 344.25,-48"/>
-<text xml:space="preserve" text-anchor="start" x="365.12" y="-55.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">flights</text>
+<text xml:space="preserve" text-anchor="start" x="365.12" y="-55.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">flights</text>
 <polygon fill="none" stroke="black" points="344.25,-26 344.25,-48 397,-48 397,-26 344.25,-26"/>
 <text xml:space="preserve" text-anchor="start" x="349.25" y="-33.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">flight_id</text>
 <polygon fill="none" stroke="black" points="397,-26 397,-48 419,-48 419,-26 397,-26"/>
@@ -73,9 +73,9 @@
 <!-- boarding_passes -->
 <g id="node4" class="node">
 <title>boarding_passes</title>
-<polygon fill="#1f4e79" stroke="none" points="8,-110 8,-132 108,-132 108,-110 8,-110"/>
+<polygon fill="#d9e2ec" stroke="none" points="8,-110 8,-132 108,-132 108,-110 8,-110"/>
 <polygon fill="none" stroke="black" points="8,-110 8,-132 108,-132 108,-110 8,-110"/>
-<text xml:space="preserve" text-anchor="start" x="13" y="-117.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">boarding_passes</text>
+<text xml:space="preserve" text-anchor="start" x="13" y="-117.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">boarding_passes</text>
 <polygon fill="none" stroke="black" points="8,-88 8,-110 66.62,-110 66.62,-88 8,-88"/>
 <text xml:space="preserve" text-anchor="start" x="13" y="-95.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">ticket_no</text>
 <polygon fill="none" stroke="black" points="66.62,-88 66.62,-110 108,-110 108,-88 66.62,-88"/>

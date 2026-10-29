@@ -11,9 +11,9 @@
 <!-- airplanes_data -->
 <g id="node1" class="node">
 <title>airplanes_data</title>
-<polygon fill="#1f4e79" stroke="none" points="196.5,-26 196.5,-48 296,-48 296,-26 196.5,-26"/>
+<polygon fill="#d9e2ec" stroke="none" points="196.5,-26 196.5,-48 296,-48 296,-26 196.5,-26"/>
 <polygon fill="none" stroke="black" points="196.5,-26 196.5,-48 296,-48 296,-26 196.5,-26"/>
-<text xml:space="preserve" text-anchor="start" x="208" y="-33.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">airplanes_data</text>
+<text xml:space="preserve" text-anchor="start" x="208" y="-33.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">airplanes_data</text>
 <polygon fill="none" stroke="black" points="196.5,-4 196.5,-26 274,-26 274,-4 196.5,-4"/>
 <text xml:space="preserve" text-anchor="start" x="201.5" y="-11.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">airplane_code</text>
 <polygon fill="none" stroke="black" points="274,-4 274,-26 296,-26 296,-4 274,-4"/>
@@ -22,9 +22,9 @@
 <!-- airports_data -->
 <g id="node2" class="node">
 <title>airports_data</title>
-<polygon fill="#1f4e79" stroke="none" points="200.25,-107 200.25,-129 292.25,-129 292.25,-107 200.25,-107"/>
+<polygon fill="#d9e2ec" stroke="none" points="200.25,-107 200.25,-129 292.25,-129 292.25,-107 200.25,-107"/>
 <polygon fill="none" stroke="black" points="200.25,-107 200.25,-129 292.25,-129 292.25,-107 200.25,-107"/>
-<text xml:space="preserve" text-anchor="start" x="211.38" y="-114.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">airports_data</text>
+<text xml:space="preserve" text-anchor="start" x="211.38" y="-114.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">airports_data</text>
 <polygon fill="none" stroke="black" points="200.25,-85 200.25,-107 270.25,-107 270.25,-85 200.25,-85"/>
 <text xml:space="preserve" text-anchor="start" x="205.25" y="-92.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">airport_code</text>
 <polygon fill="none" stroke="black" points="270.25,-85 270.25,-107 292.25,-107 292.25,-85 270.25,-85"/>

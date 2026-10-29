@@ -11,9 +11,9 @@
 <!-- segments -->
 <g id="node1" class="node">
 <title>segments</title>
-<polygon fill="#1f4e79" stroke="none" points="182,-48 182,-70 270.25,-70 270.25,-48 182,-48"/>
+<polygon fill="#d9e2ec" stroke="none" points="182,-48 182,-70 270.25,-70 270.25,-48 182,-48"/>
 <polygon fill="none" stroke="black" points="182,-48 182,-70 270.25,-70 270.25,-48 182,-48"/>
-<text xml:space="preserve" text-anchor="start" x="200.62" y="-55.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">segments</text>
+<text xml:space="preserve" text-anchor="start" x="200.62" y="-55.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">segments</text>
 <polygon fill="none" stroke="black" points="182,-26 182,-48 234.75,-48 234.75,-26 182,-26"/>
 <text xml:space="preserve" text-anchor="start" x="187" y="-33.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">ticket_no</text>
 <polygon fill="none" stroke="black" points="234.75,-26 234.75,-48 270.25,-48 270.25,-26 234.75,-26"/>

@@ -22,9 +22,9 @@
 <!-- tickets -->
 <g id="node2" class="node">
 <title>tickets</title>
-<polygon fill="#1f4e79" stroke="none" points="8,-48 8,-70 82.75,-70 82.75,-48 8,-48"/>
+<polygon fill="#d9e2ec" stroke="none" points="8,-48 8,-70 82.75,-70 82.75,-48 8,-48"/>
 <polygon fill="none" stroke="black" points="8,-48 8,-70 82.75,-70 82.75,-48 8,-48"/>
-<text xml:space="preserve" text-anchor="start" x="28.12" y="-55.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">tickets</text>
+<text xml:space="preserve" text-anchor="start" x="28.12" y="-55.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">tickets</text>
 <polygon fill="none" stroke="black" points="8,-26 8,-48 60.75,-48 60.75,-26 8,-26"/>
 <text xml:space="preserve" text-anchor="start" x="13" y="-33.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">ticket_no</text>
 <polygon fill="none" stroke="black" points="60.75,-26 60.75,-48 82.75,-48 82.75,-26 60.75,-26"/>

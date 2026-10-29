@@ -77,9 +77,9 @@
 <!-- airports_data -->
 <g id="node2" class="node">
 <title>airports_data</title>
-<polygon fill="#1f4e79" stroke="none" points="313.5,-426 313.5,-448 405.5,-448 405.5,-426 313.5,-426"/>
+<polygon fill="#d9e2ec" stroke="none" points="313.5,-426 313.5,-448 405.5,-448 405.5,-426 313.5,-426"/>
 <polygon fill="none" stroke="black" points="313.5,-426 313.5,-448 405.5,-448 405.5,-426 313.5,-426"/>
-<text xml:space="preserve" text-anchor="start" x="324.62" y="-433.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">airports_data</text>
+<text xml:space="preserve" text-anchor="start" x="324.62" y="-433.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">airports_data</text>
 <polygon fill="none" stroke="black" points="313.5,-404 313.5,-426 383.5,-426 383.5,-404 313.5,-404"/>
 <text xml:space="preserve" text-anchor="start" x="318.5" y="-411.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">airport_code</text>
 <polygon fill="none" stroke="black" points="383.5,-404 383.5,-426 405.5,-426 405.5,-404 383.5,-404"/>
@@ -88,9 +88,9 @@
 <!-- flights -->
 <g id="node3" class="node">
 <title>flights</title>
-<polygon fill="#1f4e79" stroke="none" points="86.38,-584 86.38,-606 161.12,-606 161.12,-584 86.38,-584"/>
+<polygon fill="#d9e2ec" stroke="none" points="86.38,-584 86.38,-606 161.12,-606 161.12,-584 86.38,-584"/>
 <polygon fill="none" stroke="black" points="86.38,-584 86.38,-606 161.12,-606 161.12,-584 86.38,-584"/>
-<text xml:space="preserve" text-anchor="start" x="107.25" y="-591.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">flights</text>
+<text xml:space="preserve" text-anchor="start" x="107.25" y="-591.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">flights</text>
 <polygon fill="none" stroke="black" points="86.38,-562 86.38,-584 139.12,-584 139.12,-562 86.38,-562"/>
 <text xml:space="preserve" text-anchor="start" x="91.38" y="-569.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">flight_id</text>
 <polygon fill="none" stroke="black" points="139.12,-562 139.12,-584 161.12,-584 161.12,-562 139.12,-562"/>
@@ -102,9 +102,9 @@
 <!-- routes -->
 <g id="node4" class="node">
 <title>routes</title>
-<polygon fill="#1f4e79" stroke="none" points="66.5,-481 66.5,-503 181,-503 181,-481 66.5,-481"/>
+<polygon fill="#d9e2ec" stroke="none" points="66.5,-481 66.5,-503 181,-503 181,-481 66.5,-481"/>
 <polygon fill="none" stroke="black" points="66.5,-481 66.5,-503 181,-503 181,-481 66.5,-481"/>
-<text xml:space="preserve" text-anchor="start" x="106.88" y="-488.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">routes</text>
+<text xml:space="preserve" text-anchor="start" x="106.88" y="-488.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">routes</text>
 <polygon fill="none" stroke="black" points="66.5,-459 66.5,-481 159.75,-481 159.75,-459 66.5,-459"/>
 <text xml:space="preserve" text-anchor="start" x="71.5" y="-467" font-family="Helvetica,sans-Serif" font-size="11.00">route_no</text>
 <polygon fill="none" stroke="black" points="159.75,-459 159.75,-481 181,-481 181,-459 159.75,-459"/>

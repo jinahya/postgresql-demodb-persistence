@@ -11,9 +11,9 @@
 <!-- airplanes_data -->
 <g id="node1" class="node">
 <title>airplanes_data</title>
-<polygon fill="#1f4e79" stroke="none" points="195,-48 195,-70 294.5,-70 294.5,-48 195,-48"/>
+<polygon fill="#d9e2ec" stroke="none" points="195,-48 195,-70 294.5,-70 294.5,-48 195,-48"/>
 <polygon fill="none" stroke="black" points="195,-48 195,-70 294.5,-70 294.5,-48 195,-48"/>
-<text xml:space="preserve" text-anchor="start" x="206.5" y="-55.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">airplanes_data</text>
+<text xml:space="preserve" text-anchor="start" x="206.5" y="-55.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">airplanes_data</text>
 <polygon fill="none" stroke="black" points="195,-26 195,-48 272.5,-48 272.5,-26 195,-26"/>
 <text xml:space="preserve" text-anchor="start" x="200" y="-33.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">airplane_code</text>
 <polygon fill="none" stroke="black" points="272.5,-26 272.5,-48 294.5,-48 294.5,-26 272.5,-26"/>

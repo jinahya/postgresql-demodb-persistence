@@ -22,9 +22,9 @@
 <!-- routes -->
 <g id="node2" class="node">
 <title>routes</title>
-<polygon fill="#1f4e79" stroke="none" points="8,-217 8,-239 122.5,-239 122.5,-217 8,-217"/>
+<polygon fill="#d9e2ec" stroke="none" points="8,-217 8,-239 122.5,-239 122.5,-217 8,-217"/>
 <polygon fill="none" stroke="black" points="8,-217 8,-239 122.5,-239 122.5,-217 8,-217"/>
-<text xml:space="preserve" text-anchor="start" x="48.38" y="-224.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">routes</text>
+<text xml:space="preserve" text-anchor="start" x="48.38" y="-224.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">routes</text>
 <polygon fill="none" stroke="black" points="8,-195 8,-217 101.25,-217 101.25,-195 8,-195"/>
 <text xml:space="preserve" text-anchor="start" x="13" y="-203" font-family="Helvetica,sans-Serif" font-size="11.00">route_no</text>
 <polygon fill="none" stroke="black" points="101.25,-195 101.25,-217 122.5,-217 122.5,-195 101.25,-195"/>
@@ -56,9 +56,9 @@
 <!-- seats -->
 <g id="node3" class="node">
 <title>seats</title>
-<polygon fill="#1f4e79" stroke="none" points="8.75,-48 8.75,-70 121.75,-70 121.75,-48 8.75,-48"/>
+<polygon fill="#d9e2ec" stroke="none" points="8.75,-48 8.75,-70 121.75,-70 121.75,-48 8.75,-48"/>
 <polygon fill="none" stroke="black" points="8.75,-48 8.75,-70 121.75,-70 121.75,-48 8.75,-48"/>
-<text xml:space="preserve" text-anchor="start" x="51.38" y="-55.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">seats</text>
+<text xml:space="preserve" text-anchor="start" x="51.38" y="-55.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">seats</text>
 <polygon fill="none" stroke="black" points="8.75,-26 8.75,-48 86.25,-48 86.25,-26 8.75,-26"/>
 <text xml:space="preserve" text-anchor="start" x="13.75" y="-33.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">airplane_code</text>
 <polygon fill="none" stroke="black" points="86.25,-26 86.25,-48 121.75,-48 121.75,-26 86.25,-26"/>

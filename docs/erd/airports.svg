@@ -45,9 +45,9 @@
 <!-- airports_data -->
 <g id="node2" class="node">
 <title>airports_data</title>
-<polygon fill="#1f4e79" stroke="none" points="30.88,-217 30.88,-239 122.88,-239 122.88,-217 30.88,-217"/>
+<polygon fill="#d9e2ec" stroke="none" points="30.88,-217 30.88,-239 122.88,-239 122.88,-217 30.88,-217"/>
 <polygon fill="none" stroke="black" points="30.88,-217 30.88,-239 122.88,-239 122.88,-217 30.88,-217"/>
-<text xml:space="preserve" text-anchor="start" x="42" y="-224.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">airports_data</text>
+<text xml:space="preserve" text-anchor="start" x="42" y="-224.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">airports_data</text>
 <polygon fill="none" stroke="black" points="30.88,-195 30.88,-217 100.88,-217 100.88,-195 30.88,-195"/>
 <text xml:space="preserve" text-anchor="start" x="35.88" y="-202.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">airport_code</text>
 <polygon fill="none" stroke="black" points="100.88,-195 100.88,-217 122.88,-217 122.88,-195 100.88,-195"/>

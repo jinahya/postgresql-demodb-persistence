@@ -11,9 +11,9 @@
 <!-- bookings -->
 <g id="node1" class="node">
 <title>bookings</title>
-<polygon fill="#1f4e79" stroke="none" points="319,-26 319,-48 393,-48 393,-26 319,-26"/>
+<polygon fill="#d9e2ec" stroke="none" points="319,-26 319,-48 393,-48 393,-26 319,-26"/>
 <polygon fill="none" stroke="black" points="319,-26 319,-48 393,-48 393,-26 319,-26"/>
-<text xml:space="preserve" text-anchor="start" x="331.62" y="-33.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">bookings</text>
+<text xml:space="preserve" text-anchor="start" x="331.62" y="-33.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">bookings</text>
 <polygon fill="none" stroke="black" points="319,-4 319,-26 371,-26 371,-4 319,-4"/>
 <text xml:space="preserve" text-anchor="start" x="324" y="-11.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">book_ref</text>
 <polygon fill="none" stroke="black" points="371,-4 371,-26 393,-26 393,-4 371,-4"/>
@@ -46,9 +46,9 @@
 <!-- segments -->
 <g id="node3" class="node">
 <title>segments</title>
-<polygon fill="#1f4e79" stroke="none" points="8,-48 8,-70 96.25,-70 96.25,-48 8,-48"/>
+<polygon fill="#d9e2ec" stroke="none" points="8,-48 8,-70 96.25,-70 96.25,-48 8,-48"/>
 <polygon fill="none" stroke="black" points="8,-48 8,-70 96.25,-70 96.25,-48 8,-48"/>
-<text xml:space="preserve" text-anchor="start" x="26.62" y="-55.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">segments</text>
+<text xml:space="preserve" text-anchor="start" x="26.62" y="-55.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">segments</text>
 <polygon fill="none" stroke="black" points="8,-26 8,-48 60.75,-48 60.75,-26 8,-26"/>
 <text xml:space="preserve" text-anchor="start" x="13" y="-33.55" font-family="Helvetica,sans-Serif" text-decoration="underline" font-size="11.00">ticket_no</text>
 <polygon fill="none" stroke="black" points="60.75,-26 60.75,-48 96.25,-48 96.25,-26 60.75,-26"/>
