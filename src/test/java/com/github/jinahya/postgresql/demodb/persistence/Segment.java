@@ -22,6 +22,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSegment;
 
+import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -37,7 +38,16 @@ import jakarta.persistence.Table;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Entity
-@Table(name = MappedSegment.TABLE_NAME)
+@Table(name = MappedSegment.TABLE_NAME,
+       check = {
+               @CheckConstraint(
+                       name = "segments_fare_conditions_check",
+                       constraint = "fare_conditions IN ('Economy', 'Comfort', 'Business')"),
+               @CheckConstraint(
+                       name = "segments_price_check",
+                       constraint = "price >= 0")
+       }
+)
 public class Segment
         extends MappedSegment<SegmentId> {
 

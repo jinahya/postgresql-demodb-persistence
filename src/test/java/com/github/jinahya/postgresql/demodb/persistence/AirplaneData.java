@@ -22,6 +22,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirplaneData;
 
+import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
@@ -33,7 +34,16 @@ import jakarta.persistence.Table;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Entity
-@Table(name = MappedAirplaneData.TABLE_NAME)
+@Table(name = MappedAirplaneData.TABLE_NAME,
+       check = {
+               @CheckConstraint(
+                       name = "airplanes_data_range_check",
+                       constraint = "range > 0"),
+               @CheckConstraint(
+                       name = "airplanes_data_speed_check",
+                       constraint = "speed > 0")
+       }
+)
 public class AirplaneData
         extends MappedAirplaneData {
 

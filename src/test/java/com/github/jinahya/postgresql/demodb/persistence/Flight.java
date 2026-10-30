@@ -23,6 +23,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute;
 
+import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -57,6 +58,21 @@ import org.hibernate.annotations.JoinFormula;
                @UniqueConstraint(name = "flights_route_no_scheduled_departure_key",
                                  columnNames = {MappedFlight.COLUMN_NAME_ROUTE_NO,
                                          MappedFlight.COLUMN_NAME_SCHEDULED_DEPARTURE})
+       },
+       check = {
+               @CheckConstraint(
+                       name = "flight_actual_check",
+                       constraint = "actual_arrival IS NULL"
+                                    + " OR (actual_departure IS NOT NULL"
+                                    + " AND actual_arrival IS NOT NULL"
+                                    + " AND actual_arrival > actual_departure)"),
+               @CheckConstraint(
+                       name = "flight_scheduled_check",
+                       constraint = "scheduled_arrival > scheduled_departure"),
+               @CheckConstraint(
+                       name = "flight_status_check",
+                       constraint = "status IN ('Scheduled', 'On Time', 'Delayed', 'Boarding',"
+                                    + " 'Departed', 'Arrived', 'Cancelled')")
        }
 )
 public class Flight

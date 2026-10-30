@@ -22,6 +22,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat;
 
+import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -37,7 +38,13 @@ import jakarta.persistence.Table;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Entity
-@Table(name = MappedSeat.TABLE_NAME)
+@Table(name = MappedSeat.TABLE_NAME,
+       check = {
+               @CheckConstraint(
+                       name = "seat_fare_conditions_check",
+                       constraint = "fare_conditions IN ('Economy', 'Comfort', 'Business')")
+       }
+)
 public class Seat
         extends MappedSeat<SeatId> {
 
