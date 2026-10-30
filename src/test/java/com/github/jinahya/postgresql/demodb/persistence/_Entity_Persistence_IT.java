@@ -21,7 +21,6 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.persistence.test.util.EntityPersisterUtils;
-import com.github.jinahya.persistence.test.util.JinahyaPersistenceTestUtils;
 import com.github.jinahya.persistence.util.JinahyaEntityManagerUtils;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -102,7 +101,7 @@ abstract class _Entity_Persistence_IT<T> {
     @Test
     void find_RandomlySelected_ContextCleared() {
         applyEntityManager(PERSISTENCE_UNIT_NAME, m -> applyInTransaction(m, em -> {
-            final var selected = JinahyaPersistenceTestUtils.selectRandom(em, targetClass);
+            final var selected = selectRandomEntity(em, targetClass);
             assumeTrue(selected.isPresent(), () -> "no row of " + targetClass + " is installed");
             final var identifier = JinahyaEntityManagerUtils.getEntityIdentifier(em, selected.get());
             em.clear();
