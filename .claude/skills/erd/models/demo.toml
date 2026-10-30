@@ -1,0 +1,85 @@
+# The logical model of the PostgreSQL demonstration database (schema bookings), demo-20250901: each table's keys, each
+# view's sources, and the logical groups. routes has no primary key; its exclusion constraint keeps (route_no,
+# validity) apart, so that pair is its key, and flights.route_no refers to it by a join no foreign key declares.
+schema = "demo"
+title = "demo"
+output = "docs/erd"
+
+[[group]]
+name = "airplanes_and_airports"
+title = "기재와 공항"
+tables = ["airplanes_data", "seats", "airports_data"]
+
+[[group]]
+name = "routes_and_flights"
+title = "노선과 항공편"
+tables = ["routes", "flights"]
+
+[[group]]
+name = "bookings"
+title = "예약"
+tables = ["bookings", "tickets", "segments", "boarding_passes"]
+
+[table.airplanes_data]
+pk = ["airplane_code"]
+
+[table.airports_data]
+pk = ["airport_code"]
+
+[table.seats]
+pk = ["airplane_code", "seat_no"]
+[[table.seats.fk]]
+columns = ["airplane_code"]
+references = "airplanes_data"
+
+[table.routes]
+ak = ["route_no", "validity"]
+[[table.routes.fk]]
+columns = ["departure_airport"]
+references = "airports_data"
+[[table.routes.fk]]
+columns = ["arrival_airport"]
+references = "airports_data"
+[[table.routes.fk]]
+columns = ["airplane_code"]
+references = "airplanes_data"
+
+[table.flights]
+pk = ["flight_id"]
+[[table.flights.fk]]
+columns = ["route_no"]
+references = "routes"
+declared = false
+
+[table.bookings]
+pk = ["book_ref"]
+
+[table.tickets]
+pk = ["ticket_no"]
+[[table.tickets.fk]]
+columns = ["book_ref"]
+references = "bookings"
+
+[table.segments]
+pk = ["ticket_no", "flight_id"]
+[[table.segments.fk]]
+columns = ["ticket_no"]
+references = "tickets"
+[[table.segments.fk]]
+columns = ["flight_id"]
+references = "flights"
+
+[table.boarding_passes]
+pk = ["ticket_no", "flight_id"]
+[[table.boarding_passes.fk]]
+columns = ["ticket_no", "flight_id"]
+references = "segments"
+
+[view.airplanes]
+sources = ["airplanes_data"]
+
+[view.airports]
+sources = ["airports_data"]
+
+[view.timetable]
+sources = ["flights", "routes", "airports_data"]
