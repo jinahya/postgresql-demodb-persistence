@@ -20,8 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.persistence.more.__AttributeEnum;
-import com.github.jinahya.persistence.more.converter.__AttributeEnumConverter;
+import com.github.jinahya.persistence.more.AttributeEnum;
+import com.github.jinahya.persistence.more.converter.AttributeEnumConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -63,7 +63,7 @@ public abstract class MappedSeat<T extends MappedSeatId> {
      * @see FareConditionsConverter
      */
     public enum FareConditions
-            implements __AttributeEnum.__OfString<FareConditions> {
+            implements AttributeEnum.OfString<FareConditions> {
 
         /**
          * {@code Economy}.
@@ -101,14 +101,14 @@ public abstract class MappedSeat<T extends MappedSeatId> {
     /**
      * Converts between a {@link FareConditions} and its column value, its
      * {@link FareConditions#attributeValue() attributeValue()}, through
-     * {@link __AttributeEnumConverter.__OfString}, which looks a constant up by its value.
+     * {@link AttributeEnumConverter.OfString}, which looks a constant up by its value.
      * <p>
      * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
      * {@link jakarta.persistence.Convert @Convert}.
      */
     @Converter(autoApply = false)
     public static class FareConditionsConverter
-            extends __AttributeEnumConverter.__OfString<FareConditions> {
+            extends AttributeEnumConverter.OfString<FareConditions> {
 
         /**
          * Creates a new instance.

@@ -20,8 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.persistence.more.__AttributeEnum;
-import com.github.jinahya.persistence.more.converter.__AttributeEnumConverter;
+import com.github.jinahya.persistence.more.AttributeEnum;
+import com.github.jinahya.persistence.more.converter.AttributeEnumConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -69,7 +69,7 @@ public abstract class MappedFlight {
      * @see FlightStatusConverter
      */
     public enum FlightStatus
-            implements __AttributeEnum.__OfString<FlightStatus> {
+            implements AttributeEnum.OfString<FlightStatus> {
 
         /**
          * {@code Scheduled}.
@@ -127,14 +127,14 @@ public abstract class MappedFlight {
     /**
      * Converts between a {@link FlightStatus} and its column value, its
      * {@link FlightStatus#attributeValue() attributeValue()}, through
-     * {@link __AttributeEnumConverter.__OfString}, which looks a constant up by its value.
+     * {@link AttributeEnumConverter.OfString}, which looks a constant up by its value.
      * <p>
      * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
      * {@link jakarta.persistence.Convert @Convert}.
      */
     @Converter(autoApply = false)
     public static class FlightStatusConverter
-            extends __AttributeEnumConverter.__OfString<FlightStatus> {
+            extends AttributeEnumConverter.OfString<FlightStatus> {
 
         /**
          * Creates a new instance.
