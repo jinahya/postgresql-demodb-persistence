@@ -56,7 +56,7 @@
       <!-- the dump creates database `demo` and puts everything in schema `bookings`, which it also makes the -->
       <!-- database's search_path, so unqualified table names resolve there -->
       <!-- stringtype=unspecified: a String bound for a tstzrange, point or jsonb column is sent untyped, so that the -->
-      <!-- server casts it; see README.md, "Column types the providers differ on" -->
+      <!-- server casts it; see README.md, "The column types" -->
       <!-- options=-c bookings.lang=...: the language the views read their names in, bookings.lang(); the -->
       <!-- bookings-lang-en (default) and bookings-lang-ru profiles in pom.xml choose it -->
       <property name="jakarta.persistence.jdbc.url"

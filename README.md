@@ -56,8 +56,9 @@ columns, `PK` and `FK`, and `routes`, which has no primary key, the pair its exc
 
 The schema uses five PostgreSQL types Jakarta Persistence has no basic type for: `integer[]` (`routes.days_of_week`),
 `interval` (`routes.duration`), `tstzrange` (`routes.validity`), `point` (`airports_data.coordinates`) and `jsonb`
-(`airplanes_data.model`, `airports_data.airport_name`, `city`, `country`). Hibernate ORM is the only provider, so
-each is mapped with what maps it best: Hibernate's own types, or a converter.
+(`airplanes_data.model`, `airports_data.airport_name`, `city`, `country`). The provider is a property,
+`persistence-unit.provider`, which `persistence.xml` reads; the build sets it to Hibernate ORM, and each type is mapped
+with what maps it best there: Hibernate's own types, or a converter.
 
 | PostgreSQL | Columns | Attribute | How |
 |---|---|---|---|
@@ -236,7 +237,8 @@ unequal to the old one when the names differ:
 
 ## Building
 
-Hibernate ORM is the persistence provider.
+The persistence provider is the property `persistence-unit.provider`, which `persistence.xml` reads; the build sets it
+to Hibernate ORM's `org.hibernate.jpa.HibernatePersistenceProvider`.
 
 ```shell
 $ ./_mvn_test.sh              # unit tests, no database needed
