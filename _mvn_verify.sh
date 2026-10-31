@@ -3,7 +3,7 @@
 # tests and the integration tests executed.
 #
 # The ITs talk to a real PostgreSQL at localhost:5432/demo, so bring it up with
-# ./_docker_compose_up.sh first; otherwise they fail on the connection rather than on a mapping.
+# ./compose.sh first; otherwise they fail on the connection rather than on a mapping.
 #
 # `failsafe` is the profile that binds maven-failsafe-plugin.
 #

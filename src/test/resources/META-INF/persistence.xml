@@ -52,7 +52,7 @@
     <validation-mode>CALLBACK</validation-mode>
     <properties>
       <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-      <!-- the database from compose.yaml; see _docker-compose-up.sh -->
+      <!-- the database from compose.yaml; see compose.sh -->
       <!-- the dump creates database `demo` and puts everything in schema `bookings`, which it also makes the -->
       <!-- database's search_path, so unqualified table names resolve there -->
       <!-- stringtype=unspecified: a String bound for a tstzrange, point or jsonb column is sent untyped, so that the -->
