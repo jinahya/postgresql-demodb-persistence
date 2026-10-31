@@ -51,16 +51,3 @@ FROM tickets
 GROUP BY outbound
 ORDER BY outbound
 ;
-
--- ----------------------------------------------------------------------------- DEMODB_TICKETS_B_03
--- the tickets of one passenger.
---    ticket_no   | book_ref |   passenger_id   |  passenger_name  | outbound 
--- ---------------+----------+------------------+------------------+----------
---  0005432000000 | RBUUIQ   | IT 2425980678984 | Ilaria Cazzaniga | t
---  0005432000003 | RBUUIQ   | IT 2425980678984 | Ilaria Cazzaniga | f
--- (2 rows)
-SELECT *
-FROM tickets
-WHERE passenger_id = 'IT 2425980678984'
-ORDER BY ticket_no
-;

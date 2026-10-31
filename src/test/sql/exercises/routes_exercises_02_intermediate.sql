@@ -93,3 +93,21 @@ SELECT COUNT(*) AS valid_today
 FROM routes
 WHERE validity @> bookings.now()
 ;
+
+-- ------------------------------------------------------------------------------ DEMODB_ROUTES_I_05
+-- the routes from Sheremetyevo valid today and flown on Mondays.
+--  route_no | arrival_airport | scheduled_time |  days_of_week   
+-- ----------+-----------------+----------------+-----------------
+--  PG0018   | KZN             | 02:05:00       | {1,2,3,4,5,6,7}
+--  PG0106   | LED             | 02:40:00       | {1,2,3,4,5,6,7}
+--  PG0012   | UFA             | 13:55:00       | {1,2,3,5,6,7}
+--  PG0034   | SVX             | 14:05:00       | {1,5}
+--  PG0177   | AER             | 15:05:00       | {1,2,4,6}
+-- (5 rows)
+SELECT route_no, arrival_airport, scheduled_time, days_of_week
+FROM routes
+WHERE departure_airport = 'SVO'
+  AND validity @> bookings.now()
+  AND 1 = ANY (days_of_week)
+ORDER BY scheduled_time, route_no
+;

@@ -96,3 +96,29 @@ FROM hops
 GROUP BY flights
 ORDER BY flights
 ;
+
+-- ------------------------------------------------------------------------------ DEMODB_SCHEMA_A_04
+-- the five airports where the most passengers change flights.
+--  airport | connections | shortest | average  
+-- ---------+-------------+----------+----------
+--  TFU     |       68165 | 02:30:00 | 17:57:00
+--  FRA     |       62767 | 02:10:00 | 20:07:00
+--  PVG     |       51349 | 02:05:00 | 18:34:00
+--  ATL     |       46646 | 02:25:00 | 16:18:00
+--  CAN     |       36889 | 02:05:00 | 18:33:00
+-- (5 rows)
+SELECT airport,
+       COUNT(*)                           AS connections,
+       MIN(layover)                       AS shortest,
+       DATE_TRUNC('minute', AVG(layover)) AS average
+FROM (SELECT r.departure_airport                                     AS airport,
+             f.scheduled_departure - LAG(f.scheduled_arrival) OVER w AS layover
+      FROM segments s
+               JOIN flights f ON f.flight_id = s.flight_id
+               JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+      WINDOW w AS (PARTITION BY s.ticket_no ORDER BY f.scheduled_departure)) c
+WHERE layover IS NOT NULL
+GROUP BY airport
+ORDER BY connections DESC, airport
+LIMIT 5
+;

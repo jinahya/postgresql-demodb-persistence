@@ -69,3 +69,26 @@ WHERE f.scheduled_departure >= '2025-10-01'
   AND f.scheduled_departure < '2025-10-02'
   AND bp.boarding_time IS NOT NULL
 ;
+
+-- --------------------------------------------------------------------- DEMODB_BOARDING_PASSES_I_04
+-- the five arrived flights with the most passengers checked in but not boarded.
+--  flight_id | checked_in | boarded | not_boarded 
+-- -----------+------------+---------+-------------
+--       8953 |        247 |      65 |         182
+--       9761 |        404 |     248 |         156
+--       1607 |        200 |      87 |         113
+--      10471 |        257 |     183 |          74
+--       8988 |        371 |     318 |          53
+-- (5 rows)
+SELECT bp.flight_id,
+       COUNT(*)                         AS checked_in,
+       COUNT(bp.boarding_no)            AS boarded,
+       COUNT(*) - COUNT(bp.boarding_no) AS not_boarded
+FROM boarding_passes bp
+         JOIN flights f ON f.flight_id = bp.flight_id
+WHERE f.status = 'Arrived'
+GROUP BY bp.flight_id
+HAVING COUNT(*) > COUNT(bp.boarding_no)
+ORDER BY not_boarded DESC, bp.flight_id
+LIMIT 5
+;

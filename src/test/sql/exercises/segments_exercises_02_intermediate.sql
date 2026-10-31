@@ -72,3 +72,16 @@ FROM (SELECT ticket_no
       GROUP BY ticket_no
       HAVING COUNT(*) > 2) t
 ;
+
+-- ---------------------------------------------------------------------------- DEMODB_SEGMENTS_I_04
+-- the tickets of more than one segment that fly Business on every one.
+--  tickets | all_business 
+-- ---------+--------------
+--   638446 |         4992
+-- (1 row)
+SELECT COUNT(*) AS tickets, COUNT(*) FILTER (WHERE all_business) AS all_business
+FROM (SELECT ticket_no, BOOL_AND(fare_conditions = 'Business') AS all_business
+      FROM segments
+      GROUP BY ticket_no
+      HAVING COUNT(*) > 1) t
+;

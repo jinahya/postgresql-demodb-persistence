@@ -48,24 +48,3 @@ WHERE s.airplane_code = '7M7'
   AND bp.ticket_no IS NULL
 ORDER BY s.seat_no
 ;
-
--- ------------------------------------------------------------------------------- DEMODB_SEATS_A_02
--- the share of Business seats of each airplane.
---  airplane_code | business_pct 
--- ---------------+--------------
---  789           |         18.7
---  32N           |         16.9
---  351           |         13.5
---  339           |         10.3
---  7M7           |         10.0
---  CR7           |          8.6
---  E70           |          7.7
---  77W           |          7.4
--- (8 rows)
-SELECT airplane_code,
-       ROUND(100.0 * COUNT(*) FILTER (WHERE fare_conditions = 'Business') / COUNT(*),
-             1) AS business_pct
-FROM seats
-GROUP BY airplane_code
-ORDER BY business_pct DESC, airplane_code
-;

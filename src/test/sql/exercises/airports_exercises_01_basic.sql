@@ -62,14 +62,3 @@ FROM airports
 WHERE city = 'Moscow'
 ORDER BY airport_code
 ;
-
--- ---------------------------------------------------------------------------- DEMODB_AIRPORTS_B_03
--- how many airports are called International.
---  international 
--- ---------------
---              0
--- (1 row)
-SELECT COUNT(*) AS international
-FROM airports
-WHERE airport_name LIKE '%International%'
-;

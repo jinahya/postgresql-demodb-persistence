@@ -116,3 +116,28 @@ GROUP BY a.country
 ORDER BY arrivals DESC, a.country
 LIMIT 10
 ;
+
+-- ------------------------------------------------------------------------------ DEMODB_SCHEMA_I_05
+-- the passengers and the seats of the flights from Sheremetyevo in the next 24 hours.
+--  flight_id | arrival_airport | scheduled_departure_local | airplane_code | passengers | seats 
+-- -----------+-----------------+---------------------------+---------------+------------+-------
+--      11120 | UFA             | 2025-12-01 13:55:00       | E70           |         78 |    78
+--      11121 | SVX             | 2025-12-01 14:05:00       | 339           |        281 |   281
+--      11132 | AER             | 2025-12-01 15:05:00       | 7M7           |        160 |   160
+--      11211 | KZN             | 2025-12-02 02:05:00       | CR7           |         70 |    70
+--      11216 | LED             | 2025-12-02 02:40:00       | 77W           |        404 |   404
+-- (5 rows)
+SELECT t.flight_id,
+       t.arrival_airport,
+       t.scheduled_departure_local,
+       t.airplane_code,
+       COUNT(s.ticket_no)                                                       AS passengers,
+       (SELECT COUNT(*) FROM seats st WHERE st.airplane_code = t.airplane_code) AS seats
+FROM timetable t
+         LEFT JOIN segments s ON s.flight_id = t.flight_id
+WHERE t.departure_airport = 'SVO'
+  AND t.scheduled_departure >= bookings.now()
+  AND t.scheduled_departure < bookings.now() + INTERVAL '24 hours'
+GROUP BY t.flight_id, t.arrival_airport, t.scheduled_departure_local, t.airplane_code
+ORDER BY t.scheduled_departure_local
+;

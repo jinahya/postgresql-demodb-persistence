@@ -75,3 +75,21 @@ SELECT COUNT(*) AS tickets
 FROM tickets t
 WHERE NOT EXISTS (SELECT 1 FROM segments s WHERE s.ticket_no = t.ticket_no)
 ;
+
+-- ----------------------------------------------------------------------------- DEMODB_TICKETS_I_04
+-- how many bookings carry one, two or more passengers.
+--  passengers | bookings 
+-- ------------+----------
+--           1 |   851889
+--           2 |   374707
+--           3 |    61520
+--           4 |     4662
+--           5 |      115
+-- (5 rows)
+SELECT passengers, COUNT(*) AS bookings
+FROM (SELECT book_ref, COUNT(DISTINCT passenger_id) AS passengers
+      FROM tickets
+      GROUP BY book_ref) b
+GROUP BY passengers
+ORDER BY passengers
+;

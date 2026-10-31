@@ -70,3 +70,28 @@ FROM timetable
 GROUP BY month
 ORDER BY month
 ;
+
+-- --------------------------------------------------------------------------- DEMODB_TIMETABLE_I_04
+-- the airport pairs whose flights land, by the local clocks, before they take off.
+--  departure_airport | arrival_airport | flights | local_difference 
+-- -------------------+-----------------+---------+------------------
+--  AKL               | CLT             |       5 | -01:15:00
+--  AKL               | SCL             |       9 | -03:50:00
+--  CDG               | LGW             |      59 | -00:10:00
+--  CDG               | LHR             |      31 | -00:05:00
+--  HGH               | YYC             |       5 | -03:00:00
+--  ORY               | LGW             |      25 | -00:05:00
+--  ORY               | LHR             |      61 | -00:05:00
+--  OVB               | DME             |       4 | -00:10:00
+--  OVB               | KZN             |       9 | -00:45:00
+--  OVB               | VKO             |       4 | -00:05:00
+-- ... 16 rows in all.
+SELECT departure_airport,
+       arrival_airport,
+       COUNT(*)                                                 AS flights,
+       MIN(scheduled_arrival_local - scheduled_departure_local) AS local_difference
+FROM timetable
+WHERE scheduled_arrival_local < scheduled_departure_local
+GROUP BY departure_airport, arrival_airport
+ORDER BY departure_airport, arrival_airport
+;

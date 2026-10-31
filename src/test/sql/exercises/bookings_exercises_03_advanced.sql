@@ -58,3 +58,28 @@ GROUP BY b.book_ref, b.book_date, b.total_amount
 ORDER BY tickets DESC, b.book_ref
 LIMIT 5
 ;
+
+-- ---------------------------------------------------------------------------- DEMODB_BOOKINGS_A_03
+-- the share of the money each tenth of the bookings brings.
+--  decile | bookings |     total     | share_pct 
+-- --------+----------+---------------+-----------
+--       1 |   129290 | 9148794375.00 |      37.2
+--       2 |   129290 | 4063444850.00 |      16.5
+--       3 |   129290 | 2901435700.00 |      11.8
+--       4 |   129289 | 2202659150.00 |       9.0
+--       5 |   129289 | 1755298325.00 |       7.1
+--       6 |   129289 | 1426527550.00 |       5.8
+--       7 |   129289 | 1129903700.00 |       4.6
+--       8 |   129289 |  891240850.00 |       3.6
+--       9 |   129289 |  667925925.00 |       2.7
+--      10 |   129289 |  386701150.00 |       1.6
+-- (10 rows)
+SELECT decile,
+       COUNT(*)                                                             AS bookings,
+       SUM(total_amount)                                                    AS total,
+       ROUND(100.0 * SUM(total_amount) / SUM(SUM(total_amount)) OVER (), 1) AS share_pct
+FROM (SELECT total_amount, NTILE(10) OVER (ORDER BY total_amount DESC) AS decile
+      FROM bookings) b
+GROUP BY decile
+ORDER BY decile
+;

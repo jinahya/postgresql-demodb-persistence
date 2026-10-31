@@ -78,3 +78,28 @@ WHERE r1.departure_airport < r1.arrival_airport
 ORDER BY r1.route_no, r2.route_no
 LIMIT 10
 ;
+
+-- ------------------------------------------------------------------------------ DEMODB_ROUTES_A_03
+-- the airplane changes of each route from one period to the next.
+--  route_no |       valid_from       | previous_airplane | airplane_code 
+-- ----------+------------------------+-------------------+---------------
+--  PG0001   | 2025-11-01 00:00:00+00 | 339               | 789
+--  PG0001   | 2026-01-01 00:00:00+00 | 789               | 77W
+--  PG0002   | 2025-11-01 00:00:00+00 | 339               | 789
+--  PG0002   | 2026-01-01 00:00:00+00 | 789               | 77W
+--  PG0005   | 2025-11-01 00:00:00+00 | 789               | E70
+--  PG0005   | 2025-12-01 00:00:00+00 | E70               | 339
+--  PG0005   | 2026-01-01 00:00:00+00 | 339               | 32N
+--  PG0006   | 2025-11-01 00:00:00+00 | 789               | E70
+--  PG0006   | 2025-12-01 00:00:00+00 | E70               | 339
+--  PG0006   | 2026-01-01 00:00:00+00 | 339               | 32N
+-- ... 250 rows in all.
+SELECT route_no, valid_from, previous_airplane, airplane_code
+FROM (SELECT route_no,
+             LOWER(validity)                                                   AS valid_from,
+             airplane_code,
+             LAG(airplane_code) OVER (PARTITION BY route_no ORDER BY validity) AS previous_airplane
+      FROM routes) r
+WHERE previous_airplane <> airplane_code
+ORDER BY route_no, valid_from
+;

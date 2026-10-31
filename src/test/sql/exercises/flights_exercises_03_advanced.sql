@@ -97,3 +97,28 @@ GROUP BY f.flight_id, f.route_no, r.airplane_code, s.seats
 ORDER BY boarded_pct DESC, f.flight_id
 LIMIT 5
 ;
+
+-- ----------------------------------------------------------------------------- DEMODB_FLIGHTS_A_04
+-- the time since the previous flight of the route PG0001, in October 2025.
+--  flight_id |  scheduled_departure   | since_previous 
+-- -----------+------------------------+----------------
+--         56 | 2025-10-01 08:55:00+00 | 
+--        420 | 2025-10-03 08:55:00+00 | 2 days
+--        595 | 2025-10-04 08:55:00+00 | 1 day
+--        786 | 2025-10-05 08:55:00+00 | 1 day
+--        962 | 2025-10-06 08:55:00+00 | 1 day
+--       1145 | 2025-10-07 08:55:00+00 | 1 day
+--       1319 | 2025-10-08 08:55:00+00 | 1 day
+--       1682 | 2025-10-10 08:55:00+00 | 2 days
+--       1858 | 2025-10-11 08:55:00+00 | 1 day
+--       2049 | 2025-10-12 08:55:00+00 | 1 day
+-- ... 26 rows in all.
+SELECT flight_id,
+       scheduled_departure,
+       scheduled_departure - LAG(scheduled_departure) OVER (ORDER BY scheduled_departure) AS since_previous
+FROM flights
+WHERE route_no = 'PG0001'
+  AND scheduled_departure >= '2025-10-01'
+  AND scheduled_departure < '2025-11-01'
+ORDER BY scheduled_departure
+;
