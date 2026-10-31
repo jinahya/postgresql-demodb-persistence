@@ -255,7 +255,7 @@ persistence unit is there too, `it`, on the database above.
 
 Per entity, after `mysql-sakila-persistence`: a `*_Randomizer`, podam with the constrained attributes assigned after
 the fact; a `*_Persister`, which persists what the entity references first; a `*_Test`, without a persistence
-context; and a `*_Persistence_IT`, against the database, which
+context; and a `*_PersistenceIT`, against the database, which
 `find`s a random installed row, asserts what the entity promises of it, and inserts a randomized row inside a
 transaction it rolls back. The composite identifiers have a `*_Randomizer` and a `*_Test` of their own.
 

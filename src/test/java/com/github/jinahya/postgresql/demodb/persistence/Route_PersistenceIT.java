@@ -38,13 +38,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class Route_Persistence_IT
-        extends _Entity_Persistence_IT<Route> {
+class Route_PersistenceIT
+        extends _Entity_PersistenceIT<Route> {
 
     // the bounds of a validity, as a list to assert on
     private static final BiFunction<Instant, Instant, List<Instant>> BOUNDS = List::of;
 
-    Route_Persistence_IT() {
+    Route_PersistenceIT() {
         super(Route.class);
     }
 

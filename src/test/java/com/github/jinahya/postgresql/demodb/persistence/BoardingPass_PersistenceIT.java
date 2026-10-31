@@ -39,10 +39,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class BoardingPass_Persistence_IT
-        extends _Entity_Persistence_IT<BoardingPass> {
+class BoardingPass_PersistenceIT
+        extends _Entity_PersistenceIT<BoardingPass> {
 
-    BoardingPass_Persistence_IT() {
+    BoardingPass_PersistenceIT() {
         super(BoardingPass.class);
     }
 

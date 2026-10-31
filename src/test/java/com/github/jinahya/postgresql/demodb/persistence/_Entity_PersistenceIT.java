@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
         "java:S101", // Class names should comply with a naming convention
         "java:S118"  // Abstract class names should comply with a naming convention
 })
-abstract class _Entity_Persistence_IT<T> {
+abstract class _Entity_PersistenceIT<T> {
 
     /**
      * The name of the persistence unit this class bootstraps. The value is {@value}.
@@ -72,7 +72,7 @@ abstract class _Entity_Persistence_IT<T> {
      *
      * @param targetClass the class of the entity under test.
      */
-    _Entity_Persistence_IT(final Class<T> targetClass) {
+    _Entity_PersistenceIT(final Class<T> targetClass) {
         super();
         this.targetClass = Objects.requireNonNull(targetClass, "targetClass is null");
     }

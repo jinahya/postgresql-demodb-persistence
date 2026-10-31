@@ -25,16 +25,16 @@ import lombok.extern.slf4j.Slf4j;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies the mappings of {@link Ticket} against the installed {@code demo} database.
+ * Verifies the mappings of {@link Booking} against the installed {@code demo} database.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class Ticket_Persistence_IT
-        extends _Entity_Persistence_IT<Ticket> {
+class Booking_PersistenceIT
+        extends _Entity_PersistenceIT<Booking> {
 
-    Ticket_Persistence_IT() {
-        super(Ticket.class);
+    Booking_PersistenceIT() {
+        super(Booking.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -43,11 +43,11 @@ class Ticket_Persistence_IT
      * {@inheritDoc}
      *
      * @param instance {@inheritDoc}
-     * @implNote The booking, a lazy association, resolves.
+     * @implNote The date is there, and the amount is not negative.
      */
     @Override
-    void randomTargetInstanceSelected(final Ticket instance) {
-        assertThat(instance.getBooking()).as("booking of %s", instance).isNotNull()
-                .extracting(Booking::getBookDate).isNotNull();
+    void randomTargetInstanceSelected(final Booking instance) {
+        assertThat(instance.getBookDate()).as("date of %s", instance).isNotNull();
+        assertThat(instance.getTotalAmount()).as("amount of %s", instance).isNotNegative();
     }
 }

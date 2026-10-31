@@ -22,21 +22,19 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Locale;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies the mappings of {@link AirplaneData} against the installed {@code demo} database.
+ * Verifies the mappings of {@link Seat} against the installed {@code demo} database.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class AirplaneData_Persistence_IT
-        extends _Entity_Persistence_IT<AirplaneData> {
+class Seat_PersistenceIT
+        extends _Entity_PersistenceIT<Seat> {
 
-    AirplaneData_Persistence_IT() {
-        super(AirplaneData.class);
+    Seat_PersistenceIT() {
+        super(Seat.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -45,14 +43,12 @@ class AirplaneData_Persistence_IT
      * {@inheritDoc}
      *
      * @param instance {@inheritDoc}
-     * @implNote The model is JSON with an English name, and the range and the speed are
-     *         positive.
+     * @implNote The airplane, a lazy association over the identifier, resolves to the
+     *         airplane of the code.
      */
     @Override
-    void randomTargetInstanceSelected(final AirplaneData instance) {
-        assertThat(instance.getModelName(Locale.ENGLISH)).as("model of %s", instance).isNotBlank();
-        assertThat(instance.getModelName(Locale.of("ru"))).as("model of %s", instance).isNotBlank();
-        assertThat(instance.getRange()).as("range of %s", instance).isPositive();
-        assertThat(instance.getSpeed()).as("speed of %s", instance).isPositive();
+    void randomTargetInstanceSelected(final Seat instance) {
+        assertThat(instance.getAirplaneData()).as("airplane of %s", instance).isNotNull()
+                .extracting(AirplaneData::getAirplaneCode).isEqualTo(instance.getAirplaneCode());
     }
 }

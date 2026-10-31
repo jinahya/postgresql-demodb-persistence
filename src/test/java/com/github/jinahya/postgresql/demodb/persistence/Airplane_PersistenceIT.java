@@ -39,10 +39,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class Airplane_Persistence_IT
-        extends _Entity_Persistence_IT<Airplane> {
+class Airplane_PersistenceIT
+        extends _Entity_PersistenceIT<Airplane> {
 
-    Airplane_Persistence_IT() {
+    Airplane_PersistenceIT() {
         super(Airplane.class);
     }
 

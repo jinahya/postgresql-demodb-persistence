@@ -25,16 +25,16 @@ import lombok.extern.slf4j.Slf4j;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies the mappings of {@link Seat} against the installed {@code demo} database.
+ * Verifies the mappings of {@link Ticket} against the installed {@code demo} database.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class Seat_Persistence_IT
-        extends _Entity_Persistence_IT<Seat> {
+class Ticket_PersistenceIT
+        extends _Entity_PersistenceIT<Ticket> {
 
-    Seat_Persistence_IT() {
-        super(Seat.class);
+    Ticket_PersistenceIT() {
+        super(Ticket.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -43,12 +43,11 @@ class Seat_Persistence_IT
      * {@inheritDoc}
      *
      * @param instance {@inheritDoc}
-     * @implNote The airplane, a lazy association over the identifier, resolves to the
-     *         airplane of the code.
+     * @implNote The booking, a lazy association, resolves.
      */
     @Override
-    void randomTargetInstanceSelected(final Seat instance) {
-        assertThat(instance.getAirplaneData()).as("airplane of %s", instance).isNotNull()
-                .extracting(AirplaneData::getAirplaneCode).isEqualTo(instance.getAirplaneCode());
+    void randomTargetInstanceSelected(final Ticket instance) {
+        assertThat(instance.getBooking()).as("booking of %s", instance).isNotNull()
+                .extracting(Booking::getBookDate).isNotNull();
     }
 }

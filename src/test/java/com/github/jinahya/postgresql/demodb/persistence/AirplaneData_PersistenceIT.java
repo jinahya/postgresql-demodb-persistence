@@ -22,19 +22,21 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Locale;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies the mappings of {@link Segment} against the installed {@code demo} database.
+ * Verifies the mappings of {@link AirplaneData} against the installed {@code demo} database.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class Segment_Persistence_IT
-        extends _Entity_Persistence_IT<Segment> {
+class AirplaneData_PersistenceIT
+        extends _Entity_PersistenceIT<AirplaneData> {
 
-    Segment_Persistence_IT() {
-        super(Segment.class);
+    AirplaneData_PersistenceIT() {
+        super(AirplaneData.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -43,14 +45,14 @@ class Segment_Persistence_IT
      * {@inheritDoc}
      *
      * @param instance {@inheritDoc}
-     * @implNote The ticket and the flight, lazy associations over the identifier, resolve
-     *         to the ones of the identifier.
+     * @implNote The model is JSON with an English name, and the range and the speed are
+     *         positive.
      */
     @Override
-    void randomTargetInstanceSelected(final Segment instance) {
-        assertThat(instance.getTicket()).as("ticket of %s", instance).isNotNull()
-                .extracting(Ticket::getTicketNo).isEqualTo(instance.getTicketNo());
-        assertThat(instance.getFlight()).as("flight of %s", instance).isNotNull()
-                .extracting(Flight::getFlightId).isEqualTo(instance.getFlightId());
+    void randomTargetInstanceSelected(final AirplaneData instance) {
+        assertThat(instance.getModelName(Locale.ENGLISH)).as("model of %s", instance).isNotBlank();
+        assertThat(instance.getModelName(Locale.of("ru"))).as("model of %s", instance).isNotBlank();
+        assertThat(instance.getRange()).as("range of %s", instance).isPositive();
+        assertThat(instance.getSpeed()).as("speed of %s", instance).isPositive();
     }
 }

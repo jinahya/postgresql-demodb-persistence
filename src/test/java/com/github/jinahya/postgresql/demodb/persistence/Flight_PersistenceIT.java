@@ -33,10 +33,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class Flight_Persistence_IT
-        extends _Entity_Persistence_IT<Flight> {
+class Flight_PersistenceIT
+        extends _Entity_PersistenceIT<Flight> {
 
-    Flight_Persistence_IT() {
+    Flight_PersistenceIT() {
         super(Flight.class);
     }
 

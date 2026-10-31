@@ -25,16 +25,16 @@ import lombok.extern.slf4j.Slf4j;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies the mappings of {@link Booking} against the installed {@code demo} database.
+ * Verifies the mappings of {@link Segment} against the installed {@code demo} database.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class Booking_Persistence_IT
-        extends _Entity_Persistence_IT<Booking> {
+class Segment_PersistenceIT
+        extends _Entity_PersistenceIT<Segment> {
 
-    Booking_Persistence_IT() {
-        super(Booking.class);
+    Segment_PersistenceIT() {
+        super(Segment.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -43,11 +43,14 @@ class Booking_Persistence_IT
      * {@inheritDoc}
      *
      * @param instance {@inheritDoc}
-     * @implNote The date is there, and the amount is not negative.
+     * @implNote The ticket and the flight, lazy associations over the identifier, resolve
+     *         to the ones of the identifier.
      */
     @Override
-    void randomTargetInstanceSelected(final Booking instance) {
-        assertThat(instance.getBookDate()).as("date of %s", instance).isNotNull();
-        assertThat(instance.getTotalAmount()).as("amount of %s", instance).isNotNegative();
+    void randomTargetInstanceSelected(final Segment instance) {
+        assertThat(instance.getTicket()).as("ticket of %s", instance).isNotNull()
+                .extracting(Ticket::getTicketNo).isEqualTo(instance.getTicketNo());
+        assertThat(instance.getFlight()).as("flight of %s", instance).isNotNull()
+                .extracting(Flight::getFlightId).isEqualTo(instance.getFlightId());
     }
 }

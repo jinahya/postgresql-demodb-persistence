@@ -34,10 +34,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class Timetable_Persistence_IT
-        extends _Entity_Persistence_IT<Timetable> {
+class Timetable_PersistenceIT
+        extends _Entity_PersistenceIT<Timetable> {
 
-    Timetable_Persistence_IT() {
+    Timetable_PersistenceIT() {
         super(Timetable.class);
     }
 
