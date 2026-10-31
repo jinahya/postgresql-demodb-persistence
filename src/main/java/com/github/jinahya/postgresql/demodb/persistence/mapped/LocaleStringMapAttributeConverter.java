@@ -20,7 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.persistence.more.converter.json.JsonpStringAttributeConverter;
+import com.github.jinahya.persistence.more.converter.json.JsonpAttributeConverter;
 import com.github.jinahya.persistence.more.converter.util.LocaleStringAttributeConverter;
 import jakarta.json.Json;
 import jakarta.persistence.AttributeConverter;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * language, {@code {"en": "...", "ru": "..."}}.
  * <p>
  * The column is read and written as a {@link jakarta.json.JsonObject} with
- * {@link JsonpStringAttributeConverter.OfJsonObject}, and each key is a {@link Locale} stored as
+ * {@link JsonpAttributeConverter.OfString.OfJsonObject}, and each key is a {@link Locale} stored as
  * its {@link Locale#getLanguage() language}, with
  * {@link LocaleStringAttributeConverter.OfLanguage}.
  * <p>
@@ -49,8 +49,8 @@ import java.util.stream.Collectors;
 public class LocaleStringMapAttributeConverter
         implements AttributeConverter<Map<Locale, String>, String> {
 
-    private static final JsonpStringAttributeConverter.OfJsonObject JSON_OBJECT =
-            new JsonpStringAttributeConverter.OfJsonObject();
+    private static final JsonpAttributeConverter.OfString.OfJsonObject JSON_OBJECT =
+            new JsonpAttributeConverter.OfString.OfJsonObject();
 
     private static final LocaleStringAttributeConverter.OfLanguage LANGUAGE =
             new LocaleStringAttributeConverter.OfLanguage();

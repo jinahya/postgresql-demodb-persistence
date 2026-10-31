@@ -20,7 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.persistence.more.converter.json.JsonpStringAttributeConverter;
+import com.github.jinahya.persistence.more.converter.json.JsonpAttributeConverter;
 import com.github.jinahya.persistence.more.converter.time.ZoneIdStringAttributeConverter;
 import jakarta.json.JsonObject;
 import jakarta.persistence.Basic;
@@ -34,14 +34,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TimeZone;
 import java.util.function.Supplier;
 
@@ -53,12 +52,13 @@ import java.util.function.Supplier;
  * {@value MappedAirportData#COLUMN_NAME_CITY} and {@value MappedAirportData#COLUMN_NAME_COUNTRY}
  * columns are {@code jsonb}, an object of one name per language, keyed {@code en}, {@code ru}, ...;
  * {@value MappedAirportData#COLUMN_NAME_AIRPORT_NAME} is mapped as a {@link JsonObject}, through a
- * {@link JsonpStringAttributeConverter.OfJsonObject}, {@value MappedAirportData#COLUMN_NAME_CITY}
- * as a map keyed by {@link Locale}, through a {@link LocaleStringMapAttributeConverter}, and
- * {@value MappedAirportData#COLUMN_NAME_COUNTRY} as a set of {@link LocaleName}s, one per language,
- * through a {@link LocaleNameSetAttributeConverter}; each has package-private accessors, and is
- * read and written a name at a time, by the language of a {@link Locale}. The {@code airports}
- * view, see {@link MappedAirport}, picks the session's language out of them.
+ * {@link JsonpAttributeConverter.OfString.OfJsonObject},
+ * {@value MappedAirportData#COLUMN_NAME_CITY} as a map keyed by {@link Locale}, through a
+ * {@link LocaleStringMapAttributeConverter}, and
+ * {@value MappedAirportData#COLUMN_NAME_COUNTRY} as a list of {@link LocaleName}s, one per
+ * language, through a {@link LocaleNameListAttributeConverter}; each has package-private
+ * accessors, and is read and written a name at a time, by the language of a {@link Locale}. The
+ * {@code airports} view, see {@link MappedAirport}, picks the session's language out of them.
  * <p>
  * The {@value MappedAirportData#COLUMN_NAME_COORDINATES} column is a {@code point}, which has no
  * type in Jakarta Persistence; it is mapped as a list of two {@link Double}s, the longitude as
@@ -432,12 +432,8 @@ public abstract class MappedAirportData {
      */
     public void setCityName(final Locale locale, final String name) {
         final var language = new Locale(LanguageNameUtils.language(locale));
-        Objects.requireNonNull(name, "name is null");
-        if (name.isBlank()) {
-            throw new IllegalArgumentException("name is blank");
-        }
         final var city = new HashMap<>(Optional.ofNullable(getCity()).orElse(Map.of()));
-        city.put(language, name);
+        city.put(language, LanguageNameUtils.name(name));
         setCity(city);
     }
 
@@ -466,13 +462,13 @@ public abstract class MappedAirportData {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_COUNTRY} attribute -- a {@code jsonb}
-     * column, mapped, through a {@link LocaleNameSetAttributeConverter}, as the names it holds, one
-     * per language.
+     * column, mapped, through a {@link LocaleNameListAttributeConverter}, as the names it holds,
+     * one per language, in the order of their languages.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_COUNTRY} attribute.
      * @see #getCountryName(Locale)
      */
-    Set<LocaleName> getCountry() {
+    List<LocaleName> getCountry() {
         return country;
     }
 
@@ -481,11 +477,11 @@ public abstract class MappedAirportData {
      * value.
      *
      * @param country new value for {@value #ATTRIBUTE_NAME_COUNTRY} attribute.
-     * @implNote The names are replaced with a new set, not changed in place, so that the
-     *         change is seen as a change of the attribute.
+     * @implNote The names are replaced with a new list, not changed in place, so that the change
+     *         is seen as a change of the attribute.
      * @see #setCountryName(Locale, String)
      */
-    void setCountry(final Set<LocaleName> country) {
+    void setCountry(final List<LocaleName> country) {
         this.country = country;
     }
 
@@ -501,7 +497,7 @@ public abstract class MappedAirportData {
     public String getCountryName(final Locale locale) {
         final var language = new Locale(LanguageNameUtils.language(locale));
         return Optional.ofNullable(getCountry()).stream()
-                .flatMap(Set::stream)
+                .flatMap(List::stream)
                 .filter(n -> n.getLocale().equals(language))
                 .map(LocaleName::getValue)
                 .findFirst()
@@ -517,15 +513,16 @@ public abstract class MappedAirportData {
      * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
      *                                  blank.
-     * @implNote The names are replaced with a new set, not changed in place, so that the
-     *         change is seen as a change of the attribute.
+     * @implNote The names are replaced with new ones, not changed in place, so that the change is
+     *         seen as a change of the attribute.
      * @see #removeCountryName(Locale)
      */
     public void setCountryName(final Locale locale, final String name) {
         final var element = new LocaleName(locale, name);
-        final var country = new HashSet<>(Optional.ofNullable(getCountry()).orElse(Set.of()));
+        final var country = new ArrayList<>(Optional.ofNullable(getCountry()).orElse(List.of()));
         country.removeIf(n -> n.getLocale().equals(element.getLocale())); // one per language
         country.add(element);
+        country.sort(LocaleNameListAttributeConverter.ORDER);
         setCountry(country);
     }
 
@@ -536,15 +533,14 @@ public abstract class MappedAirportData {
      * @return the name removed; {@code null} if there was none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language.
-     * @implNote The names are replaced with a new set, not changed in place, so that the
-     *         change is seen as a change of the attribute; nothing is replaced when there was no
-     *         name.
+     * @implNote The names are replaced with new ones, not changed in place, so that the change is
+     *         seen as a change of the attribute; nothing is replaced when there was no name.
      */
     public String removeCountryName(final Locale locale) {
         final var removed = getCountryName(locale);
         if (removed != null) {
             final var language = new Locale(LanguageNameUtils.language(locale));
-            final var country = new HashSet<>(getCountry());
+            final var country = new ArrayList<>(getCountry());
             country.removeIf(n -> n.getLocale().equals(language));
             setCountry(country);
         }
@@ -634,7 +630,7 @@ public abstract class MappedAirportData {
 
     // ---------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = JsonpStringAttributeConverter.OfJsonObject.class)
+    @Convert(converter = JsonpAttributeConverter.OfString.OfJsonObject.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_AIRPORT_NAME, nullable = false, insertable = true, updatable = true)
     private JsonObject airportName;
@@ -648,10 +644,10 @@ public abstract class MappedAirportData {
 
     // ---------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = LocaleNameSetAttributeConverter.class)
+    @Convert(converter = LocaleNameListAttributeConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_COUNTRY, nullable = false, insertable = true, updatable = true)
-    private Set<@NotNull LocaleName> country;
+    private List<@NotNull LocaleName> country;
 
     // ---------------------------------------------------------------------------------------------
     @Size(min = 2, max = 2)

@@ -52,10 +52,7 @@ final class LocaleName {
     LocaleName(final Locale locale, final String value) {
         super();
         this.locale = new Locale(LanguageNameUtils.language(locale));
-        this.value = Objects.requireNonNull(value, "value is null");
-        if (value.isBlank()) {
-            throw new IllegalArgumentException("value is blank");
-        }
+        this.value = LanguageNameUtils.name(value);
     }
 
     // ------------------------------------------------------------------------------------ Object

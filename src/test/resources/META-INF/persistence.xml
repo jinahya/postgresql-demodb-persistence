@@ -28,7 +28,7 @@
     <description>Persistence Unit for a Physical Database</description>
     <!--    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
-    <class>com.github.jinahya.persistence.more.converter.json.JsonpStringAttributeConverter$OfJsonObject</class>
+    <class>com.github.jinahya.persistence.more.converter.json.JsonpAttributeConverter$OfString$OfJsonObject</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.PointAttributeConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRouteId$ValidityConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>

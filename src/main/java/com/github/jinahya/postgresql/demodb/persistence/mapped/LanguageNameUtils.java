@@ -58,6 +58,22 @@ final class LanguageNameUtils {
     }
 
     /**
+     * Returns the specified name, if it is a name: not blank.
+     *
+     * @param name the name.
+     * @return {@code name}.
+     * @throws NullPointerException     if {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code name} is blank.
+     */
+    static String name(final String name) {
+        Objects.requireNonNull(name, "name is null");
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("name is blank");
+        }
+        return name;
+    }
+
+    /**
      * Returns the name, in the specified names, in the language of the specified locale.
      *
      * @param names  the names; may be {@code null}.
@@ -86,11 +102,7 @@ final class LanguageNameUtils {
      */
     static JsonObject with(final JsonObject names, final Locale locale, final String name) {
         final var language = language(locale);
-        Objects.requireNonNull(name, "name is null");
-        if (name.isBlank()) {
-            throw new IllegalArgumentException("name is blank");
-        }
-        return builder(names).add(language, name).build();
+        return builder(names).add(language, name(name)).build();
     }
 
     /**
