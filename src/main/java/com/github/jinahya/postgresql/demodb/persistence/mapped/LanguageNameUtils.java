@@ -38,7 +38,7 @@ import java.util.Optional;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-final class _LocaleNames {
+final class LanguageNameUtils {
 
     /**
      * Returns the language of the specified locale, the key of a name.
@@ -117,7 +117,7 @@ final class _LocaleNames {
 
     // -------------------------------------------------------------------------------- CONSTRUCTORS
 
-    private _LocaleNames() {
+    private LanguageNameUtils() {
         throw new AssertionError("instantiation is not allowed");
     }
 }

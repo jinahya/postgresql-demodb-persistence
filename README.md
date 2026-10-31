@@ -64,8 +64,10 @@ each is mapped with what maps it best: Hibernate's own types, or a converter.
 | `integer[]` | `routes.days_of_week` | `List<Integer>` | Hibernate's, `@JdbcTypeCode(SqlTypes.ARRAY)` |
 | `interval` | `routes.duration` | `Duration` | Hibernate's, `@JdbcTypeCode(SqlTypes.INTERVAL_SECOND)` |
 | `tstzrange` | `routes.validity` | `Instant[]`, the lower and the upper bound | `MappedRouteId.ValidityConverter`, through the text `["lower","upper")` |
-| `point` | `airports_data.coordinates`, the `airports` view's | `List<Double>`, the longitude and the latitude | `MappedAirportData.CoordinatesAttributeConverter`, through the text `(x,y)` |
-| `jsonb` | `airplanes_data.model`, `airports_data.airport_name`, `city`, `country` | `JsonObject` | `JsonpStringAttributeConverter.OfJsonObject`, through the JSON text |
+| `point` | `airports_data.coordinates`, the `airports` view's | `List<Double>`, the longitude and the latitude | `PointAttributeConverter`, through the text `(x,y)` |
+| `jsonb` | `airplanes_data.model`, `airports_data.airport_name` | `JsonObject` | `JsonpStringAttributeConverter.OfJsonObject`, through the JSON text |
+| `jsonb` | `airports_data.city` | `Map<Locale, String>`, keyed by language | `LocaleStringMapAttributeConverter`, through a `JsonObject` |
+| `jsonb` | `airports_data.country` | `Set<LocaleName>`, one per language | `LocaleNameSetAttributeConverter`, through a `Map<Locale, String>` |
 
 What Hibernate does with each of the five, mapped by a plain `@Column` and no converter, measured against the database
 above with Hibernate ORM 7.4.12.Final and PostgreSQL JDBC 42.7.14, a row read and the column updated and rolled back;
@@ -117,12 +119,16 @@ What else this module does:
   converter writes UTC, in the server's own text, which it has to read back too: Hibernate copies an array, a mutable
   value to it, through the converter both ways. The write needs `stringtype=unspecified` on the JDBC URL.
 - `point` holds an airport's geolocation, the longitude as `x` and the latitude as `y`, as the columns' comments say;
-  `MappedAirportData.CoordinatesAttributeConverter`, a plain `AttributeConverter<List<Double>, String>`, prints `(longitude,latitude)` and reads the
+  `PointAttributeConverter`, a plain `AttributeConverter<List<Double>, String>`, prints `(longitude,latitude)` and reads the
   text as the server does. No provider maps a native `point`: Hibernate Spatial and geolatte need PostGIS `geometry`,
   which the database does not have.
-- Each `jsonb` column, an object of one name per language, is mapped as a JSON-P `JsonObject` through
-  `JsonpStringAttributeConverter.OfJsonObject`; the attributes have package-private accessors, and are read and
-  written a name at a time, by the language of a `Locale`. `JsonpStringAttributeConverter`, from
+- Each `jsonb` column is an object of one name per language. `airplanes_data.model` and `airports_data.airport_name`
+  are mapped as a JSON-P `JsonObject` through `JsonpStringAttributeConverter.OfJsonObject`; `airports_data.city` as a
+  `Map<Locale, String>` through `LocaleStringMapAttributeConverter`, which reads the column as a `JsonObject` and each
+  key as a language with `LocaleStringAttributeConverter.OfLanguage`; and `airports_data.country` as a
+  `Set<LocaleName>` through `LocaleNameSetAttributeConverter`, which goes through `LocaleStringMapAttributeConverter`.
+  The attributes have package-private accessors, and are read and written a name at a time, by the language of a
+  `Locale`, through public `get…Name`, `set…Name` and `remove…Name` methods. `JsonpStringAttributeConverter`, from
   `jinahya-persistence-more`, has a converter for each JSON-P type, `OfJsonValue`, `OfJsonStructure`, `OfJsonObject`,
   `OfJsonArray`, `OfJsonString` and `OfJsonNumber`; each reads one JSON value, rejects anything after it, and rejects
   a value of another type.
@@ -165,8 +171,8 @@ The demo database runs with the default; a database set to `sql_standard` would 
 
 ### `jsonb`, and why not `@Lob`
 
-The four `jsonb` columns are `JsonObject` attributes over the text, `@Basic` and `@Column` with no `length` and no
-`@Lob`. Hibernate reads them as the JSON text, which the converter parses, and writes them back, the write with
+The four `jsonb` columns are attributes over the text, `@Basic` and `@Column` with no `length` and no `@Lob`.
+Hibernate reads them as the JSON text, which the converter parses, and writes them back, the write with
 `stringtype=unspecified`.
 A `jsonb` value is at most 268,435,455 bytes, one short of 256 MB -- the 28-bit offsets of its binary
 form, not a setting, see [BUG #15079](https://www.postgresql.org/message-id/151933308143.1365.3106046996770708952%40wrigleys.postgresql.org)
@@ -193,7 +199,33 @@ Hibernate's `@JdbcTypeCode(SqlTypes.JSON)` would bind `jsonb` as itself, with no
 ([Thorben Janssen](https://thorben-janssen.com/?p=3224),
 [Hibernate javadoc](https://docs.hibernate.org/orm/6.6/javadocs/org/hibernate/dialect/PostgreSQLJsonPGObjectJsonbType.html)),
 but it serializes a value through Jackson or JSON-B into a type whose shape it fixes, a record or a `Map`; the
-columns' objects have no fixed keys and values, so they stay JSON-P `JsonObject`s.
+columns' objects have no fixed keys and values, so they stay text, which a converter parses.
+
+### Portability
+
+The mappings are measured with Hibernate ORM only, and two things in them depend on it.
+
+An attribute declared as a `Map` or a `Set`, `airports_data.city` and `country`, is `@Basic` with `@Convert`.
+The specification's basic types are the primitives and their wrappers, `String`, the numeric and the date and time
+types, `byte[]` and `char[]`, enums and "any other type that implements `java.io.Serializable`"; an attribute
+declared as a `Collection`, a `Set`, a `List` or a `Map` is collection-valued, a relationship or an
+`@ElementCollection`
+([Jakarta Persistence 3.2, `Basic`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/Basic.html)).
+Hibernate takes a `Map` or a `Set` with a converter as a basic value; a provider that reads the declaration as a
+collection may refuse it. A `JsonObject`, which is a `Map<String, JsonValue>`, is the same case. The portable form is
+an immutable, `Serializable` value type of the module's own, which is no collection, with a converter.
+
+The specification does not say how a provider sees a change of a converted attribute. Hibernate keeps a copy of the
+value, through the converter, and compares it with `equals` at a flush; a provider may as well compare the reference
+only. So a value is never changed in place, but replaced with a new one, which every provider sees, and which is
+unequal to the old one when the names differ:
+
+- `city`'s `setCityName` and `removeCityName` build a new map, and a `Map`'s equality takes in its values, so a
+  rename in a language the city has is seen.
+- `country`'s `setCountryName` and `removeCountryName` build a new set, and a `LocaleName` is equal to another of the
+  same language and the same value, so a set with a name renamed is unequal to the set before, and the rename is
+  seen. The set's equality does not keep it to one name per language; `setCountryName` does, by removing the name
+  of the language before it adds the new one, and the converter refuses a set with two.
 
 ## Building
 

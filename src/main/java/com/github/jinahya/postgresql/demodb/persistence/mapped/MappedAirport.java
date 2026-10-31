@@ -46,7 +46,7 @@ import java.util.TimeZone;
  * The {@value MappedAirport#COLUMN_NAME_COORDINATES} column is a {@code point}, which has no type
  * in Jakarta Persistence; it is mapped as a list of two {@link Double}s, the longitude as {@code x}
  * and the latitude as {@code y}, through a
- * {@link MappedAirportData.CoordinatesAttributeConverter}.
+ * {@link PointAttributeConverter}.
  * <p>
  * The view reads {@code airports_data}, see {@link MappedAirportData}, with the
  * {@value #COLUMN_NAME_AIRPORT_NAME}, {@value #COLUMN_NAME_CITY} and {@value #COLUMN_NAME_COUNTRY}
@@ -351,7 +351,7 @@ public abstract class MappedAirport {
 
     // ---------------------------------------------------------------------------------------------
     @Size(min = 2, max = 2)
-    @Convert(converter = MappedAirportData.CoordinatesAttributeConverter.class)
+    @Convert(converter = PointAttributeConverter.class)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_COORDINATES, nullable = true, insertable = false, updatable = false)
     private List<@NotNull Double> coordinates;

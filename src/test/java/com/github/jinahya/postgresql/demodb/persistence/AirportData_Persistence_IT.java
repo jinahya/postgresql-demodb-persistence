@@ -20,7 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirportData;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.PointAttributeConverter;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,19 +49,35 @@ class AirportData_Persistence_IT
      *
      * @param entityManager  {@inheritDoc}
      * @param entityInstance {@inheritDoc}
-     * @implNote The coordinates, written as a point, are read back as they were, by the
-     *         server and by a new find.
+     * @implNote The city and the country, each renamed in a language they have, are written
+     *         with the rename, and read back with it by the server and by a new find; the
+     *         coordinates, written as a point, are read back as they were, by the server and by a
+     *         new find.
      */
     @Override
     void targetInstancePersisted(final EntityManager entityManager,
                                  final AirportData entityInstance) {
+        final var ru = Locale.of("ru");
+        entityInstance.setCityName(Locale.ENGLISH, "city renamed");
+        entityInstance.setCountryName(Locale.ENGLISH, "country renamed");
+        entityManager.flush();
+        final var names = (Object[]) entityManager.createNativeQuery(
+                        "SELECT city->>'en', city->>'ru', country->>'en', country->>'ru'"
+                        + " FROM airports_data WHERE airport_code = ?1")
+                .setParameter(1, entityInstance.getAirportCode())
+                .getSingleResult();
+        assertThat(names).as("names of %s, as the server reads them", entityInstance)
+                .containsExactly("city renamed", entityInstance.getCityName(ru),
+                                 "country renamed", entityInstance.getCountryName(ru));
+        final var cityRu = entityInstance.getCityName(ru);
+        final var countryRu = entityInstance.getCountryName(ru);
         final var coordinates = entityInstance.getCoordinates();
         final var text = (String) entityManager.createNativeQuery(
                         "SELECT coordinates::text FROM airports_data WHERE airport_code = ?1")
                 .setParameter(1, entityInstance.getAirportCode())
                 .getSingleResult();
         log.info("coordinates: {}, text: {}", coordinates, text);
-        assertThat(new MappedAirportData.CoordinatesAttributeConverter()
+        assertThat(new PointAttributeConverter()
                            .convertToEntityAttribute(text))
                 .as("coordinates of %s, as the server reads them", entityInstance)
                 .isEqualTo(coordinates);
@@ -71,6 +87,14 @@ class AirportData_Persistence_IT
                 .as("coordinates of %s, found", entityInstance)
                 .isNotSameAs(coordinates)
                 .isEqualTo(coordinates);
+        assertThat(found.getCityName(Locale.ENGLISH)).as("city of %s, found", entityInstance)
+                .isEqualTo("city renamed");
+        assertThat(found.getCityName(ru)).as("city of %s, found", entityInstance)
+                .isEqualTo(cityRu);
+        assertThat(found.getCountryName(Locale.ENGLISH)).as("country of %s, found", entityInstance)
+                .isEqualTo("country renamed");
+        assertThat(found.getCountryName(ru)).as("country of %s, found", entityInstance)
+                .isEqualTo(countryRu);
     }
 
     /**

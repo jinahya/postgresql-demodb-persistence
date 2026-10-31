@@ -256,7 +256,7 @@ public abstract class MappedAirplaneData {
      * @throws IllegalArgumentException if {@code locale} has no language.
      */
     public String getModelName(final Locale locale) {
-        return _LocaleNames.get(getModel(), locale);
+        return LanguageNameUtils.get(getModel(), locale);
     }
 
     /**
@@ -273,7 +273,7 @@ public abstract class MappedAirplaneData {
      * @see #removeModelName(Locale)
      */
     public void setModelName(final Locale locale, final String name) {
-        setModel(_LocaleNames.with(getModel(), locale, name));
+        setModel(LanguageNameUtils.with(getModel(), locale, name));
     }
 
     /**
@@ -290,7 +290,7 @@ public abstract class MappedAirplaneData {
     public String removeModelName(final Locale locale) {
         final var removed = getModelName(locale);
         if (removed != null) {
-            setModel(_LocaleNames.without(getModel(), locale));
+            setModel(LanguageNameUtils.without(getModel(), locale));
         }
         return removed;
     }

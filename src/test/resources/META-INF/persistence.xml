@@ -29,7 +29,7 @@
     <!--    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
     <class>com.github.jinahya.persistence.more.converter.json.JsonpStringAttributeConverter$OfJsonObject</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirportData$CoordinatesAttributeConverter</class>
+    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.PointAttributeConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRouteId$ValidityConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
