@@ -52,8 +52,8 @@ import java.util.stream.Collectors;
  * <p>
  * The {@value MappedRoute#COLUMN_NAME_DEPARTURE_AIRPORT},
  * {@value MappedRoute#COLUMN_NAME_ARRIVAL_AIRPORT}, {@value MappedRoute#COLUMN_NAME_AIRPLANE_CODE}
- * columns are mapped read-only ({@code insertable = false, updatable = false}), with a
- * {@code protected} getter and no setter, for {@link #toString()} and for queries. How the
+ * columns are mapped read-only ({@code insertable = false, updatable = false}), with a public
+ * getter and a {@code protected} setter, for {@link #toString()} and for queries. How the
  * relationship behind each is mapped -- fetch type, cascade, whether there is an association at all
  * -- is the extending entity's decision, so the extending entity also owns their writable mapping,
  * by an association's {@link jakarta.persistence.JoinColumn @JoinColumn} or by an

@@ -35,16 +35,17 @@ import java.util.function.Supplier;
  * <q>Tickets</q>.
  * <p>
  * The {@value MappedTicket#COLUMN_NAME_BOOK_REF} column is mapped read-only
- * ({@code insertable = false, updatable = false}), with a {@code protected} getter and no setter,
- * for {@link #toString()} and for queries. How the relationship behind it is mapped -- fetch type,
- * cascade, whether there is an association at all -- is the extending entity's decision, so the
- * extending entity also owns its writable mapping, by an association's
+ * ({@code insertable = false, updatable = false}), with a public getter and a {@code protected}
+ * setter, for {@link #toString()} and for queries. How the relationship behind it is mapped --
+ * fetch type, cascade, whether there is an association at all -- is the extending entity's
+ * decision, so the extending entity also owns its writable mapping, by an association's
  * {@link jakarta.persistence.JoinColumn @JoinColumn} or by an
  * {@link jakarta.persistence.AttributeOverride @AttributeOverride}. <strong>An extending entity
  * which maps neither never writes it.</strong> Being read-only, it is populated by a load or a
- * refresh only, which is also why it carries no {@code @NotNull}: an instance about to be inserted
- * has nothing there, and the column's {@code NOT NULL} is the database's to enforce, on whatever
- * the association writes.
+ * refresh, or by the extending entity, which sets it through its {@code protected} setter in step
+ * with the association which writes the column. It carries no {@code @NotNull}: an extending
+ * entity need not set it, so an instance about to be inserted may have nothing there, and the
+ * column's {@code NOT NULL} is the database's to enforce, on whatever the association writes.
  * <p>
  * The table also keeps ({@value #COLUMN_NAME_BOOK_REF}, {@value #COLUMN_NAME_PASSENGER_ID},
  * {@value #COLUMN_NAME_OUTBOUND}) unique, which an extending entity may state in its
