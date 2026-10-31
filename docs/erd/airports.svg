@@ -5,35 +5,34 @@
  -->
 <!-- Title: erd Pages: 1 -->
 <!-- demo.airports: the view and the tables it reads -->
-<svg width="193pt" height="65pt"
- viewBox="0.00 0.00 193.00 65.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="196pt" height="65pt"
+ viewBox="0.00 0.00 196.00 65.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(7.2 58.2)">
 <title>erd</title>
-<polygon fill="white" stroke="none" points="-7.2,7.2 -7.2,-58.2 185.95,-58.2 185.95,7.2 -7.2,7.2"/>
 <!-- airports -->
 <g id="node1" class="node">
 <title>airports</title>
-<polygon fill="none" stroke="#000000" stroke-dasharray="5,2" points="130.75,-2.5 130.75,-48.5 178.75,-48.5 178.75,-2.5 130.75,-2.5"/>
-<polygon fill="#1f4e79" stroke="none" stroke-dasharray="5,2" points="131.75,-24 131.75,-47.5 177.75,-47.5 177.75,-24 131.75,-24"/>
-<text xml:space="preserve" text-anchor="start" x="136.75" y="-34.95" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#ffffff">airports</text>
-<text xml:space="preserve" text-anchor="start" x="146.88" y="-10.75" font-family="Noto Sans KR" font-size="7.00" fill="#555555">VIEW</text>
+<polygon fill="none" stroke="#000000" stroke-dasharray="5,2" points="133.75,-1 133.75,-50 181.75,-50 181.75,-1 133.75,-1"/>
+<polygon fill="#1f4e79" stroke="none" stroke-dasharray="5,2" points="134.75,-25.5 134.75,-49 180.75,-49 180.75,-25.5 134.75,-25.5"/>
+<text xml:space="preserve" text-anchor="start" x="139.75" y="-36.45" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#ffffff">airports</text>
+<text xml:space="preserve" text-anchor="start" x="146.88" y="-10" font-family="Noto Sans KR" font-size="9.00" fill="#555555">VIEW</text>
 </g>
 <!-- airports_data -->
 <g id="node2" class="node">
 <title>airports_data</title>
-<polygon fill="#d9e2ec" stroke="none" points="0,-25.5 0,-51 87.75,-51 87.75,-25.5 0,-25.5"/>
-<polygon fill="none" stroke="#000000" points="0,-25.5 0,-51 87.75,-51 87.75,-25.5 0,-25.5"/>
-<text xml:space="preserve" text-anchor="start" x="13.12" y="-37.45" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#000000">airports_data</text>
+<polygon fill="#d9e2ec" stroke="none" points="0,-25.5 0,-51 90.75,-51 90.75,-25.5 0,-25.5"/>
+<polygon fill="none" stroke="#000000" points="0,-25.5 0,-51 90.75,-51 90.75,-25.5 0,-25.5"/>
+<text xml:space="preserve" text-anchor="start" x="14.62" y="-37.45" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#000000">airports_data</text>
 <polygon fill="none" stroke="#000000" points="0,0 0,-25.5 66.75,-25.5 66.75,0 0,0"/>
 <text xml:space="preserve" text-anchor="start" x="6" y="-11.95" font-family="Noto Sans KR" text-decoration="underline" font-size="9.00">airport_code</text>
-<polygon fill="none" stroke="#000000" points="66.75,0 66.75,-25.5 87.75,-25.5 87.75,0 66.75,0"/>
-<text xml:space="preserve" text-anchor="start" x="72.75" y="-9.75" font-family="Noto Sans KR" font-size="7.00" fill="#555555">PK</text>
+<polygon fill="none" stroke="#000000" points="66.75,0 66.75,-25.5 90.75,-25.5 90.75,0 66.75,0"/>
+<text xml:space="preserve" text-anchor="start" x="72.75" y="-9" font-family="Noto Sans KR" font-size="9.00" fill="#555555">PK</text>
 </g>
 <!-- airports_data&#45;&gt;airports -->
 <g id="edge1" class="edge">
 <title>airports_data&#45;&gt;airports</title>
-<path fill="none" stroke="#8a8a8a" stroke-width="1.2" stroke-dasharray="5,2" d="M87.59,-25.5C98.9,-25.5 110.92,-25.5 121.57,-25.5"/>
-<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="129.44,-25.5 121.44,-29.1 126.91,-25.6 121.44,-25.6 121.44,-25.5 121.44,-25.4 126.91,-25.4 121.44,-21.9 129.44,-25.5"/>
+<path fill="none" stroke="#8a8a8a" stroke-width="1.2" stroke-dasharray="5,2" d="M90.63,-25.5C102.02,-25.5 114.06,-25.5 124.69,-25.5"/>
+<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="132.54,-25.5 124.54,-29.1 130.01,-25.6 124.54,-25.6 124.54,-25.5 124.54,-25.4 130.01,-25.4 124.54,-21.9 132.54,-25.5"/>
 </g>
 </g>
 </svg>

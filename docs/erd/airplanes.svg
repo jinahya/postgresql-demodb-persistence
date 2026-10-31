@@ -5,35 +5,34 @@
  -->
 <!-- Title: erd Pages: 1 -->
 <!-- demo.airplanes: the view and the tables it reads -->
-<svg width="204pt" height="65pt"
- viewBox="0.00 0.00 204.00 65.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="207pt" height="65pt"
+ viewBox="0.00 0.00 207.00 65.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(7.2 58.2)">
 <title>erd</title>
-<polygon fill="white" stroke="none" points="-7.2,7.2 -7.2,-58.2 197.2,-58.2 197.2,7.2 -7.2,7.2"/>
 <!-- airplanes -->
 <g id="node1" class="node">
 <title>airplanes</title>
-<polygon fill="none" stroke="#000000" stroke-dasharray="5,2" points="136,-2.5 136,-48.5 190,-48.5 190,-2.5 136,-2.5"/>
-<polygon fill="#1f4e79" stroke="none" stroke-dasharray="5,2" points="137,-24 137,-47.5 189,-47.5 189,-24 137,-24"/>
-<text xml:space="preserve" text-anchor="start" x="142" y="-34.95" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#ffffff">airplanes</text>
-<text xml:space="preserve" text-anchor="start" x="155.12" y="-10.75" font-family="Noto Sans KR" font-size="7.00" fill="#555555">VIEW</text>
+<polygon fill="none" stroke="#000000" stroke-dasharray="5,2" points="139,-1 139,-50 193,-50 193,-1 139,-1"/>
+<polygon fill="#1f4e79" stroke="none" stroke-dasharray="5,2" points="140,-25.5 140,-49 192,-49 192,-25.5 140,-25.5"/>
+<text xml:space="preserve" text-anchor="start" x="145" y="-36.45" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#ffffff">airplanes</text>
+<text xml:space="preserve" text-anchor="start" x="155.12" y="-10" font-family="Noto Sans KR" font-size="9.00" fill="#555555">VIEW</text>
 </g>
 <!-- airplanes_data -->
 <g id="node2" class="node">
 <title>airplanes_data</title>
-<polygon fill="#d9e2ec" stroke="none" points="0,-25.5 0,-51 93,-51 93,-25.5 0,-25.5"/>
-<polygon fill="none" stroke="#000000" points="0,-25.5 0,-51 93,-51 93,-25.5 0,-25.5"/>
-<text xml:space="preserve" text-anchor="start" x="12.75" y="-37.45" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#000000">airplanes_data</text>
+<polygon fill="#d9e2ec" stroke="none" points="0,-25.5 0,-51 96,-51 96,-25.5 0,-25.5"/>
+<polygon fill="none" stroke="#000000" points="0,-25.5 0,-51 96,-51 96,-25.5 0,-25.5"/>
+<text xml:space="preserve" text-anchor="start" x="14.25" y="-37.45" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#000000">airplanes_data</text>
 <polygon fill="none" stroke="#000000" points="0,0 0,-25.5 72,-25.5 72,0 0,0"/>
 <text xml:space="preserve" text-anchor="start" x="6" y="-11.95" font-family="Noto Sans KR" text-decoration="underline" font-size="9.00">airplane_code</text>
-<polygon fill="none" stroke="#000000" points="72,0 72,-25.5 93,-25.5 93,0 72,0"/>
-<text xml:space="preserve" text-anchor="start" x="78" y="-9.75" font-family="Noto Sans KR" font-size="7.00" fill="#555555">PK</text>
+<polygon fill="none" stroke="#000000" points="72,0 72,-25.5 96,-25.5 96,0 72,0"/>
+<text xml:space="preserve" text-anchor="start" x="78" y="-9" font-family="Noto Sans KR" font-size="9.00" fill="#555555">PK</text>
 </g>
 <!-- airplanes_data&#45;&gt;airplanes -->
 <g id="edge1" class="edge">
 <title>airplanes_data&#45;&gt;airplanes</title>
-<path fill="none" stroke="#8a8a8a" stroke-width="1.2" stroke-dasharray="5,2" d="M92.75,-25.5C104.05,-25.5 115.99,-25.5 126.73,-25.5"/>
-<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="134.73,-25.5 126.73,-29.1 132.19,-25.6 126.73,-25.6 126.73,-25.5 126.73,-25.4 132.19,-25.4 126.73,-21.9 134.73,-25.5"/>
+<path fill="none" stroke="#8a8a8a" stroke-width="1.2" stroke-dasharray="5,2" d="M95.85,-25.5C107.21,-25.5 119.16,-25.5 129.88,-25.5"/>
+<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="137.85,-25.5 129.85,-29.1 135.32,-25.6 129.85,-25.6 129.85,-25.5 129.85,-25.4 135.32,-25.4 129.85,-21.9 137.85,-25.5"/>
 </g>
 </g>
 </svg>
