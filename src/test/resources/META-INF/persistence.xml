@@ -28,12 +28,12 @@
     <description>Persistence Unit for a Physical Database</description>
     <!--    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
     <provider>${persistence-unit.provider}</provider>
-    <class>com.github.jinahya.persistence.more.converter.json.JsonpAttributeConverter$OfString$OfJsonObject</class>
+    <class>com.github.jinahya.persistence.more.converter.jakartajson.JsonpAttributeConverter$OfString$OfJsonObject</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.PointAttributeConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRouteId$ValidityConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
-    <class>com.github.jinahya.persistence.more.converter.time.ZoneIdStringAttributeConverter</class>
+    <class>com.github.jinahya.persistence.more.converter.javatime.ZoneIdStringAttributeConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirplaneData</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirportData</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.Booking</class>

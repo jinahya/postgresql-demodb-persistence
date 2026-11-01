@@ -20,8 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.persistence.more.converter.json.JsonpAttributeConverter;
-import com.github.jinahya.persistence.more.converter.util.LocaleStringAttributeConverter;
+import com.github.jinahya.persistence.more.converter.jakartajson.JsonpAttributeConverter;
+import com.github.jinahya.persistence.more.converter.javautil.LocaleStringAttributeConverter;
 import jakarta.json.Json;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
