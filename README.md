@@ -8,7 +8,7 @@ Sibling of [mysql-sakila-persistence](https://github.com/jinahya/mysql-sakila-pe
 ## The database
 
 ```shell
-$ ./compose.sh
+$ ./_compose.sh
 ```
 
 Brings up [`onacit/postgresql-demodb:18-alpine-3m`](https://hub.docker.com/r/onacit/postgresql-demodb) on
