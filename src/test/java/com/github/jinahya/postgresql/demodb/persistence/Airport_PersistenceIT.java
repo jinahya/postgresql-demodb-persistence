@@ -22,6 +22,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.persistence.util.JinahyaEntityManagerUtils;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirport;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import java.time.DateTimeException;
 import java.util.TimeZone;
 
+import static com.github.jinahya.postgresql.demodb.persistence.___PersistenceIT_Utils.PERSISTENCE_UNIT_NAME;
 import static com.github.jinahya.persistence.util.JinahyaPersistenceUtils.applyEntityManager;
 import static com.github.jinahya.persistence.util.JinahyaEntityManagerUtils.applyInTransaction;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,10 +46,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  */
 @Slf4j
 class Airport_PersistenceIT
-        extends _Entity_PersistenceIT<Airport> {
+        extends _Entity_PersistenceIT<Airport, String> {
 
     Airport_PersistenceIT() {
-        super(Airport.class);
+        super(Airport.class, String.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -58,19 +61,23 @@ class Airport_PersistenceIT
     @Disabled("a view: nothing is inserted into it")
     @Override
     @Test
-    void persistTargetInstance() {
+    protected void persistRandomizedEntityInstance__() {
         // empty
     }
 
     /**
      * {@inheritDoc}
      *
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param entityInstance {@inheritDoc}
      * @implNote The name is the name in the session's language, no longer JSON, and the
      *         association reaches the airport data of the code.
      */
     @Override
-    void randomTargetInstanceSelected(final Airport entityInstance) {
+    protected void randomEntityInstanceSelected__(final EntityManagerFactory entityManagerFactory,
+                                                  final EntityManager entityManager,
+                                                  final Airport entityInstance) {
         {
             assertThat(entityInstance.getAirportName()).as("name of %s", entityInstance)
                     .isNotBlank()

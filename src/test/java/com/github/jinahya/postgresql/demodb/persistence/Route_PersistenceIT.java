@@ -22,6 +22,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRouteId;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.postgres.extensions.converters.OffsetDateTimeRangeConverter;
 
@@ -39,13 +40,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 class Route_PersistenceIT
-        extends _Entity_PersistenceIT<Route> {
+        extends _Entity_PersistenceIT<Route, RouteId> {
 
     // the bounds of a validity, as a list to assert on
     private static final BiFunction<Instant, Instant, List<Instant>> BOUNDS = List::of;
 
     Route_PersistenceIT() {
-        super(Route.class);
+        super(Route.class, RouteId.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -53,7 +54,8 @@ class Route_PersistenceIT
     /**
      * {@inheritDoc}
      *
-     * @param entityManager  {@inheritDoc}
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param entityInstance {@inheritDoc}
      * @implNote The duration, written as an interval, is read back as it was, by the
      *         server, as its number of seconds, and by a new find; the validity, written as a
@@ -61,7 +63,10 @@ class Route_PersistenceIT
      *         jooq-postgres-extensions alike, and by a new find, by its identifier.
      */
     @Override
-    void targetInstancePersisted(final EntityManager entityManager, final Route entityInstance) {
+    protected void randomizedEntityInstancePersisted__(
+            final EntityManagerFactory entityManagerFactory,
+            final EntityManager entityManager,
+            final Route entityInstance) {
         final var validity = new MappedRouteId.ValidityConverter()
                 .convertToDatabaseColumn(entityInstance.getValidityRange(
                         (l, u) -> new Instant[]{l, u}));
@@ -111,12 +116,16 @@ class Route_PersistenceIT
     /**
      * {@inheritDoc}
      *
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param instance {@inheritDoc}
      * @implNote The identifier agrees with the two attributes it reads a second time, the
      *         days of the week are within the week, and the three lazy associations resolve.
      */
     @Override
-    void randomTargetInstanceSelected(final Route instance) {
+    protected void randomEntityInstanceSelected__(final EntityManagerFactory entityManagerFactory,
+                                                  final EntityManager entityManager,
+                                                  final Route instance) {
         assertThat(instance.getId()).as("id of %s", instance).isNotNull().satisfies(id -> {
             assertThat(id.getRouteNo()).isEqualTo(instance.getRouteNo());
             assertThat(id.getValidityRange(BOUNDS)).isEqualTo(instance.getValidityRange(BOUNDS));

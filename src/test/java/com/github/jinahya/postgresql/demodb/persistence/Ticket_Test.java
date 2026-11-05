@@ -31,10 +31,10 @@ import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
  */
 @Slf4j
 class Ticket_Test
-        extends _Entity_Test<Ticket> {
+        extends _Entity_Test<Ticket, String> {
 
     Ticket_Test() {
-        super(Ticket.class);
+        super(Ticket.class, String.class);
     }
 
     // ----------------------------------------------------------------------------- equals/hashCode
@@ -46,8 +46,8 @@ class Ticket_Test
      *         every other attribute is mutable state.
      */
     @Override
-    public SingleTypeEqualsVerifierApi<Ticket> equalsVerifier() {
-        return super.equalsVerifier()
+    public SingleTypeEqualsVerifierApi<Ticket> equals_verifier_() {
+        return super.equals_verifier_()
                 .suppress(Warning.SURROGATE_KEY,
                           Warning.IDENTICAL_COPY_FOR_VERSIONED_ENTITY,
                           Warning.STRICT_HASHCODE);

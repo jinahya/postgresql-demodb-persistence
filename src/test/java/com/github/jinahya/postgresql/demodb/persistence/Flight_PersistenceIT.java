@@ -21,6 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -34,10 +35,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 class Flight_PersistenceIT
-        extends _Entity_PersistenceIT<Flight> {
+        extends _Entity_PersistenceIT<Flight, Integer> {
 
     Flight_PersistenceIT() {
-        super(Flight.class);
+        super(Flight.class, Integer.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -45,13 +46,17 @@ class Flight_PersistenceIT
     /**
      * {@inheritDoc}
      *
-     * @param entityManager  {@inheritDoc}
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param entityInstance {@inheritDoc}
      * @implNote The flight, found again, flies the route its persister made for it: one
      *         valid at its scheduled departure, whose duration is its scheduled block time.
      */
     @Override
-    void targetInstancePersisted(final EntityManager entityManager, final Flight entityInstance) {
+    protected void randomizedEntityInstancePersisted__(
+            final EntityManagerFactory entityManagerFactory,
+            final EntityManager entityManager,
+            final Flight entityInstance) {
         entityManager.clear();
         final var found = entityManager.find(Flight.class, entityInstance.getFlightId());
         assertThat(found.getRoute()).as("route of %s", found).isNotNull().satisfies(r -> {
@@ -66,6 +71,8 @@ class Flight_PersistenceIT
     /**
      * {@inheritDoc}
      *
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param instance {@inheritDoc}
      * @implNote The scheduled arrival is after the scheduled departure, as the check
      *         constraint requires; and the route, joined by the route number and a formula, is the
@@ -73,7 +80,9 @@ class Flight_PersistenceIT
      *         flight's scheduled block time.
      */
     @Override
-    void randomTargetInstanceSelected(final Flight instance) {
+    protected void randomEntityInstanceSelected__(final EntityManagerFactory entityManagerFactory,
+                                                  final EntityManager entityManager,
+                                                  final Flight instance) {
         assertThat(instance.getScheduledArrival()).as("scheduled arrival of %s", instance)
                 .isAfter(instance.getScheduledDeparture());
         assertThat(instance.getRoute()).as("route of %s", instance).isNotNull().satisfies(r -> {

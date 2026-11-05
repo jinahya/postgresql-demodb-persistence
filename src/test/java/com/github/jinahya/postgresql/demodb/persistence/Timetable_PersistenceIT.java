@@ -21,8 +21,9 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedTimetable;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -35,10 +36,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 class Timetable_PersistenceIT
-        extends _Entity_PersistenceIT<Timetable> {
+        extends _Entity_PersistenceIT<Timetable, Integer> {
 
     Timetable_PersistenceIT() {
-        super(Timetable.class);
+        super(Timetable.class, Integer.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -50,20 +51,24 @@ class Timetable_PersistenceIT
     @Disabled("a view: nothing is inserted into it")
     @Override
     @Test
-    void persistTargetInstance() {
+    protected void persistRandomizedEntityInstance__() {
         // empty
     }
 
     /**
      * {@inheritDoc}
      *
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param instance {@inheritDoc}
      * @implNote The local departure is the departure in the airport's zone, which the view
      *         computes; and the four read-only associations resolve, each to the row of the code
      *         the view carries.
      */
     @Override
-    void randomTargetInstanceSelected(final Timetable instance) {
+    protected void randomEntityInstanceSelected__(final EntityManagerFactory entityManagerFactory,
+                                                  final EntityManager entityManager,
+                                                  final Timetable instance) {
         assertThat(instance.getScheduledDepartureLocal()).as("local departure of %s", instance)
                 .isNotNull();
         assertThat(instance.getScheduledDeparture()).as("departure of %s", instance).isNotNull();

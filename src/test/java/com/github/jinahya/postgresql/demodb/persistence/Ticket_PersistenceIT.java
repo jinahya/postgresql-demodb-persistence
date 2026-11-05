@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,10 +33,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 class Ticket_PersistenceIT
-        extends _Entity_PersistenceIT<Ticket> {
+        extends _Entity_PersistenceIT<Ticket, String> {
 
     Ticket_PersistenceIT() {
-        super(Ticket.class);
+        super(Ticket.class, String.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -42,11 +44,15 @@ class Ticket_PersistenceIT
     /**
      * {@inheritDoc}
      *
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param instance {@inheritDoc}
      * @implNote The booking, a lazy association, resolves.
      */
     @Override
-    void randomTargetInstanceSelected(final Ticket instance) {
+    protected void randomEntityInstanceSelected__(final EntityManagerFactory entityManagerFactory,
+                                                  final EntityManager entityManager,
+                                                  final Ticket instance) {
         assertThat(instance.getBooking()).as("booking of %s", instance).isNotNull()
                 .extracting(Booking::getBookDate).isNotNull();
     }

@@ -20,129 +20,43 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
-import com.github.jinahya.object.randomizer.ObjectRandomizerUtils;
-import jakarta.persistence.Transient;
-import lombok.extern.slf4j.Slf4j;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
-import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.ReflectionUtils;
-
-import java.beans.IntrospectionException;
 import java.util.Objects;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 /**
- * An abstract base class for testing, without a persistence context, a class which maps a table or
- * a view.
+ * An abstract base class for testing, without a persistence context, an entity class.
  * <p>
- * Its checks are, for now, the ones {@link _NonEntity_Test} runs too -- a usable
- * {@code toString()}, an {@code equals}/{@code hashCode} pair, and property accessors which
- * round-trip; checks only such a class has to pass go here.
+ * Its checks are, for now, the ones of {@link __Object_Test}, which {@link _NonEntity_Test} runs
+ * too; checks only an entity has to pass go here.
  *
- * @param <T> the type of the class.
- * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @param <T> the type of the entity.
+ * @param <U> the type of the identifier of the entity: its id class, the type of its
+ *            {@code @EmbeddedId}, or the type of its {@code @Id}.
  */
-@Slf4j
 @SuppressWarnings({
         "java:S101", // Class names should comply with a naming convention
         "java:S118"  // Abstract class names should comply with a naming convention
 })
-abstract class _Entity_Test<T> {
+public abstract class _Entity_Test<T, U>
+        extends __Test<T>
+        implements __Object_Test<T> {
 
     /**
-     * Creates a new instance for the specified target class.
+     * Creates a new instance for the specified entity class.
      *
-     * @param targetClass the class to test.
+     * @param targetClass the entity class to test.
+     * @param idClass     the class of the identifier of the entity: its id class, the type of its
+     *                    {@code @EmbeddedId}, or the type of its {@code @Id}.
      */
-    _Entity_Test(final Class<T> targetClass) {
-        super();
-        this.targetClass = Objects.requireNonNull(targetClass, "targetClass is null");
-    }
-
-    // ------------------------------------------------------------------------------------ toString
-
-    /**
-     * Verifies that {@code toString()} of a new instance of {@link #targetClass} is not blank.
-     */
-    @Test
-    void toString_NotBlank_NewInstance() {
-        final var instance = newTargetInstance();
-        final var string = instance.toString();
-        assertThat(string).isNotBlank();
-    }
-
-    /**
-     * Verifies that {@code toString()} of a new randomized instance of {@link #targetClass} is not
-     * blank.
-     */
-    @Test
-    void toString_NotBlank_NewRandomizedInstance() {
-        assertThat(newRandomizedTargetInstance().toString()).isNotBlank();
-    }
-
-    // ----------------------------------------------------------------------------- equals/hashCode
-
-    /**
-     * Returns an equals-verifier for {@link #targetClass}, which subclasses may further configure.
-     *
-     * @return an equals-verifier for {@link #targetClass}.
-     */
-    SingleTypeEqualsVerifierApi<T> equalsVerifier() {
-        return EqualsVerifier.simple().forClass(targetClass);
-    }
-
-    /**
-     * Verifies the {@code equals}/{@code hashCode} contract of {@link #targetClass}, using the
-     * verifier which {@link #equalsVerifier()} returns.
-     */
-    @Test
-    void equals_verify_() {
-        final var verifier = equalsVerifier();
-        verifier.verify();
+    protected _Entity_Test(final Class<T> targetClass, final Class<U> idClass) {
+        super(targetClass);
+        this.idClass = Objects.requireNonNull(idClass, "idClass is null");
     }
 
     // ---------------------------------------------------------------------------------------------
 
     /**
-     * Verifies that every non-{@link Transient @Transient} read/write property of
-     * {@link #targetClass} accepts what its own reader returns.
-     *
-     * @throws IntrospectionException when {@link #targetClass} cannot be introspected.
-     * @see __Object_TestUtils#assertPropertyAccessorsDoNotThrow(Class, Object)
+     * The class of the identifier of {@link #targetClass}: its id class, the type of its
+     * {@code @EmbeddedId}, or the type of its {@code @Id}.
      */
-    @Test
-    void propertyAccessors_DoNotThrow() throws IntrospectionException {
-        __Object_TestUtils.assertPropertyAccessorsDoNotThrow(targetClass, newTargetInstance());
-    }
-
-    // --------------------------------------------------------------------------------- targetClass
-
-    /**
-     * Returns a new, uninitialized instance of {@link #targetClass}.
-     *
-     * @return a new instance of {@link #targetClass}.
-     */
-    T newTargetInstance() {
-        return ReflectionUtils.newInstance(targetClass);
-    }
-
-    /**
-     * Returns a new instance of {@link #targetClass} with randomized property values.
-     *
-     * @return a new randomized instance of {@link #targetClass}.
-     * @throws IllegalStateException if no randomizer is registered for {@link #targetClass}.
-     */
-    T newRandomizedTargetInstance() {
-        return ObjectRandomizerUtils.newRandomizedInstanceOf(targetClass)
-                .orElseThrow(() -> new IllegalStateException("no randomizer for " + targetClass));
-    }
-
-    // ---------------------------------------------------------------------------------------------
-
-    /**
-     * The class which this test targets.
-     */
-    final Class<T> targetClass;
+    protected final Class<U> idClass;
 }

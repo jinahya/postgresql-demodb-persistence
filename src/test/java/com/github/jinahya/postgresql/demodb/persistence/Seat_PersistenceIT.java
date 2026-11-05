@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,10 +33,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 class Seat_PersistenceIT
-        extends _Entity_PersistenceIT<Seat> {
+        extends _Entity_PersistenceIT<Seat, SeatId> {
 
     Seat_PersistenceIT() {
-        super(Seat.class);
+        super(Seat.class, SeatId.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -42,12 +44,16 @@ class Seat_PersistenceIT
     /**
      * {@inheritDoc}
      *
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param instance {@inheritDoc}
      * @implNote The airplane, a lazy association over the identifier, resolves to the
      *         airplane of the code.
      */
     @Override
-    void randomTargetInstanceSelected(final Seat instance) {
+    protected void randomEntityInstanceSelected__(final EntityManagerFactory entityManagerFactory,
+                                                  final EntityManager entityManager,
+                                                  final Seat instance) {
         assertThat(instance.getAirplaneData()).as("airplane of %s", instance).isNotNull()
                 .extracting(AirplaneData::getAirplaneCode).isEqualTo(instance.getAirplaneCode());
     }

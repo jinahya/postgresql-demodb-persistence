@@ -35,10 +35,10 @@ import org.junit.jupiter.api.Test;
  */
 @Slf4j
 class Timetable_Test
-        extends _Entity_Test<Timetable> {
+        extends _Entity_Test<Timetable, Integer> {
 
     Timetable_Test() {
-        super(Timetable.class);
+        super(Timetable.class, Integer.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ class Timetable_Test
     @Disabled("a view: no randomizer")
     @Override
     @Test
-    void toString_NotBlank_NewRandomizedInstance() {
+    public void toString_NotBlank_NewRandomizedInstance() {
         // empty
     }
 
@@ -62,8 +62,8 @@ class Timetable_Test
      *         because every other attribute is mutable state.
      */
     @Override
-    public SingleTypeEqualsVerifierApi<Timetable> equalsVerifier() {
-        return super.equalsVerifier()
+    public SingleTypeEqualsVerifierApi<Timetable> equals_verifier_() {
+        return super.equals_verifier_()
                 .suppress(Warning.SURROGATE_KEY,
                           Warning.IDENTICAL_COPY_FOR_VERSIONED_ENTITY,
                           Warning.STRICT_HASHCODE);

@@ -33,10 +33,10 @@ import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
  */
 @Slf4j
 class Route_Test
-        extends _Entity_Test<Route> {
+        extends _Entity_Test<Route, RouteId> {
 
     Route_Test() {
-        super(Route.class);
+        super(Route.class, RouteId.class);
     }
 
     // ----------------------------------------------------------------------------- equals/hashCode
@@ -52,8 +52,8 @@ class Route_Test
      *         state.
      */
     @Override
-    public SingleTypeEqualsVerifierApi<Route> equalsVerifier() {
-        return super.equalsVerifier()
+    public SingleTypeEqualsVerifierApi<Route> equals_verifier_() {
+        return super.equals_verifier_()
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED,
                           Warning.IDENTICAL_COPY_FOR_VERSIONED_ENTITY,
                           Warning.STRICT_HASHCODE);

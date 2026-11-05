@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,10 +33,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 class Segment_PersistenceIT
-        extends _Entity_PersistenceIT<Segment> {
+        extends _Entity_PersistenceIT<Segment, SegmentId> {
 
     Segment_PersistenceIT() {
-        super(Segment.class);
+        super(Segment.class, SegmentId.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -42,12 +44,16 @@ class Segment_PersistenceIT
     /**
      * {@inheritDoc}
      *
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param instance {@inheritDoc}
      * @implNote The ticket and the flight, lazy associations over the identifier, resolve
      *         to the ones of the identifier.
      */
     @Override
-    void randomTargetInstanceSelected(final Segment instance) {
+    protected void randomEntityInstanceSelected__(final EntityManagerFactory entityManagerFactory,
+                                                  final EntityManager entityManager,
+                                                  final Segment instance) {
         assertThat(instance.getTicket()).as("ticket of %s", instance).isNotNull()
                 .extracting(Ticket::getTicketNo).isEqualTo(instance.getTicketNo());
         assertThat(instance.getFlight()).as("flight of %s", instance).isNotNull()

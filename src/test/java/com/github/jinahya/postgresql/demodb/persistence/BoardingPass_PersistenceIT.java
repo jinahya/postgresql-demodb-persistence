@@ -22,6 +22,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSegmentId_;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.github.jinahya.postgresql.demodb.persistence.___PersistenceIT_Utils.PERSISTENCE_UNIT_NAME;
 import static com.github.jinahya.persistence.util.JinahyaPersistenceUtils.applyEntityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,10 +42,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 class BoardingPass_PersistenceIT
-        extends _Entity_PersistenceIT<BoardingPass> {
+        extends _Entity_PersistenceIT<BoardingPass, BoardingPassId> {
 
     BoardingPass_PersistenceIT() {
-        super(BoardingPass.class);
+        super(BoardingPass.class, BoardingPassId.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -51,14 +53,17 @@ class BoardingPass_PersistenceIT
     /**
      * {@inheritDoc}
      *
-     * @param entityManager  {@inheritDoc}
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param entityInstance {@inheritDoc}
      * @implNote The pass, found again, is of a seat of the airplane of its flight's route,
      *         which its persister made, of the segment's fare conditions.
      */
     @Override
-    void targetInstancePersisted(final EntityManager entityManager,
-                                 final BoardingPass entityInstance) {
+    protected void randomizedEntityInstancePersisted__(
+            final EntityManagerFactory entityManagerFactory,
+            final EntityManager entityManager,
+            final BoardingPass entityInstance) {
         entityManager.clear();
         final var found = entityManager.find(BoardingPass.class, entityInstance.getId());
         final var segment = found.getSegment();
@@ -75,12 +80,16 @@ class BoardingPass_PersistenceIT
     /**
      * {@inheritDoc}
      *
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param instance {@inheritDoc}
      * @implNote The segment, a lazy association over the identifier, resolves to the one of
      *         the identifier.
      */
     @Override
-    void randomTargetInstanceSelected(final BoardingPass instance) {
+    protected void randomEntityInstanceSelected__(final EntityManagerFactory entityManagerFactory,
+                                                  final EntityManager entityManager,
+                                                  final BoardingPass instance) {
         assertThat(instance.getSegment()).as("segment of %s", instance).isNotNull().satisfies(s -> {
             assertThat(s.getTicketNo()).isEqualTo(instance.getTicketNo());
             assertThat(s.getFlightId()).isEqualTo(instance.getFlightId());

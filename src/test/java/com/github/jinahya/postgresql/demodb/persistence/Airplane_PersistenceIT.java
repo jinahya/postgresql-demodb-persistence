@@ -22,12 +22,14 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.persistence.util.JinahyaEntityManagerUtils;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirplane;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.github.jinahya.postgresql.demodb.persistence.___PersistenceIT_Utils.PERSISTENCE_UNIT_NAME;
 import static com.github.jinahya.persistence.util.JinahyaEntityManagerUtils.applyInTransaction;
 import static com.github.jinahya.persistence.util.JinahyaPersistenceUtils.applyEntityManager;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,10 +42,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  */
 @Slf4j
 class Airplane_PersistenceIT
-        extends _Entity_PersistenceIT<Airplane> {
+        extends _Entity_PersistenceIT<Airplane, String> {
 
     Airplane_PersistenceIT() {
-        super(Airplane.class);
+        super(Airplane.class, String.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -55,19 +57,23 @@ class Airplane_PersistenceIT
     @Disabled("a view: nothing is inserted into it")
     @Override
     @Test
-    void persistTargetInstance() {
+    protected void persistRandomizedEntityInstance__() {
         // empty
     }
 
     /**
      * {@inheritDoc}
      *
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param instance {@inheritDoc}
      * @implNote The model is the name in the session's language, no longer JSON, and the
      *         association reaches the airplane data of the code.
      */
     @Override
-    void randomTargetInstanceSelected(final Airplane instance) {
+    protected void randomEntityInstanceSelected__(final EntityManagerFactory entityManagerFactory,
+                                                  final EntityManager entityManager,
+                                                  final Airplane instance) {
         assertThat(instance.getModel())
                 .as("model of %s", instance).isNotBlank()
                 .doesNotContain("\"en\"");

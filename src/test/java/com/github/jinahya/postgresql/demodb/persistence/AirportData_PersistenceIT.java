@@ -22,6 +22,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.PointAttributeConverter;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.DateTimeException;
@@ -36,10 +37,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 class AirportData_PersistenceIT
-        extends _Entity_PersistenceIT<AirportData> {
+        extends _Entity_PersistenceIT<AirportData, String> {
 
     AirportData_PersistenceIT() {
-        super(AirportData.class);
+        super(AirportData.class, String.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -47,7 +48,8 @@ class AirportData_PersistenceIT
     /**
      * {@inheritDoc}
      *
-     * @param entityManager  {@inheritDoc}
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param entityInstance {@inheritDoc}
      * @implNote The city and the country, each renamed in a language they have, are written
      *         with the rename, and read back with it by the server and by a new find; the
@@ -55,8 +57,10 @@ class AirportData_PersistenceIT
      *         new find.
      */
     @Override
-    void targetInstancePersisted(final EntityManager entityManager,
-                                 final AirportData entityInstance) {
+    protected void randomizedEntityInstancePersisted__(
+            final EntityManagerFactory entityManagerFactory,
+            final EntityManager entityManager,
+            final AirportData entityInstance) {
         final var ru = Locale.of("ru");
         entityInstance.setCityName(Locale.ENGLISH, "city renamed");
         entityInstance.setCountryName(Locale.ENGLISH, "country renamed");
@@ -100,12 +104,16 @@ class AirportData_PersistenceIT
     /**
      * {@inheritDoc}
      *
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param entityInstance {@inheritDoc}
      * @implNote The names are JSON, the coordinates a point, and the time zone a zone the
      *         JDK knows.
      */
     @Override
-    void randomTargetInstanceSelected(final AirportData entityInstance) {
+    protected void randomEntityInstanceSelected__(final EntityManagerFactory entityManagerFactory,
+                                                  final EntityManager entityManager,
+                                                  final AirportData entityInstance) {
         assertThat(entityInstance.getAirportName(Locale.ENGLISH)).as("name of %s", entityInstance)
                 .isNotBlank();
         assertThat(entityInstance.getAirportName(Locale.of("ru"))).as("name of %s", entityInstance)

@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Locale;
@@ -33,10 +35,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 class AirplaneData_PersistenceIT
-        extends _Entity_PersistenceIT<AirplaneData> {
+        extends _Entity_PersistenceIT<AirplaneData, String> {
 
     AirplaneData_PersistenceIT() {
-        super(AirplaneData.class);
+        super(AirplaneData.class, String.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -44,12 +46,16 @@ class AirplaneData_PersistenceIT
     /**
      * {@inheritDoc}
      *
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param instance {@inheritDoc}
      * @implNote The model is JSON with an English name, and the range and the speed are
      *         positive.
      */
     @Override
-    void randomTargetInstanceSelected(final AirplaneData instance) {
+    protected void randomEntityInstanceSelected__(final EntityManagerFactory entityManagerFactory,
+                                                  final EntityManager entityManager,
+                                                  final AirplaneData instance) {
         assertThat(instance.getModelName(Locale.ENGLISH)).as("model of %s", instance).isNotBlank();
         assertThat(instance.getModelName(Locale.of("ru"))).as("model of %s", instance).isNotBlank();
         assertThat(instance.getRange()).as("range of %s", instance).isPositive();

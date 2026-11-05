@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,10 +33,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 class Booking_PersistenceIT
-        extends _Entity_PersistenceIT<Booking> {
+        extends _Entity_PersistenceIT<Booking, String> {
 
     Booking_PersistenceIT() {
-        super(Booking.class);
+        super(Booking.class, String.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -42,11 +44,15 @@ class Booking_PersistenceIT
     /**
      * {@inheritDoc}
      *
+     * @param entityManagerFactory {@inheritDoc}
+     * @param entityManager        {@inheritDoc}
      * @param instance {@inheritDoc}
      * @implNote The date is there, and the amount is not negative.
      */
     @Override
-    void randomTargetInstanceSelected(final Booking instance) {
+    protected void randomEntityInstanceSelected__(final EntityManagerFactory entityManagerFactory,
+                                                  final EntityManager entityManager,
+                                                  final Booking instance) {
         assertThat(instance.getBookDate()).as("date of %s", instance).isNotNull();
         assertThat(instance.getTotalAmount()).as("amount of %s", instance).isNotNegative();
     }

@@ -31,10 +31,10 @@ import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
  */
 @Slf4j
 class Flight_Test
-        extends _Entity_Test<Flight> {
+        extends _Entity_Test<Flight, Integer> {
 
     Flight_Test() {
-        super(Flight.class);
+        super(Flight.class, Integer.class);
     }
 
     // ----------------------------------------------------------------------------- equals/hashCode
@@ -47,8 +47,8 @@ class Flight_Test
      *         mutable state.
      */
     @Override
-    public SingleTypeEqualsVerifierApi<Flight> equalsVerifier() {
-        return super.equalsVerifier()
+    public SingleTypeEqualsVerifierApi<Flight> equals_verifier_() {
+        return super.equals_verifier_()
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED,
                           Warning.IDENTICAL_COPY_FOR_VERSIONED_ENTITY,
                           Warning.STRICT_HASHCODE);
