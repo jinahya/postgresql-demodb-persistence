@@ -62,7 +62,7 @@
       <property name="jakarta.persistence.jdbc.url"
                 value="jdbc:postgresql://localhost:5432/demo?stringtype=unspecified&amp;options=-c%20bookings.lang=${bookings.lang}"/>
       <property name="jakarta.persistence.jdbc.user" value="postgres"/>
-      <property name="jakarta.persistence.jdbc.password" value="password"/>
+      <property name="jakarta.persistence.jdbc.password" value="Passw0rd!"/>
       <!-- /////////////////////////////////////////////////////////////////////////////////////////////// hibernate -->
       <!--      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>-->
       <property name="hibernate.format_sql" value="true"/>

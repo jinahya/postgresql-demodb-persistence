@@ -12,7 +12,7 @@ $ ./compose.sh
 ```
 
 Brings up [`onacit/postgresql-demodb:18-alpine-3m`](https://hub.docker.com/r/onacit/postgresql-demodb) on
-`localhost:5432`, as `postgres` / `password`, and follows its log; Ctrl-C takes it down again. That is the official
+`localhost:5432`, as `postgres` / `Passw0rd!`, and follows its log; Ctrl-C takes it down again. That is the official
 `postgres:18-alpine` image with the demonstration database dump baked in, loaded on first start; the smallest tag,
 about 260 MB to pull. Every run starts from an empty cluster, so loading happens every time, about a minute; the
 container is `healthy` once `demo` is there.
@@ -36,7 +36,7 @@ $ docker exec -i postgresql-demodb psql -U postgres -d demo < src/test/sql/route
 ```
 
 The same stack brings up [pgAdmin](https://hub.docker.com/r/dpage/pgadmin4) on http://localhost:5050, login
-`postgres@example.com` / `password` (pgAdmin wants an e-mail address). The demo server is already registered
+`postgres@example.com` / `Passw0rd!` (pgAdmin wants an e-mail address). The demo server is already registered
 there and connects on its own; see the `configs` at the bottom of `compose.yaml`.
 
 ## The diagrams
