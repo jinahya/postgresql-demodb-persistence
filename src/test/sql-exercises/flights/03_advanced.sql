@@ -50,7 +50,16 @@ LIMIT 5
 
 -- ----------------------------------------------------------------------------- DEMODB_FLIGHTS_A_02
 -- the flights of each day of the first week, and their running total.
--- NOT YET RUN
+--     day     | flights | running_total 
+-- ------------+---------+---------------
+--  2025-10-01 |     169 |           169
+--  2025-10-02 |     189 |           358
+--  2025-10-03 |     174 |           532
+--  2025-10-04 |     185 |           717
+--  2025-10-05 |     183 |           900
+--  2025-10-06 |     175 |          1075
+--  2025-10-07 |     187 |          1262
+-- (7 rows)
 SELECT (scheduled_departure AT TIME ZONE 'UTC')::date                         AS day,
        COUNT(*)                                                         AS flights,
        SUM(COUNT(*)) OVER (ORDER BY (scheduled_departure AT TIME ZONE 'UTC')::date) AS running_total
@@ -63,7 +72,14 @@ ORDER BY day
 
 -- ----------------------------------------------------------------------------- DEMODB_FLIGHTS_A_03
 -- the five fullest flights of the first day.
--- NOT YET RUN
+--  flight_id | route_no | airplane_code | boarded | seats | boarded_pct 
+-- -----------+----------+---------------+---------+-------+-------------
+--          2 | PG0247   | 32N           |     166 |   166 |       100.0
+--          3 | PG0215   | 789           |     257 |   257 |       100.0
+--          4 | PG0059   | CR7           |      70 |    70 |       100.0
+--          5 | PG0220   | 351           |     325 |   325 |       100.0
+--          6 | PG0009   | 789           |     257 |   257 |       100.0
+-- (5 rows)
 SELECT f.flight_id,
        f.route_no,
        r.airplane_code,
@@ -84,7 +100,19 @@ LIMIT 5
 
 -- ----------------------------------------------------------------------------- DEMODB_FLIGHTS_A_04
 -- the time since the previous flight of the route PG0001, in October 2025.
--- NOT YET RUN
+--  flight_id |  scheduled_departure   | since_previous 
+-- -----------+------------------------+----------------
+--         56 | 2025-10-01 08:55:00+00 | 
+--        420 | 2025-10-03 08:55:00+00 | 2 days
+--        595 | 2025-10-04 08:55:00+00 | 1 day
+--        786 | 2025-10-05 08:55:00+00 | 1 day
+--        962 | 2025-10-06 08:55:00+00 | 1 day
+--       1145 | 2025-10-07 08:55:00+00 | 1 day
+--       1319 | 2025-10-08 08:55:00+00 | 1 day
+--       1682 | 2025-10-10 08:55:00+00 | 2 days
+--       1858 | 2025-10-11 08:55:00+00 | 1 day
+--       2049 | 2025-10-12 08:55:00+00 | 1 day
+-- ... 26 rows in all.
 SELECT flight_id,
        scheduled_departure,
        scheduled_departure - LAG(scheduled_departure) OVER (ORDER BY scheduled_departure) AS since_previous

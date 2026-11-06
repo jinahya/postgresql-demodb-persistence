@@ -41,7 +41,12 @@ WHERE o.outbound
 
 -- ----------------------------------------------------------------------------- DEMODB_TICKETS_A_02
 -- the share of return tickets, by booking month.
--- NOT YET RUN
+--   month  | return_pct 
+-- ---------+------------
+--  2025-09 |       41.4
+--  2025-10 |       39.2
+--  2025-11 |       37.0
+-- (3 rows)
 SELECT TO_CHAR(b.book_date AT TIME ZONE 'UTC', 'YYYY-MM')                                     AS month,
        ROUND(100.0 * COUNT(*) FILTER (WHERE NOT t.outbound) / COUNT(*), 1) AS return_pct
 FROM tickets t

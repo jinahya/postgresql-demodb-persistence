@@ -114,7 +114,16 @@ ORDER BY scheduled_time, route_no
 
 -- ------------------------------------------------------------------------------ DEMODB_ROUTES_I_06
 -- how many routes fly on each day of the week, now.
--- NOT YET RUN
+--  day_of_week | routes 
+-- -------------+--------
+--            1 |    173
+--            2 |    191
+--            3 |    175
+--            4 |    172
+--            5 |    181
+--            6 |    177
+--            7 |    181
+-- (7 rows)
 SELECT d.day_of_week, COUNT(*) AS routes
 FROM routes r
          CROSS JOIN UNNEST(r.days_of_week) AS d(day_of_week)
@@ -125,7 +134,9 @@ ORDER BY d.day_of_week
 
 -- ------------------------------------------------------------------------------ DEMODB_ROUTES_I_07
 -- the rows whose days of the week are not a set of days.
--- NOT YET RUN
+--  route_no | validity | days_of_week 
+-- ----------+----------+--------------
+-- (0 rows)
 SELECT route_no, validity, days_of_week
 FROM routes
 WHERE CARDINALITY(days_of_week) = 0

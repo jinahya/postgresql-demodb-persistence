@@ -56,7 +56,13 @@ LIMIT 5
 
 -- --------------------------------------------------------------------------- DEMODB_TIMETABLE_I_03
 -- the flights that arrived late, by month.
--- NOT YET RUN
+--   month  | arrived | late 
+-- ---------+---------+------
+--  2025-10 |    5526 |  261
+--  2025-11 |    5440 |  292
+--  2025-12 |       0 |    0
+--  2026-01 |       0 |    0
+-- (4 rows)
 SELECT TO_CHAR(scheduled_arrival AT TIME ZONE 'UTC', 'YYYY-MM') AS month,
        COUNT(*) FILTER (WHERE status = 'Arrived') AS arrived,
        COUNT(*) FILTER (WHERE status = 'Arrived' AND actual_arrival > scheduled_arrival + INTERVAL '1 hour') AS late
@@ -92,7 +98,19 @@ ORDER BY departure_airport, arrival_airport
 
 -- --------------------------------------------------------------------------- DEMODB_TIMETABLE_I_05
 -- the ten airports with the longest average departure delay.
--- NOT YET RUN
+--  departure_airport | departed |  average_delay  
+-- -------------------+----------+-----------------
+--  AMD               |      121 | 00:26:30.318256
+--  YUL               |      119 | 00:24:24.721629
+--  OVB               |      106 | 00:23:45.132593
+--  YEG               |      124 | 00:22:06.295919
+--  DFW               |      138 | 00:21:33.284388
+--  YVR               |      166 | 00:21:23.125409
+--  PVG               |      242 | 00:21:14.01014
+--  WUH               |      126 | 00:20:24.89244
+--  HYD               |      139 | 00:19:40.605326
+--  YYC               |      129 | 00:19:14.142478
+-- (10 rows)
 SELECT departure_airport,
        COUNT(*)                                    AS departed,
        AVG(actual_departure - scheduled_departure) AS average_delay

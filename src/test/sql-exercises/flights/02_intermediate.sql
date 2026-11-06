@@ -28,7 +28,13 @@
 
 -- ----------------------------------------------------------------------------- DEMODB_FLIGHTS_I_01
 -- how many flights each month.
--- NOT YET RUN
+--   month  | flights 
+-- ---------+---------
+--  2025-10 |    5580
+--  2025-11 |    5467
+--  2025-12 |    5539
+--  2026-01 |    5172
+-- (4 rows)
 SELECT TO_CHAR(scheduled_departure AT TIME ZONE 'UTC', 'YYYY-MM') AS month, COUNT(*) AS flights
 FROM flights
 GROUP BY month
@@ -74,7 +80,19 @@ WHERE actual_departure > scheduled_departure + INTERVAL '1 hour'
 
 -- ----------------------------------------------------------------------------- DEMODB_FLIGHTS_I_04
 -- today's flights, with their airports.
--- NOT YET RUN
+--  flight_id | route_no | departure_airport | arrival_airport |  scheduled_departure   |  status  
+-- -----------+----------+-------------------+-----------------+------------------------+----------
+--      11048 | PG0098   | DEL               | CCU             | 2025-12-01 00:10:00+00 | Boarding
+--      11049 | PG0456   | KZN               | UFA             | 2025-12-01 00:15:00+00 | Boarding
+--      11050 | PG0215   | XIY               | SHA             | 2025-12-01 00:25:00+00 | Boarding
+--      11051 | PG0356   | XIY               | WUH             | 2025-12-01 00:30:00+00 | Delayed
+--      11052 | PG0191   | LAX               | LAS             | 2025-12-01 00:35:00+00 | On Time
+--      11053 | PG0350   | ATL               | CLT             | 2025-12-01 00:35:00+00 | On Time
+--      11054 | PG0059   | OKA               | CTS             | 2025-12-01 00:45:00+00 | On Time
+--      11055 | PG0526   | ORY               | VIE             | 2025-12-01 00:50:00+00 | On Time
+--      11056 | PG0364   | CKG               | CTU             | 2025-12-01 00:55:00+00 | On Time
+--      11057 | PG0247   | ATL               | DEN             | 2025-12-01 01:20:00+00 | On Time
+-- ... 170 rows in all.
 SELECT f.flight_id, f.route_no, r.departure_airport, r.arrival_airport, f.scheduled_departure, f.status
 FROM flights f
          JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
@@ -85,7 +103,9 @@ ORDER BY f.scheduled_departure, f.flight_id
 
 -- ----------------------------------------------------------------------------- DEMODB_FLIGHTS_I_05
 -- the flights whose status disagrees with their actual times.
--- NOT YET RUN
+--  status | flights 
+-- --------+---------
+-- (0 rows)
 SELECT status, COUNT(*) AS flights
 FROM flights
 WHERE (status = 'Arrived' AND actual_arrival IS NULL)

@@ -28,7 +28,14 @@
 
 -- ---------------------------------------------------------------------------- DEMODB_SEGMENTS_A_01
 -- the five flights where Business costs the most over Economy.
--- NOT YET RUN
+--  flight_id | economy  | business | ratio 
+-- -----------+----------+----------+-------
+--          1 |  5000.00 | 10000.00 |  2.00
+--          2 |  9250.00 | 18500.00 |  2.00
+--          3 |  6000.00 | 12000.00 |  2.00
+--          4 | 10500.00 | 21000.00 |  2.00
+--          5 |  5250.00 | 10500.00 |  2.00
+-- (5 rows)
 SELECT flight_id,
        MIN(price) FILTER (WHERE fare_conditions = 'Economy')  AS economy,
        MIN(price) FILTER (WHERE fare_conditions = 'Business') AS business,
@@ -46,7 +53,10 @@ LIMIT 5
 --  segments 
 -- ----------
 --         0
--- NOT YET RUN
+--  segments 
+-- ----------
+--         0
+-- (1 row)
 SELECT COUNT(*) AS segments
 FROM segments s
          JOIN flights f ON f.flight_id = s.flight_id

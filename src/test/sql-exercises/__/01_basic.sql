@@ -66,7 +66,17 @@ ORDER BY ordinal_position
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_B_03
 -- the foreign keys, and what they reference.
--- NOT YET RUN
+--    table_name    |                 conname                  |                                       definition                                       
+-- -----------------+------------------------------------------+----------------------------------------------------------------------------------------
+--  boarding_passes | boarding_passes_ticket_no_flight_id_fkey | FOREIGN KEY (ticket_no, flight_id) REFERENCES segments(ticket_no, flight_id)
+--  routes          | routes_airplane_code_fkey                | FOREIGN KEY (airplane_code) REFERENCES airplanes_data(airplane_code)
+--  routes          | routes_arrival_airport_fkey              | FOREIGN KEY (arrival_airport) REFERENCES airports_data(airport_code)
+--  routes          | routes_departure_airport_fkey            | FOREIGN KEY (departure_airport) REFERENCES airports_data(airport_code)
+--  seats           | seats_airplane_code_fkey                 | FOREIGN KEY (airplane_code) REFERENCES airplanes_data(airplane_code) ON DELETE CASCADE
+--  segments        | segments_flight_id_fkey                  | FOREIGN KEY (flight_id) REFERENCES flights(flight_id)
+--  segments        | segments_ticket_no_fkey                  | FOREIGN KEY (ticket_no) REFERENCES tickets(ticket_no)
+--  tickets         | tickets_book_ref_fkey                    | FOREIGN KEY (book_ref) REFERENCES bookings(book_ref)
+-- (8 rows)
 SELECT conrelid::regclass::text AS table_name, conname, PG_GET_CONSTRAINTDEF(oid) AS definition
 FROM pg_constraint
 WHERE connamespace = 'bookings'::regnamespace
@@ -133,7 +143,10 @@ ORDER BY table_name
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_B_06
 -- the sold segments of the cancelled flights.
--- NOT YET RUN
+--  affected_segments 
+-- -------------------
+--                  0
+-- (1 row)
 SELECT COUNT(*) AS affected_segments
 FROM segments s
          JOIN flights f ON f.flight_id = s.flight_id

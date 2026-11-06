@@ -28,7 +28,19 @@
 
 -- ----------------------------------------------------------------------- DEMODB_AIRPORTS_DATA_A_01
 -- the cities with more than one airport.
--- NOT YET RUN
+--      city     |    country     |             airports              | count 
+-- --------------+----------------+-----------------------------------+-------
+--  Houston      | United States  | AAP, DWH, EFD, HOU, IAH, IWS, SGR |     7
+--  Chicago      | United States  | LOT, MDW, ORD, PWK, RFD, UGN      |     6
+--  London       | United Kingdom | BQH, LCY, LGW, LHR, LTN, STN      |     6
+--  Berlin       | Germany        | BER, QXH, SXF, THF, TXL           |     5
+--  Columbus     | United States  | CMH, CSG, GTR, LCK, OSU           |     5
+--  Jacksonville | United States  | JAX, LRF, NIP, OAJ, VQQ           |     5
+--  Las Vegas    | United States  | HSH, LAS, LSV, LVS, VGT           |     5
+--  Moscow       | Russia         | BKA, DME, OSF, SVO, VKO           |     5
+--  Cleveland    | United States  | BKL, CGF, CLE, HDI                |     4
+--  Dallas       | United States  | ADS, DAL, DFW, RBD                |     4
+-- (10 rows)
 SELECT city ->> 'en'                                        AS city,
        country ->> 'en'                                     AS country,
        STRING_AGG(airport_code, ', ' ORDER BY airport_code) AS airports,

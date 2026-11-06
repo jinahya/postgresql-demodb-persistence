@@ -89,7 +89,9 @@ LIMIT 5
 
 -- ----------------------------------------------------------------------- DEMODB_AIRPORTS_DATA_I_04
 -- the airports missing an English name, city or country.
--- NOT YET RUN
+--  airport_code | airport_name | city | country 
+-- --------------+--------------+------+---------
+-- (0 rows)
 SELECT airport_code,
        airport_name ->> 'en' AS airport_name,
        city ->> 'en'         AS city,

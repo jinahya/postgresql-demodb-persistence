@@ -28,7 +28,19 @@
 
 -- ------------------------------------------------------------------------------- DEMODB_SEATS_A_01
 -- the empty seats of the flight 1.
--- NOT YET RUN
+--  seat_no | fare_conditions 
+-- ---------+-----------------
+--  10A     | Economy
+--  10B     | Economy
+--  10C     | Economy
+--  10D     | Economy
+--  10E     | Economy
+--  10F     | Economy
+--  11A     | Economy
+--  11C     | Economy
+--  11D     | Economy
+--  11E     | Economy
+-- ... 112 rows in all.
 SELECT s.seat_no, s.fare_conditions
 FROM timetable t
          JOIN seats s ON s.airplane_code = t.airplane_code

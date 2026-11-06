@@ -28,7 +28,10 @@
 
 -- --------------------------------------------------------------------- DEMODB_BOARDING_PASSES_A_01
 -- the passengers of the first day seated in other fare conditions than they paid.
--- NOT YET RUN
+--  passes | upgraded | downgraded 
+-- --------+----------+------------
+--       0 |        0 |          0
+-- (1 row)
 SELECT COUNT(*)                                      AS passes,
        COUNT(*) FILTER (WHERE rank.seat > rank.paid) AS upgraded,
        COUNT(*) FILTER (WHERE rank.seat < rank.paid) AS downgraded

@@ -28,7 +28,12 @@
 
 -- ---------------------------------------------------------------------------- DEMODB_BOOKINGS_I_01
 -- the bookings and the money of each month.
--- NOT YET RUN
+--   month  | bookings |     total     
+-- ---------+----------+---------------
+--  2025-09 |   448064 | 8749891200.00
+--  2025-10 |   434159 | 8223964900.00
+--  2025-11 |   410670 | 7600075475.00
+-- (3 rows)
 SELECT TO_CHAR(book_date AT TIME ZONE 'UTC', 'YYYY-MM') AS month, COUNT(*) AS bookings, SUM(total_amount) AS total
 FROM bookings
 GROUP BY month
@@ -37,7 +42,16 @@ ORDER BY month
 
 -- ---------------------------------------------------------------------------- DEMODB_BOOKINGS_I_04
 -- how many bookings on each day of the week.
--- NOT YET RUN
+--  weekday | bookings 
+-- ---------+----------
+--  Sun     |   183235
+--  Mon     |   185709
+--  Tue     |   185390
+--  Wed     |   185600
+--  Thu     |   184292
+--  Fri     |   184620
+--  Sat     |   184047
+-- (7 rows)
 SELECT TO_CHAR(book_date AT TIME ZONE 'UTC', 'Dy') AS weekday, COUNT(*) AS bookings
 FROM bookings
 GROUP BY weekday, EXTRACT(DOW FROM book_date)

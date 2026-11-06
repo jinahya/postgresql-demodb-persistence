@@ -96,7 +96,9 @@ ORDER BY passengers
 
 -- ----------------------------------------------------------------------------- DEMODB_TICKETS_I_05
 -- the passenger ids recorded under more than one name.
--- NOT YET RUN
+--  passenger_id | names 
+-- --------------+-------
+-- (0 rows)
 SELECT passenger_id, COUNT(DISTINCT passenger_name) AS names
 FROM tickets
 GROUP BY passenger_id

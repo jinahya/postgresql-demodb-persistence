@@ -79,7 +79,11 @@ LIMIT 10
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_A_03
 -- how many airports are one and two routes away from Sheremetyevo.
--- NOT YET RUN
+--  flights | airports 
+-- ---------+----------
+--        1 |       16
+--        2 |       33
+-- (2 rows)
 WITH RECURSIVE hops AS (SELECT 'SVO'::bpchar AS airport, 0 AS flights
                         UNION
                         SELECT r.arrival_airport, h.flights + 1
@@ -123,7 +127,10 @@ LIMIT 5
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_A_05
 -- the segments which do not connect to the previous one of their ticket.
--- NOT YET RUN
+--  elsewhere | overlapping 
+-- -----------+-------------
+--          0 |           0
+-- (1 row)
 SELECT COUNT(*) FILTER (WHERE departure_airport <> previous_airport)  AS elsewhere,
        COUNT(*) FILTER (WHERE scheduled_departure < previous_arrival) AS overlapping
 FROM (SELECT r.departure_airport,
@@ -138,7 +145,19 @@ FROM (SELECT r.departure_airport,
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_A_06
 -- the passengers still to board the flights now boarding.
--- NOT YET RUN
+--  flight_id |   ticket_no   |    passenger_name    | seat_no | boarding_no 
+-- -----------+---------------+----------------------+---------+-------------
+--      11048 | 0005433234672 | Kamla Reddy          | 15F     |            
+--      11048 | 0005433296114 | Amrita Verma         | 50D     |            
+--      11048 | 0005433317257 | Laxmi Gupta          | 19K     |            
+--      11048 | 0005433325245 | Sheetal Kumar        | 15D     |            
+--      11048 | 0005433337233 | Rajakumari Saha      | 34K     |            
+--      11048 | 0005433337242 | Ramesh Padhi         | 46J     |            
+--      11048 | 0005433337249 | Chhotelal Bahadur    | 12G     |            
+--      11048 | 0005433339085 | Reshma Basumatary    | 46C     |            
+--      11048 | 0005433354525 | Manisha Mondal       | 30D     |            
+--      11048 | 0005433354539 | Ramdas Bairagi       | 46K     |            
+-- ... 240 rows in all.
 SELECT f.flight_id, s.ticket_no, t.passenger_name, bp.seat_no, bp.boarding_no
 FROM flights f
          JOIN segments s ON s.flight_id = f.flight_id

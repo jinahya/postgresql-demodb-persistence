@@ -106,7 +106,19 @@ ORDER BY route_no, valid_from
 
 -- ------------------------------------------------------------------------------ DEMODB_ROUTES_A_04
 -- the ten longest routes valid now, by great-circle distance.
--- NOT YET RUN
+--  route_no | departure_airport | arrival_airport | airplane_code | range | distance_km 
+-- ----------+-------------------+-----------------+---------------+-------+-------------
+--  PG0569   | SZX               | MCO             | 351           | 16700 |       14110
+--  PG0570   | MCO               | SZX             | 351           | 16700 |       14110
+--  PG0503   | HYD               | YYZ             | 789           | 14000 |       12883
+--  PG0504   | YYZ               | HYD             | 789           | 14000 |       12883
+--  PG0493   | AKL               | PEK             | 351           | 16700 |       10426
+--  PG0494   | PEK               | AKL             | 351           | 16700 |       10426
+--  PG0491   | AKL               | CAN             | 77W           | 14600 |        9300
+--  PG0492   | CAN               | AKL             | 77W           | 14600 |        9300
+--  PG0577   | PVG               | ORY             | 789           | 14000 |        9297
+--  PG0578   | ORY               | PVG             | 789           | 14000 |        9297
+-- (10 rows)
 SELECT r.route_no,
        r.departure_airport,
        r.arrival_airport,

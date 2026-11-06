@@ -100,7 +100,9 @@ ORDER BY seat_no
 
 -- ------------------------------------------------------------------------------- DEMODB_SEATS_I_04
 -- the seat numbers which are not a row and a letter.
--- NOT YET RUN
+--  airplane_code | seat_no 
+-- ---------------+---------
+-- (0 rows)
 SELECT airplane_code, seat_no
 FROM seats
 WHERE seat_no !~ '^[1-9][0-9]*[A-Z]$'

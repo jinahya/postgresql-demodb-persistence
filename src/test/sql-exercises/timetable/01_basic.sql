@@ -28,7 +28,14 @@
 
 -- --------------------------------------------------------------------------- DEMODB_TIMETABLE_B_01
 -- the flights from Sheremetyevo in the next 24 hours.
--- NOT YET RUN
+--  flight_id | route_no | arrival_airport | scheduled_departure_local | status  
+-- -----------+----------+-----------------+---------------------------+---------
+--      11120 | PG0012   | UFA             | 2025-12-01 13:55:00       | On Time
+--      11121 | PG0034   | SVX             | 2025-12-01 14:05:00       | On Time
+--      11132 | PG0177   | AER             | 2025-12-01 15:05:00       | On Time
+--      11211 | PG0018   | KZN             | 2025-12-02 02:05:00       | On Time
+--      11216 | PG0106   | LED             | 2025-12-02 02:40:00       | On Time
+-- (5 rows)
 SELECT flight_id, route_no, arrival_airport, scheduled_departure_local, status
 FROM timetable
 WHERE departure_airport = 'SVO'
@@ -39,7 +46,10 @@ ORDER BY scheduled_departure, flight_id
 
 -- --------------------------------------------------------------------------- DEMODB_TIMETABLE_B_02
 -- the flights of the route PG0078 on the first day, in local time.
--- NOT YET RUN
+--  flight_id | departure_airport | arrival_airport | scheduled_departure_utc | scheduled_departure_local | scheduled_arrival_local 
+-- -----------+-------------------+-----------------+-------------------------+---------------------------+-------------------------
+--          1 | SVO               | HEL             | 2025-10-01 00:00:00     | 2025-10-01 03:00:00       | 2025-10-01 04:40:00
+-- (1 row)
 SELECT flight_id,
        departure_airport,
        arrival_airport,
@@ -55,7 +65,16 @@ ORDER BY scheduled_departure
 
 -- --------------------------------------------------------------------------- DEMODB_TIMETABLE_B_03
 -- how many flights of each status.
--- NOT YET RUN
+--   status   | flights 
+-- -----------+---------
+--  Arrived   |   10966
+--  Boarding  |       4
+--  Cancelled |     121
+--  Delayed   |      10
+--  Departed  |      20
+--  On Time   |     157
+--  Scheduled |   10480
+-- (7 rows)
 SELECT status, COUNT(*) AS flights
 FROM timetable
 GROUP BY status

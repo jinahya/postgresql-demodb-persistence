@@ -28,7 +28,13 @@
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_I_01
 -- the segments sold and the money taken, by month of flight.
--- NOT YET RUN
+--   month  | segments |    revenue    
+-- ---------+----------+---------------
+--  2025-10 |  1213221 | 7388546575.00
+--  2025-11 |  1221803 | 7579759950.00
+--  2025-12 |   996024 | 6209347975.00
+--  2026-01 |   510201 | 3396277075.00
+-- (4 rows)
 SELECT TO_CHAR(f.scheduled_departure AT TIME ZONE 'UTC', 'YYYY-MM') AS month,
        COUNT(*)                                  AS segments,
        SUM(s.price)                              AS revenue
@@ -41,7 +47,19 @@ ORDER BY month
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_I_02
 -- the ten airports with the most passengers boarded in the first week.
--- NOT YET RUN
+--  airport_code |    airport_name     | boarded 
+-- --------------+---------------------+---------
+--  PVG          | Pudong              |   11468
+--  ATL          | Hartsfield-Jackson  |   10666
+--  DEL          | Indira Gandhi       |    9578
+--  BOM          | Chhatrapati Shivaji |    8977
+--  SHA          | Hongqiao            |    7979
+--  SZX          | Bao'an              |    7743
+--  TFU          | Tianfu              |    7653
+--  FRA          | Frankfurt am Main   |    6932
+--  HND          | Haneda              |    6743
+--  CAN          | Baiyun              |    6668
+-- (10 rows)
 SELECT a.airport_code, a.airport_name, COUNT(*) AS boarded
 FROM boarding_passes bp
          JOIN flights f ON f.flight_id = bp.flight_id
@@ -102,7 +120,14 @@ LIMIT 10
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_I_05
 -- the passengers and the seats of the flights from Sheremetyevo in the next 24 hours.
--- NOT YET RUN
+--  flight_id | arrival_airport | scheduled_departure_local | airplane_code | passengers | seats 
+-- -----------+-----------------+---------------------------+---------------+------------+-------
+--      11120 | UFA             | 2025-12-01 13:55:00       | E70           |         78 |    78
+--      11121 | SVX             | 2025-12-01 14:05:00       | 339           |        281 |   281
+--      11132 | AER             | 2025-12-01 15:05:00       | 7M7           |        160 |   160
+--      11211 | KZN             | 2025-12-02 02:05:00       | CR7           |         70 |    70
+--      11216 | LED             | 2025-12-02 02:40:00       | 77W           |        404 |   404
+-- (5 rows)
 SELECT t.flight_id,
        t.arrival_airport,
        t.scheduled_departure_local,
@@ -120,7 +145,9 @@ ORDER BY t.scheduled_departure, t.flight_id
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_I_06
 -- the flights with no route valid at their departure.
--- NOT YET RUN
+--  flight_id | route_no | scheduled_departure 
+-- -----------+----------+---------------------
+-- (0 rows)
 SELECT f.flight_id, f.route_no, f.scheduled_departure
 FROM flights f
 WHERE NOT EXISTS (SELECT 1
@@ -132,7 +159,10 @@ ORDER BY f.scheduled_departure, f.flight_id
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_I_07
 -- how far ahead the bookings were made.
--- NOT YET RUN
+--        shortest        |     average      |         longest         
+-- -----------------------+------------------+-------------------------
+--  1 day 00:15:00.059124 | 32 days 29:00:00 | 60 days 00:04:37.102002
+-- (1 row)
 SELECT MIN(ahead)                     AS shortest,
        DATE_TRUNC('hour', AVG(ahead)) AS average,
        MAX(ahead)                     AS longest
@@ -146,7 +176,19 @@ FROM (SELECT b.book_ref, MIN(f.scheduled_departure) - b.book_date AS ahead
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_I_08
 -- the seats of each airplane model, by fare conditions.
--- NOT YET RUN
+--  airplane_code |          model          | range | speed | seats | economy | comfort | business 
+-- ---------------+-------------------------+-------+-------+-------+---------+---------+----------
+--  32N           | Airbus A320neo          |  6500 |   830 |   166 |     138 |       0 |       28
+--  339           | Airbus A330-900neo      | 13300 |   870 |   281 |     224 |      28 |       29
+--  351           | Airbus A350-1000        | 16700 |   913 |   325 |     281 |       0 |       44
+--  35X           | Airbus A350F            |  8700 |   903 |     0 |       0 |       0 |        0
+--  76F           | Boeing 767-300F         |  6000 |   850 |     0 |       0 |       0 |        0
+--  77W           | Boeing 777-300ER        | 14600 |   905 |   404 |     326 |      48 |       30
+--  789           | Boeing 787-9 Dreamliner | 14000 |   913 |   257 |     188 |      21 |       48
+--  7M7           | Boeing 737 MAX 7        |  7000 |   840 |   160 |     144 |       0 |       16
+--  CR7           | Bombardier CRJ700       |  3100 |   829 |    70 |      52 |      12 |        6
+--  E70           | Embraer E170            |  4000 |   800 |    78 |      72 |       0 |        6
+-- (10 rows)
 SELECT a.airplane_code,
        a.model,
        a.range,
@@ -163,7 +205,19 @@ ORDER BY a.airplane_code
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_I_09
 -- today's departures, in each airport's own day.
--- NOT YET RUN
+--  airport_code |        airport_name         |      timezone       | flight_id | arrival_airport | scheduled_departure_local 
+-- --------------+-----------------------------+---------------------+-----------+-----------------+---------------------------
+--  AER          | Sochi                       | Europe/Moscow       |     11027 | KJA             | 2025-12-01 00:35:00
+--  AER          | Sochi                       | Europe/Moscow       |     11064 | SVO             | 2025-12-01 05:15:00
+--  AMD          | Sardar Vallabhbhai Patel    | Asia/Kolkata        |     11066 | BOM             | 2025-12-01 07:45:00
+--  AMD          | Sardar Vallabhbhai Patel    | Asia/Kolkata        |     11127 | DEL             | 2025-12-01 17:00:00
+--  ARN          | Arlanda                     | Europe/Stockholm    |     11076 | LGW             | 2025-12-01 05:30:00
+--  ATL          | Hartsfield-Jackson          | America/New_York    |     10941 | LAX             | 2025-11-30 05:00:00
+--  ATL          | Hartsfield-Jackson          | America/New_York    |     10942 | MIA             | 2025-11-30 05:00:00
+--  ATL          | Hartsfield-Jackson          | America/New_York    |     11053 | CLT             | 2025-11-30 19:35:00
+--  ATL          | Hartsfield-Jackson          | America/New_York    |     11057 | DEN             | 2025-11-30 20:20:00
+--  BER          | Brandenburg                 | Europe/Berlin       |     11129 | FRA             | 2025-12-01 12:45:00
+-- ... 169 rows in all.
 SELECT a.airport_code,
        a.airport_name,
        a.timezone,
@@ -178,7 +232,19 @@ ORDER BY a.airport_code, t.scheduled_departure_local, t.flight_id
 
 -- ------------------------------------------------------------------------------ DEMODB_SCHEMA_I_10
 -- the outbound and return tickets of one passenger in one booking.
--- NOT YET RUN
+--  book_ref |           book_date           |   passenger_id   | outbound_ticket | return_ticket 
+-- ----------+-------------------------------+------------------+-----------------+---------------
+--  0000EG   | 2025-11-16 21:21:48.411495+00 | CA 1985281597520 | 0005434564147   | 0005434564152
+--  00040W   | 2025-10-13 09:50:50.314587+00 | IN 2849974177127 | 0005433488169   | 0005433488174
+--  000562   | 2025-09-11 10:21:54.084444+00 | CN 8124086130640 | 0005432379163   | 0005432379166
+--  000562   | 2025-09-11 10:21:54.084444+00 | CN 8278780386895 | 0005432379152   | 0005432379162
+--  000AB9   | 2025-09-14 09:38:24.862062+00 | FR 9136453193331 | 0005432484130   | 0005432484139
+--  000CTL   | 2025-09-12 03:00:50.050639+00 | CA 1858375121919 | 0005432403569   | 0005432403579
+--  000CTL   | 2025-09-12 03:00:50.050639+00 | CA 4214750109906 | 0005432403583   | 0005432403584
+--  000FHR   | 2025-09-20 01:23:24.977241+00 | US 6852803198732 | 0005432684628   | 0005432684637
+--  000J03   | 2025-09-21 10:36:16.247585+00 | DE 5115949846908 | 0005432733791   | 0005432733800
+--  000J03   | 2025-09-21 10:36:16.247585+00 | DE 9841850206654 | 0005432733806   | 0005432733808
+-- ... 1168851 rows in all.
 SELECT b.book_ref,
        b.book_date,
        o.passenger_id,

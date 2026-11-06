@@ -28,7 +28,14 @@
 
 -- --------------------------------------------------------------------- DEMODB_BOARDING_PASSES_I_01
 -- the five seats boarded the most.
--- NOT YET RUN
+--  seat_no | boarded 
+-- ---------+---------
+--  20D     |    9661
+--  22D     |    9636
+--  20C     |    9617
+--  20A     |    9607
+--  21D     |    9602
+-- (5 rows)
 SELECT seat_no, COUNT(*) AS boarded
 FROM boarding_passes
 WHERE boarding_no IS NOT NULL
@@ -54,7 +61,10 @@ WHERE bp.ticket_no IS NULL
 --  minutes_before 
 -- ----------------
 --              11
--- NOT YET RUN
+--  minutes_before 
+-- ----------------
+--              11
+-- (1 row)
 SELECT ROUND(AVG(EXTRACT(EPOCH FROM f.scheduled_departure - bp.boarding_time)) /
              60) AS minutes_before
 FROM boarding_passes bp

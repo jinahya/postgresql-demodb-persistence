@@ -41,7 +41,19 @@ ORDER BY a.airplane_code
 
 -- ---------------------------------------------------------------------- DEMODB_AIRPLANES_DATA_A_02
 -- the airplanes by the flights they fly.
--- NOT YET RUN
+--  airplane_code |          model          | flights 
+-- ---------------+-------------------------+---------
+--  77W           | Boeing 777-300ER        |    6331
+--  7M7           | Boeing 737 MAX 7        |    3599
+--  789           | Boeing 787-9 Dreamliner |    3030
+--  351           | Airbus A350-1000        |    2548
+--  E70           | Embraer E170            |    2413
+--  CR7           | Bombardier CRJ700       |    1564
+--  339           | Airbus A330-900neo      |    1428
+--  32N           | Airbus A320neo          |     845
+--  35X           | Airbus A350F            |       0
+--  76F           | Boeing 767-300F         |       0
+-- (10 rows)
 SELECT a.airplane_code, a.model ->> 'en' AS model, COUNT(f.flight_id) AS flights
 FROM airplanes_data a
          LEFT JOIN routes r ON r.airplane_code = a.airplane_code

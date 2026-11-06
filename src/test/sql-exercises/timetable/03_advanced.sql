@@ -40,7 +40,11 @@ WHERE t.flight_id IS NULL
 
 -- --------------------------------------------------------------------------- DEMODB_TIMETABLE_A_02
 -- the connections at Sheremetyevo on the first day.
--- NOT YET RUN
+--  arriving | departing | destination | layover  
+-- ----------+-----------+-------------+----------
+--        54 |        81 | AER         | 02:30:00
+--       131 |       168 | LED         | 03:35:00
+-- (2 rows)
 SELECT a.flight_id                                 AS arriving,
        d.flight_id                                 AS departing,
        d.arrival_airport                           AS destination,

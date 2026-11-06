@@ -31,7 +31,10 @@
 --  bookings 
 -- ----------
 --         0
--- NOT YET RUN
+--  bookings 
+-- ----------
+--         0
+-- (1 row)
 SELECT COUNT(*) AS bookings
 FROM (SELECT b.book_ref
       FROM bookings b
