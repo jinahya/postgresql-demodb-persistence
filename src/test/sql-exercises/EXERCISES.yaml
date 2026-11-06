@@ -1,0 +1,886 @@
+# Registry of the exercises in EXERCISES.asciidoc and the <section>/<NN>_<level>.sql files beside it.
+#
+# An id is DEMODB_<SECTION>_<TIER>_<NN>: the table or view the exercise reads alone, or SCHEMA for one that reads more
+# than one, the tier (B for Basic, I for Intermediate, A for Advanced), and a number within that section and tier.
+#
+# Ids are permanent. A new exercise takes the next unused number of its section and tier; an exercise that moves or
+# changes tier keeps its id; an id of a removed exercise is marked `retired: true` and never reused. EXERCISES.asciidoc
+# carries each id as the anchor and the prefix of the exercise's heading, and the .sql file repeats it in the marker
+# above the statement.
+#
+# `sql` is the file that answers the exercise in SQL. `test`, the integration test and its nested class that answer it
+# in JPQL and with the Criteria API, is added with the class, once the entities exist; an exercise only SQL can answer
+# is flagged `native-only: true`.
+
+# ---- airplanes_data
+
+- id: DEMODB_AIRPLANES_DATA_B_01
+  section: "AIRPLANES_DATA"
+  tier: Basic
+  title: "every airplane, by code"
+  sql: src/test/sql-exercises/airplanes_data/01_basic.sql
+  test: AirplanesData_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_DATA_B_01_Test
+- id: DEMODB_AIRPLANES_DATA_B_02
+  section: "AIRPLANES_DATA"
+  tier: Basic
+  title: "the airplanes with a range of 10000 km or more, the longest first"
+  sql: src/test/sql-exercises/airplanes_data/01_basic.sql
+  test: AirplanesData_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_DATA_B_02_Test
+- id: DEMODB_AIRPLANES_DATA_B_03
+  section: "AIRPLANES_DATA"
+  tier: Basic
+  title: "how many airplanes, and the shortest and the longest range"
+  sql: src/test/sql-exercises/airplanes_data/01_basic.sql
+  test: AirplanesData_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_DATA_B_03_Test
+- id: DEMODB_AIRPLANES_DATA_I_01
+  section: "AIRPLANES_DATA"
+  tier: Intermediate
+  title: "the English name of each airplane"
+  sql: src/test/sql-exercises/airplanes_data/02_intermediate.sql
+  test: AirplanesData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPLANES_DATA_I_01_Test
+- id: DEMODB_AIRPLANES_DATA_I_02
+  section: "AIRPLANES_DATA"
+  tier: Intermediate
+  title: "the hours each airplane flies at its full range"
+  sql: src/test/sql-exercises/airplanes_data/02_intermediate.sql
+  test: AirplanesData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPLANES_DATA_I_02_Test
+- id: DEMODB_AIRPLANES_DATA_I_03
+  section: "AIRPLANES_DATA"
+  tier: Intermediate
+  title: "the languages the models are named in"
+  sql: src/test/sql-exercises/airplanes_data/02_intermediate.sql
+  test: AirplanesData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPLANES_DATA_I_03_Test
+- id: DEMODB_AIRPLANES_DATA_A_01
+  section: "AIRPLANES_DATA"
+  tier: Advanced
+  title: "the airplanes that fly no route"
+  sql: src/test/sql-exercises/airplanes_data/03_advanced.sql
+  test: AirplanesData_Exercises_03_Advanced_PersistenceIT.DEMODB_AIRPLANES_DATA_A_01_Test
+- id: DEMODB_AIRPLANES_DATA_A_02
+  section: "AIRPLANES_DATA"
+  tier: Advanced
+  title: "the airplanes by the flights they fly"
+  sql: src/test/sql-exercises/airplanes_data/03_advanced.sql
+  test: AirplanesData_Exercises_03_Advanced_PersistenceIT.DEMODB_AIRPLANES_DATA_A_02_Test
+# ---- airplanes
+
+- id: DEMODB_AIRPLANES_B_01
+  section: "AIRPLANES"
+  tier: Basic
+  title: "every airplane of the view, by code"
+  sql: src/test/sql-exercises/airplanes/01_basic.sql
+  test: Airplanes_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_B_01_Test
+- id: DEMODB_AIRPLANES_B_02
+  section: "AIRPLANES"
+  tier: Basic
+  title: "the Boeings"
+  sql: src/test/sql-exercises/airplanes/01_basic.sql
+  test: Airplanes_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_B_02_Test
+- id: DEMODB_AIRPLANES_I_01
+  section: "AIRPLANES"
+  tier: Intermediate
+  title: "how many airplanes each maker has"
+  sql: src/test/sql-exercises/airplanes/02_intermediate.sql
+  test: Airplanes_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPLANES_I_01_Test
+- id: DEMODB_AIRPLANES_I_02
+  section: "AIRPLANES"
+  tier: Intermediate
+  title: "whether the view agrees with the table"
+  sql: src/test/sql-exercises/airplanes/02_intermediate.sql
+  retired: true
+- id: DEMODB_AIRPLANES_A_01
+  section: "AIRPLANES"
+  tier: Advanced
+  title: "the three airplanes with the most routes"
+  sql: src/test/sql-exercises/airplanes/03_advanced.sql
+  retired: true
+- id: DEMODB_AIRPLANES_A_02
+  section: "AIRPLANES"
+  tier: Advanced
+  title: "the airplanes ranked by speed, ties sharing a rank"
+  sql: src/test/sql-exercises/airplanes/03_advanced.sql
+  test: Airplanes_Exercises_03_Advanced_PersistenceIT.DEMODB_AIRPLANES_A_02_Test
+# ---- airports_data
+
+- id: DEMODB_AIRPORTS_DATA_B_01
+  section: "AIRPORTS_DATA"
+  tier: Basic
+  title: "the airports in the Europe/Moscow time zone"
+  sql: src/test/sql-exercises/airports_data/01_basic.sql
+  test: AirportsData_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPORTS_DATA_B_01_Test
+- id: DEMODB_AIRPORTS_DATA_B_02
+  section: "AIRPORTS_DATA"
+  tier: Basic
+  title: "how many airports, and how many time zones"
+  sql: src/test/sql-exercises/airports_data/01_basic.sql
+  test: AirportsData_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPORTS_DATA_B_02_Test
+- id: DEMODB_AIRPORTS_DATA_B_03
+  section: "AIRPORTS_DATA"
+  tier: Basic
+  title: "the airports whose code starts with SV"
+  sql: src/test/sql-exercises/airports_data/01_basic.sql
+  retired: true
+- id: DEMODB_AIRPORTS_DATA_I_01
+  section: "AIRPORTS_DATA"
+  tier: Intermediate
+  title: "the airports of Finland, in English"
+  sql: src/test/sql-exercises/airports_data/02_intermediate.sql
+  test: AirportsData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_DATA_I_01_Test
+- id: DEMODB_AIRPORTS_DATA_I_02
+  section: "AIRPORTS_DATA"
+  tier: Intermediate
+  title: "the ten time zones with the most airports"
+  sql: src/test/sql-exercises/airports_data/02_intermediate.sql
+  test: AirportsData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_DATA_I_02_Test
+- id: DEMODB_AIRPORTS_DATA_I_03
+  section: "AIRPORTS_DATA"
+  tier: Intermediate
+  title: "the five countries with the most airports south of the equator"
+  sql: src/test/sql-exercises/airports_data/02_intermediate.sql
+  test: AirportsData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_DATA_I_03_Test
+- id: DEMODB_AIRPORTS_DATA_I_04
+  section: "AIRPORTS_DATA"
+  tier: Intermediate
+  title: "the airports missing an English name, city or country"
+  sql: src/test/sql-exercises/airports_data/02_intermediate.sql
+  test: AirportsData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_DATA_I_04_Test
+- id: DEMODB_AIRPORTS_DATA_A_01
+  section: "AIRPORTS_DATA"
+  tier: Advanced
+  title: "the cities with more than one airport"
+  sql: src/test/sql-exercises/airports_data/03_advanced.sql
+  test: AirportsData_Exercises_03_Advanced_PersistenceIT.DEMODB_AIRPORTS_DATA_A_01_Test
+- id: DEMODB_AIRPORTS_DATA_A_02
+  section: "AIRPORTS_DATA"
+  tier: Advanced
+  title: "how many airports no route touches"
+  sql: src/test/sql-exercises/airports_data/03_advanced.sql
+  test: AirportsData_Exercises_03_Advanced_PersistenceIT.DEMODB_AIRPORTS_DATA_A_02_Test
+# ---- airports
+
+- id: DEMODB_AIRPORTS_B_01
+  section: "AIRPORTS"
+  tier: Basic
+  title: "the airports of Norway"
+  sql: src/test/sql-exercises/airports/01_basic.sql
+  test: Airports_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPORTS_B_01_Test
+- id: DEMODB_AIRPORTS_B_02
+  section: "AIRPORTS"
+  tier: Basic
+  title: "the airports of Moscow"
+  sql: src/test/sql-exercises/airports/01_basic.sql
+  test: Airports_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPORTS_B_02_Test
+- id: DEMODB_AIRPORTS_B_03
+  section: "AIRPORTS"
+  tier: Basic
+  title: "how many airports are called International"
+  sql: src/test/sql-exercises/airports/01_basic.sql
+  retired: true
+- id: DEMODB_AIRPORTS_I_01
+  section: "AIRPORTS"
+  tier: Intermediate
+  title: "the ten countries with the most airports"
+  sql: src/test/sql-exercises/airports/02_intermediate.sql
+  test: Airports_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_I_01_Test
+- id: DEMODB_AIRPORTS_I_02
+  section: "AIRPORTS"
+  tier: Intermediate
+  title: "how many countries have exactly one airport"
+  sql: src/test/sql-exercises/airports/02_intermediate.sql
+  test: Airports_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_I_02_Test
+- id: DEMODB_AIRPORTS_I_03
+  section: "AIRPORTS"
+  tier: Intermediate
+  title: "the westernmost and the easternmost airport"
+  sql: src/test/sql-exercises/airports/02_intermediate.sql
+  test: Airports_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_I_03_Test
+- id: DEMODB_AIRPORTS_A_01
+  section: "AIRPORTS"
+  tier: Advanced
+  title: "the airports flown from but never to"
+  sql: src/test/sql-exercises/airports/03_advanced.sql
+  test: Airports_Exercises_03_Advanced_PersistenceIT.DEMODB_AIRPORTS_A_01_Test
+- id: DEMODB_AIRPORTS_A_02
+  section: "AIRPORTS"
+  tier: Advanced
+  title: "the ten airports with the most departures"
+  sql: src/test/sql-exercises/airports/03_advanced.sql
+  test: Airports_Exercises_03_Advanced_PersistenceIT.DEMODB_AIRPORTS_A_02_Test
+# ---- routes
+
+- id: DEMODB_ROUTES_B_01
+  section: "ROUTES"
+  tier: Basic
+  title: "the routes from Sheremetyevo"
+  sql: src/test/sql-exercises/routes/01_basic.sql
+  test: Routes_Exercises_01_Basic_PersistenceIT.DEMODB_ROUTES_B_01_Test
+- id: DEMODB_ROUTES_B_02
+  section: "ROUTES"
+  tier: Basic
+  title: "how many rows, and how many route numbers"
+  sql: src/test/sql-exercises/routes/01_basic.sql
+  test: Routes_Exercises_01_Basic_PersistenceIT.DEMODB_ROUTES_B_02_Test
+- id: DEMODB_ROUTES_B_03
+  section: "ROUTES"
+  tier: Basic
+  title: "the routes flown every day of the week"
+  sql: src/test/sql-exercises/routes/01_basic.sql
+  test: Routes_Exercises_01_Basic_PersistenceIT.DEMODB_ROUTES_B_03_Test
+- id: DEMODB_ROUTES_B_04
+  section: "ROUTES"
+  tier: Basic
+  title: "the routes longer than ten hours"
+  sql: src/test/sql-exercises/routes/01_basic.sql
+  test: Routes_Exercises_01_Basic_PersistenceIT.DEMODB_ROUTES_B_04_Test
+- id: DEMODB_ROUTES_I_01
+  section: "ROUTES"
+  tier: Intermediate
+  title: "the periods of the route PG0001"
+  sql: src/test/sql-exercises/routes/02_intermediate.sql
+  test: Routes_Exercises_02_Intermediate_PersistenceIT.DEMODB_ROUTES_I_01_Test
+- id: DEMODB_ROUTES_I_02
+  section: "ROUTES"
+  tier: Intermediate
+  title: "the five route numbers with the most periods"
+  sql: src/test/sql-exercises/routes/02_intermediate.sql
+  test: Routes_Exercises_02_Intermediate_PersistenceIT.DEMODB_ROUTES_I_02_Test
+- id: DEMODB_ROUTES_I_03
+  section: "ROUTES"
+  tier: Intermediate
+  title: "how many routes each airplane flies"
+  sql: src/test/sql-exercises/routes/02_intermediate.sql
+  test: Routes_Exercises_02_Intermediate_PersistenceIT.DEMODB_ROUTES_I_03_Test
+- id: DEMODB_ROUTES_I_04
+  section: "ROUTES"
+  tier: Intermediate
+  title: "how many routes are valid today"
+  sql: src/test/sql-exercises/routes/02_intermediate.sql
+  test: Routes_Exercises_02_Intermediate_PersistenceIT.DEMODB_ROUTES_I_04_Test
+- id: DEMODB_ROUTES_I_05
+  section: "ROUTES"
+  tier: Intermediate
+  title: "the routes from Sheremetyevo valid today and flown on Mondays"
+  sql: src/test/sql-exercises/routes/02_intermediate.sql
+  test: Routes_Exercises_02_Intermediate_PersistenceIT.DEMODB_ROUTES_I_05_Test
+- id: DEMODB_ROUTES_I_06
+  section: "ROUTES"
+  tier: Intermediate
+  title: "how many routes fly on each day of the week, now"
+  sql: src/test/sql-exercises/routes/02_intermediate.sql
+  test: Routes_Exercises_02_Intermediate_PersistenceIT.DEMODB_ROUTES_I_06_Test
+- id: DEMODB_ROUTES_I_07
+  section: "ROUTES"
+  tier: Intermediate
+  title: "the rows whose days of the week are not a set of days"
+  sql: src/test/sql-exercises/routes/02_intermediate.sql
+  test: Routes_Exercises_02_Intermediate_PersistenceIT.DEMODB_ROUTES_I_07_Test
+- id: DEMODB_ROUTES_A_01
+  section: "ROUTES"
+  tier: Advanced
+  title: "the longest route from each airport"
+  sql: src/test/sql-exercises/routes/03_advanced.sql
+  test: Routes_Exercises_03_Advanced_PersistenceIT.DEMODB_ROUTES_A_01_Test
+- id: DEMODB_ROUTES_A_02
+  section: "ROUTES"
+  tier: Advanced
+  title: "the routes with a return route in the same period"
+  sql: src/test/sql-exercises/routes/03_advanced.sql
+  test: Routes_Exercises_03_Advanced_PersistenceIT.DEMODB_ROUTES_A_02_Test
+- id: DEMODB_ROUTES_A_03
+  section: "ROUTES"
+  tier: Advanced
+  title: "the airplane changes of each route from one period to the next"
+  sql: src/test/sql-exercises/routes/03_advanced.sql
+  test: Routes_Exercises_03_Advanced_PersistenceIT.DEMODB_ROUTES_A_03_Test
+- id: DEMODB_ROUTES_A_04
+  section: "ROUTES"
+  tier: Advanced
+  title: "the ten longest routes valid now, by great-circle distance"
+  sql: src/test/sql-exercises/routes/03_advanced.sql
+  test: Routes_Exercises_03_Advanced_PersistenceIT.DEMODB_ROUTES_A_04_Test
+# ---- flights
+
+- id: DEMODB_FLIGHTS_B_01
+  section: "FLIGHTS"
+  tier: Basic
+  title: "the flights of the route PG0001 in October 2025"
+  sql: src/test/sql-exercises/flights/01_basic.sql
+  test: Flights_Exercises_01_Basic_PersistenceIT.DEMODB_FLIGHTS_B_01_Test
+- id: DEMODB_FLIGHTS_B_02
+  section: "FLIGHTS"
+  tier: Basic
+  title: "how many flights of each status"
+  sql: src/test/sql-exercises/flights/01_basic.sql
+  test: Flights_Exercises_01_Basic_PersistenceIT.DEMODB_FLIGHTS_B_02_Test
+- id: DEMODB_FLIGHTS_B_03
+  section: "FLIGHTS"
+  tier: Basic
+  title: "the cancelled flights"
+  sql: src/test/sql-exercises/flights/01_basic.sql
+  test: Flights_Exercises_01_Basic_PersistenceIT.DEMODB_FLIGHTS_B_03_Test
+- id: DEMODB_FLIGHTS_B_04
+  section: "FLIGHTS"
+  tier: Basic
+  title: "the flights scheduled to take more than twelve hours"
+  sql: src/test/sql-exercises/flights/01_basic.sql
+  test: Flights_Exercises_01_Basic_PersistenceIT.DEMODB_FLIGHTS_B_04_Test
+- id: DEMODB_FLIGHTS_B_05
+  section: "FLIGHTS"
+  tier: Basic
+  title: "the flights in the air"
+  sql: src/test/sql-exercises/flights/01_basic.sql
+  test: Flights_Exercises_01_Basic_PersistenceIT.DEMODB_FLIGHTS_B_05_Test
+- id: DEMODB_FLIGHTS_I_01
+  section: "FLIGHTS"
+  tier: Intermediate
+  title: "how many flights each month"
+  sql: src/test/sql-exercises/flights/02_intermediate.sql
+  test: Flights_Exercises_02_Intermediate_PersistenceIT.DEMODB_FLIGHTS_I_01_Test
+- id: DEMODB_FLIGHTS_I_02
+  section: "FLIGHTS"
+  tier: Intermediate
+  title: "the ten routes whose flights depart the latest"
+  sql: src/test/sql-exercises/flights/02_intermediate.sql
+  test: Flights_Exercises_02_Intermediate_PersistenceIT.DEMODB_FLIGHTS_I_02_Test
+- id: DEMODB_FLIGHTS_I_03
+  section: "FLIGHTS"
+  tier: Intermediate
+  title: "how many flights departed more than an hour late"
+  sql: src/test/sql-exercises/flights/02_intermediate.sql
+  test: Flights_Exercises_02_Intermediate_PersistenceIT.DEMODB_FLIGHTS_I_03_Test
+- id: DEMODB_FLIGHTS_I_04
+  section: "FLIGHTS"
+  tier: Intermediate
+  title: "today's flights, with their airports"
+  sql: src/test/sql-exercises/flights/02_intermediate.sql
+  test: Flights_Exercises_02_Intermediate_PersistenceIT.DEMODB_FLIGHTS_I_04_Test
+- id: DEMODB_FLIGHTS_I_05
+  section: "FLIGHTS"
+  tier: Intermediate
+  title: "the flights whose status disagrees with their actual times"
+  sql: src/test/sql-exercises/flights/02_intermediate.sql
+  test: Flights_Exercises_02_Intermediate_PersistenceIT.DEMODB_FLIGHTS_I_05_Test
+- id: DEMODB_FLIGHTS_A_01
+  section: "FLIGHTS"
+  tier: Advanced
+  title: "the five longest flights flown"
+  sql: src/test/sql-exercises/flights/03_advanced.sql
+  test: Flights_Exercises_03_Advanced_PersistenceIT.DEMODB_FLIGHTS_A_01_Test
+- id: DEMODB_FLIGHTS_A_02
+  section: "FLIGHTS"
+  tier: Advanced
+  title: "the flights of each day of the first week, and their running total"
+  sql: src/test/sql-exercises/flights/03_advanced.sql
+  test: Flights_Exercises_03_Advanced_PersistenceIT.DEMODB_FLIGHTS_A_02_Test
+- id: DEMODB_FLIGHTS_A_03
+  section: "FLIGHTS"
+  tier: Advanced
+  title: "the five fullest flights of the first day"
+  sql: src/test/sql-exercises/flights/03_advanced.sql
+  test: Flights_Exercises_03_Advanced_PersistenceIT.DEMODB_FLIGHTS_A_03_Test
+- id: DEMODB_FLIGHTS_A_04
+  section: "FLIGHTS"
+  tier: Advanced
+  title: "the time since the previous flight of the route PG0001, in October 2025"
+  sql: src/test/sql-exercises/flights/03_advanced.sql
+  test: Flights_Exercises_03_Advanced_PersistenceIT.DEMODB_FLIGHTS_A_04_Test
+# ---- timetable
+
+- id: DEMODB_TIMETABLE_B_01
+  section: "TIMETABLE"
+  tier: Basic
+  title: "the flights from Sheremetyevo in the next 24 hours"
+  sql: src/test/sql-exercises/timetable/01_basic.sql
+  test: Timetable_Exercises_01_Basic_PersistenceIT.DEMODB_TIMETABLE_B_01_Test
+- id: DEMODB_TIMETABLE_B_02
+  section: "TIMETABLE"
+  tier: Basic
+  title: "the flights of the route PG0078 on the first day, in local time"
+  sql: src/test/sql-exercises/timetable/01_basic.sql
+  test: Timetable_Exercises_01_Basic_PersistenceIT.DEMODB_TIMETABLE_B_02_Test
+- id: DEMODB_TIMETABLE_B_03
+  section: "TIMETABLE"
+  tier: Basic
+  title: "how many flights of each status"
+  sql: src/test/sql-exercises/timetable/01_basic.sql
+  test: Timetable_Exercises_01_Basic_PersistenceIT.DEMODB_TIMETABLE_B_03_Test
+- id: DEMODB_TIMETABLE_I_01
+  section: "TIMETABLE"
+  tier: Intermediate
+  title: "how many flights depart on another local day than the UTC one"
+  sql: src/test/sql-exercises/timetable/02_intermediate.sql
+  test: Timetable_Exercises_02_Intermediate_PersistenceIT.DEMODB_TIMETABLE_I_01_Test
+- id: DEMODB_TIMETABLE_I_02
+  section: "TIMETABLE"
+  tier: Intermediate
+  title: "the five airport pairs with the most flights"
+  sql: src/test/sql-exercises/timetable/02_intermediate.sql
+  test: Timetable_Exercises_02_Intermediate_PersistenceIT.DEMODB_TIMETABLE_I_02_Test
+- id: DEMODB_TIMETABLE_I_03
+  section: "TIMETABLE"
+  tier: Intermediate
+  title: "the flights that arrived late, by month"
+  sql: src/test/sql-exercises/timetable/02_intermediate.sql
+  test: Timetable_Exercises_02_Intermediate_PersistenceIT.DEMODB_TIMETABLE_I_03_Test
+- id: DEMODB_TIMETABLE_I_04
+  section: "TIMETABLE"
+  tier: Intermediate
+  title: "the airport pairs whose flights land, by the local clocks, before they take off"
+  sql: src/test/sql-exercises/timetable/02_intermediate.sql
+  test: Timetable_Exercises_02_Intermediate_PersistenceIT.DEMODB_TIMETABLE_I_04_Test
+- id: DEMODB_TIMETABLE_I_05
+  section: "TIMETABLE"
+  tier: Intermediate
+  title: "the ten airports with the longest average departure delay"
+  sql: src/test/sql-exercises/timetable/02_intermediate.sql
+  test: Timetable_Exercises_02_Intermediate_PersistenceIT.DEMODB_TIMETABLE_I_05_Test
+- id: DEMODB_TIMETABLE_A_01
+  section: "TIMETABLE"
+  tier: Advanced
+  title: "whether the view has a row for every flight"
+  sql: src/test/sql-exercises/timetable/03_advanced.sql
+  test: Timetable_Exercises_03_Advanced_PersistenceIT.DEMODB_TIMETABLE_A_01_Test
+- id: DEMODB_TIMETABLE_A_02
+  section: "TIMETABLE"
+  tier: Advanced
+  title: "the connections at Sheremetyevo on the first day"
+  sql: src/test/sql-exercises/timetable/03_advanced.sql
+  test: Timetable_Exercises_03_Advanced_PersistenceIT.DEMODB_TIMETABLE_A_02_Test
+# ---- seats
+
+- id: DEMODB_SEATS_B_01
+  section: "SEATS"
+  tier: Basic
+  title: "the Business seats of the Airbus A320neo"
+  sql: src/test/sql-exercises/seats/01_basic.sql
+  test: Seats_Exercises_01_Basic_PersistenceIT.DEMODB_SEATS_B_01_Test
+- id: DEMODB_SEATS_B_02
+  section: "SEATS"
+  tier: Basic
+  title: "how many seats each airplane has"
+  sql: src/test/sql-exercises/seats/01_basic.sql
+  test: Seats_Exercises_01_Basic_PersistenceIT.DEMODB_SEATS_B_02_Test
+- id: DEMODB_SEATS_B_03
+  section: "SEATS"
+  tier: Basic
+  title: "how many seats of each fare conditions"
+  sql: src/test/sql-exercises/seats/01_basic.sql
+  test: Seats_Exercises_01_Basic_PersistenceIT.DEMODB_SEATS_B_03_Test
+- id: DEMODB_SEATS_I_01
+  section: "SEATS"
+  tier: Intermediate
+  title: "the seats of each airplane, by fare conditions"
+  sql: src/test/sql-exercises/seats/02_intermediate.sql
+  test: Seats_Exercises_02_Intermediate_PersistenceIT.DEMODB_SEATS_I_01_Test
+- id: DEMODB_SEATS_I_02
+  section: "SEATS"
+  tier: Intermediate
+  title: "the rows and the letters of each airplane"
+  sql: src/test/sql-exercises/seats/02_intermediate.sql
+  test: Seats_Exercises_02_Intermediate_PersistenceIT.DEMODB_SEATS_I_02_Test
+- id: DEMODB_SEATS_I_03
+  section: "SEATS"
+  tier: Intermediate
+  title: "the seat numbers found in the most airplanes"
+  sql: src/test/sql-exercises/seats/02_intermediate.sql
+  test: Seats_Exercises_02_Intermediate_PersistenceIT.DEMODB_SEATS_I_03_Test
+- id: DEMODB_SEATS_I_04
+  section: "SEATS"
+  tier: Intermediate
+  title: "the seat numbers which are not a row and a letter"
+  sql: src/test/sql-exercises/seats/02_intermediate.sql
+  test: Seats_Exercises_02_Intermediate_PersistenceIT.DEMODB_SEATS_I_04_Test
+- id: DEMODB_SEATS_A_01
+  section: "SEATS"
+  tier: Advanced
+  title: "the empty seats of the flight 1"
+  sql: src/test/sql-exercises/seats/03_advanced.sql
+  test: Seats_Exercises_03_Advanced_PersistenceIT.DEMODB_SEATS_A_01_Test
+- id: DEMODB_SEATS_A_02
+  section: "SEATS"
+  tier: Advanced
+  title: "the share of Business seats of each airplane"
+  sql: src/test/sql-exercises/seats/03_advanced.sql
+  retired: true
+# ---- bookings
+
+- id: DEMODB_BOOKINGS_B_01
+  section: "BOOKINGS"
+  tier: Basic
+  title: "the bookings of the first minute"
+  sql: src/test/sql-exercises/bookings/01_basic.sql
+  test: Bookings_Exercises_01_Basic_PersistenceIT.DEMODB_BOOKINGS_B_01_Test
+- id: DEMODB_BOOKINGS_B_02
+  section: "BOOKINGS"
+  tier: Basic
+  title: "how many bookings, and how much in all"
+  sql: src/test/sql-exercises/bookings/01_basic.sql
+  test: Bookings_Exercises_01_Basic_PersistenceIT.DEMODB_BOOKINGS_B_02_Test
+- id: DEMODB_BOOKINGS_B_03
+  section: "BOOKINGS"
+  tier: Basic
+  title: "the bookings of 700000 or more"
+  sql: src/test/sql-exercises/bookings/01_basic.sql
+  test: Bookings_Exercises_01_Basic_PersistenceIT.DEMODB_BOOKINGS_B_03_Test
+- id: DEMODB_BOOKINGS_B_04
+  section: "BOOKINGS"
+  tier: Basic
+  title: "the second page of the bookings of 2025-10-01"
+  sql: src/test/sql-exercises/bookings/01_basic.sql
+  test: Bookings_Exercises_01_Basic_PersistenceIT.DEMODB_BOOKINGS_B_04_Test
+- id: DEMODB_BOOKINGS_I_01
+  section: "BOOKINGS"
+  tier: Intermediate
+  title: "the bookings and the money of each month"
+  sql: src/test/sql-exercises/bookings/02_intermediate.sql
+  test: Bookings_Exercises_02_Intermediate_PersistenceIT.DEMODB_BOOKINGS_I_01_Test
+- id: DEMODB_BOOKINGS_I_02
+  section: "BOOKINGS"
+  tier: Intermediate
+  title: "the ten most expensive bookings"
+  sql: src/test/sql-exercises/bookings/02_intermediate.sql
+  retired: true
+- id: DEMODB_BOOKINGS_I_03
+  section: "BOOKINGS"
+  tier: Intermediate
+  title: "the smallest, the average and the largest booking"
+  sql: src/test/sql-exercises/bookings/02_intermediate.sql
+  retired: true
+- id: DEMODB_BOOKINGS_I_04
+  section: "BOOKINGS"
+  tier: Intermediate
+  title: "how many bookings on each day of the week"
+  sql: src/test/sql-exercises/bookings/02_intermediate.sql
+  test: Bookings_Exercises_02_Intermediate_PersistenceIT.DEMODB_BOOKINGS_I_04_Test
+- id: DEMODB_BOOKINGS_I_05
+  section: "BOOKINGS"
+  tier: Intermediate
+  title: "the median and the 90th percentile of the booking amounts"
+  sql: src/test/sql-exercises/bookings/02_intermediate.sql
+  test: Bookings_Exercises_02_Intermediate_PersistenceIT.DEMODB_BOOKINGS_I_05_Test
+- id: DEMODB_BOOKINGS_A_01
+  section: "BOOKINGS"
+  tier: Advanced
+  title: "how many bookings do not add up"
+  sql: src/test/sql-exercises/bookings/03_advanced.sql
+  test: Bookings_Exercises_03_Advanced_PersistenceIT.DEMODB_BOOKINGS_A_01_Test
+- id: DEMODB_BOOKINGS_A_02
+  section: "BOOKINGS"
+  tier: Advanced
+  title: "the five bookings with the most tickets"
+  sql: src/test/sql-exercises/bookings/03_advanced.sql
+  test: Bookings_Exercises_03_Advanced_PersistenceIT.DEMODB_BOOKINGS_A_02_Test
+- id: DEMODB_BOOKINGS_A_03
+  section: "BOOKINGS"
+  tier: Advanced
+  title: "the share of the money each tenth of the bookings brings"
+  sql: src/test/sql-exercises/bookings/03_advanced.sql
+  test: Bookings_Exercises_03_Advanced_PersistenceIT.DEMODB_BOOKINGS_A_03_Test
+# ---- tickets
+
+- id: DEMODB_TICKETS_B_01
+  section: "TICKETS"
+  tier: Basic
+  title: "the tickets of the booking 0000EG"
+  sql: src/test/sql-exercises/tickets/01_basic.sql
+  test: Tickets_Exercises_01_Basic_PersistenceIT.DEMODB_TICKETS_B_01_Test
+- id: DEMODB_TICKETS_B_02
+  section: "TICKETS"
+  tier: Basic
+  title: "how many tickets, outbound and return"
+  sql: src/test/sql-exercises/tickets/01_basic.sql
+  test: Tickets_Exercises_01_Basic_PersistenceIT.DEMODB_TICKETS_B_02_Test
+- id: DEMODB_TICKETS_B_03
+  section: "TICKETS"
+  tier: Basic
+  title: "the tickets of one passenger"
+  sql: src/test/sql-exercises/tickets/01_basic.sql
+  retired: true
+- id: DEMODB_TICKETS_I_01
+  section: "TICKETS"
+  tier: Intermediate
+  title: "the five passengers with the most tickets"
+  sql: src/test/sql-exercises/tickets/02_intermediate.sql
+  test: Tickets_Exercises_02_Intermediate_PersistenceIT.DEMODB_TICKETS_I_01_Test
+- id: DEMODB_TICKETS_I_02
+  section: "TICKETS"
+  tier: Intermediate
+  title: "the ten countries whose passengers hold the most tickets"
+  sql: src/test/sql-exercises/tickets/02_intermediate.sql
+  test: Tickets_Exercises_02_Intermediate_PersistenceIT.DEMODB_TICKETS_I_02_Test
+- id: DEMODB_TICKETS_I_03
+  section: "TICKETS"
+  tier: Intermediate
+  title: "how many tickets have no segment"
+  sql: src/test/sql-exercises/tickets/02_intermediate.sql
+  test: Tickets_Exercises_02_Intermediate_PersistenceIT.DEMODB_TICKETS_I_03_Test
+- id: DEMODB_TICKETS_I_04
+  section: "TICKETS"
+  tier: Intermediate
+  title: "how many bookings carry one, two or more passengers"
+  sql: src/test/sql-exercises/tickets/02_intermediate.sql
+  test: Tickets_Exercises_02_Intermediate_PersistenceIT.DEMODB_TICKETS_I_04_Test
+- id: DEMODB_TICKETS_I_05
+  section: "TICKETS"
+  tier: Intermediate
+  title: "the passenger ids recorded under more than one name"
+  sql: src/test/sql-exercises/tickets/02_intermediate.sql
+  test: Tickets_Exercises_02_Intermediate_PersistenceIT.DEMODB_TICKETS_I_05_Test
+- id: DEMODB_TICKETS_A_01
+  section: "TICKETS"
+  tier: Advanced
+  title: "how many passengers booked a return"
+  sql: src/test/sql-exercises/tickets/03_advanced.sql
+  test: Tickets_Exercises_03_Advanced_PersistenceIT.DEMODB_TICKETS_A_01_Test
+- id: DEMODB_TICKETS_A_02
+  section: "TICKETS"
+  tier: Advanced
+  title: "the share of return tickets, by booking month"
+  sql: src/test/sql-exercises/tickets/03_advanced.sql
+  test: Tickets_Exercises_03_Advanced_PersistenceIT.DEMODB_TICKETS_A_02_Test
+# ---- segments
+
+- id: DEMODB_SEGMENTS_B_01
+  section: "SEGMENTS"
+  tier: Basic
+  title: "the segments of the ticket 0005432000000"
+  sql: src/test/sql-exercises/segments/01_basic.sql
+  test: Segments_Exercises_01_Basic_PersistenceIT.DEMODB_SEGMENTS_B_01_Test
+- id: DEMODB_SEGMENTS_B_02
+  section: "SEGMENTS"
+  tier: Basic
+  title: "how many segments of each fare conditions"
+  sql: src/test/sql-exercises/segments/01_basic.sql
+  test: Segments_Exercises_01_Basic_PersistenceIT.DEMODB_SEGMENTS_B_02_Test
+- id: DEMODB_SEGMENTS_B_03
+  section: "SEGMENTS"
+  tier: Basic
+  title: "the segments of the flight 1"
+  sql: src/test/sql-exercises/segments/01_basic.sql
+  test: Segments_Exercises_01_Basic_PersistenceIT.DEMODB_SEGMENTS_B_03_Test
+- id: DEMODB_SEGMENTS_I_01
+  section: "SEGMENTS"
+  tier: Intermediate
+  title: "the prices of each fare conditions"
+  sql: src/test/sql-exercises/segments/02_intermediate.sql
+  test: Segments_Exercises_02_Intermediate_PersistenceIT.DEMODB_SEGMENTS_I_01_Test
+- id: DEMODB_SEGMENTS_I_02
+  section: "SEGMENTS"
+  tier: Intermediate
+  title: "the five flights that earned the most"
+  sql: src/test/sql-exercises/segments/02_intermediate.sql
+  test: Segments_Exercises_02_Intermediate_PersistenceIT.DEMODB_SEGMENTS_I_02_Test
+- id: DEMODB_SEGMENTS_I_03
+  section: "SEGMENTS"
+  tier: Intermediate
+  title: "how many tickets have more than two segments"
+  sql: src/test/sql-exercises/segments/02_intermediate.sql
+  retired: true
+- id: DEMODB_SEGMENTS_I_04
+  section: "SEGMENTS"
+  tier: Intermediate
+  title: "the tickets of more than one segment that fly Business on every one"
+  sql: src/test/sql-exercises/segments/02_intermediate.sql
+  test: Segments_Exercises_02_Intermediate_PersistenceIT.DEMODB_SEGMENTS_I_04_Test
+- id: DEMODB_SEGMENTS_A_01
+  section: "SEGMENTS"
+  tier: Advanced
+  title: "the five flights where Business costs the most over Economy"
+  sql: src/test/sql-exercises/segments/03_advanced.sql
+  test: Segments_Exercises_03_Advanced_PersistenceIT.DEMODB_SEGMENTS_A_01_Test
+- id: DEMODB_SEGMENTS_A_02
+  section: "SEGMENTS"
+  tier: Advanced
+  title: "how many segments of the first day were sold in fare conditions the airplane has not"
+  sql: src/test/sql-exercises/segments/03_advanced.sql
+  test: Segments_Exercises_03_Advanced_PersistenceIT.DEMODB_SEGMENTS_A_02_Test
+# ---- boarding_passes
+
+- id: DEMODB_BOARDING_PASSES_B_01
+  section: "BOARDING_PASSES"
+  tier: Basic
+  title: "the boarding passes of the flight 1, in boarding order"
+  sql: src/test/sql-exercises/boarding_passes/01_basic.sql
+  test: BoardingPasses_Exercises_01_Basic_PersistenceIT.DEMODB_BOARDING_PASSES_B_01_Test
+- id: DEMODB_BOARDING_PASSES_B_02
+  section: "BOARDING_PASSES"
+  tier: Basic
+  title: "how many boarding passes, and how many not boarded"
+  sql: src/test/sql-exercises/boarding_passes/01_basic.sql
+  test: BoardingPasses_Exercises_01_Basic_PersistenceIT.DEMODB_BOARDING_PASSES_B_02_Test
+- id: DEMODB_BOARDING_PASSES_B_03
+  section: "BOARDING_PASSES"
+  tier: Basic
+  title: "the boarding passes of the ticket 0005432000000"
+  sql: src/test/sql-exercises/boarding_passes/01_basic.sql
+  test: BoardingPasses_Exercises_01_Basic_PersistenceIT.DEMODB_BOARDING_PASSES_B_03_Test
+- id: DEMODB_BOARDING_PASSES_I_01
+  section: "BOARDING_PASSES"
+  tier: Intermediate
+  title: "the five seats boarded the most"
+  sql: src/test/sql-exercises/boarding_passes/02_intermediate.sql
+  test: BoardingPasses_Exercises_02_Intermediate_PersistenceIT.DEMODB_BOARDING_PASSES_I_01_Test
+- id: DEMODB_BOARDING_PASSES_I_02
+  section: "BOARDING_PASSES"
+  tier: Intermediate
+  title: "how many segments have no boarding pass"
+  sql: src/test/sql-exercises/boarding_passes/02_intermediate.sql
+  test: BoardingPasses_Exercises_02_Intermediate_PersistenceIT.DEMODB_BOARDING_PASSES_I_02_Test
+- id: DEMODB_BOARDING_PASSES_I_03
+  section: "BOARDING_PASSES"
+  tier: Intermediate
+  title: "how long before departure the passengers of the first day boarded"
+  sql: src/test/sql-exercises/boarding_passes/02_intermediate.sql
+  test: BoardingPasses_Exercises_02_Intermediate_PersistenceIT.DEMODB_BOARDING_PASSES_I_03_Test
+- id: DEMODB_BOARDING_PASSES_I_04
+  section: "BOARDING_PASSES"
+  tier: Intermediate
+  title: "the five arrived flights with the most passengers checked in but not boarded"
+  sql: src/test/sql-exercises/boarding_passes/02_intermediate.sql
+  test: BoardingPasses_Exercises_02_Intermediate_PersistenceIT.DEMODB_BOARDING_PASSES_I_04_Test
+- id: DEMODB_BOARDING_PASSES_A_01
+  section: "BOARDING_PASSES"
+  tier: Advanced
+  title: "the passengers of the first day seated in other fare conditions than they paid"
+  sql: src/test/sql-exercises/boarding_passes/03_advanced.sql
+  test: BoardingPasses_Exercises_03_Advanced_PersistenceIT.DEMODB_BOARDING_PASSES_A_01_Test
+- id: DEMODB_BOARDING_PASSES_A_02
+  section: "BOARDING_PASSES"
+  tier: Advanced
+  title: "the boarding numbers the flight 1 skipped"
+  sql: src/test/sql-exercises/boarding_passes/03_advanced.sql
+  test: BoardingPasses_Exercises_03_Advanced_PersistenceIT.DEMODB_BOARDING_PASSES_A_02_Test
+# ---- the schema
+
+- id: DEMODB_SCHEMA_B_01
+  section: "SCHEMA"
+  tier: Basic
+  title: "the tables and the views of the schema"
+  sql: src/test/sql-exercises/__/01_basic.sql
+  test: ___Exercises_01_Basic_PersistenceIT.DEMODB_SCHEMA_B_01_Test
+- id: DEMODB_SCHEMA_B_02
+  section: "SCHEMA"
+  tier: Basic
+  title: "the columns of tickets"
+  sql: src/test/sql-exercises/__/01_basic.sql
+  test: ___Exercises_01_Basic_PersistenceIT.DEMODB_SCHEMA_B_02_Test
+- id: DEMODB_SCHEMA_B_03
+  section: "SCHEMA"
+  tier: Basic
+  title: "the foreign keys, and what they reference"
+  sql: src/test/sql-exercises/__/01_basic.sql
+  test: ___Exercises_01_Basic_PersistenceIT.DEMODB_SCHEMA_B_03_Test
+- id: DEMODB_SCHEMA_B_04
+  section: "SCHEMA"
+  tier: Basic
+  title: "the functions of the schema"
+  sql: src/test/sql-exercises/__/01_basic.sql
+  test: ___Exercises_01_Basic_PersistenceIT.DEMODB_SCHEMA_B_04_Test
+- id: DEMODB_SCHEMA_B_05
+  section: "SCHEMA"
+  tier: Basic
+  title: "how many rows each table has"
+  sql: src/test/sql-exercises/__/01_basic.sql
+  test: ___Exercises_01_Basic_PersistenceIT.DEMODB_SCHEMA_B_05_Test
+- id: DEMODB_SCHEMA_B_06
+  section: "SCHEMA"
+  tier: Basic
+  title: "the sold segments of the cancelled flights"
+  sql: src/test/sql-exercises/__/01_basic.sql
+  test: ___Exercises_01_Basic_PersistenceIT.DEMODB_SCHEMA_B_06_Test
+- id: DEMODB_SCHEMA_I_01
+  section: "SCHEMA"
+  tier: Intermediate
+  title: "the segments sold and the money taken, by month of flight"
+  sql: src/test/sql-exercises/__/02_intermediate.sql
+  test: ___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_01_Test
+- id: DEMODB_SCHEMA_I_02
+  section: "SCHEMA"
+  tier: Intermediate
+  title: "the ten airports with the most passengers boarded in the first week"
+  sql: src/test/sql-exercises/__/02_intermediate.sql
+  test: ___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_02_Test
+- id: DEMODB_SCHEMA_I_03
+  section: "SCHEMA"
+  tier: Intermediate
+  title: "the money each airplane model took"
+  sql: src/test/sql-exercises/__/02_intermediate.sql
+  test: ___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_03_Test
+- id: DEMODB_SCHEMA_I_04
+  section: "SCHEMA"
+  tier: Intermediate
+  title: "the ten countries flown to the most"
+  sql: src/test/sql-exercises/__/02_intermediate.sql
+  test: ___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_04_Test
+- id: DEMODB_SCHEMA_I_05
+  section: "SCHEMA"
+  tier: Intermediate
+  title: "the passengers and the seats of the flights from Sheremetyevo in the next 24 hours"
+  sql: src/test/sql-exercises/__/02_intermediate.sql
+  test: ___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_05_Test
+- id: DEMODB_SCHEMA_I_06
+  section: "SCHEMA"
+  tier: Intermediate
+  title: "the flights with no route valid at their departure"
+  sql: src/test/sql-exercises/__/02_intermediate.sql
+  test: ___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_06_Test
+- id: DEMODB_SCHEMA_I_07
+  section: "SCHEMA"
+  tier: Intermediate
+  title: "how far ahead the bookings were made"
+  sql: src/test/sql-exercises/__/02_intermediate.sql
+  test: ___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_07_Test
+- id: DEMODB_SCHEMA_I_08
+  section: "SCHEMA"
+  tier: Intermediate
+  title: "the seats of each airplane model, by fare conditions"
+  sql: src/test/sql-exercises/__/02_intermediate.sql
+  test: ___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_08_Test
+- id: DEMODB_SCHEMA_I_09
+  section: "SCHEMA"
+  tier: Intermediate
+  title: "today's departures, in each airport's own day"
+  sql: src/test/sql-exercises/__/02_intermediate.sql
+  test: ___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_09_Test
+- id: DEMODB_SCHEMA_I_10
+  section: "SCHEMA"
+  tier: Intermediate
+  title: "the outbound and return tickets of one passenger in one booking"
+  sql: src/test/sql-exercises/__/02_intermediate.sql
+  test: ___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_10_Test
+- id: DEMODB_SCHEMA_A_01
+  section: "SCHEMA"
+  tier: Advanced
+  title: "the five tickets with the most segments, and their itineraries"
+  sql: src/test/sql-exercises/__/03_advanced.sql
+  test: ___Exercises_03_Advanced_PersistenceIT.DEMODB_SCHEMA_A_01_Test
+- id: DEMODB_SCHEMA_A_02
+  section: "SCHEMA"
+  tier: Advanced
+  title: "the busiest airport of each country"
+  sql: src/test/sql-exercises/__/03_advanced.sql
+  test: ___Exercises_03_Advanced_PersistenceIT.DEMODB_SCHEMA_A_02_Test
+- id: DEMODB_SCHEMA_A_03
+  section: "SCHEMA"
+  tier: Advanced
+  title: "how many airports are one and two routes away from Sheremetyevo"
+  sql: src/test/sql-exercises/__/03_advanced.sql
+  test: ___Exercises_03_Advanced_PersistenceIT.DEMODB_SCHEMA_A_03_Test
+- id: DEMODB_SCHEMA_A_04
+  section: "SCHEMA"
+  tier: Advanced
+  title: "the five airports where the most passengers change flights"
+  sql: src/test/sql-exercises/__/03_advanced.sql
+  test: ___Exercises_03_Advanced_PersistenceIT.DEMODB_SCHEMA_A_04_Test
+- id: DEMODB_SCHEMA_A_05
+  section: "SCHEMA"
+  tier: Advanced
+  title: "the segments which do not connect to the previous one of their ticket"
+  sql: src/test/sql-exercises/__/03_advanced.sql
+  test: ___Exercises_03_Advanced_PersistenceIT.DEMODB_SCHEMA_A_05_Test
+- id: DEMODB_SCHEMA_A_06
+  section: "SCHEMA"
+  tier: Advanced
+  title: "the passengers still to board the flights now boarding"
+  sql: src/test/sql-exercises/__/03_advanced.sql
+  test: ___Exercises_03_Advanced_PersistenceIT.DEMODB_SCHEMA_A_06_Test

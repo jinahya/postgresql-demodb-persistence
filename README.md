@@ -28,8 +28,8 @@ $ docker exec -it postgres-demonstration psql -U postgres -d demo
 
 [`src/test/sql`](src/test/sql) holds a profiling script per table and view, a section per column; each query says
 what it looks for and what the installed data gives back, and `no rows` marks a check which passes when nothing comes
-back. The `*_exercises_*.sql` files under [`src/test/sql/exercises`](src/test/sql/exercises) are the exercises of
-[`EXERCISES.asciidoc`](EXERCISES.asciidoc).
+back. The `<section>/<NN>_<level>.sql` files under [`src/test/sql-exercises`](src/test/sql-exercises) are the exercises of
+[`EXERCISES.asciidoc`](src/test/sql-exercises/EXERCISES.asciidoc).
 
 ```shell
 $ docker exec -i postgresql-demodb psql -U postgres -d demo < src/test/sql/routes.sql
@@ -269,11 +269,11 @@ that a randomized row never collides with an installed one.
 
 ## The exercises
 
-The exercises on the installed database are listed, with their ids, in [EXERCISES.asciidoc](EXERCISES.asciidoc), and
-registered in [EXERCISES.yaml](EXERCISES.yaml); the `src/test/sql/exercises/*_exercises_*.sql` files answer them in
+The exercises on the installed database are listed, with their ids, in [EXERCISES.asciidoc](src/test/sql-exercises/EXERCISES.asciidoc), and
+registered in [EXERCISES.yaml](src/test/sql-exercises/EXERCISES.yaml); the `src/test/sql-exercises/<section>/<NN>_<level>.sql` files answer them in
 SQL, each with what the installed data gives back. The `*_Exercises_*_PersistenceIT` classes, which answer them in JPQL
 and with the Criteria API, follow once the entities exist.
 
 ```shell
-$ docker exec -i postgresql-demodb psql -U postgres -d demo < src/test/sql/exercises/flights_exercises_01_basic.sql
+$ docker exec -i postgresql-demodb psql -U postgres -d demo < src/test/sql-exercises/flights/01_basic.sql
 ```
