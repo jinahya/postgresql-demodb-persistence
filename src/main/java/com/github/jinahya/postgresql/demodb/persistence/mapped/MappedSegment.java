@@ -42,9 +42,10 @@ import java.util.Optional;
  * <q>Flight segment (leg)</q>.
  * <p>
  * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of
- * {@link SegmentId}, or of a subclass, {@code T}, which an extending entity names; {@link #equals(Object)}
- * compares the identifiers, and the getters of the key's attributes read them. An identifier is not
- * modified once created; a segment takes another with {@link #setId(SegmentId)}.
+ * {@link SegmentId}, or of a subclass, {@code T}, which an extending entity names;
+ * {@link #equals(Object)} compares the identifiers, and the getters of the key's attributes read
+ * them. An identifier is not modified once created; a segment takes another with
+ * {@link #setId(SegmentId)}.
  * <p>
  * The {@value MappedSegment#COLUMN_NAME_TICKET_NO} and {@value MappedSegment#COLUMN_NAME_FLIGHT_ID}
  * columns are also foreign keys; the identifier writes them, and an association over them, if the

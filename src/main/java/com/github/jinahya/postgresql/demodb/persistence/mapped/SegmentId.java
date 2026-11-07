@@ -23,14 +23,12 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * The identifier of the {@value MappedSegment#TABLE_NAME} table -- the pair of the
@@ -40,9 +38,8 @@ import java.util.function.Supplier;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see MappedSegment
- * @see BoardingPassId
+ * @see MappedBoardingPass
  */
-@MappedSuperclass
 @Embeddable
 public class SegmentId
         implements Serializable {
@@ -69,38 +66,18 @@ public class SegmentId
     // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
     /**
-     * Creates a new instance of this class, or of a subclass, with the specified values. The
-     * instance is not modified afterwards: an identifier has no setter.
-     *
-     * @param <T>          the type of the identifier.
-     * @param instantiator a supplier of a new, empty instance of {@code T}.
-     * @param ticketNo     a value for the {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
-     * @param flightId     a value for the {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
-     * @return the instance supplied by {@code instantiator}, with its attributes set.
-     * @throws NullPointerException if {@code instantiator} is {@code null}, or it supplies
-     *                              {@code null}.
-     */
-    protected static <T extends SegmentId> T of(final Supplier<? extends T> instantiator,
-                                                final String ticketNo, final Integer flightId) {
-        Objects.requireNonNull(instantiator, "instantiator is null");
-        final T instance =
-                Objects.requireNonNull(instantiator.get(), "instantiator.get() is null");
-        // a private field is not accessed through a type variable
-        final SegmentId id = instance;
-        id.ticketNo = ticketNo;
-        id.flightId = flightId;
-        return instance;
-    }
-
-    /**
-     * Creates a new instance of the specified values.
+     * Creates a new instance of the specified values. The instance is not modified afterwards: an
+     * identifier has no setter.
      *
      * @param ticketNo a value for the {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
      * @param flightId a value for the {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
      * @return a new instance.
      */
     public static SegmentId of(final String ticketNo, final Integer flightId) {
-        return of(SegmentId::new, ticketNo, flightId);
+        final var instance = new SegmentId();
+        instance.ticketNo = ticketNo;
+        instance.flightId = flightId;
+        return instance;
     }
 
     /**
@@ -147,10 +124,9 @@ public class SegmentId
      * @return {@inheritDoc}
      * @implSpec Equality is by {@value #ATTRIBUTE_NAME_TICKET_NO} and
      *         {@value #ATTRIBUTE_NAME_FLIGHT_ID}.
-     * @implNote {@link BoardingPassId} extends this class, for the
-     *         {@code boarding_passes} key is the {@code segments} key it references; an identifier
-     *         of either equals one of the other with the same values. A subclass which checked its
-     *         own type here would break the symmetry, so this method is {@code final}.
+     * @implNote The class is the identifier of both {@link MappedSegment} and
+     *         {@link MappedBoardingPass}, for the {@code boarding_passes} key is the
+     *         {@code segments} key it references.
      */
     @Override
     public final boolean equals(final Object obj) {

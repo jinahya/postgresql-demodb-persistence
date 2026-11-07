@@ -38,12 +38,14 @@ import java.util.Optional;
  * <q>Boarding passes</q>.
  * <p>
  * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of
- * {@link SegmentId}, or of a subclass, {@code T}, which an extending entity names; {@link #equals(Object)}
- * compares the identifiers, and the getters of the key's attributes read them. An identifier is not
- * modified once created; a boarding pass takes another with {@link #setId(SegmentId)}.
+ * {@link SegmentId}, or of a subclass, {@code T}, which an extending entity names;
+ * {@link #equals(Object)} compares the identifiers, and the getters of the key's attributes read
+ * them. An identifier is not modified once created; a boarding pass takes another with
+ * {@link #setId(SegmentId)}.
  * <p>
- * The two columns of the identifier together are also a foreign key, to the {@code segments} table,
- * see {@link MappedSegment}.
+ * The two columns of the identifier together are also a foreign key, to the {@code segments}
+ * table's primary key, see {@link MappedSegment}; so a boarding pass's identifier is its segment's,
+ * and its class is the segment's, {@link SegmentId}.
  * <p>
  * The table also keeps ({@value #COLUMN_NAME_FLIGHT_ID}, {@value #COLUMN_NAME_BOARDING_NO});
  * ({@value #COLUMN_NAME_FLIGHT_ID}, {@value #COLUMN_NAME_SEAT_NO}) unique, which an extending

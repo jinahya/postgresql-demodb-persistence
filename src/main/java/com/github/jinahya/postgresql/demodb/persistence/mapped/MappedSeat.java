@@ -39,9 +39,10 @@ import java.util.Optional;
  * <q>Seats</q>.
  * <p>
  * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of
- * {@link SeatId}, or of a subclass, {@code T}, which an extending entity names; {@link #equals(Object)}
- * compares the identifiers, and the getters of the key's attributes read them. An identifier is not
- * modified once created; a seat takes another with {@link #setId(SeatId)}.
+ * {@link SeatId}, or of a subclass, {@code T}, which an extending entity names;
+ * {@link #equals(Object)} compares the identifiers, and the getters of the key's attributes read
+ * them. An identifier is not modified once created; a seat takes another with
+ * {@link #setId(SeatId)}.
  * <p>
  * The {@value MappedSeat#COLUMN_NAME_AIRPLANE_CODE} column is also a foreign key; the identifier
  * writes it, and an association over it, if the extending entity maps one, is read-only

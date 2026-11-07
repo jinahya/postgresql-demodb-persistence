@@ -96,9 +96,10 @@ public class SeatId
      * Creates a new instance of the identifier of the specified airplane and the specified seat
      * number.
      *
-     * @param airplaneData the airplane whose {@link MappedAirplaneData#getAirplaneCode()
-     *                     airplaneCode} is the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute; may
-     *                     be {@code null}, which gives a {@code null} value.
+     * @param airplaneData the airplane whose
+     *                     {@link MappedAirplaneData#getAirplaneCode() airplaneCode} is the
+     *                     {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute; may be {@code null},
+     *                     which gives a {@code null} value.
      * @param seatNo       a value for the {@value #ATTRIBUTE_NAME_SEAT_NO} attribute.
      * @return a new instance of {@code airplaneData}'s identifier and {@code seatNo}.
      * @see #of(String, String)
