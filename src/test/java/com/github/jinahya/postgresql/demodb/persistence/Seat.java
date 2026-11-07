@@ -34,7 +34,7 @@ import jakarta.persistence.Table;
  * An entity which maps the {@value MappedSeat#TABLE_NAME} table, extending {@link MappedSeat} with
  * what is an application's to decide: its associations, their fetch types and their cascades.
  * <p>
- * The identifier is {@link SeatId}, {@link MappedSeat}'s type argument.
+ * The identifier is {@link SeatId}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -47,7 +47,7 @@ import jakarta.persistence.Table;
        }
 )
 public class Seat
-        extends MappedSeat<SeatId> {
+        extends MappedSeat {
 
     /**
      * Creates a new instance of the specified airplane and seat number.

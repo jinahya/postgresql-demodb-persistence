@@ -42,21 +42,19 @@ import java.util.Optional;
  * <q>Flight segment (leg)</q>.
  * <p>
  * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of
- * {@link SegmentId}, or of a subclass, {@code T}, which an extending entity names;
- * {@link #equals(Object)} compares the identifiers, and the getters of the key's attributes read
- * them. An identifier is not modified once created; a segment takes another with
+ * {@link SegmentId}; {@link #equals(Object)} compares the identifiers, and the getters of the key's
+ * attributes read them. An identifier is not modified once created; a segment takes another with
  * {@link #setId(SegmentId)}.
  * <p>
  * The {@value MappedSegment#COLUMN_NAME_TICKET_NO} and {@value MappedSegment#COLUMN_NAME_FLIGHT_ID}
  * columns are also foreign keys; the identifier writes them, and an association over them, if the
  * extending entity maps one, is read-only ({@code insertable = false, updatable = false}).
  *
- * @param <T> the type of the identifier.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see SegmentId
  */
 @MappedSuperclass
-public abstract class MappedSegment<T extends SegmentId> {
+public abstract class MappedSegment {
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -222,7 +220,7 @@ public abstract class MappedSegment<T extends SegmentId> {
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (!(obj instanceof MappedSegment<?> that)) {
+        if (!(obj instanceof MappedSegment that)) {
             return false;
         }
         return Objects.equals(getId(), that.getId());
@@ -246,7 +244,7 @@ public abstract class MappedSegment<T extends SegmentId> {
      *
      * @return current value of the identifier; {@code null} until set or loaded.
      */
-    public T getId() {
+    public SegmentId getId() {
         return id;
     }
 
@@ -255,7 +253,7 @@ public abstract class MappedSegment<T extends SegmentId> {
      *
      * @param id new value for the identifier.
      */
-    public void setId(final T id) {
+    public void setId(final SegmentId id) {
         this.id = id;
     }
 
@@ -335,7 +333,7 @@ public abstract class MappedSegment<T extends SegmentId> {
     @Valid
     @NotNull
     @EmbeddedId
-    private T id;
+    private SegmentId id;
 
     // ---------------------------------------------------------------------------------------------
     @Convert(converter = FareConditionsConverter.class)

@@ -180,8 +180,8 @@ hold the same shape, a name per language, but are three Java types; see <<json>>
 [[composite-keys]]
 == Composite keys
 
-The four tables of composite keys map them in `@EmbeddedId`s of a type variable, `T`, bound to the `@Embeddable`
-`*Id` class, which a subclass names; their attributes are among the rows above.
+The four tables of composite keys map them in `@EmbeddedId`s of the `@Embeddable` `*Id` classes; their attributes
+are among the rows above.
 
 [cols="2,3,5",options="header"]
 |===
@@ -194,8 +194,8 @@ The four tables of composite keys map them in `@EmbeddedId`s of a type variable,
 
 |===
 
-The specification has neither an attribute of a type variable nor `@Convert` on an attribute of an identifier, so
-`MappedRoute` and `RouteId`'s `validity` are not portable; the module's javadoc says Hibernate ORM maps both.
+The specification does not have `@Convert` on an attribute of an identifier, so `RouteId`'s `validity` is not
+portable; the module's javadoc says Hibernate ORM maps it.
 
 [[json]]
 == JSON

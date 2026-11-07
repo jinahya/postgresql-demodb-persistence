@@ -38,7 +38,7 @@ import jakarta.persistence.UniqueConstraint;
  * {@link MappedBoardingPass} with what is an application's to decide: its associations, their fetch
  * types and their cascades.
  * <p>
- * The identifier is {@link SegmentId}, {@link MappedBoardingPass}'s type argument.
+ * The identifier is {@link SegmentId}.
  * <p>
  * The table's two unique constraints, a boarding number and a seat each once per flight, are
  * declared with {@link UniqueConstraint @UniqueConstraint}, under the names the database gives
@@ -88,7 +88,7 @@ import jakarta.persistence.UniqueConstraint;
        }
 )
 public class BoardingPass
-        extends MappedBoardingPass<SegmentId> {
+        extends MappedBoardingPass {
 
     /**
      * Creates a new instance of the specified segment, whose identifier becomes the identifier.

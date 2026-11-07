@@ -67,10 +67,9 @@ import java.util.stream.Collectors;
  * The table has no primary key. What keeps a row apart is the {@code routes_route_no_validity_excl}
  * exclusion constraint: no two rows share a {@value #COLUMN_NAME_ROUTE_NO} with overlapping
  * {@value #COLUMN_NAME_VALIDITY} periods. So the two are the identifier, an
- * {@link EmbeddedId @EmbeddedId} of {@link RouteId}, or of a subclass, {@code T}, which an
- * extending entity names; {@link #equals(Object)} compares the identifiers, and
- * {@link #getRouteNo()} and {@link #getValidityRange(BiFunction)} read them. An identifier is not
- * modified once created; a route takes another with {@link #setId(RouteId)}.
+ * {@link EmbeddedId @EmbeddedId} of {@link RouteId}; {@link #equals(Object)} compares the
+ * identifiers, and {@link #getRouteNo()} and {@link #getValidityRange(BiFunction)} read them. An
+ * identifier is not modified once created; a route takes another with {@link #setId(RouteId)}.
  * <p>
  * The {@value MappedRoute#COLUMN_NAME_VALIDITY} column is a {@code tstzrange}, which neither
  * Jakarta Persistence nor Hibernate ORM maps; the identifier maps it as its two bounds, the lower,
@@ -78,9 +77,8 @@ import java.util.stream.Collectors;
  * an instant, whatever time zone the session prints it in, so neither the identifier nor
  * {@link #equals(Object)} depends on the time zone the JVM runs in.
  * <p>
- * The specification has neither an attribute of a type variable nor
- * {@link jakarta.persistence.Convert @Convert} on an identifier's attribute; Hibernate ORM, the
- * only provider, maps both.
+ * The specification does not have {@link jakarta.persistence.Convert @Convert} on an identifier's
+ * attribute; Hibernate ORM, the only provider, maps it.
  * <p>
  * The {@value #COLUMN_NAME_DAYS_OF_WEEK} column is an {@code integer[]}, mapped as a {@link List}
  * of {@link Integer}, which Hibernate ORM binds and reads as an array; the
@@ -89,11 +87,10 @@ import java.util.stream.Collectors;
  * {@link JdbcTypeCode @JdbcTypeCode}{@code (}{@link SqlTypes#INTERVAL_SECOND}{@code )}, and as a
  * number without it. A {@link Duration} has no months; the column's values are hours and minutes.
  *
- * @param <T> the type of the identifier.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @MappedSuperclass
-public abstract class MappedRoute<T extends RouteId> {
+public abstract class MappedRoute {
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -309,7 +306,7 @@ public abstract class MappedRoute<T extends RouteId> {
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (!(obj instanceof MappedRoute<?> that)) {
+        if (!(obj instanceof MappedRoute that)) {
             return false;
         }
         return Objects.equals(getId(), that.getId());
@@ -333,7 +330,7 @@ public abstract class MappedRoute<T extends RouteId> {
      *
      * @return current value of the identifier; {@code null} until set or loaded.
      */
-    public T getId() {
+    public RouteId getId() {
         return id;
     }
 
@@ -342,7 +339,7 @@ public abstract class MappedRoute<T extends RouteId> {
      *
      * @param id new value for the identifier.
      */
-    public void setId(final T id) {
+    public void setId(final RouteId id) {
         this.id = id;
     }
 
@@ -576,7 +573,7 @@ public abstract class MappedRoute<T extends RouteId> {
     @Valid
     @NotNull
     @EmbeddedId
-    private T id;
+    private RouteId id;
 
     // ---------------------------------------------------------------------------------------------
     // read-only: the extending entity owns the writable mapping; see the class documentation

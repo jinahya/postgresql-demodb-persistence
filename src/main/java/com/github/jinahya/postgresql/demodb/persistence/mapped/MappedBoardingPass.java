@@ -38,10 +38,9 @@ import java.util.Optional;
  * <q>Boarding passes</q>.
  * <p>
  * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of
- * {@link SegmentId}, or of a subclass, {@code T}, which an extending entity names;
- * {@link #equals(Object)} compares the identifiers, and the getters of the key's attributes read
- * them. An identifier is not modified once created; a boarding pass takes another with
- * {@link #setId(SegmentId)}.
+ * {@link SegmentId}; {@link #equals(Object)} compares the identifiers, and the getters of the key's
+ * attributes read them. An identifier is not modified once created; a boarding pass takes another
+ * with {@link #setId(SegmentId)}.
  * <p>
  * The two columns of the identifier together are also a foreign key, to the {@code segments}
  * table's primary key, see {@link MappedSegment}; so a boarding pass's identifier is its segment's,
@@ -51,12 +50,11 @@ import java.util.Optional;
  * ({@value #COLUMN_NAME_FLIGHT_ID}, {@value #COLUMN_NAME_SEAT_NO}) unique, which an extending
  * entity may state in its {@link jakarta.persistence.Table @Table}.
  *
- * @param <T> the type of the identifier.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see SegmentId
  */
 @MappedSuperclass
-public abstract class MappedBoardingPass<T extends SegmentId> {
+public abstract class MappedBoardingPass {
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -174,7 +172,7 @@ public abstract class MappedBoardingPass<T extends SegmentId> {
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (!(obj instanceof MappedBoardingPass<?> that)) {
+        if (!(obj instanceof MappedBoardingPass that)) {
             return false;
         }
         return Objects.equals(getId(), that.getId());
@@ -198,7 +196,7 @@ public abstract class MappedBoardingPass<T extends SegmentId> {
      *
      * @return current value of the identifier; {@code null} until set or loaded.
      */
-    public T getId() {
+    public SegmentId getId() {
         return id;
     }
 
@@ -207,7 +205,7 @@ public abstract class MappedBoardingPass<T extends SegmentId> {
      *
      * @param id new value for the identifier.
      */
-    public void setId(final T id) {
+    public void setId(final SegmentId id) {
         this.id = id;
     }
 
@@ -308,7 +306,7 @@ public abstract class MappedBoardingPass<T extends SegmentId> {
     @Valid
     @NotNull
     @EmbeddedId
-    private T id;
+    private SegmentId id;
 
     // ---------------------------------------------------------------------------------------------
     @NotNull

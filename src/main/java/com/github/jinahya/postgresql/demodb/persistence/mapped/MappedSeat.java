@@ -39,21 +39,19 @@ import java.util.Optional;
  * <q>Seats</q>.
  * <p>
  * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of
- * {@link SeatId}, or of a subclass, {@code T}, which an extending entity names;
- * {@link #equals(Object)} compares the identifiers, and the getters of the key's attributes read
- * them. An identifier is not modified once created; a seat takes another with
+ * {@link SeatId}; {@link #equals(Object)} compares the identifiers, and the getters of the key's
+ * attributes read them. An identifier is not modified once created; a seat takes another with
  * {@link #setId(SeatId)}.
  * <p>
  * The {@value MappedSeat#COLUMN_NAME_AIRPLANE_CODE} column is also a foreign key; the identifier
  * writes it, and an association over it, if the extending entity maps one, is read-only
  * ({@code insertable = false, updatable = false}).
  *
- * @param <T> the type of the identifier.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see SeatId
  */
 @MappedSuperclass
-public abstract class MappedSeat<T extends SeatId> {
+public abstract class MappedSeat {
 
     /**
      * The fare conditions, the travel class, the value of a {@code seats.fare_conditions} column
@@ -245,7 +243,7 @@ public abstract class MappedSeat<T extends SeatId> {
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (!(obj instanceof MappedSeat<?> that)) {
+        if (!(obj instanceof MappedSeat that)) {
             return false;
         }
         return Objects.equals(getId(), that.getId());
@@ -269,7 +267,7 @@ public abstract class MappedSeat<T extends SeatId> {
      *
      * @return current value of the identifier; {@code null} until set or loaded.
      */
-    public T getId() {
+    public SeatId getId() {
         return id;
     }
 
@@ -278,7 +276,7 @@ public abstract class MappedSeat<T extends SeatId> {
      *
      * @param id new value for the identifier.
      */
-    public void setId(final T id) {
+    public void setId(final SeatId id) {
         this.id = id;
     }
 
@@ -335,7 +333,7 @@ public abstract class MappedSeat<T extends SeatId> {
     @Valid
     @NotNull
     @EmbeddedId
-    private T id;
+    private SeatId id;
 
     // ---------------------------------------------------------------------------------------------
     @Convert(converter = FareConditionsConverter.class)

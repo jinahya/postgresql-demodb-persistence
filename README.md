@@ -250,7 +250,7 @@ $ ./_mvn_verify_notests.sh    # no database needed
 
 The entities live in `src/test`, one per table and view, extending the mapped superclasses with what an
 application decides: the associations, lazy, with no cascade; `of(...)` factories where an association is part of
-the identifier; `RouteId`, the key `Route` gives `MappedRoute<T>` for a table which has none. The
+the identifier. The
 persistence unit is there too, `it`, on the database above.
 
 Per entity, after `mysql-sakila-persistence`: a `*_Randomizer`, podam with the constrained attributes assigned after

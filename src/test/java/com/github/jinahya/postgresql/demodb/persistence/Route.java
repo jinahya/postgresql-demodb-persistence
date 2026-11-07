@@ -36,7 +36,7 @@ import java.util.Optional;
  * An entity which maps the {@value MappedRoute#TABLE_NAME} table, extending {@link MappedRoute}
  * with what is an application's to decide: its associations, their fetch types and their cascades.
  * <p>
- * The table has no primary key, so the entity names the identifier {@link MappedRoute} takes:
+ * The table has no primary key, so {@link MappedRoute} takes an identifier of its own:
  * {@link RouteId}, the {@value MappedRoute#COLUMN_NAME_ROUTE_NO} and
  * {@value MappedRoute#COLUMN_NAME_VALIDITY} columns.
  *
@@ -51,7 +51,7 @@ import java.util.Optional;
 @Entity
 @Table(name = MappedRoute.TABLE_NAME)
 public class Route
-        extends MappedRoute<RouteId> {
+        extends MappedRoute {
 
     // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 

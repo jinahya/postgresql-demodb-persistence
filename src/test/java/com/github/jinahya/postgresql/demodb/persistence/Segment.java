@@ -34,7 +34,7 @@ import jakarta.persistence.Table;
  * An entity which maps the {@value MappedSegment#TABLE_NAME} table, extending {@link MappedSegment}
  * with what is an application's to decide: its associations, their fetch types and their cascades.
  * <p>
- * The identifier is {@link SegmentId}, {@link MappedSegment}'s type argument.
+ * The identifier is {@link SegmentId}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -50,7 +50,7 @@ import jakarta.persistence.Table;
        }
 )
 public class Segment
-        extends MappedSegment<SegmentId> {
+        extends MappedSegment {
 
     /**
      * Creates a new instance of the specified ticket and flight, whose identifiers become the two
