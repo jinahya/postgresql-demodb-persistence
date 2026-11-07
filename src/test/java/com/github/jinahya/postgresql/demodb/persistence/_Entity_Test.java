@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Objects;
 
 /**
@@ -36,6 +38,7 @@ import java.util.Objects;
         "java:S101", // Class names should comply with a naming convention
         "java:S118"  // Abstract class names should comply with a naming convention
 })
+@Slf4j
 public abstract class _Entity_Test<T, U>
         extends __Test<T>
         implements __Object_Test<T> {

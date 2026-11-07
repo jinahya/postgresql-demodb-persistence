@@ -20,7 +20,9 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSegmentId_;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.SegmentId;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.SeatId;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.SegmentId_;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +44,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 class BoardingPass_PersistenceIT
-        extends _Entity_PersistenceIT<BoardingPass, BoardingPassId> {
+        extends _Entity_PersistenceIT<BoardingPass, SegmentId> {
 
     BoardingPass_PersistenceIT() {
-        super(BoardingPass.class, BoardingPassId.class);
+        super(BoardingPass.class, SegmentId.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -203,7 +205,7 @@ class BoardingPass_PersistenceIT
                 final var root = query.from(BoardingPass.class);
                 query.select(root).where(
                         builder.equal(
-                                root.get(BoardingPass_.id).get(MappedSegmentId_.flightId),
+                                root.get(BoardingPass_.id).get(SegmentId_.flightId),
                                 FLIGHT_ID),
                         builder.equal(root.get(BoardingPass_.boardingNo), 1));
                 final var found = em.createQuery(query).getSingleResult();
@@ -292,7 +294,7 @@ class BoardingPass_PersistenceIT
                 final var root = query.from(BoardingPass.class);
                 query.select(root).where(
                         builder.equal(
-                                root.get(BoardingPass_.id).get(MappedSegmentId_.flightId),
+                                root.get(BoardingPass_.id).get(SegmentId_.flightId),
                                 FLIGHT_ID),
                         builder.equal(root.get(BoardingPass_.seatNo), "9C"));
                 final var found = em.createQuery(query).getSingleResult();
@@ -380,7 +382,7 @@ class BoardingPass_PersistenceIT
                 final var root = query.from(BoardingPass.class);
                 query.select(root)
                         .where(builder.equal(
-                                root.get(BoardingPass_.id).get(MappedSegmentId_.flightId),
+                                root.get(BoardingPass_.id).get(SegmentId_.flightId),
                                 FLIGHT_ID))
                         .orderBy(builder.asc(root.get(BoardingPass_.boardingNo)));
                 final var all = em.createQuery(query).getResultList();
@@ -467,7 +469,7 @@ class BoardingPass_PersistenceIT
                 final var root = query.from(BoardingPass.class);
                 query.select(root)
                         .where(builder.equal(
-                                root.get(BoardingPass_.id).get(MappedSegmentId_.flightId),
+                                root.get(BoardingPass_.id).get(SegmentId_.flightId),
                                 FLIGHT_ID))
                         .orderBy(builder.asc(root.get(BoardingPass_.seatNo)));
                 final var all = em.createQuery(query).getResultList();

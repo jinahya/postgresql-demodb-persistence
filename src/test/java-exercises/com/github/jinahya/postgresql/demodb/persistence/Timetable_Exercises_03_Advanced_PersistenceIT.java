@@ -20,6 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Nested;
 @SuppressWarnings({
         "java:S101" // Class names should comply with a naming convention
 })
+@Slf4j
 class Timetable_Exercises_03_Advanced_PersistenceIT {
 
     @DisplayName("DEMODB_TIMETABLE_A_01: whether the view has a row for every flight")

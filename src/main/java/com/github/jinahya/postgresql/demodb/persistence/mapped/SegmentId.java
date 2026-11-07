@@ -22,22 +22,33 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * A superclass for the identifier of the {@value MappedSegment#TABLE_NAME} table -- the pair of the
+ * The identifier of the {@value MappedSegment#TABLE_NAME} table -- the pair of the
  * {@value MappedSegment#COLUMN_NAME_TICKET_NO} and {@value MappedSegment#COLUMN_NAME_FLIGHT_ID}
- * columns.
+ * columns; {@link Serializable} and {@link Embeddable}, as an
+ * {@link jakarta.persistence.EmbeddedId @EmbeddedId} has to be.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see MappedSegment
+ * @see BoardingPassId
  */
 @MappedSuperclass
-public abstract class MappedSegmentId {
+@Embeddable
+public class SegmentId
+        implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     // ---------------------------------------------------------------------------------------------
 
@@ -58,8 +69,8 @@ public abstract class MappedSegmentId {
     // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
     /**
-     * Creates a new instance of a subclass, with the specified values. The instance is not modified
-     * afterwards: an identifier has no setter.
+     * Creates a new instance of this class, or of a subclass, with the specified values. The
+     * instance is not modified afterwards: an identifier has no setter.
      *
      * @param <T>          the type of the identifier.
      * @param instantiator a supplier of a new, empty instance of {@code T}.
@@ -69,25 +80,53 @@ public abstract class MappedSegmentId {
      * @throws NullPointerException if {@code instantiator} is {@code null}, or it supplies
      *                              {@code null}.
      */
-    protected static <T extends MappedSegmentId> T of(final Supplier<? extends T> instantiator,
-                                                      final String ticketNo,
-                                                      final Integer flightId) {
+    protected static <T extends SegmentId> T of(final Supplier<? extends T> instantiator,
+                                                final String ticketNo, final Integer flightId) {
         Objects.requireNonNull(instantiator, "instantiator is null");
         final T instance =
                 Objects.requireNonNull(instantiator.get(), "instantiator.get() is null");
         // a private field is not accessed through a type variable
-        final MappedSegmentId id = instance;
+        final SegmentId id = instance;
         id.ticketNo = ticketNo;
         id.flightId = flightId;
         return instance;
     }
 
+    /**
+     * Creates a new instance of the specified values.
+     *
+     * @param ticketNo a value for the {@value #ATTRIBUTE_NAME_TICKET_NO} attribute.
+     * @param flightId a value for the {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute.
+     * @return a new instance.
+     */
+    public static SegmentId of(final String ticketNo, final Integer flightId) {
+        return of(SegmentId::new, ticketNo, flightId);
+    }
+
+    /**
+     * Creates a new instance of the identifiers of the specified entities.
+     *
+     * @param ticket the ticket whose {@link MappedTicket#getTicketNo() ticketNo} is the
+     *               {@value #ATTRIBUTE_NAME_TICKET_NO} attribute; may be {@code null}.
+     * @param flight the flight whose {@link MappedFlight#getFlightId() flightId} is the
+     *               {@value #ATTRIBUTE_NAME_FLIGHT_ID} attribute; may be {@code null}.
+     * @return a new instance of {@code ticket}'s and {@code flight}'s identifiers.
+     * @see #of(String, Integer)
+     */
+    public static SegmentId from(final MappedTicket ticket, final MappedFlight flight) {
+        return of(
+                Optional.ofNullable(ticket).map(MappedTicket::getTicketNo).orElse(null),
+                Optional.ofNullable(flight).map(MappedFlight::getFlightId).orElse(null)
+        );
+    }
+
     // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
-     * Creates a new instance.
+     * Creates a new instance. The constructor is {@code public}, as the specification requires of a
+     * primary key class.
      */
-    protected MappedSegmentId() {
+    public SegmentId() {
         super();
     }
 
@@ -108,14 +147,14 @@ public abstract class MappedSegmentId {
      * @return {@inheritDoc}
      * @implSpec Equality is by {@value #ATTRIBUTE_NAME_TICKET_NO} and
      *         {@value #ATTRIBUTE_NAME_FLIGHT_ID}.
-     * @implNote {@link MappedBoardingPassId} extends this class, for the
+     * @implNote {@link BoardingPassId} extends this class, for the
      *         {@code boarding_passes} key is the {@code segments} key it references; an identifier
      *         of either equals one of the other with the same values. A subclass which checked its
      *         own type here would break the symmetry, so this method is {@code final}.
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (!(obj instanceof MappedSegmentId that)) {
+        if (!(obj instanceof SegmentId that)) {
             return false;
         }
         return Objects.equals(getTicketNo(), that.getTicketNo())

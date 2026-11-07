@@ -20,6 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.SegmentId;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedBoardingPass;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSegment;
 
@@ -37,7 +38,7 @@ import jakarta.persistence.UniqueConstraint;
  * {@link MappedBoardingPass} with what is an application's to decide: its associations, their fetch
  * types and their cascades.
  * <p>
- * The identifier is {@link BoardingPassId}, {@link MappedBoardingPass}'s type argument.
+ * The identifier is {@link SegmentId}, {@link MappedBoardingPass}'s type argument.
  * <p>
  * The table's two unique constraints, a boarding number and a seat each once per flight, are
  * declared with {@link UniqueConstraint @UniqueConstraint}, under the names the database gives
@@ -87,7 +88,7 @@ import jakarta.persistence.UniqueConstraint;
        }
 )
 public class BoardingPass
-        extends MappedBoardingPass<BoardingPassId> {
+        extends MappedBoardingPass<SegmentId> {
 
     /**
      * Creates a new instance of the specified segment, whose identifier becomes the identifier.
@@ -97,7 +98,7 @@ public class BoardingPass
      */
     public static BoardingPass of(final Segment segment) {
         final var instance = new BoardingPass();
-        instance.setId(BoardingPassId.of(segment.getTicketNo(), segment.getFlightId()));
+        instance.setId(SegmentId.of(segment.getTicketNo(), segment.getFlightId()));
         instance.segment = segment;
         return instance;
     }

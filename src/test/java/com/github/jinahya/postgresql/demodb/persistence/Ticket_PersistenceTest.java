@@ -20,12 +20,15 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Verifies the mappings of {@link Ticket} against the schema generated into the in-memory
  * database.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class Ticket_PersistenceTest
         extends _Entity_PersistenceTest<Ticket, String> {
 

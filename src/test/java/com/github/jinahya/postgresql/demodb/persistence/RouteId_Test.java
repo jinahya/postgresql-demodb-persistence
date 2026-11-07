@@ -20,6 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.RouteId;
 import lombok.extern.slf4j.Slf4j;
 
 /**

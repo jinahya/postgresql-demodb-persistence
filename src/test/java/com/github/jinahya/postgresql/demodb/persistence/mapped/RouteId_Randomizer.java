@@ -1,4 +1,4 @@
-package com.github.jinahya.postgresql.demodb.persistence;
+package com.github.jinahya.postgresql.demodb.persistence.mapped;
 
 /*-
  * #%L
@@ -22,6 +22,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.object.randomizer.PodamObjectRandomizer;
 
+import com.github.jinahya.postgresql.demodb.persistence.__Random_TestUtils;
 import uk.co.jemos.podam.api.ClassInfoStrategy;
 import uk.co.jemos.podam.api.DataProviderStrategy;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -29,18 +30,18 @@ import uk.co.jemos.podam.api.PodamFactory;
 import java.util.List;
 
 /**
- * A randomizer which produces randomized {@link SeatId} instances.
+ * A randomizer which produces randomized {@link RouteId} instances.
  * <p>
  * Nothing is excluded from randomization; the class holds only the columns of the composite key,
  * assigned after the fact through the factory.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-class SeatId_Randomizer
-        extends PodamObjectRandomizer<SeatId> {
+class RouteId_Randomizer
+        extends PodamObjectRandomizer<RouteId> {
 
-    SeatId_Randomizer() {
-        super(SeatId.class, List.of(
+    RouteId_Randomizer() {
+        super(RouteId.class, List.of(
 
         ));
     }
@@ -62,7 +63,8 @@ class SeatId_Randomizer
     }
 
     @Override
-    public SeatId get() {
-        return SeatId.of(__Random_TestUtils.code(3), __Random_TestUtils.seatNo());
+    public RouteId get() {
+        final var validity = __Random_TestUtils.validity();
+        return RouteId.of(__Random_TestUtils.routeNo(), validity.get(0), validity.get(1));
     }
 }

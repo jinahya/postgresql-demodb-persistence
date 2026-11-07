@@ -22,23 +22,30 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.Optional;
 
 /**
- * A superclass for the identifier of the {@value MappedSeat#TABLE_NAME} table -- the pair of the
+ * The identifier of the {@value MappedSeat#TABLE_NAME} table -- the pair of the
  * {@value MappedSeat#COLUMN_NAME_AIRPLANE_CODE} and {@value MappedSeat#COLUMN_NAME_SEAT_NO}
- * columns.
+ * columns; {@link Serializable} and {@link Embeddable}, as an
+ * {@link jakarta.persistence.EmbeddedId @EmbeddedId} has to be.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see MappedSeat
  */
-@MappedSuperclass
-public abstract class MappedSeatId {
+@Embeddable
+public class SeatId
+        implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     // ---------------------------------------------------------------------------------------------
 
@@ -71,35 +78,47 @@ public abstract class MappedSeatId {
     // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
     /**
-     * Creates a new instance of a subclass, with the specified values. The instance is not modified
-     * afterwards: an identifier has no setter.
+     * Creates a new instance of the specified values. The instance is not modified afterwards: an
+     * identifier has no setter.
      *
-     * @param <T>          the type of the identifier.
-     * @param instantiator a supplier of a new, empty instance of {@code T}.
      * @param airplaneCode a value for the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute.
      * @param seatNo       a value for the {@value #ATTRIBUTE_NAME_SEAT_NO} attribute.
-     * @return the instance supplied by {@code instantiator}, with its attributes set.
-     * @throws NullPointerException if {@code instantiator} is {@code null}, or it supplies
-     *                              {@code null}.
+     * @return a new instance.
      */
-    protected static <T extends MappedSeatId> T of(final Supplier<? extends T> instantiator,
-                                                   final String airplaneCode, final String seatNo) {
-        Objects.requireNonNull(instantiator, "instantiator is null");
-        final T instance =
-                Objects.requireNonNull(instantiator.get(), "instantiator.get() is null");
-        // a private field is not accessed through a type variable
-        final MappedSeatId id = instance;
-        id.airplaneCode = airplaneCode;
-        id.seatNo = seatNo;
+    public static SeatId of(final String airplaneCode, final String seatNo) {
+        final var instance = new SeatId();
+        instance.airplaneCode = airplaneCode;
+        instance.seatNo = seatNo;
         return instance;
+    }
+
+    /**
+     * Creates a new instance of the identifier of the specified airplane and the specified seat
+     * number.
+     *
+     * @param airplaneData the airplane whose {@link MappedAirplaneData#getAirplaneCode()
+     *                     airplaneCode} is the {@value #ATTRIBUTE_NAME_AIRPLANE_CODE} attribute; may
+     *                     be {@code null}, which gives a {@code null} value.
+     * @param seatNo       a value for the {@value #ATTRIBUTE_NAME_SEAT_NO} attribute.
+     * @return a new instance of {@code airplaneData}'s identifier and {@code seatNo}.
+     * @see #of(String, String)
+     */
+    public static SeatId from(final MappedAirplaneData airplaneData, final String seatNo) {
+        return of(
+                Optional.ofNullable(airplaneData)
+                        .map(MappedAirplaneData::getAirplaneCode)
+                        .orElse(null),
+                seatNo
+        );
     }
 
     // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
-     * Creates a new instance.
+     * Creates a new instance. The constructor is {@code public}, as the specification requires of a
+     * primary key class.
      */
-    protected MappedSeatId() {
+    public SeatId() {
         super();
     }
 
@@ -123,7 +142,7 @@ public abstract class MappedSeatId {
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (!(obj instanceof MappedSeatId that)) {
+        if (!(obj instanceof SeatId that)) {
             return false;
         }
         return Objects.equals(getAirplaneCode(), that.getAirplaneCode())

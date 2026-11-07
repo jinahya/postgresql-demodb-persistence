@@ -20,12 +20,16 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.SeatId;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Verifies the mappings of {@link Seat} against the schema generated into the in-memory
  * database.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class Seat_PersistenceTest
         extends _Entity_PersistenceTest<Seat, SeatId> {
 

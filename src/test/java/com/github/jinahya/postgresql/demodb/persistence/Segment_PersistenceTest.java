@@ -20,12 +20,16 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.SegmentId;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Verifies the mappings of {@link Segment} against the schema generated into the in-memory
  * database.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class Segment_PersistenceTest
         extends _Entity_PersistenceTest<Segment, SegmentId> {
 

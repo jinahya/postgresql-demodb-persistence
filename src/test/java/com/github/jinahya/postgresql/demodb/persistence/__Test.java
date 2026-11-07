@@ -21,6 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import com.github.jinahya.object.randomizer.ObjectRandomizerUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.platform.commons.util.ReflectionUtils;
 
 import java.util.Objects;
@@ -38,6 +39,7 @@ import java.util.Objects;
         "java:S101", // Class names should comply with a naming convention
         "java:S118"  // Abstract class names should comply with a naming convention
 })
+@Slf4j
 public abstract class __Test<T> {
 
     /**

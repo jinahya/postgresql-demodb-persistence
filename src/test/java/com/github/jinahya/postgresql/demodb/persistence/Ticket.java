@@ -60,13 +60,19 @@ public class Ticket
     // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
     /**
-     * Creates a new instance with the specified ticket number.
+     * Creates a new instance of the specified booking with the specified ticket number.
+     * <p>
+     * This is the only way to set the booking from outside the package. A ticket is issued in a
+     * booking, and does not move to another one; another booking takes another ticket.
      *
+     * @param booking  a value for the booking.
      * @param ticketNo a value for the {@value MappedTicket#ATTRIBUTE_NAME_TICKET_NO} attribute.
-     * @return a new instance.
+     * @return a new instance of {@code booking} and {@code ticketNo}.
      */
-    public static Ticket of(final String ticketNo) {
-        return MappedTicket.of(Ticket::new, ticketNo);
+    public static Ticket of(final Booking booking, final String ticketNo) {
+        final var instance = MappedTicket.of(Ticket::new, ticketNo);
+        instance.setBooking(booking);
+        return instance;
     }
 
     // -------------------------------------------------------------------------------- CONSTRUCTORS
@@ -107,8 +113,10 @@ public class Ticket
      * association writes.
      *
      * @param booking new value for the booking; {@code null} clears the reference too.
+     * @apiNote This method is package-private; {@link #of(Booking, String)} sets the booking
+     *         from outside the package.
      */
-    public void setBooking(final Booking booking) {
+    void setBooking(final Booking booking) {
         this.booking = booking;
         setBookRef(Optional.ofNullable(booking)
                            .map(Booking::getBookRef)
@@ -118,6 +126,6 @@ public class Ticket
     // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = COLUMN_NAME_BOOK_REF, nullable = false, insertable = true,
-                updatable = true)
+                updatable = false)
     private Booking booking;
 }

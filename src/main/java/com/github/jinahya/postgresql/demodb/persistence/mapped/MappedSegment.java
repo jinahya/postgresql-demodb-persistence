@@ -41,10 +41,10 @@ import java.util.Optional;
  * A mapped superclass which holds the mappings of the {@value MappedSegment#TABLE_NAME} table,
  * <q>Flight segment (leg)</q>.
  * <p>
- * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of a subclass of
- * {@link MappedSegmentId}, {@code T}, which an extending entity names; {@link #equals(Object)}
+ * The composite primary key is the identifier, an {@link EmbeddedId @EmbeddedId} of
+ * {@link SegmentId}, or of a subclass, {@code T}, which an extending entity names; {@link #equals(Object)}
  * compares the identifiers, and the getters of the key's attributes read them. An identifier is not
- * modified once created; a segment takes another with {@link #setId(MappedSegmentId)}.
+ * modified once created; a segment takes another with {@link #setId(SegmentId)}.
  * <p>
  * The {@value MappedSegment#COLUMN_NAME_TICKET_NO} and {@value MappedSegment#COLUMN_NAME_FLIGHT_ID}
  * columns are also foreign keys; the identifier writes them, and an association over them, if the
@@ -52,10 +52,10 @@ import java.util.Optional;
  *
  * @param <T> the type of the identifier.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see MappedSegmentId
+ * @see SegmentId
  */
 @MappedSuperclass
-public abstract class MappedSegment<T extends MappedSegmentId> {
+public abstract class MappedSegment<T extends SegmentId> {
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -72,7 +72,7 @@ public abstract class MappedSegment<T extends MappedSegmentId> {
     // ----------------------------------------------------------------------------------- ticket_no
 
     /**
-     * The name of the table column to which the {@value MappedSegmentId#ATTRIBUTE_NAME_TICKET_NO}
+     * The name of the table column to which the {@value SegmentId#ATTRIBUTE_NAME_TICKET_NO}
      * attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_TICKET_NO = "ticket_no";
@@ -82,12 +82,12 @@ public abstract class MappedSegment<T extends MappedSegmentId> {
      * The value is {@value}.
      */
     public static final String ATTRIBUTE_PATH_ID_TICKET_NO =
-            ATTRIBUTE_NAME_ID + '.' + MappedSegmentId.ATTRIBUTE_NAME_TICKET_NO;
+            ATTRIBUTE_NAME_ID + '.' + SegmentId.ATTRIBUTE_NAME_TICKET_NO;
 
     // ----------------------------------------------------------------------------------- flight_id
 
     /**
-     * The name of the table column to which the {@value MappedSegmentId#ATTRIBUTE_NAME_FLIGHT_ID}
+     * The name of the table column to which the {@value SegmentId#ATTRIBUTE_NAME_FLIGHT_ID}
      * attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_FLIGHT_ID = "flight_id";
@@ -97,7 +97,7 @@ public abstract class MappedSegment<T extends MappedSegmentId> {
      * The value is {@value}.
      */
     public static final String ATTRIBUTE_PATH_ID_FLIGHT_ID =
-            ATTRIBUTE_NAME_ID + '.' + MappedSegmentId.ATTRIBUTE_NAME_FLIGHT_ID;
+            ATTRIBUTE_NAME_ID + '.' + SegmentId.ATTRIBUTE_NAME_FLIGHT_ID;
 
     // ----------------------------------------------------------------------------- fare_conditions
 
@@ -261,28 +261,28 @@ public abstract class MappedSegment<T extends MappedSegmentId> {
     // ------------------------------------------------------------------------------------ ticketNo
 
     /**
-     * Returns the {@value MappedSegmentId#ATTRIBUTE_NAME_TICKET_NO} of the identifier.
+     * Returns the {@value SegmentId#ATTRIBUTE_NAME_TICKET_NO} of the identifier.
      *
-     * @return the {@value MappedSegmentId#ATTRIBUTE_NAME_TICKET_NO} of the identifier; {@code null}
+     * @return the {@value SegmentId#ATTRIBUTE_NAME_TICKET_NO} of the identifier; {@code null}
      *         when the identifier is {@code null}.
      */
     public String getTicketNo() {
         return Optional.ofNullable(getId())
-                .map(MappedSegmentId::getTicketNo)
+                .map(SegmentId::getTicketNo)
                 .orElse(null);
     }
 
     // ------------------------------------------------------------------------------------ flightId
 
     /**
-     * Returns the {@value MappedSegmentId#ATTRIBUTE_NAME_FLIGHT_ID} of the identifier.
+     * Returns the {@value SegmentId#ATTRIBUTE_NAME_FLIGHT_ID} of the identifier.
      *
-     * @return the {@value MappedSegmentId#ATTRIBUTE_NAME_FLIGHT_ID} of the identifier; {@code null}
+     * @return the {@value SegmentId#ATTRIBUTE_NAME_FLIGHT_ID} of the identifier; {@code null}
      *         when the identifier is {@code null}.
      */
     public Integer getFlightId() {
         return Optional.ofNullable(getId())
-                .map(MappedSegmentId::getFlightId)
+                .map(SegmentId::getFlightId)
                 .orElse(null);
     }
 

@@ -20,6 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Nested;
 @SuppressWarnings({
         "java:S101" // Class names should comply with a naming convention
 })
+@Slf4j
 class AirportsData_Exercises_03_Advanced_PersistenceIT {
 
     @DisplayName("DEMODB_AIRPORTS_DATA_A_01: the cities with more than one airport")

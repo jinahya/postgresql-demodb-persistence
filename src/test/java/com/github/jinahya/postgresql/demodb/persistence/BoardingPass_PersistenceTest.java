@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.SegmentId;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -29,11 +31,12 @@ import org.junit.jupiter.api.Test;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class BoardingPass_PersistenceTest
-        extends _Entity_PersistenceTest<BoardingPass, BoardingPassId> {
+        extends _Entity_PersistenceTest<BoardingPass, SegmentId> {
 
     BoardingPass_PersistenceTest() {
-        super(BoardingPass.class, BoardingPassId.class);
+        super(BoardingPass.class, SegmentId.class);
     }
 
     // ---------------------------------------------------------------------------------------------

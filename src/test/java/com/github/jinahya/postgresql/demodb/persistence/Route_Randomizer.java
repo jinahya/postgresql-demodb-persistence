@@ -23,6 +23,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 import com.github.jinahya.object.randomizer.PodamObjectRandomizer;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute;
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.RouteId;
 import uk.co.jemos.podam.api.ClassInfoStrategy;
 import uk.co.jemos.podam.api.DataProviderStrategy;
 import uk.co.jemos.podam.api.PodamFactory;

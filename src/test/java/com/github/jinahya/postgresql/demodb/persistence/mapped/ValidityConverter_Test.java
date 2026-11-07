@@ -20,7 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRouteId.ValidityConverter;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.RouteId.ValidityConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -35,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class ValidityConverter_Test {
 
     private static final Instant LOWER = Instant.parse("2025-10-01T00:00:00Z");

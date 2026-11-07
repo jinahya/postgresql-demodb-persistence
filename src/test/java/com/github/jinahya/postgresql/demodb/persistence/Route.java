@@ -22,6 +22,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRoute;
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.RouteId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -55,14 +56,25 @@ public class Route
     // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
     /**
-     * Creates a new instance with the specified identifier.
+     * Creates a new instance with the specified identifier, from the specified airport of departure
+     * to the specified airport of arrival.
+     * <p>
+     * This is the only way to set the two airports from outside the package. A route number names
+     * the way between two airports, and neither changes; another way takes another route. The
+     * airplane may change, and is set with {@link #setAirplaneData(AirplaneData)}.
      *
-     * @param id a value for the identifier.
-     * @return a new instance.
+     * @param id                   a value for the identifier.
+     * @param departureAirportData a value for the departureAirportData.
+     * @param arrivalAirportData   a value for the arrivalAirportData.
+     * @return a new instance of {@code id}, {@code departureAirportData} and
+     *         {@code arrivalAirportData}.
      */
-    public static Route of(final RouteId id) {
+    public static Route of(final RouteId id, final AirportData departureAirportData,
+                           final AirportData arrivalAirportData) {
         final var instance = new Route();
         instance.setId(id);
+        instance.setDepartureAirportData(departureAirportData);
+        instance.setArrivalAirportData(arrivalAirportData);
         return instance;
     }
 
@@ -94,8 +106,11 @@ public class Route
      *
      * @param departureAirportData new value for the departureAirportData; {@code null} clears the
      *                             code too.
+     * @apiNote This method is package-private;
+     *         {@link #of(RouteId, AirportData, AirportData)} sets the departureAirportData from
+     *         outside the package.
      */
-    public void setDepartureAirportData(final AirportData departureAirportData) {
+    void setDepartureAirportData(final AirportData departureAirportData) {
         this.departureAirportData = departureAirportData;
         setDepartureAirport(
                 Optional.ofNullable(departureAirportData)
@@ -123,8 +138,11 @@ public class Route
      *
      * @param arrivalAirportData new value for the arrivalAirportData; {@code null} clears the code
      *                           too.
+     * @apiNote This method is package-private;
+     *         {@link #of(RouteId, AirportData, AirportData)} sets the arrivalAirportData from
+     *         outside the package.
      */
-    public void setArrivalAirportData(final AirportData arrivalAirportData) {
+    void setArrivalAirportData(final AirportData arrivalAirportData) {
         this.arrivalAirportData = arrivalAirportData;
         setArrivalAirport(
                 Optional.ofNullable(arrivalAirportData)
@@ -147,6 +165,9 @@ public class Route
      * Replaces the airplaneData with the specified value, and the inherited, read-only attribute
      * over the {@value MappedRoute#COLUMN_NAME_AIRPLANE_CODE} column with its airplane code, which
      * is what this association writes.
+     * <p>
+     * The airplane may change, as another airplane comes to fly the route; this is why the setter
+     * is public.
      *
      * @param airplaneData new value for the airplaneData; {@code null} clears the code too.
      */
@@ -162,13 +183,13 @@ public class Route
     // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = COLUMN_NAME_DEPARTURE_AIRPORT, nullable = false, insertable = true,
-                updatable = true)
+                updatable = false)
     private AirportData departureAirportData;
 
     // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = COLUMN_NAME_ARRIVAL_AIRPORT, nullable = false, insertable = true,
-                updatable = true)
+                updatable = false)
     private AirportData arrivalAirportData;
 
     // ---------------------------------------------------------------------------------------------

@@ -67,14 +67,14 @@ import java.util.stream.Collectors;
  * The table has no primary key. What keeps a row apart is the {@code routes_route_no_validity_excl}
  * exclusion constraint: no two rows share a {@value #COLUMN_NAME_ROUTE_NO} with overlapping
  * {@value #COLUMN_NAME_VALIDITY} periods. So the two are the identifier, an
- * {@link EmbeddedId @EmbeddedId} of a subclass of {@link MappedRouteId}, {@code T}, which an
+ * {@link EmbeddedId @EmbeddedId} of {@link RouteId}, or of a subclass, {@code T}, which an
  * extending entity names; {@link #equals(Object)} compares the identifiers, and
  * {@link #getRouteNo()} and {@link #getValidityRange(BiFunction)} read them. An identifier is not
- * modified once created; a route takes another with {@link #setId(MappedRouteId)}.
+ * modified once created; a route takes another with {@link #setId(RouteId)}.
  * <p>
  * The {@value MappedRoute#COLUMN_NAME_VALIDITY} column is a {@code tstzrange}, which neither
  * Jakarta Persistence nor Hibernate ORM maps; the identifier maps it as its two bounds, the lower,
- * inclusive, and the upper, exclusive, through {@link MappedRouteId.ValidityConverter}. A bound is
+ * inclusive, and the upper, exclusive, through {@link RouteId.ValidityConverter}. A bound is
  * an instant, whatever time zone the session prints it in, so neither the identifier nor
  * {@link #equals(Object)} depends on the time zone the JVM runs in.
  * <p>
@@ -93,7 +93,7 @@ import java.util.stream.Collectors;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @MappedSuperclass
-public abstract class MappedRoute<T extends MappedRouteId> {
+public abstract class MappedRoute<T extends RouteId> {
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -121,7 +121,7 @@ public abstract class MappedRoute<T extends MappedRouteId> {
      * The value is {@value}.
      */
     public static final String ATTRIBUTE_PATH_ID_ROUTE_NO =
-            ATTRIBUTE_NAME_ID + '.' + MappedRouteId.ATTRIBUTE_NAME_ROUTE_NO;
+            ATTRIBUTE_NAME_ID + '.' + RouteId.ATTRIBUTE_NAME_ROUTE_NO;
 
     // ------------------------------------------------------------------------------------ validity
 
@@ -136,7 +136,7 @@ public abstract class MappedRoute<T extends MappedRouteId> {
      * The value is {@value}.
      */
     public static final String ATTRIBUTE_PATH_ID_VALIDITY =
-            ATTRIBUTE_NAME_ID + '.' + MappedRouteId.ATTRIBUTE_NAME_VALIDITY;
+            ATTRIBUTE_NAME_ID + '.' + RouteId.ATTRIBUTE_NAME_VALIDITY;
 
     // --------------------------------------------------------------------------- departure_airport
 
@@ -303,8 +303,8 @@ public abstract class MappedRoute<T extends MappedRouteId> {
      * @param obj {@inheritDoc}
      * @return {@inheritDoc}
      * @implSpec Equality is by the identifier,
-     *         {@value MappedRouteId#ATTRIBUTE_NAME_ROUTE_NO} and
-     *         {@value MappedRouteId#ATTRIBUTE_NAME_VALIDITY}, the latter's bounds compared as
+     *         {@value RouteId#ATTRIBUTE_NAME_ROUTE_NO} and
+     *         {@value RouteId#ATTRIBUTE_NAME_VALIDITY}, the latter's bounds compared as
      *         instants.
      */
     @Override
@@ -349,14 +349,14 @@ public abstract class MappedRoute<T extends MappedRouteId> {
     // ------------------------------------------------------------------------------------- routeNo
 
     /**
-     * Returns the {@value MappedRouteId#ATTRIBUTE_NAME_ROUTE_NO} of the identifier.
+     * Returns the {@value RouteId#ATTRIBUTE_NAME_ROUTE_NO} of the identifier.
      *
-     * @return the {@value MappedRouteId#ATTRIBUTE_NAME_ROUTE_NO} of the identifier; {@code null}
+     * @return the {@value RouteId#ATTRIBUTE_NAME_ROUTE_NO} of the identifier; {@code null}
      *         when the identifier is {@code null}.
      */
     public String getRouteNo() {
         return Optional.ofNullable(getId())
-                .map(MappedRouteId::getRouteNo)
+                .map(RouteId::getRouteNo)
                 .orElse(null);
     }
 
@@ -364,12 +364,12 @@ public abstract class MappedRoute<T extends MappedRouteId> {
 
     /**
      * Applies the specified function to the bounds of the
-     * {@value MappedRouteId#ATTRIBUTE_NAME_VALIDITY} of the identifier, and returns the result.
+     * {@value RouteId#ATTRIBUTE_NAME_VALIDITY} of the identifier, and returns the result.
      *
      * @param <R>      the type of the result.
      * @param function a function of the lower bound, inclusive, and the upper bound, exclusive.
      * @return the result of {@code function}; or {@code null} when the identifier, or its
-     *         {@value MappedRouteId#ATTRIBUTE_NAME_VALIDITY}, is {@code null}.
+     *         {@value RouteId#ATTRIBUTE_NAME_VALIDITY}, is {@code null}.
      */
     public <R> R getValidityRange(
             final BiFunction<? super Instant, ? super Instant, ? extends R> function) {

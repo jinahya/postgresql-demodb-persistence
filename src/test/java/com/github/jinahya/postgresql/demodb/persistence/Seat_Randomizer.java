@@ -24,6 +24,7 @@ import com.github.jinahya.object.randomizer.PodamObjectRandomizer;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat.FareConditions;
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.SeatId;
 import uk.co.jemos.podam.api.ClassInfoStrategy;
 import uk.co.jemos.podam.api.DataProviderStrategy;
 import uk.co.jemos.podam.api.PodamFactory;

@@ -43,7 +43,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @SuppressWarnings({
         "java:S101" // Class names should comply with a naming convention
 })
-final class __Random_TestUtils {
+public final class __Random_TestUtils {
 
     /**
      * Lower case, where the installed codes -- IATA codes, airplane codes, booking references --
@@ -71,14 +71,14 @@ final class __Random_TestUtils {
      * code or a booking reference; lower-case so that it never collides with an installed one,
      * which are upper-case.
      */
-    static String code(final int length) {
+    public static String code(final int length) {
         return of(LOWER + DIGITS, length);
     }
 
     /**
      * Returns a string of the specified number of digits, such as a ticket number.
      */
-    static String digits(final int length) {
+    public static String digits(final int length) {
         return of(DIGITS, length);
     }
 
@@ -87,7 +87,7 @@ final class __Random_TestUtils {
         return values[ThreadLocalRandom.current().nextInt(values.length)];
     }
 
-    static int positiveInt() {
+    public static int positiveInt() {
         return ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE);
     }
 
@@ -120,11 +120,11 @@ final class __Random_TestUtils {
     /**
      * Returns a route number of the schema's shape, {@code PG} and four digits.
      */
-    static String routeNo() {
+    public static String routeNo() {
         return "PG" + digits(4);
     }
 
-    static String seatNo() {
+    public static String seatNo() {
         return ThreadLocalRandom.current().nextInt(1, 60) + of("ABCDEFHJK", 1);
     }
 
@@ -133,7 +133,7 @@ final class __Random_TestUtils {
      * installed route's validity, so that no random route overlaps an installed one with the same
      * number.
      */
-    static List<Instant> validity() {
+    public static List<Instant> validity() {
         final var month = YearMonth.of(ThreadLocalRandom.current().nextInt(2030, 2040),
                                        ThreadLocalRandom.current().nextInt(1, 13));
         return List.of(month.atDay(1).atStartOfDay(ZoneOffset.UTC).toInstant(),

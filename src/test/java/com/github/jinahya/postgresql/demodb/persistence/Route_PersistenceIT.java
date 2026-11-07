@@ -20,7 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
-import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedRouteId;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.RouteId;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -67,7 +67,7 @@ class Route_PersistenceIT
             final EntityManagerFactory entityManagerFactory,
             final EntityManager entityManager,
             final Route entityInstance) {
-        final var validity = new MappedRouteId.ValidityConverter()
+        final var validity = new RouteId.ValidityConverter()
                 .convertToDatabaseColumn(entityInstance.getValidityRange(
                         (l, u) -> new Instant[]{l, u}));
         final var duration = entityInstance.getDuration();
@@ -88,7 +88,7 @@ class Route_PersistenceIT
                 .getSingleResult();
         log.info("validity: {}, written: {}, the server's text: {}",
                  entityInstance.getValidityRange(BOUNDS), validity, text);
-        assertThat(List.of(new MappedRouteId.ValidityConverter().convertToEntityAttribute(text)))
+        assertThat(List.of(new RouteId.ValidityConverter().convertToEntityAttribute(text)))
                 .as("validity of %s, from the server's text, by the converter", entityInstance)
                 .isEqualTo(entityInstance.getValidityRange(BOUNDS));
         final var range = new OffsetDateTimeRangeConverter().from(text);

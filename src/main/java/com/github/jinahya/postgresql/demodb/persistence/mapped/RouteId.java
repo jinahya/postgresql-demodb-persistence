@@ -25,11 +25,13 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Converter;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -40,12 +42,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
- * A superclass for an identifier of the {@value MappedRoute#TABLE_NAME} table -- the pair of the
- * {@value MappedRoute#COLUMN_NAME_ROUTE_NO} and {@value MappedRoute#COLUMN_NAME_VALIDITY} columns.
+ * An identifier of the {@value MappedRoute#TABLE_NAME} table -- the pair of the
+ * {@value MappedRoute#COLUMN_NAME_ROUTE_NO} and {@value MappedRoute#COLUMN_NAME_VALIDITY} columns;
+ * {@link Serializable} and {@link Embeddable}, as an
+ * {@link jakarta.persistence.EmbeddedId @EmbeddedId} has to be.
  * <p>
  * The table has no primary key; the pair is what its {@code routes_route_no_validity_excl}
  * exclusion constraint keeps apart, so it is the identifier an extending entity can take. The
@@ -60,8 +63,12 @@ import java.util.regex.Pattern;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see MappedRoute
  */
-@MappedSuperclass
-public abstract class MappedRouteId {
+@Embeddable
+public class RouteId
+        implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * Converts between the {@value #ATTRIBUTE_NAME_VALIDITY} attribute, an array of two
@@ -182,33 +189,24 @@ public abstract class MappedRouteId {
     // ---------------------------------------------------------------------- STATIC_FACTORY_METHODS
 
     /**
-     * Creates a new instance of a subclass, with the specified values. The instance is not modified
-     * afterwards: an identifier has no setter.
+     * Creates a new instance of the specified values. The instance is not modified afterwards: an
+     * identifier has no setter.
      *
-     * @param <T>           the type of the identifier.
-     * @param instantiator  a supplier of a new, empty instance of {@code T}.
      * @param routeNo       a value for the {@value #ATTRIBUTE_NAME_ROUTE_NO} attribute.
      * @param fromInclusive the lower bound of the {@value #ATTRIBUTE_NAME_VALIDITY} attribute,
      *                      inclusive.
      * @param toExclusive   the upper bound of the {@value #ATTRIBUTE_NAME_VALIDITY} attribute,
      *                      exclusive.
-     * @return the instance supplied by {@code instantiator}, with its attributes set.
-     * @throws NullPointerException     if {@code instantiator} is {@code null}, or it supplies
-     *                                  {@code null}; or if either bound is {@code null}.
+     * @return a new instance.
+     * @throws NullPointerException     if either bound is {@code null}.
      * @throws IllegalArgumentException if {@code fromInclusive} is not before {@code toExclusive}.
      */
-    protected static <T extends MappedRouteId> T of(final Supplier<? extends T> instantiator,
-                                                    final String routeNo,
-                                                    final Instant fromInclusive,
-                                                    final Instant toExclusive) {
-        Objects.requireNonNull(instantiator, "instantiator is null");
+    public static RouteId of(final String routeNo, final Instant fromInclusive,
+                             final Instant toExclusive) {
         final var validity = validity(fromInclusive, toExclusive);
-        final T instance =
-                Objects.requireNonNull(instantiator.get(), "instantiator.get() is null");
-        // a private field is not accessed through a type variable
-        final MappedRouteId id = instance;
-        id.routeNo = routeNo;
-        id.validity = validity;
+        final var instance = new RouteId();
+        instance.routeNo = routeNo;
+        instance.validity = validity;
         return instance;
     }
 
@@ -240,9 +238,10 @@ public abstract class MappedRouteId {
     // -------------------------------------------------------------------------------- CONSTRUCTORS
 
     /**
-     * Creates a new instance.
+     * Creates a new instance. The constructor is {@code public}, as the specification requires of a
+     * primary key class.
      */
-    protected MappedRouteId() {
+    public RouteId() {
         super();
     }
 
@@ -266,7 +265,7 @@ public abstract class MappedRouteId {
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (!(obj instanceof MappedRouteId that)) {
+        if (!(obj instanceof RouteId that)) {
             return false;
         }
         return Objects.equals(getRouteNo(), that.getRouteNo())

@@ -20,6 +20,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.SegmentId;
 import lombok.extern.slf4j.Slf4j;
 import nl.jqno.equalsverifier.Warning;
 import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
@@ -31,10 +32,10 @@ import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
  */
 @Slf4j
 class BoardingPass_Test
-        extends _Entity_Test<BoardingPass, BoardingPassId> {
+        extends _Entity_Test<BoardingPass, SegmentId> {
 
     BoardingPass_Test() {
-        super(BoardingPass.class, BoardingPassId.class);
+        super(BoardingPass.class, SegmentId.class);
     }
 
     // ----------------------------------------------------------------------------- equals/hashCode

@@ -20,7 +20,16 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirplaneData;
+import com.github.jinahya.postgresql.demodb.persistence.mapped.SeatId;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 /**
  * A class for testing the {@link SeatId} composite primary key class.
@@ -33,5 +42,43 @@ class SeatId_Test
 
     SeatId_Test() {
         super(SeatId.class);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Tests {@link SeatId#from(MappedAirplaneData, String)}.
+     */
+    @DisplayName("from(airplaneData, seatNo)")
+    @Nested
+    class FromAirplaneDataSeatNoTest {
+
+        /**
+         * Verifies that {@link SeatId#from(MappedAirplaneData, String) from} returns an instance of the
+         * airplane's code and the seat number.
+         */
+        @Test
+        void __() {
+            final var airplaneData = mock(AirplaneData.class);
+            doReturn("773").when(airplaneData).getAirplaneCode();
+            final var instance = SeatId.from(airplaneData, "1A");
+            assertThat(instance).isNotNull().satisfies(v -> {
+                assertThat(v.getAirplaneCode()).isEqualTo("773");
+                assertThat(v.getSeatNo()).isEqualTo("1A");
+            });
+        }
+
+        /**
+         * Verifies that {@link SeatId#from(MappedAirplaneData, String) from} gives a {@code null} code
+         * for a {@code null} airplane.
+         */
+        @Test
+        void __null() {
+            final var instance = SeatId.from(null, null);
+            assertThat(instance).isNotNull().satisfies(v -> {
+                assertThat(v.getAirplaneCode()).isNull();
+                assertThat(v.getSeatNo()).isNull();
+            });
+        }
     }
 }

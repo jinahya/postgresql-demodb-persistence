@@ -20,6 +20,8 @@ package com.github.jinahya.postgresql.demodb.persistence;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * An abstract base class for testing a value class -- an id class, an embeddable -- which has no
  * identity of its own, and so no persistence test either.
@@ -30,6 +32,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
         "java:S101", // Class names should comply with a naming convention
         "java:S118"  // Abstract class names should comply with a naming convention
 })
+@Slf4j
 public abstract class _NonEntity_Test<T>
         extends __Test<T>
         implements __Object_Test<T> {

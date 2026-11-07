@@ -23,6 +23,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
 import com.github.jinahya.persistence.util.JinahyaEntityManagerFactoryUtils;
 import com.github.jinahya.persistence.util.JinahyaEntityManagerUtils;
 import jakarta.persistence.EntityManagerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Slf4j
 class PersistenceUnit_PersistenceTest {
 
     @DisplayName("the persistence unit bootstraps")
