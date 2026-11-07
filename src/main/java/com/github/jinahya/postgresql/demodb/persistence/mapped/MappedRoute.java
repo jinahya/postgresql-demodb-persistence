@@ -64,6 +64,12 @@ import java.util.stream.Collectors;
  * {@code prePersist} only so: an extending entity which writes a column without setting its code
  * has an instance about to be inserted rejected, though the association would write the column.
  * <p>
+ * None of the three changes once a row is written. A route number names the way between two
+ * airports, which never change; its airplane changes from one period of
+ * {@value #COLUMN_NAME_VALIDITY} to the next, but as another row, of another period, since a row
+ * is what was valid for its period, and its flights, and their seats, are its airplane's. So the
+ * mapping which writes a column need only insert it, {@code updatable = false}.
+ * <p>
  * The table has no primary key. What keeps a row apart is the {@code routes_route_no_validity_excl}
  * exclusion constraint: no two rows share a {@value #COLUMN_NAME_ROUTE_NO} with overlapping
  * {@value #COLUMN_NAME_VALIDITY} periods. So the two are the identifier, an

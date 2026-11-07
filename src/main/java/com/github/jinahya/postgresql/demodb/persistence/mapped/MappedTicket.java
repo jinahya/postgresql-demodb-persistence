@@ -47,6 +47,10 @@ import java.util.function.Supplier;
  * entity need not set it, so an instance about to be inserted may have nothing there, and the
  * column's {@code NOT NULL} is the database's to enforce, on whatever the association writes.
  * <p>
+ * The column does not change once a row is written: a ticket is issued in a booking, and does not
+ * move to another one. So the mapping which writes it need only insert it,
+ * {@code updatable = false}.
+ * <p>
  * The table also keeps ({@value #COLUMN_NAME_BOOK_REF}, {@value #COLUMN_NAME_PASSENGER_ID},
  * {@value #COLUMN_NAME_OUTBOUND}) unique, which an extending entity may state in its
  * {@link jakarta.persistence.Table @Table}.

@@ -39,6 +39,11 @@ import java.util.Optional;
  * The table has no primary key, so {@link MappedRoute} takes an identifier of its own:
  * {@link RouteId}, the {@value MappedRoute#COLUMN_NAME_ROUTE_NO} and
  * {@value MappedRoute#COLUMN_NAME_VALIDITY} columns.
+ * <p>
+ * A row is what was valid for its period: its airports and its airplane are set by
+ * {@link #of(RouteId, AirportData, AirportData, AirplaneData)}, whose setters are package-private,
+ * and written once, their join columns {@code updatable = false}. Another airplane is another row,
+ * of another period.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -95,7 +100,7 @@ public class Route
 
     /**
      * Returns the airport of departure, over the {@value MappedRoute#COLUMN_NAME_DEPARTURE_AIRPORT}
-     * column; the column's writable mapping.
+     * column; the column's writable mapping, which inserts it and never updates it.
      *
      * @return the departureAirportData.
      */
@@ -127,7 +132,7 @@ public class Route
 
     /**
      * Returns the airport of arrival, over the {@value MappedRoute#COLUMN_NAME_ARRIVAL_AIRPORT}
-     * column; the column's writable mapping.
+     * column; the column's writable mapping, which inserts it and never updates it.
      *
      * @return the arrivalAirportData.
      */
@@ -157,7 +162,8 @@ public class Route
 
     /**
      * Returns the airplane which flies the route, over the
-     * {@value MappedRoute#COLUMN_NAME_AIRPLANE_CODE} column; the column's writable mapping.
+     * {@value MappedRoute#COLUMN_NAME_AIRPLANE_CODE} column; the column's writable mapping, which
+     * inserts it and never updates it.
      *
      * @return the airplaneData.
      */

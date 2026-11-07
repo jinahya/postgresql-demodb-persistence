@@ -38,6 +38,10 @@ import java.util.Optional;
  * The table's unique constraint, one ticket of a passenger per booking and direction, is declared
  * with {@link UniqueConstraint @UniqueConstraint}, under the name the database gives it, so that a
  * schema generated from the mapping, the test unit's, has it too.
+ * <p>
+ * A ticket is issued in a booking and stays there: the booking is set by
+ * {@link #of(Booking, String)}, whose setter is package-private, and written once, its join column
+ * {@code updatable = false}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -98,8 +102,8 @@ public class Ticket
 
     /**
      * Returns the booking this ticket belongs to, over the
-     * {@value MappedTicket#COLUMN_NAME_BOOK_REF} column; this is the column's writable mapping, the
-     * inherited {@code bookRef} being read-only.
+     * {@value MappedTicket#COLUMN_NAME_BOOK_REF} column; this is the column's writable mapping,
+     * which inserts it and never updates it, the inherited {@code bookRef} being read-only.
      *
      * @return the booking.
      */

@@ -1,0 +1,2117 @@
+= Exercises picks
+:toc: left
+:toclevels: 3
+
+// AI: Editorial review dated 2026-11-08. Source: sibling EXERCISES.asciidoc and EXERCISES.yaml.
+// AI: Reviewed every exercise in this module against Jakarta Persistence Applied, master src/main/asciidoc/00_book.asciidoc.
+// AI: This is a candidate shortlist, not a change to the official PROJECTS_EXERCISES.asciidoc picks or the manuscript.
+// AI: Preserve source scope order, level classifications, permanent IDs, statements, SQL, JPQL, and existing answer blocks.
+// AI: At most three candidates per original scope and level; fewer or zero is intentional. Do not fill slots mechanically.
+// AI: Prefer mapped attributes, identifiers, enum/converter behavior, associations, joins, aggregates, subqueries, fetching, and paging.
+// AI: Omit contrived name/string puzzles, redundant integrity audits, arbitrary rankings, and unrelated SQL analytics.
+// AI: Native-only candidates are explicit chapter-specific exceptions, not permission to replace portable solutions elsewhere.
+// AI: Agent handoff: read each rationale and TODO, resolve the registry sql/test paths, inspect the mapped types and actual tests,
+// AI: reconcile stale solutions, and run the relevant database/provider tests before promoting any candidate to the book.
+// AI: Existing output blocks below are archival copies from the source, not fresh test results or verified publication output.
+// AI: For manuscript output, rerun the query, retain // AI: provenance, and use the current mappings and provider policy.
+// AI: Source SHA-256 at review: 72a23cf9bfdb05001cb7b45e504308bf7187d6f2101a059bd7ea26f8460a9d94.
+
+Selected exercises for a persistence-focused teaching sequence.
+The original scope and difficulty headings are retained; an empty level intentionally has no suitable pick.
+Statements and answers are copied from link:EXERCISES.asciidoc[the complete exercise collection].
+Selection is an editorial recommendation; implementation notes in the source comments identify follow-up work.
+
+// AI: Original source conventions below apply to the copied subset.
+The exercises on the installed `demo` database, the PostgreSQL demonstration database (https://postgrespro.com/community/demodb[Airlines]), in its `bookings` schema: a section for each table and view, with a section for each level, and, at the end, a section for the schema as a whole.
+Each exercise poses a problem; its answer, and what the installed data gives back, are in the `.sql` file.
+The data is the `3m` edition, three months of flights from 2025-10-01, and the database's today, `bookings.now()`, is 2025-12-01; the views read the names in the language `bookings.lang()` returns, `en`.
+A day or a month is a UTC one, unless an exercise says it is an airport's local one: a bound on a `timestamptz` is written `TIMESTAMPTZ '2025-10-01 00:00:00+00'`, and a day or a month is taken `AT TIME ZONE 'UTC'`, so that the answer does not depend on the session's time zone, which psql and a JDBC connection set differently.
+
+Run a file as a whole:
+
+[source,sh]
+----
+docker exec -i postgresql-demodb psql -U postgres -d demo < src/test/sql-exercises/<section>/<NN>_<level>.sql
+----
+
+== airplanes_data
+
+The `airplanes_data` table, mapped by `MappedAirplaneData`: the ten airplane models, each with its name in several languages, as `jsonb`.
+
+=== Basic
+
+// AI: Basic: selected 2 of 3 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_AIRPLANES_DATA_B_03.
+
+// AI: Pick DEMODB_AIRPLANES_DATA_B_01: Load the entity and its mapped JSON model without hand-parsing SQL output.
+// AI: Copied from EXERCISES.asciidoc:23, anchor DEMODB_AIRPLANES_DATA_B_01; retain the permanent ID when revising.
+// AI: Registry: section=AIRPLANES_DATA; tier=Basic; sql=src/test/sql-exercises/airplanes_data/01_basic.sql; test=AirplanesData_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_DATA_B_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_AIRPLANES_DATA_B_01]]
+==== DEMODB_AIRPLANES_DATA_B_01: every airplane, by code
+
+Show every row of `airplanes_data`, ordered by `airplane_code`.
+The model is a `jsonb` object, a name per language.
+A single table and a sort; no filter.
+
+.`airplanes_data/01_basic.sql`, DEMODB_AIRPLANES_DATA_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM airplanes_data
+ORDER BY airplane_code
+----
+
+....
+ airplane_code |                               model                               | range | speed 
+---------------+-------------------------------------------------------------------+-------+-------
+ 32N           | {"en": "Airbus A320neo", "ru": "Аэробус A320neo"}                 |  6500 |   830
+ 339           | {"en": "Airbus A330-900neo", "ru": "Аэробус A330-900neo"}         | 13300 |   870
+ 351           | {"en": "Airbus A350-1000", "ru": "Аэробус A350-1000"}             | 16700 |   913
+ 35X           | {"en": "Airbus A350F", "ru": "Аэробус A350F"}                     |  8700 |   903
+ 76F           | {"en": "Boeing 767-300F", "ru": "Боинг 767-300F"}                 |  6000 |   850
+ 77W           | {"en": "Boeing 777-300ER", "ru": "Боинг 777-300ER"}               | 14600 |   905
+ 789           | {"en": "Boeing 787-9 Dreamliner", "ru": "Боинг 787-9 Dreamliner"} | 14000 |   913
+ 7M7           | {"en": "Boeing 737 MAX 7", "ru": "Боинг 737 MAX 7"}               |  7000 |   840
+ CR7           | {"en": "Bombardier CRJ700", "ru": "Бомбардье CRJ700"}             |  3100 |   829
+ E70           | {"en": "Embraer E170", "ru": "Эмбраэр E170"}                      |  4000 |   800
+(10 rows)
+....
+====
+
+// AI: Pick DEMODB_AIRPLANES_DATA_B_02: A simple numeric range predicate and deterministic ordering.
+// AI: Copied from EXERCISES.asciidoc:57, anchor DEMODB_AIRPLANES_DATA_B_02; retain the permanent ID when revising.
+// AI: Registry: section=AIRPLANES_DATA; tier=Basic; sql=src/test/sql-exercises/airplanes_data/01_basic.sql; test=AirplanesData_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_DATA_B_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_AIRPLANES_DATA_B_02]]
+==== DEMODB_AIRPLANES_DATA_B_02: the airplanes with a range of 10000 km or more, the longest first
+
+Find the airplanes whose `range` is 10000 or more.
+Show the whole rows, the longest range first; airplanes with the same range are ordered by `airplane_code`.
+A single table, a comparison and a sort on two columns.
+
+.`airplanes_data/01_basic.sql`, DEMODB_AIRPLANES_DATA_B_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM airplanes_data
+WHERE range >= 10000
+ORDER BY range DESC, airplane_code
+----
+
+....
+ airplane_code |                               model                               | range | speed 
+---------------+-------------------------------------------------------------------+-------+-------
+ 351           | {"en": "Airbus A350-1000", "ru": "Аэробус A350-1000"}             | 16700 |   913
+ 77W           | {"en": "Boeing 777-300ER", "ru": "Боинг 777-300ER"}               | 14600 |   905
+ 789           | {"en": "Boeing 787-9 Dreamliner", "ru": "Боинг 787-9 Dreamliner"} | 14000 |   913
+ 339           | {"en": "Airbus A330-900neo", "ru": "Аэробус A330-900neo"}         | 13300 |   870
+(4 rows)
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 1 of 3 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_AIRPLANES_DATA_I_02, DEMODB_AIRPLANES_DATA_I_03.
+
+// AI: Pick DEMODB_AIRPLANES_DATA_I_01: A bounded example of querying a PostgreSQL jsonb attribute.
+// AI: Copied from EXERCISES.asciidoc:111, anchor DEMODB_AIRPLANES_DATA_I_01; retain the permanent ID when revising.
+// AI: Registry: section=AIRPLANES_DATA; tier=Intermediate; sql=src/test/sql-exercises/airplanes_data/02_intermediate.sql; test=AirplanesData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPLANES_DATA_I_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_AIRPLANES_DATA_I_01]]
+==== DEMODB_AIRPLANES_DATA_I_01: the English name of each airplane
+
+Show each airplane's code, its model's name in English, taken out of the `jsonb` with `->>`, and its range, ordered by `airplane_code`.
+A `jsonb` field read as text.
+
+.`airplanes_data/02_intermediate.sql`, DEMODB_AIRPLANES_DATA_I_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airplane_code, model ->> 'en' AS model, range
+FROM airplanes_data
+ORDER BY airplane_code
+----
+
+....
+ airplane_code |          model          | range 
+---------------+-------------------------+-------
+ 32N           | Airbus A320neo          |  6500
+ 339           | Airbus A330-900neo      | 13300
+ 351           | Airbus A350-1000        | 16700
+ 35X           | Airbus A350F            |  8700
+ 76F           | Boeing 767-300F         |  6000
+ 77W           | Boeing 777-300ER        | 14600
+ 789           | Boeing 787-9 Dreamliner | 14000
+ 7M7           | Boeing 737 MAX 7        |  7000
+ CR7           | Bombardier CRJ700       |  3100
+ E70           | Embraer E170            |  4000
+(10 rows)
+....
+====
+
+=== Advanced
+
+// AI: Advanced: selected 1 of 2 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_AIRPLANES_DATA_A_02.
+
+// AI: Pick DEMODB_AIRPLANES_DATA_A_01: NOT EXISTS across the airplane-to-route relationship.
+// AI: Copied from EXERCISES.asciidoc:205, anchor DEMODB_AIRPLANES_DATA_A_01; retain the permanent ID when revising.
+// AI: Registry: section=AIRPLANES_DATA; tier=Advanced; sql=src/test/sql-exercises/airplanes_data/03_advanced.sql; test=AirplanesData_Exercises_03_Advanced_PersistenceIT.DEMODB_AIRPLANES_DATA_A_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_AIRPLANES_DATA_A_01]]
+==== DEMODB_AIRPLANES_DATA_A_01: the airplanes that fly no route
+
+Find the airplanes no row of `routes` names.
+Show the whole rows, ordered by `airplane_code`.
+A `NOT EXISTS` against the table that references this one.
+
+.`airplanes_data/03_advanced.sql`, DEMODB_AIRPLANES_DATA_A_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.*
+FROM airplanes_data a
+WHERE NOT EXISTS (SELECT 1 FROM routes r WHERE r.airplane_code = a.airplane_code)
+ORDER BY a.airplane_code
+----
+
+....
+ airplane_code |                       model                       | range | speed 
+---------------+---------------------------------------------------+-------+-------
+ 35X           | {"en": "Airbus A350F", "ru": "Аэробус A350F"}     |  8700 |   903
+ 76F           | {"en": "Boeing 767-300F", "ru": "Боинг 767-300F"} |  6000 |   850
+(2 rows)
+....
+====
+
+== airplanes
+
+The `airplanes` view, mapped by `MappedAirplane`: `airplanes_data` with the model's name in the session's language, `lang()`.
+
+=== Basic
+
+// AI: Basic: selected 2 of 2 reviewed candidates in this original scope.
+// AI: Selection boundary: Deriving a manufacturer from the first word or ranking ten models is weaker than reading their mapped attributes.
+
+// AI: Pick DEMODB_AIRPLANES_B_01: Read the localized view and compare its mapped shape with the base table.
+// AI: Copied from EXERCISES.asciidoc:275, anchor DEMODB_AIRPLANES_B_01; retain the permanent ID when revising.
+// AI: Registry: section=AIRPLANES; tier=Basic; sql=src/test/sql-exercises/airplanes/01_basic.sql; test=Airplanes_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_B_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_AIRPLANES_B_01]]
+==== DEMODB_AIRPLANES_B_01: every airplane of the view, by code
+
+Show every row of the `airplanes` view, ordered by `airplane_code`.
+The view gives the model's name as text, in the language `lang()` returns.
+
+.`airplanes/01_basic.sql`, DEMODB_AIRPLANES_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM airplanes
+ORDER BY airplane_code
+----
+
+....
+ airplane_code |          model          | range | speed 
+---------------+-------------------------+-------+-------
+ 32N           | Airbus A320neo          |  6500 |   830
+ 339           | Airbus A330-900neo      | 13300 |   870
+ 351           | Airbus A350-1000        | 16700 |   913
+ 35X           | Airbus A350F            |  8700 |   903
+ 76F           | Boeing 767-300F         |  6000 |   850
+ 77W           | Boeing 777-300ER        | 14600 |   905
+ 789           | Boeing 787-9 Dreamliner | 14000 |   913
+ 7M7           | Boeing 737 MAX 7        |  7000 |   840
+ CR7           | Bombardier CRJ700       |  3100 |   829
+ E70           | Embraer E170            |  4000 |   800
+(10 rows)
+....
+====
+
+// AI: Pick DEMODB_AIRPLANES_B_02: A straightforward LIKE predicate over the view's text model.
+// AI: Copied from EXERCISES.asciidoc:308, anchor DEMODB_AIRPLANES_B_02; retain the permanent ID when revising.
+// AI: Registry: section=AIRPLANES; tier=Basic; sql=src/test/sql-exercises/airplanes/01_basic.sql; test=Airplanes_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_B_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_AIRPLANES_B_02]]
+==== DEMODB_AIRPLANES_B_02: the Boeings
+
+Find the airplanes whose model name starts with `Boeing`.
+Show the whole rows, ordered by `airplane_code`.
+A `LIKE` on the view's text column.
+
+.`airplanes/01_basic.sql`, DEMODB_AIRPLANES_B_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM airplanes
+WHERE model LIKE 'Boeing%'
+ORDER BY airplane_code
+----
+
+....
+ airplane_code |          model          | range | speed 
+---------------+-------------------------+-------+-------
+ 76F           | Boeing 767-300F         |  6000 |   850
+ 77W           | Boeing 777-300ER        | 14600 |   905
+ 789           | Boeing 787-9 Dreamliner | 14000 |   913
+ 7M7           | Boeing 737 MAX 7        |  7000 |   840
+(4 rows)
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 0 of 1 reviewed candidates in this original scope.
+// AI: Selection boundary: Deriving a manufacturer from the first word or ranking ten models is weaker than reading their mapped attributes.
+// AI: Not selected: DEMODB_AIRPLANES_I_01.
+// AI: No pick: the available exercises add peripheral SQL, fragile assumptions, audits, or repeat lessons selected elsewhere.
+
+=== Advanced
+
+// AI: Advanced: selected 0 of 1 reviewed candidates in this original scope.
+// AI: Selection boundary: Deriving a manufacturer from the first word or ranking ten models is weaker than reading their mapped attributes.
+// AI: Not selected: DEMODB_AIRPLANES_A_02.
+// AI: No pick: the available exercises add peripheral SQL, fragile assumptions, audits, or repeat lessons selected elsewhere.
+
+== airports_data
+
+The `airports_data` table, mapped by `MappedAirportData`: the airports, each with its name, city and country in several languages, as `jsonb`, and its coordinates as a `point`.
+
+=== Basic
+
+// AI: Basic: selected 1 of 2 reviewed candidates in this original scope.
+// AI: Selection boundary: Do not enumerate JSON keys or validate every JSON field just to fill a tier.
+// AI: Not selected: DEMODB_AIRPORTS_DATA_B_02.
+
+// AI: Pick DEMODB_AIRPORTS_DATA_B_01: Filter a time-zone string while loading mapped JSON attributes.
+// AI: Copied from EXERCISES.asciidoc:414, anchor DEMODB_AIRPORTS_DATA_B_01; retain the permanent ID when revising.
+// AI: Registry: section=AIRPORTS_DATA; tier=Basic; sql=src/test/sql-exercises/airports_data/01_basic.sql; test=AirportsData_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPORTS_DATA_B_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_AIRPORTS_DATA_B_01]]
+==== DEMODB_AIRPORTS_DATA_B_01: the airports in the Europe/Moscow time zone
+
+Find the airports whose `timezone` is `Europe/Moscow`.
+Show the code, the name and the city, ordered by `airport_code`.
+A single table and an equality filter.
+
+.`airports_data/01_basic.sql`, DEMODB_AIRPORTS_DATA_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airport_code, airport_name, city
+FROM airports_data
+WHERE timezone = 'Europe/Moscow'
+ORDER BY airport_code
+----
+
+....
+ airport_code |                    airport_name                     |                           city                           
+--------------+-----------------------------------------------------+----------------------------------------------------------
+ AAQ          | {"en": "Vityazevo", "ru": "Витязево"}               | {"en": "Anapa", "ru": "Анапа"}
+ AER          | {"en": "Sochi", "ru": "Сочи"}                       | {"en": "Sochi", "ru": "Сочи"}
+ AMV          | {"en": "Amderma", "ru": "Амдерма"}                  | {"en": "Amderma", "ru": "Амдерма"}
+ ARH          | {"en": "Talagi", "ru": "Талаги"}                    | {"en": "Arkhangelsk", "ru": "Архангельск"}
+ BKA          | {"en": "Bykovo", "ru": "Быково"}                    | {"en": "Moscow", "ru": "Москва"}
+ BWO          | {"en": "Balakovo", "ru": "Балаково"}                | {"en": "Balakovo", "ru": "Балаково"}
+ BZK          | {"en": "Bryansk", "ru": "Брянск"}                   | {"en": "Bryansk", "ru": "Брянск"}
+ CEE          | {"en": "Cherepovets", "ru": "Череповец"}            | {"en": "Cherepovets", "ru": "Череповец"}
+ CKL          | {"en": "Chkalovskiy", "ru": "Чкаловский"}           | {"en": "Shchyolkovo", "ru": "Щёлково"}
+ CSH          | {"en": "Solovki", "ru": "Соловки"}                  | {"en": "Solovetsky Islands", "ru": "Соловецкие острова"}
+... 65 rows in all.
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 2 of 4 reviewed candidates in this original scope.
+// AI: Selection boundary: Do not enumerate JSON keys or validate every JSON field just to fill a tier.
+// AI: Not selected: DEMODB_AIRPORTS_DATA_I_03, DEMODB_AIRPORTS_DATA_I_04.
+
+// AI: Pick DEMODB_AIRPORTS_DATA_I_01: A concrete multilingual JSON lookup rather than JSON-key enumeration.
+// AI: Copied from EXERCISES.asciidoc:474, anchor DEMODB_AIRPORTS_DATA_I_01; retain the permanent ID when revising.
+// AI: Registry: section=AIRPORTS_DATA; tier=Intermediate; sql=src/test/sql-exercises/airports_data/02_intermediate.sql; test=AirportsData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_DATA_I_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_AIRPORTS_DATA_I_01]]
+==== DEMODB_AIRPORTS_DATA_I_01: the airports of Finland, in English
+
+Find the airports whose country, in English, is `Finland`.
+Show the code and the English name and city, ordered by `airport_code`.
+Three `jsonb` fields read as text, one of them in the filter.
+
+.`airports_data/02_intermediate.sql`, DEMODB_AIRPORTS_DATA_I_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airport_code, airport_name ->> 'en' AS airport_name, city ->> 'en' AS city
+FROM airports_data
+WHERE country ->> 'en' = 'Finland'
+ORDER BY airport_code
+----
+
+....
+ airport_code |   airport_name   |     city     
+--------------+------------------+--------------
+ ENF          | Enontekio        | Enontekio
+ HEL          | Vantaa           | Helsinki
+ HEM          | Malmi            | Helsinki
+ HYV          | Hyvinkää         | Hyvinkää
+ IVL          | Ivalo            | Ivalo
+ JOE          | Joensuu          | Joensuu
+ JYV          | Jyvaskyla        | Jyvaskyla
+ KAJ          | Kajaani          | Kajaani
+ KAO          | Kuusamo          | Kuusamo
+ KAU          | Kauhava          | Kauhava
+... 33 rows in all.
+....
+====
+
+// AI: Pick DEMODB_AIRPORTS_DATA_I_02: Top-n aggregation of ordinary mapped attributes.
+// AI: Copied from EXERCISES.asciidoc:509, anchor DEMODB_AIRPORTS_DATA_I_02; retain the permanent ID when revising.
+// AI: Registry: section=AIRPORTS_DATA; tier=Intermediate; sql=src/test/sql-exercises/airports_data/02_intermediate.sql; test=AirportsData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_DATA_I_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_AIRPORTS_DATA_I_02]]
+==== DEMODB_AIRPORTS_DATA_I_02: the ten time zones with the most airports
+
+Count the airports of each `timezone`, and keep the ten with the most.
+Show the time zone and the count, the most first; time zones with the same count are ordered by name.
+
+.`airports_data/02_intermediate.sql`, DEMODB_AIRPORTS_DATA_I_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT timezone, COUNT(*) AS airports
+FROM airports_data
+GROUP BY timezone
+ORDER BY airports DESC, timezone
+LIMIT 10
+----
+
+....
+      timezone       | airports 
+---------------------+----------
+ America/New_York    |      366
+ America/Chicago     |      296
+ Asia/Shanghai       |      188
+ America/Anchorage   |      168
+ America/Los_Angeles |      143
+ Europe/Paris        |      123
+ America/Toronto     |      120
+ America/Denver      |      110
+ Asia/Kolkata        |      110
+ Europe/London       |      106
+(10 rows)
+....
+====
+
+=== Advanced
+
+// AI: Advanced: selected 0 of 2 reviewed candidates in this original scope.
+// AI: Selection boundary: Do not enumerate JSON keys or validate every JSON field just to fill a tier.
+// AI: Not selected: DEMODB_AIRPORTS_DATA_A_01, DEMODB_AIRPORTS_DATA_A_02.
+// AI: No pick: the available exercises add peripheral SQL, fragile assumptions, audits, or repeat lessons selected elsewhere.
+
+== airports
+
+The `airports` view, mapped by `MappedAirport`: `airports_data` with the names in the session's language, `lang()`.
+
+=== Basic
+
+// AI: Basic: selected 2 of 2 reviewed candidates in this original scope.
+// AI: Selection boundary: Avoid directionality checks with empty output and coordinate-extrema puzzles.
+
+// AI: Pick DEMODB_AIRPORTS_B_01: Filter a localized airport view by country.
+// AI: Copied from EXERCISES.asciidoc:681, anchor DEMODB_AIRPORTS_B_01; retain the permanent ID when revising.
+// AI: Registry: section=AIRPORTS; tier=Basic; sql=src/test/sql-exercises/airports/01_basic.sql; test=Airports_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPORTS_B_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_AIRPORTS_B_01]]
+==== DEMODB_AIRPORTS_B_01: the airports of Norway
+
+Find the rows of the `airports` view whose `country` is `Norway`.
+Show the whole rows, ordered by `airport_code`.
+The view gives the names as text, so the filter is a plain equality.
+
+.`airports/01_basic.sql`, DEMODB_AIRPORTS_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM airports
+WHERE country = 'Norway'
+ORDER BY airport_code
+----
+
+....
+ airport_code |  airport_name  |     city     | country |    coordinates    |      timezone       
+--------------+----------------+--------------+---------+-------------------+---------------------
+ AES          | Vigra          | Ålesund      | Norway  | (6.1197,62.5625)  | Europe/Oslo
+ ALF          | Alta           | Alta         | Norway  | (23.3717,69.9761) | Europe/Oslo
+ ANX          | Andøya         | Andenes      | Norway  | (16.1442,69.2925) | Europe/Oslo
+ BDU          | Bardufoss      | Bardufoss    | Norway  | (18.5404,69.0558) | Europe/Oslo
+ BGO          | Flesland       | Bergen       | Norway  | (5.2181,60.2934)  | Europe/Oslo
+ BJF          | Båtsfjord      | Båtsfjord    | Norway  | (29.6914,70.6005) | Europe/Oslo
+ BNN          | Brønnøysund    | Brønnøysund  | Norway  | (12.2175,65.4611) | Europe/Oslo
+ BOO          | Bodø           | Bodø         | Norway  | (14.3653,67.2692) | Europe/Oslo
+ BVG          | Berlevåg       | Berlevåg     | Norway  | (29.0342,70.8714) | Europe/Oslo
+ DLD          | Dagali         | Geilo        | Norway  | (8.5183,60.4173)  | Europe/Oslo
+... 55 rows in all.
+....
+====
+
+// AI: Pick DEMODB_AIRPORTS_B_02: Filter a localized airport view by city.
+// AI: Copied from EXERCISES.asciidoc:716, anchor DEMODB_AIRPORTS_B_02; retain the permanent ID when revising.
+// AI: Registry: section=AIRPORTS; tier=Basic; sql=src/test/sql-exercises/airports/01_basic.sql; test=Airports_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPORTS_B_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_AIRPORTS_B_02]]
+==== DEMODB_AIRPORTS_B_02: the airports of Moscow
+
+Find the airports whose `city` is `Moscow`.
+Show the code, the name, the city and the country, ordered by `airport_code`.
+
+.`airports/01_basic.sql`, DEMODB_AIRPORTS_B_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airport_code, airport_name, city, country
+FROM airports
+WHERE city = 'Moscow'
+ORDER BY airport_code
+----
+
+....
+ airport_code | airport_name |  city  | country 
+--------------+--------------+--------+---------
+ BKA          | Bykovo       | Moscow | Russia
+ DME          | Domodedovo   | Moscow | Russia
+ OSF          | Ostafyevo    | Moscow | Russia
+ SVO          | Sheremetyevo | Moscow | Russia
+ VKO          | Vnukovo      | Moscow | Russia
+(5 rows)
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 1 of 3 reviewed candidates in this original scope.
+// AI: Selection boundary: Avoid directionality checks with empty output and coordinate-extrema puzzles.
+// AI: Not selected: DEMODB_AIRPORTS_I_02, DEMODB_AIRPORTS_I_03.
+
+// AI: Pick DEMODB_AIRPORTS_I_01: Group view rows and apply deterministic pagination.
+// AI: Copied from EXERCISES.asciidoc:747, anchor DEMODB_AIRPORTS_I_01; retain the permanent ID when revising.
+// AI: Registry: section=AIRPORTS; tier=Intermediate; sql=src/test/sql-exercises/airports/02_intermediate.sql; test=Airports_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_I_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_AIRPORTS_I_01]]
+==== DEMODB_AIRPORTS_I_01: the ten countries with the most airports
+
+Count the airports of each `country`, and keep the ten with the most.
+Show the country and the count, the most first; countries with the same count are ordered by name.
+
+.`airports/02_intermediate.sql`, DEMODB_AIRPORTS_I_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT country, COUNT(*) AS airports
+FROM airports
+GROUP BY country
+ORDER BY airports DESC, country
+LIMIT 10
+----
+
+....
+    country     | airports 
+----------------+----------
+ United States  |     1129
+ Canada         |      335
+ Australia      |      218
+ China          |      187
+ Brazil         |      180
+ Russia         |      158
+ France         |      122
+ India          |      110
+ Indonesia      |      105
+ United Kingdom |      105
+(10 rows)
+....
+====
+
+=== Advanced
+
+// AI: Advanced: selected 0 of 2 reviewed candidates in this original scope.
+// AI: Selection boundary: Avoid directionality checks with empty output and coordinate-extrema puzzles.
+// AI: Not selected: DEMODB_AIRPORTS_A_01, DEMODB_AIRPORTS_A_02.
+// AI: No pick: the available exercises add peripheral SQL, fragile assumptions, audits, or repeat lessons selected elsewhere.
+
+== routes
+
+The `routes` table, mapped by `MappedRoute`: a route number, its two airports, its airplane, its days of the week and its departure time, each valid for a `tstzrange`; the same route number has a row per period of validity.
+
+=== Basic
+
+// AI: Basic: selected 2 of 4 reviewed candidates in this original scope.
+// AI: Selection boundary: Keep one period/type example; omit array expansion, graph reachability, and great-circle ranking.
+// AI: Not selected: DEMODB_ROUTES_B_02, DEMODB_ROUTES_B_03.
+
+// AI: Pick DEMODB_ROUTES_B_01: Filter routes by a departure role and order by their composite key.
+// AI: Copied from EXERCISES.asciidoc:909, anchor DEMODB_ROUTES_B_01; retain the permanent ID when revising.
+// AI: Registry: section=ROUTES; tier=Basic; sql=src/test/sql-exercises/routes/01_basic.sql; test=Routes_Exercises_01_Basic_PersistenceIT.DEMODB_ROUTES_B_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_ROUTES_B_01]]
+==== DEMODB_ROUTES_B_01: the routes from Sheremetyevo
+
+Find the rows of `routes` whose `departure_airport` is `SVO`.
+Show the whole rows, ordered by `route_no` and then by `validity`.
+A route number appears once per period of validity.
+
+.`routes/01_basic.sql`, DEMODB_ROUTES_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM routes
+WHERE departure_airport = 'SVO'
+ORDER BY route_no, validity
+----
+
+....
+ route_no |                      validity                       | departure_airport | arrival_airport | airplane_code |  days_of_week   | scheduled_time | duration 
+----------+-----------------------------------------------------+-------------------+-----------------+---------------+-----------------+----------------+----------
+ PG0006   | ["2025-10-01 00:00:00+00","2025-11-01 00:00:00+00") | SVO               | KJA             | 789           | {6}             | 17:15:00       | 04:30:00
+ PG0006   | ["2025-11-01 00:00:00+00","2025-12-01 00:00:00+00") | SVO               | KJA             | E70           | {1,2,4,6}       | 17:15:00       | 05:05:00
+ PG0006   | ["2025-12-01 00:00:00+00","2026-01-01 00:00:00+00") | SVO               | KJA             | 339           | {3}             | 17:15:00       | 04:40:00
+ PG0006   | ["2026-01-01 00:00:00+00","2026-02-01 00:00:00+00") | SVO               | KJA             | 32N           | {4}             | 17:15:00       | 04:55:00
+ PG0012   | ["2025-10-01 00:00:00+00","2025-11-01 00:00:00+00") | SVO               | UFA             | 351           | {2}             | 13:55:00       | 01:55:00
+ PG0012   | ["2025-11-01 00:00:00+00","2025-12-01 00:00:00+00") | SVO               | UFA             | E70           | {2,3,5,6,7}     | 13:55:00       | 02:05:00
+ PG0012   | ["2025-12-01 00:00:00+00","2026-01-01 00:00:00+00") | SVO               | UFA             | E70           | {1,2,3,5,6,7}   | 13:55:00       | 02:05:00
+ PG0012   | ["2026-01-01 00:00:00+00","2026-02-01 00:00:00+00") | SVO               | UFA             | E70           | {1,2,3,4,5,6}   | 13:55:00       | 02:05:00
+ PG0018   | ["2025-10-01 00:00:00+00","2025-11-01 00:00:00+00") | SVO               | KZN             | 339           | {3,7}           | 02:05:00       | 01:25:00
+ PG0018   | ["2025-11-01 00:00:00+00","2025-12-01 00:00:00+00") | SVO               | KZN             | 7M7           | {2,4,6,7}       | 02:05:00       | 01:30:00
+... 34 rows in all.
+....
+====
+
+// AI: Pick DEMODB_ROUTES_B_04: A PostgreSQL interval attribute with a direct business meaning.
+// AI: Copied from EXERCISES.asciidoc:1002, anchor DEMODB_ROUTES_B_04; retain the permanent ID when revising.
+// AI: Registry: section=ROUTES; tier=Basic; sql=src/test/sql-exercises/routes/01_basic.sql; test=Routes_Exercises_01_Basic_PersistenceIT.DEMODB_ROUTES_B_04_Test.
+// AI: Check the actual JPQL/Criteria solution: source SQL uses database-specific syntax or analytics; do not call that SQL portable JPQL.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_ROUTES_B_04]]
+==== DEMODB_ROUTES_B_04: the routes longer than ten hours
+
+Find the rows whose `duration` is more than ten hours.
+Show the route number, the airports and the duration, the longest first; rows with the same duration are ordered by `route_no` and then by `validity`.
+A comparison with an `interval`.
+
+.`routes/01_basic.sql`, DEMODB_ROUTES_B_04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT route_no, departure_airport, arrival_airport, duration
+FROM routes
+WHERE duration > INTERVAL '10 hours'
+ORDER BY duration DESC, route_no, validity
+----
+
+....
+ route_no | departure_airport | arrival_airport | duration 
+----------+-------------------+-----------------+----------
+ PG0129   | SCL               | BOM             | 19:55:00
+ PG0130   | BOM               | SCL             | 19:55:00
+ PG0143   | MCO               | MAA             | 18:35:00
+ PG0144   | MAA               | MCO             | 18:35:00
+ PG0569   | SZX               | MCO             | 17:30:00
+ PG0570   | MCO               | SZX             | 17:30:00
+ PG0615   | AKL               | CLT             | 16:45:00
+ PG0616   | CLT               | AKL             | 16:45:00
+ PG0635   | MIA               | DEL             | 16:45:00
+ PG0636   | DEL               | MIA             | 16:45:00
+... 80 rows in all.
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 2 of 7 reviewed candidates in this original scope.
+// AI: Selection boundary: Keep one period/type example; omit array expansion, graph reachability, and great-circle ranking.
+// AI: Not selected: DEMODB_ROUTES_I_03, DEMODB_ROUTES_I_04, DEMODB_ROUTES_I_05, DEMODB_ROUTES_I_06, DEMODB_ROUTES_I_07.
+
+// AI: Pick DEMODB_ROUTES_I_01: Inspect the period component of the composite route identifier.
+// AI: Copied from EXERCISES.asciidoc:1039, anchor DEMODB_ROUTES_I_01; retain the permanent ID when revising.
+// AI: Registry: section=ROUTES; tier=Intermediate; sql=src/test/sql-exercises/routes/02_intermediate.sql; test=Routes_Exercises_02_Intermediate_PersistenceIT.DEMODB_ROUTES_I_01_Test.
+// AI: Check the actual JPQL/Criteria solution: source SQL uses database-specific syntax or analytics; do not call that SQL portable JPQL.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_ROUTES_I_01]]
+==== DEMODB_ROUTES_I_01: the periods of the route PG0001
+
+Show the rows of the route `PG0001`, one per period of validity, in order: the start and the end of the period, taken out of the range with `lower` and `upper`, the airplane and the days of the week.
+
+.`routes/02_intermediate.sql`, DEMODB_ROUTES_I_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT route_no, LOWER(validity) AS valid_from, UPPER(validity) AS valid_to, airplane_code, days_of_week
+FROM routes
+WHERE route_no = 'PG0001'
+ORDER BY validity
+----
+
+....
+ route_no |       valid_from       |        valid_to        | airplane_code | days_of_week  
+----------+------------------------+------------------------+---------------+---------------
+ PG0001   | 2025-10-01 00:00:00+00 | 2025-11-01 00:00:00+00 | 339           | {1,2,3,5,6,7}
+ PG0001   | 2025-11-01 00:00:00+00 | 2025-12-01 00:00:00+00 | 789           | {1,2,3,5,6,7}
+ PG0001   | 2025-12-01 00:00:00+00 | 2026-01-01 00:00:00+00 | 789           | {2,3,4,5,6,7}
+ PG0001   | 2026-01-01 00:00:00+00 | 2026-02-01 00:00:00+00 | 77W           | {2,4,6,7}
+(4 rows)
+....
+====
+
+// AI: Pick DEMODB_ROUTES_I_02: A route number alone is not a row identifier; count its periods.
+// AI: Copied from EXERCISES.asciidoc:1066, anchor DEMODB_ROUTES_I_02; retain the permanent ID when revising.
+// AI: Registry: section=ROUTES; tier=Intermediate; sql=src/test/sql-exercises/routes/02_intermediate.sql; test=Routes_Exercises_02_Intermediate_PersistenceIT.DEMODB_ROUTES_I_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_ROUTES_I_02]]
+==== DEMODB_ROUTES_I_02: the five route numbers with the most periods
+
+Count the rows of each `route_no`, and keep the five with the most.
+Show the route number and the count, the most first; route numbers with the same count are ordered by name.
+
+.`routes/02_intermediate.sql`, DEMODB_ROUTES_I_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT route_no, COUNT(*) AS periods
+FROM routes
+GROUP BY route_no
+ORDER BY periods DESC, route_no
+LIMIT 5
+----
+
+....
+ route_no | periods 
+----------+---------
+ PG0001   |       4
+ PG0002   |       4
+ PG0005   |       4
+ PG0006   |       4
+ PG0007   |       4
+(5 rows)
+....
+====
+
+=== Advanced
+
+// AI: Advanced: selected 0 of 4 reviewed candidates in this original scope.
+// AI: Selection boundary: Keep one period/type example; omit array expansion, graph reachability, and great-circle ranking.
+// AI: Not selected: DEMODB_ROUTES_A_01, DEMODB_ROUTES_A_02, DEMODB_ROUTES_A_03, DEMODB_ROUTES_A_04.
+// AI: No pick: the available exercises add peripheral SQL, fragile assumptions, audits, or repeat lessons selected elsewhere.
+
+== flights
+
+The `flights` table, mapped by `MappedFlight`: a flight of a route on a day, with its scheduled and actual times and its status; the route's row is the one whose validity holds the scheduled departure.
+
+=== Basic
+
+// AI: Basic: selected 3 of 5 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_FLIGHTS_B_03, DEMODB_FLIGHTS_B_04.
+
+// AI: Pick DEMODB_FLIGHTS_B_01: A half-open UTC timestamp interval and route predicate.
+// AI: Copied from EXERCISES.asciidoc:1413, anchor DEMODB_FLIGHTS_B_01; retain the permanent ID when revising.
+// AI: Registry: section=FLIGHTS; tier=Basic; sql=src/test/sql-exercises/flights/01_basic.sql; test=Flights_Exercises_01_Basic_PersistenceIT.DEMODB_FLIGHTS_B_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_FLIGHTS_B_01]]
+==== DEMODB_FLIGHTS_B_01: the flights of the route PG0001 in October 2025
+
+Find the flights whose `route_no` is `PG0001` and whose `scheduled_departure` is in October 2025.
+Show the whole rows, ordered by `scheduled_departure`.
+A half-open range on a timestamp: from the first of the month, up to but not including the first of the next.
+
+.`flights/01_basic.sql`, DEMODB_FLIGHTS_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM flights
+WHERE route_no = 'PG0001'
+  AND scheduled_departure >= TIMESTAMPTZ '2025-10-01 00:00:00+00'
+  AND scheduled_departure < TIMESTAMPTZ '2025-11-01 00:00:00+00'
+ORDER BY scheduled_departure
+----
+
+....
+ flight_id | route_no | status  |  scheduled_departure   |   scheduled_arrival    |       actual_departure        |        actual_arrival         
+-----------+----------+---------+------------------------+------------------------+-------------------------------+-------------------------------
+        56 | PG0001   | Arrived | 2025-10-01 08:55:00+00 | 2025-10-01 11:00:00+00 | 2025-10-01 09:04:22.242543+00 | 2025-10-01 11:10:08.207796+00
+       420 | PG0001   | Arrived | 2025-10-03 08:55:00+00 | 2025-10-03 11:00:00+00 | 2025-10-03 09:01:01.503634+00 | 2025-10-03 11:06:26.993085+00
+       595 | PG0001   | Arrived | 2025-10-04 08:55:00+00 | 2025-10-04 11:00:00+00 | 2025-10-04 09:01:14.82653+00  | 2025-10-04 11:06:58.248499+00
+       786 | PG0001   | Arrived | 2025-10-05 08:55:00+00 | 2025-10-05 11:00:00+00 | 2025-10-05 09:00:29.243524+00 | 2025-10-05 11:03:09.767793+00
+       962 | PG0001   | Arrived | 2025-10-06 08:55:00+00 | 2025-10-06 11:00:00+00 | 2025-10-06 09:00:22.207094+00 | 2025-10-06 11:05:05.472695+00
+      1145 | PG0001   | Arrived | 2025-10-07 08:55:00+00 | 2025-10-07 11:00:00+00 | 2025-10-07 09:00:29.021862+00 | 2025-10-07 11:05:45.299731+00
+      1319 | PG0001   | Arrived | 2025-10-08 08:55:00+00 | 2025-10-08 11:00:00+00 | 2025-10-08 09:01:37.086295+00 | 2025-10-08 11:07:39.885001+00
+      1682 | PG0001   | Arrived | 2025-10-10 08:55:00+00 | 2025-10-10 11:00:00+00 | 2025-10-10 09:02:00.561019+00 | 2025-10-10 11:06:54.008201+00
+      1858 | PG0001   | Arrived | 2025-10-11 08:55:00+00 | 2025-10-11 11:00:00+00 | 2025-10-11 08:59:42.455704+00 | 2025-10-11 11:04:41.659585+00
+      2049 | PG0001   | Arrived | 2025-10-12 08:55:00+00 | 2025-10-12 11:00:00+00 | 2025-10-12 08:58:44.753122+00 | 2025-10-12 11:04:51.136787+00
+... 26 rows in all.
+....
+====
+
+// AI: Pick DEMODB_FLIGHTS_B_02: Group by the flight-status attribute.
+// AI: Copied from EXERCISES.asciidoc:1450, anchor DEMODB_FLIGHTS_B_02; retain the permanent ID when revising.
+// AI: Registry: section=FLIGHTS; tier=Basic; sql=src/test/sql-exercises/flights/01_basic.sql; test=Flights_Exercises_01_Basic_PersistenceIT.DEMODB_FLIGHTS_B_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_FLIGHTS_B_02]]
+==== DEMODB_FLIGHTS_B_02: how many flights of each status
+
+Count the flights of each `status`.
+Show the status and the count, ordered by status.
+
+.`flights/01_basic.sql`, DEMODB_FLIGHTS_B_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT status, COUNT(*) AS flights
+FROM flights
+GROUP BY status
+ORDER BY status
+----
+
+....
+  status   | flights 
+-----------+---------
+ Arrived   |   10966
+ Boarding  |       4
+ Cancelled |     121
+ Delayed   |      10
+ Departed  |      20
+ On Time   |     157
+ Scheduled |   10480
+(7 rows)
+....
+====
+
+// AI: Pick DEMODB_FLIGHTS_B_05: Use NULL predicates on optional actual arrival/departure values.
+// AI: Copied from EXERCISES.asciidoc:1550, anchor DEMODB_FLIGHTS_B_05; retain the permanent ID when revising.
+// AI: Registry: section=FLIGHTS; tier=Basic; sql=src/test/sql-exercises/flights/01_basic.sql; test=Flights_Exercises_01_Basic_PersistenceIT.DEMODB_FLIGHTS_B_05_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_FLIGHTS_B_05]]
+==== DEMODB_FLIGHTS_B_05: the flights in the air
+
+Find the flights that have taken off and not landed: an `actual_departure` and no `actual_arrival`.
+Show the flight, its route, its status, when it was to leave, when it left and when it is to land, in the order they took off.
+`IS NOT NULL` and `IS NULL`; a comparison with `=` or `<>` to `NULL` is never true.
+Every one of them has the status `Departed`.
+
+.`flights/01_basic.sql`, DEMODB_FLIGHTS_B_05
+[%collapsible]
+====
+[source,sql]
+----
+SELECT flight_id, route_no, status, scheduled_departure, actual_departure, scheduled_arrival
+FROM flights
+WHERE actual_departure IS NOT NULL
+  AND actual_arrival IS NULL
+ORDER BY actual_departure, flight_id
+----
+
+....
+ flight_id | route_no |  status  |  scheduled_departure   |       actual_departure        |   scheduled_arrival    
+-----------+----------+----------+------------------------+-------------------------------+------------------------
+     10976 | PG0328   | Departed | 2025-11-30 13:45:00+00 | 2025-11-30 13:47:41.516904+00 | 2025-12-01 01:35:00+00
+     10984 | PG0384   | Departed | 2025-11-30 14:10:00+00 | 2025-11-30 14:14:54.688712+00 | 2025-12-01 00:15:00+00
+     10966 | PG0292   | Departed | 2025-11-30 12:50:00+00 | 2025-11-30 15:47:11.461764+00 | 2025-12-01 03:25:00+00
+     11024 | PG0381   | Departed | 2025-11-30 20:25:00+00 | 2025-11-30 20:29:50.700992+00 | 2025-12-01 00:10:00+00
+     11025 | PG0211   | Departed | 2025-11-30 20:45:00+00 | 2025-11-30 20:49:46.926534+00 | 2025-12-01 01:40:00+00
+     11027 | PG0290   | Departed | 2025-11-30 21:35:00+00 | 2025-11-30 21:40:56.704528+00 | 2025-12-01 03:30:00+00
+     11031 | PG0301   | Departed | 2025-11-30 22:05:00+00 | 2025-11-30 22:11:44.385829+00 | 2025-12-01 01:20:00+00
+     11033 | PG0043   | Departed | 2025-11-30 22:35:00+00 | 2025-11-30 22:42:45.411075+00 | 2025-12-01 03:00:00+00
+     11037 | PG0406   | Departed | 2025-11-30 23:10:00+00 | 2025-11-30 23:16:07.884398+00 | 2025-12-01 00:25:00+00
+     11036 | PG0011   | Departed | 2025-11-30 23:10:00+00 | 2025-11-30 23:16:44.924251+00 | 2025-12-01 01:15:00+00
+... 20 rows in all.
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 1 of 5 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_FLIGHTS_I_01, DEMODB_FLIGHTS_I_02, DEMODB_FLIGHTS_I_03, DEMODB_FLIGHTS_I_05.
+
+// AI: Pick DEMODB_FLIGHTS_I_04: Exercise the validity-dependent flight-to-route mapping.
+// AI: Copied from EXERCISES.asciidoc:1682, anchor DEMODB_FLIGHTS_I_04; retain the permanent ID when revising.
+// AI: Registry: section=FLIGHTS; tier=Intermediate; sql=src/test/sql-exercises/flights/02_intermediate.sql; test=Flights_Exercises_02_Intermediate_PersistenceIT.DEMODB_FLIGHTS_I_04_Test.
+// AI: Check the actual JPQL/Criteria solution: source SQL uses database-specific syntax or analytics; do not call that SQL portable JPQL.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_FLIGHTS_I_04]]
+==== DEMODB_FLIGHTS_I_04: today's flights, with their airports
+
+The database's today is the UTC day of `bookings.now()`.
+Find the flights scheduled to depart today, and join each to the row of `routes` valid at its scheduled departure.
+Show the flight, the route, the two airports, the scheduled departure and the status, ordered by the scheduled departure and then by `flight_id`.
+A half-open range on the timestamp, not a cast of each row to a date.
+
+.`flights/02_intermediate.sql`, DEMODB_FLIGHTS_I_04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT f.flight_id, f.route_no, r.departure_airport, r.arrival_airport, f.scheduled_departure, f.status
+FROM flights f
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+WHERE f.scheduled_departure >= DATE_TRUNC('day', bookings.now() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC'
+  AND f.scheduled_departure < (DATE_TRUNC('day', bookings.now() AT TIME ZONE 'UTC') + INTERVAL '1 day') AT TIME ZONE 'UTC'
+ORDER BY f.scheduled_departure, f.flight_id
+----
+
+....
+ flight_id | route_no | departure_airport | arrival_airport |  scheduled_departure   |  status  
+-----------+----------+-------------------+-----------------+------------------------+----------
+     11048 | PG0098   | DEL               | CCU             | 2025-12-01 00:10:00+00 | Boarding
+     11049 | PG0456   | KZN               | UFA             | 2025-12-01 00:15:00+00 | Boarding
+     11050 | PG0215   | XIY               | SHA             | 2025-12-01 00:25:00+00 | Boarding
+     11051 | PG0356   | XIY               | WUH             | 2025-12-01 00:30:00+00 | Delayed
+     11052 | PG0191   | LAX               | LAS             | 2025-12-01 00:35:00+00 | On Time
+     11053 | PG0350   | ATL               | CLT             | 2025-12-01 00:35:00+00 | On Time
+     11054 | PG0059   | OKA               | CTS             | 2025-12-01 00:45:00+00 | On Time
+     11055 | PG0526   | ORY               | VIE             | 2025-12-01 00:50:00+00 | On Time
+     11056 | PG0364   | CKG               | CTU             | 2025-12-01 00:55:00+00 | On Time
+     11057 | PG0247   | ATL               | DEN             | 2025-12-01 01:20:00+00 | On Time
+... 170 rows in all.
+....
+====
+
+=== Advanced
+
+// AI: Advanced: selected 0 of 4 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_FLIGHTS_A_01, DEMODB_FLIGHTS_A_02, DEMODB_FLIGHTS_A_03, DEMODB_FLIGHTS_A_04.
+// AI: No pick: the available exercises add peripheral SQL, fragile assumptions, audits, or repeat lessons selected elsewhere.
+
+== timetable
+
+The `timetable` view, mapped by `MappedTimetable`: each flight with its route's airports and airplane, and every time also in the airport's local time.
+
+=== Basic
+
+// AI: Basic: selected 2 of 3 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_TIMETABLE_B_03.
+
+// AI: Pick DEMODB_TIMETABLE_B_01: Query a reporting view using the demo database's clock.
+// AI: Copied from EXERCISES.asciidoc:1903, anchor DEMODB_TIMETABLE_B_01; retain the permanent ID when revising.
+// AI: Registry: section=TIMETABLE; tier=Basic; sql=src/test/sql-exercises/timetable/01_basic.sql; test=Timetable_Exercises_01_Basic_PersistenceIT.DEMODB_TIMETABLE_B_01_Test.
+// AI: Check the actual JPQL/Criteria solution: source SQL uses database-specific syntax or analytics; do not call that SQL portable JPQL.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_TIMETABLE_B_01]]
+==== DEMODB_TIMETABLE_B_01: the flights from Sheremetyevo in the next 24 hours
+
+The database's now is `bookings.now()`.
+Find the rows of `timetable` whose `departure_airport` is `SVO` and whose scheduled departure is within the next 24 hours of it.
+Show the flight, the route, the arrival airport, the local departure time and the status, ordered by the scheduled departure, then by `flight_id`.
+
+.`timetable/01_basic.sql`, DEMODB_TIMETABLE_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT flight_id, route_no, arrival_airport, scheduled_departure_local, status
+FROM timetable
+WHERE departure_airport = 'SVO'
+  AND scheduled_departure >= bookings.now()
+  AND scheduled_departure < bookings.now() + INTERVAL '24 hours'
+ORDER BY scheduled_departure, flight_id
+----
+
+....
+ flight_id | route_no | arrival_airport | scheduled_departure_local | status  
+-----------+----------+-----------------+---------------------------+---------
+     11120 | PG0012   | UFA             | 2025-12-01 13:55:00       | On Time
+     11121 | PG0034   | SVX             | 2025-12-01 14:05:00       | On Time
+     11132 | PG0177   | AER             | 2025-12-01 15:05:00       | On Time
+     11211 | PG0018   | KZN             | 2025-12-02 02:05:00       | On Time
+     11216 | PG0106   | LED             | 2025-12-02 02:40:00       | On Time
+(5 rows)
+....
+====
+
+// AI: Pick DEMODB_TIMETABLE_B_02: Make UTC and local timestamp attributes visible side by side.
+// AI: Copied from EXERCISES.asciidoc:1935, anchor DEMODB_TIMETABLE_B_02; retain the permanent ID when revising.
+// AI: Registry: section=TIMETABLE; tier=Basic; sql=src/test/sql-exercises/timetable/01_basic.sql; test=Timetable_Exercises_01_Basic_PersistenceIT.DEMODB_TIMETABLE_B_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_TIMETABLE_B_02]]
+==== DEMODB_TIMETABLE_B_02: the flights of the route PG0078 on the first day, in local time
+
+Find the rows of the route `PG0078` scheduled to depart on 2025-10-01, UTC.
+Show the flight, the two airports, the scheduled departure in UTC and local time, and the scheduled arrival in local time, ordered by the scheduled departure.
+The view has already converted the times with each airport's time zone; `AT TIME ZONE 'UTC'` shows a `timestamptz` in UTC whatever the session's zone.
+
+.`timetable/01_basic.sql`, DEMODB_TIMETABLE_B_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT flight_id,
+       departure_airport,
+       arrival_airport,
+       scheduled_departure AT TIME ZONE 'UTC' AS scheduled_departure_utc,
+       scheduled_departure_local,
+       scheduled_arrival_local
+FROM timetable
+WHERE route_no = 'PG0078'
+  AND scheduled_departure >= TIMESTAMPTZ '2025-10-01 00:00:00+00'
+  AND scheduled_departure < TIMESTAMPTZ '2025-10-02 00:00:00+00'
+ORDER BY scheduled_departure
+----
+
+....
+ flight_id | departure_airport | arrival_airport | scheduled_departure_utc | scheduled_departure_local | scheduled_arrival_local 
+-----------+-------------------+-----------------+-------------------------+---------------------------+-------------------------
+         1 | SVO               | HEL             | 2025-10-01 00:00:00     | 2025-10-01 03:00:00       | 2025-10-01 04:40:00
+(1 row)
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 1 of 5 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_TIMETABLE_I_01, DEMODB_TIMETABLE_I_03, DEMODB_TIMETABLE_I_04, DEMODB_TIMETABLE_I_05.
+
+// AI: Pick DEMODB_TIMETABLE_I_02: Group by the two airport roles with deterministic top-n ordering.
+// AI: Copied from EXERCISES.asciidoc:2024, anchor DEMODB_TIMETABLE_I_02; retain the permanent ID when revising.
+// AI: Registry: section=TIMETABLE; tier=Intermediate; sql=src/test/sql-exercises/timetable/02_intermediate.sql; test=Timetable_Exercises_02_Intermediate_PersistenceIT.DEMODB_TIMETABLE_I_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_TIMETABLE_I_02]]
+==== DEMODB_TIMETABLE_I_02: the five airport pairs with the most flights
+
+Count the flights of each pair of departure and arrival airport, and keep the five with the most.
+Show the two airports and the count, the most first; pairs with the same count are ordered by the two airports.
+
+.`timetable/02_intermediate.sql`, DEMODB_TIMETABLE_I_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT departure_airport, arrival_airport, COUNT(*) AS flights
+FROM timetable
+GROUP BY departure_airport, arrival_airport
+ORDER BY flights DESC, departure_airport, arrival_airport
+LIMIT 5
+----
+
+....
+ departure_airport | arrival_airport | flights 
+-------------------+-----------------+---------
+ BGY               | FCO             |     121
+ CAN               | SZX             |     121
+ CDG               | NCE             |     121
+ FCO               | BGY             |     121
+ FCO               | MXP             |     121
+(5 rows)
+....
+====
+
+=== Advanced
+
+// AI: Advanced: selected 1 of 2 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_TIMETABLE_A_01.
+
+// AI: Pick DEMODB_TIMETABLE_A_02: A self-join expresses a concrete connection interval.
+// AI: Copied from EXERCISES.asciidoc:2191, anchor DEMODB_TIMETABLE_A_02; retain the permanent ID when revising.
+// AI: Registry: section=TIMETABLE; tier=Advanced; sql=src/test/sql-exercises/timetable/03_advanced.sql; test=Timetable_Exercises_03_Advanced_PersistenceIT.DEMODB_TIMETABLE_A_02_Test.
+// AI: Check the actual JPQL/Criteria solution: source SQL uses database-specific syntax or analytics; do not call that SQL portable JPQL.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_TIMETABLE_A_02]]
+==== DEMODB_TIMETABLE_A_02: the connections at Sheremetyevo on the first day
+
+For each flight scheduled to arrive at `SVO` on 2025-10-01, local time at `SVO`, find the flights departing from `SVO` between one and four hours after its scheduled arrival.
+Show the arriving flight, the departing flight, where it goes and the layover, ordered by the two flights; the first ten.
+A self join of the view on the airport and a window of time; the day is taken on `scheduled_arrival_local`, a `timestamp` in the airport's own time.
+
+.`timetable/03_advanced.sql`, DEMODB_TIMETABLE_A_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.flight_id                                 AS arriving,
+       d.flight_id                                 AS departing,
+       d.arrival_airport                           AS destination,
+       d.scheduled_departure - a.scheduled_arrival AS layover
+FROM timetable a
+         JOIN timetable d ON d.departure_airport = a.arrival_airport
+    AND d.scheduled_departure BETWEEN a.scheduled_arrival + INTERVAL '1 hour' AND a.scheduled_arrival + INTERVAL '4 hours'
+WHERE a.arrival_airport = 'SVO'
+  AND a.scheduled_arrival_local >= TIMESTAMP '2025-10-01 00:00:00'
+  AND a.scheduled_arrival_local < TIMESTAMP '2025-10-02 00:00:00'
+ORDER BY a.flight_id, d.flight_id
+LIMIT 10
+----
+
+....
+ arriving | departing | destination | layover  
+----------+-----------+-------------+----------
+       54 |        81 | AER         | 02:30:00
+      131 |       168 | LED         | 03:35:00
+(2 rows)
+....
+====
+
+== seats
+
+The `seats` table, mapped by `MappedSeat`: the seats of each airplane, each with its fare conditions.
+
+=== Basic
+
+// AI: Basic: selected 2 of 3 reviewed candidates in this original scope.
+// AI: Selection boundary: Seat-label parsing, regular-expression validation, and globally popular seat labels are weak domain questions.
+// AI: Not selected: DEMODB_SEATS_B_03.
+
+// AI: Pick DEMODB_SEATS_B_01: Filter the composite-key seat entity by airplane and fare class.
+// AI: Copied from EXERCISES.asciidoc:2232, anchor DEMODB_SEATS_B_01; retain the permanent ID when revising.
+// AI: Registry: section=SEATS; tier=Basic; sql=src/test/sql-exercises/seats/01_basic.sql; test=Seats_Exercises_01_Basic_PersistenceIT.DEMODB_SEATS_B_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SEATS_B_01]]
+==== DEMODB_SEATS_B_01: the Business seats of the Airbus A320neo
+
+Find the seats of the airplane `32N` whose `fare_conditions` is `Business`.
+Show the whole rows, ordered by `seat_no`.
+Two equality filters on one table.
+
+.`seats/01_basic.sql`, DEMODB_SEATS_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM seats
+WHERE airplane_code = '32N'
+  AND fare_conditions = 'Business'
+ORDER BY seat_no
+----
+
+....
+ airplane_code | seat_no | fare_conditions 
+---------------+---------+-----------------
+ 32N           | 1A      | Business
+ 32N           | 1C      | Business
+ 32N           | 1D      | Business
+ 32N           | 1F      | Business
+ 32N           | 2A      | Business
+ 32N           | 2C      | Business
+ 32N           | 2D      | Business
+ 32N           | 2F      | Business
+ 32N           | 3A      | Business
+ 32N           | 3C      | Business
+... 28 rows in all.
+....
+====
+
+// AI: Pick DEMODB_SEATS_B_02: Group seats by airplane.
+// AI: Copied from EXERCISES.asciidoc:2268, anchor DEMODB_SEATS_B_02; retain the permanent ID when revising.
+// AI: Registry: section=SEATS; tier=Basic; sql=src/test/sql-exercises/seats/01_basic.sql; test=Seats_Exercises_01_Basic_PersistenceIT.DEMODB_SEATS_B_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SEATS_B_02]]
+==== DEMODB_SEATS_B_02: how many seats each airplane has
+
+Count the seats of each `airplane_code`.
+Show the code and the count, ordered by code.
+
+.`seats/01_basic.sql`, DEMODB_SEATS_B_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT airplane_code, COUNT(*) AS seats
+FROM seats
+GROUP BY airplane_code
+ORDER BY airplane_code
+----
+
+....
+ airplane_code | seats 
+---------------+-------
+ 32N           |   166
+ 339           |   281
+ 351           |   325
+ 77W           |   404
+ 789           |   257
+ 7M7           |   160
+ CR7           |    70
+ E70           |    78
+(8 rows)
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 0 of 4 reviewed candidates in this original scope.
+// AI: Selection boundary: Seat-label parsing, regular-expression validation, and globally popular seat labels are weak domain questions.
+// AI: Not selected: DEMODB_SEATS_I_01, DEMODB_SEATS_I_02, DEMODB_SEATS_I_03, DEMODB_SEATS_I_04.
+// AI: No pick: the available exercises add peripheral SQL, fragile assumptions, audits, or repeat lessons selected elsewhere.
+
+=== Advanced
+
+// AI: Advanced: selected 1 of 1 reviewed candidates in this original scope.
+// AI: Selection boundary: Seat-label parsing, regular-expression validation, and globally popular seat labels are weak domain questions.
+
+// AI: Pick DEMODB_SEATS_A_01: A correlated NOT EXISTS finds available seats for a flight.
+// AI: Copied from EXERCISES.asciidoc:2468, anchor DEMODB_SEATS_A_01; retain the permanent ID when revising.
+// AI: Registry: section=SEATS; tier=Advanced; sql=src/test/sql-exercises/seats/03_advanced.sql; test=Seats_Exercises_03_Advanced_PersistenceIT.DEMODB_SEATS_A_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SEATS_A_01]]
+==== DEMODB_SEATS_A_01: the empty seats of the flight 1
+
+Find the seats of the airplane that flies the flight `1` that nobody boarded: the seats with no boarding pass of that flight.
+Show the seat and its fare conditions, ordered by `seat_no`.
+The flight's airplane is the one of the route's row valid at its departure, which `timetable` gives; a `NOT EXISTS` keeps the seats with no pass.
+
+.`seats/03_advanced.sql`, DEMODB_SEATS_A_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT s.seat_no, s.fare_conditions
+FROM timetable t
+         JOIN seats s ON s.airplane_code = t.airplane_code
+WHERE t.flight_id = 1
+  AND NOT EXISTS (SELECT 1
+                  FROM boarding_passes bp
+                  WHERE bp.flight_id = t.flight_id
+                    AND bp.seat_no = s.seat_no)
+ORDER BY s.seat_no
+----
+
+....
+ seat_no | fare_conditions 
+---------+-----------------
+ 10A     | Economy
+ 10B     | Economy
+ 10C     | Economy
+ 10D     | Economy
+ 10E     | Economy
+ 10F     | Economy
+ 11A     | Economy
+ 11C     | Economy
+ 11D     | Economy
+ 11E     | Economy
+... 112 rows in all.
+....
+====
+
+== bookings
+
+The `bookings` table, mapped by `MappedBooking`: a booking, when it was made and what it cost in all.
+
+=== Basic
+
+// AI: Basic: selected 3 of 4 reviewed candidates in this original scope.
+// AI: Selection boundary: Percentiles, deciles, and weekday formatting are analytics exercises rather than new persistence lessons.
+// AI: Not selected: DEMODB_BOOKINGS_B_02.
+
+// AI: Pick DEMODB_BOOKINGS_B_01: A small half-open UTC timestamp interval.
+// AI: Copied from EXERCISES.asciidoc:2514, anchor DEMODB_BOOKINGS_B_01; retain the permanent ID when revising.
+// AI: Registry: section=BOOKINGS; tier=Basic; sql=src/test/sql-exercises/bookings/01_basic.sql; test=Bookings_Exercises_01_Basic_PersistenceIT.DEMODB_BOOKINGS_B_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_BOOKINGS_B_01]]
+==== DEMODB_BOOKINGS_B_01: the bookings of the first minute
+
+Find the bookings made in the first minute of the data, from 2025-09-01 00:00 UTC up to but not including 00:01.
+Show the whole rows, ordered by `book_date`, then by `book_ref`.
+
+.`bookings/01_basic.sql`, DEMODB_BOOKINGS_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM bookings
+WHERE book_date >= TIMESTAMPTZ '2025-09-01 00:00:00+00'
+  AND book_date < TIMESTAMPTZ '2025-09-01 00:01:00+00'
+ORDER BY book_date, book_ref
+----
+
+....
+ book_ref |           book_date           | total_amount 
+----------+-------------------------------+--------------
+ 6TAS39   | 2025-09-01 00:00:06.265219+00 |      5000.00
+ GGY5EU   | 2025-09-01 00:00:07.565193+00 |      5750.00
+ Y4KNLB   | 2025-09-01 00:00:07.980879+00 |     18000.00
+ MJUZ2D   | 2025-09-01 00:00:10.850077+00 |      5000.00
+ 4O2NMP   | 2025-09-01 00:00:12.040076+00 |     27500.00
+ 2EW1SQ   | 2025-09-01 00:00:12.557744+00 |      8125.00
+ KP3OIQ   | 2025-09-01 00:00:15.012997+00 |     15000.00
+ H40481   | 2025-09-01 00:00:17.28616+00  |     29000.00
+ KOS1KJ   | 2025-09-01 00:00:18.970418+00 |     21500.00
+ NWE9DB   | 2025-09-01 00:00:20.274286+00 |     41250.00
+... 17 rows in all.
+....
+====
+
+// AI: Pick DEMODB_BOOKINGS_B_03: Filter and order a monetary attribute.
+// AI: Copied from EXERCISES.asciidoc:2572, anchor DEMODB_BOOKINGS_B_03; retain the permanent ID when revising.
+// AI: Registry: section=BOOKINGS; tier=Basic; sql=src/test/sql-exercises/bookings/01_basic.sql; test=Bookings_Exercises_01_Basic_PersistenceIT.DEMODB_BOOKINGS_B_03_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_BOOKINGS_B_03]]
+==== DEMODB_BOOKINGS_B_03: the bookings of 700000 or more
+
+Find the bookings whose `total_amount` is 700000 or more.
+Show the whole rows, the largest first; bookings of the same amount are ordered by `book_ref`.
+
+.`bookings/01_basic.sql`, DEMODB_BOOKINGS_B_03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM bookings
+WHERE total_amount >= 700000
+ORDER BY total_amount DESC, book_ref
+----
+
+....
+ book_ref |           book_date           | total_amount 
+----------+-------------------------------+--------------
+ 7UU4BE   | 2025-09-20 04:54:14.10585+00  |    915250.00
+ 3OSUL8   | 2025-10-13 09:23:52.261287+00 |    741100.00
+ 613WY4   | 2025-10-14 03:44:02.154647+00 |    717450.00
+(3 rows)
+....
+====
+
+// AI: Pick DEMODB_BOOKINGS_B_04: A deterministic second page over timestamp and booking identifier.
+// AI: Copied from EXERCISES.asciidoc:2599, anchor DEMODB_BOOKINGS_B_04; retain the permanent ID when revising.
+// AI: Registry: section=BOOKINGS; tier=Basic; sql=src/test/sql-exercises/bookings/01_basic.sql; test=Bookings_Exercises_01_Basic_PersistenceIT.DEMODB_BOOKINGS_B_04_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_BOOKINGS_B_04]]
+==== DEMODB_BOOKINGS_B_04: the second page of the bookings of 2025-10-01
+
+Order the bookings made on 2025-10-01, UTC, by `book_date` and then by `book_ref`, twenty to a page, and show the second page, the whole rows.
+`book_ref` makes the order total, so each page is fixed.
+
+.`bookings/01_basic.sql`, DEMODB_BOOKINGS_B_04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM bookings
+WHERE book_date >= TIMESTAMPTZ '2025-10-01 00:00:00+00'
+  AND book_date < TIMESTAMPTZ '2025-10-02 00:00:00+00'
+ORDER BY book_date, book_ref
+LIMIT 20 OFFSET 20
+----
+
+....
+ book_ref |           book_date           | total_amount 
+----------+-------------------------------+--------------
+ 0GLNZI   | 2025-10-01 00:01:30.918125+00 |     12075.00
+ M9ZJIV   | 2025-10-01 00:01:34.386935+00 |      9750.00
+ WU45PM   | 2025-10-01 00:01:35.027927+00 |      2500.00
+ 2L26GJ   | 2025-10-01 00:01:36.898209+00 |     12250.00
+ Z5FA7T   | 2025-10-01 00:01:44.870713+00 |     33500.00
+ 04UWDM   | 2025-10-01 00:01:48.064918+00 |     47750.00
+ 5SODYM   | 2025-10-01 00:01:52.593366+00 |     44000.00
+ 6C54DM   | 2025-10-01 00:02:09.186487+00 |     46850.00
+ 7VE52V   | 2025-10-01 00:02:10.809042+00 |      1750.00
+ I32M88   | 2025-10-01 00:02:17.050868+00 |     30500.00
+... 20 rows in all.
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 0 of 3 reviewed candidates in this original scope.
+// AI: Selection boundary: Percentiles, deciles, and weekday formatting are analytics exercises rather than new persistence lessons.
+// AI: Not selected: DEMODB_BOOKINGS_I_01, DEMODB_BOOKINGS_I_04, DEMODB_BOOKINGS_I_05.
+// AI: No pick: the available exercises add peripheral SQL, fragile assumptions, audits, or repeat lessons selected elsewhere.
+
+=== Advanced
+
+// AI: Advanced: selected 1 of 3 reviewed candidates in this original scope.
+// AI: Selection boundary: Percentiles, deciles, and weekday formatting are analytics exercises rather than new persistence lessons.
+// AI: Not selected: DEMODB_BOOKINGS_A_01, DEMODB_BOOKINGS_A_03.
+
+// AI: Pick DEMODB_BOOKINGS_A_02: Count the ticket association and limit a booking ranking.
+// AI: Copied from EXERCISES.asciidoc:2750, anchor DEMODB_BOOKINGS_A_02; retain the permanent ID when revising.
+// AI: Registry: section=BOOKINGS; tier=Advanced; sql=src/test/sql-exercises/bookings/03_advanced.sql; test=Bookings_Exercises_03_Advanced_PersistenceIT.DEMODB_BOOKINGS_A_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_BOOKINGS_A_02]]
+==== DEMODB_BOOKINGS_A_02: the five bookings with the most tickets
+
+Count the tickets of each booking, and keep the five with the most; bookings with the same count are ordered by `book_ref`.
+Show the booking, when it was made, its amount and the count.
+
+.`bookings/03_advanced.sql`, DEMODB_BOOKINGS_A_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT b.book_ref, b.book_date, b.total_amount, COUNT(*) AS tickets
+FROM bookings b
+         JOIN tickets t ON t.book_ref = b.book_ref
+GROUP BY b.book_ref, b.book_date, b.total_amount
+ORDER BY tickets DESC, b.book_ref
+LIMIT 5
+----
+
+....
+ book_ref |           book_date           | total_amount | tickets 
+----------+-------------------------------+--------------+---------
+ 033CTO   | 2025-09-07 01:15:43.363826+00 |     87500.00 |      10
+ 1OP3KI   | 2025-10-14 22:12:29.76249+00  |    114000.00 |      10
+ 25XXZL   | 2025-09-08 06:49:23.980094+00 |     72500.00 |      10
+ 3WXRTI   | 2025-09-11 03:13:41.930626+00 |     36725.00 |      10
+ 49Z3NQ   | 2025-11-03 11:03:13.2549+00   |     86100.00 |      10
+(5 rows)
+....
+====
+
+== tickets
+
+The `tickets` table, mapped by `MappedTicket`: a passenger's ticket in a booking, outbound or return.
+
+=== Basic
+
+// AI: Basic: selected 2 of 2 reviewed candidates in this original scope.
+// AI: Selection boundary: Do not infer nationality from an undocumented passenger-id prefix.
+
+// AI: Pick DEMODB_TICKETS_B_01: Filter tickets by their booking association.
+// AI: Copied from EXERCISES.asciidoc:2826, anchor DEMODB_TICKETS_B_01; retain the permanent ID when revising.
+// AI: Registry: section=TICKETS; tier=Basic; sql=src/test/sql-exercises/tickets/01_basic.sql; test=Tickets_Exercises_01_Basic_PersistenceIT.DEMODB_TICKETS_B_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_TICKETS_B_01]]
+==== DEMODB_TICKETS_B_01: the tickets of the booking 0000EG
+
+Find the tickets whose `book_ref` is `0000EG`.
+Show the whole rows, ordered by `ticket_no`.
+
+.`tickets/01_basic.sql`, DEMODB_TICKETS_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM tickets
+WHERE book_ref = '0000EG'
+ORDER BY ticket_no
+----
+
+....
+   ticket_no   | book_ref |   passenger_id   | passenger_name | outbound 
+---------------+----------+------------------+----------------+----------
+ 0005434564147 | 0000EG   | CA 1985281597520 | John Beland    | t
+ 0005434564152 | 0000EG   | CA 1985281597520 | John Beland    | f
+(2 rows)
+....
+====
+
+// AI: Pick DEMODB_TICKETS_B_02: Group by the mapped outbound boolean.
+// AI: Copied from EXERCISES.asciidoc:2852, anchor DEMODB_TICKETS_B_02; retain the permanent ID when revising.
+// AI: Registry: section=TICKETS; tier=Basic; sql=src/test/sql-exercises/tickets/01_basic.sql; test=Tickets_Exercises_01_Basic_PersistenceIT.DEMODB_TICKETS_B_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_TICKETS_B_02]]
+==== DEMODB_TICKETS_B_02: how many tickets, outbound and return
+
+Count the tickets of each value of `outbound`.
+Show the flag and the count, return first.
+
+.`tickets/01_basic.sql`, DEMODB_TICKETS_B_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT outbound, COUNT(*) AS tickets
+FROM tickets
+GROUP BY outbound
+ORDER BY outbound
+----
+
+....
+ outbound | tickets 
+----------+---------
+ f        | 1168851
+ t        | 1805086
+(2 rows)
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 2 of 5 reviewed candidates in this original scope.
+// AI: Selection boundary: Do not infer nationality from an undocumented passenger-id prefix.
+// AI: Not selected: DEMODB_TICKETS_I_02, DEMODB_TICKETS_I_04, DEMODB_TICKETS_I_05.
+
+// AI: Pick DEMODB_TICKETS_I_01: Group passenger identifiers and apply a stable top-n limit.
+// AI: Copied from EXERCISES.asciidoc:2880, anchor DEMODB_TICKETS_I_01; retain the permanent ID when revising.
+// AI: Registry: section=TICKETS; tier=Intermediate; sql=src/test/sql-exercises/tickets/02_intermediate.sql; test=Tickets_Exercises_02_Intermediate_PersistenceIT.DEMODB_TICKETS_I_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_TICKETS_I_01]]
+==== DEMODB_TICKETS_I_01: the five passengers with the most tickets
+
+Count the tickets of each passenger, by `passenger_id`, and keep the five with the most; passengers with the same count are ordered by id.
+Show the id, the name and the count.
+
+.`tickets/02_intermediate.sql`, DEMODB_TICKETS_I_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT passenger_id, passenger_name, COUNT(*) AS tickets
+FROM tickets
+GROUP BY passenger_id, passenger_name
+ORDER BY tickets DESC, passenger_id
+LIMIT 5
+----
+
+....
+   passenger_id   |  passenger_name  | tickets 
+------------------+------------------+---------
+ CN 1303160118058 | Haiyun Yang      |       5
+ CN 8458154433091 | Haiyun Zhao      |       5
+ US 2995168528581 | William Thompson |       5
+ CA 0307652121299 | Pascal Lang      |       4
+ CA 0314814108732 | Dawn Dupuis      |       4
+(5 rows)
+....
+====
+
+// AI: Pick DEMODB_TICKETS_I_03: NOT EXISTS on the ticket-to-segment relationship.
+// AI: Copied from EXERCISES.asciidoc:2945, anchor DEMODB_TICKETS_I_03; retain the permanent ID when revising.
+// AI: Registry: section=TICKETS; tier=Intermediate; sql=src/test/sql-exercises/tickets/02_intermediate.sql; test=Tickets_Exercises_02_Intermediate_PersistenceIT.DEMODB_TICKETS_I_03_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_TICKETS_I_03]]
+==== DEMODB_TICKETS_I_03: how many tickets have no segment
+
+Count the tickets no row of `segments` names.
+A `NOT EXISTS` against the referencing table; there should be none.
+
+.`tickets/02_intermediate.sql`, DEMODB_TICKETS_I_03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS tickets
+FROM tickets t
+WHERE NOT EXISTS (SELECT 1 FROM segments s WHERE s.ticket_no = t.ticket_no)
+----
+
+....
+ tickets 
+---------
+       0
+(1 row)
+....
+====
+
+=== Advanced
+
+// AI: Advanced: selected 1 of 2 reviewed candidates in this original scope.
+// AI: Selection boundary: Do not infer nationality from an undocumented passenger-id prefix.
+// AI: Not selected: DEMODB_TICKETS_A_02.
+
+// AI: Pick DEMODB_TICKETS_A_01: A self-join matches outbound and return ticket roles within one booking.
+// AI: Copied from EXERCISES.asciidoc:3027, anchor DEMODB_TICKETS_A_01; retain the permanent ID when revising.
+// AI: Registry: section=TICKETS; tier=Advanced; sql=src/test/sql-exercises/tickets/03_advanced.sql; test=Tickets_Exercises_03_Advanced_PersistenceIT.DEMODB_TICKETS_A_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_TICKETS_A_01]]
+==== DEMODB_TICKETS_A_01: how many passengers booked a return
+
+In a booking, a passenger's outbound ticket and return ticket share the `book_ref` and the `passenger_id`.
+Count the outbound tickets that have a return ticket in the same booking.
+A self join on two columns, one side outbound, the other not.
+
+.`tickets/03_advanced.sql`, DEMODB_TICKETS_A_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS returns
+FROM tickets o
+         JOIN tickets r ON r.book_ref = o.book_ref AND r.passenger_id = o.passenger_id AND NOT r.outbound
+WHERE o.outbound
+----
+
+....
+ returns 
+---------
+ 1168851
+(1 row)
+....
+====
+
+== segments
+
+The `segments` table, mapped by `MappedSegment`: a ticket's flight, with the fare conditions and the price paid.
+
+=== Basic
+
+// AI: Basic: selected 3 of 3 reviewed candidates in this original scope.
+
+// AI: Pick DEMODB_SEGMENTS_B_01: Read the composite-key segment entity through its ticket association.
+// AI: Copied from EXERCISES.asciidoc:3089, anchor DEMODB_SEGMENTS_B_01; retain the permanent ID when revising.
+// AI: Registry: section=SEGMENTS; tier=Basic; sql=src/test/sql-exercises/segments/01_basic.sql; test=Segments_Exercises_01_Basic_PersistenceIT.DEMODB_SEGMENTS_B_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SEGMENTS_B_01]]
+==== DEMODB_SEGMENTS_B_01: the segments of the ticket 0005432000000
+
+Find the segments whose `ticket_no` is `0005432000000`.
+Show the whole rows, ordered by `flight_id`.
+
+.`segments/01_basic.sql`, DEMODB_SEGMENTS_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM segments
+WHERE ticket_no = '0005432000000'
+ORDER BY flight_id
+----
+
+....
+   ticket_no   | flight_id | fare_conditions |  price  
+---------------+-----------+-----------------+---------
+ 0005432000000 |       108 | Economy         | 3250.00
+(1 row)
+....
+====
+
+// AI: Pick DEMODB_SEGMENTS_B_02: Group by the mapped fare class.
+// AI: Copied from EXERCISES.asciidoc:3114, anchor DEMODB_SEGMENTS_B_02; retain the permanent ID when revising.
+// AI: Registry: section=SEGMENTS; tier=Basic; sql=src/test/sql-exercises/segments/01_basic.sql; test=Segments_Exercises_01_Basic_PersistenceIT.DEMODB_SEGMENTS_B_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SEGMENTS_B_02]]
+==== DEMODB_SEGMENTS_B_02: how many segments of each fare conditions
+
+Count the segments of each `fare_conditions`.
+Show the fare conditions and the count, ordered by fare conditions.
+
+.`segments/01_basic.sql`, DEMODB_SEGMENTS_B_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT fare_conditions, COUNT(*) AS segments
+FROM segments
+GROUP BY fare_conditions
+ORDER BY fare_conditions
+----
+
+....
+ fare_conditions | segments 
+-----------------+----------
+ Business        |   417644
+ Comfort         |   301832
+ Economy         |  3221773
+(3 rows)
+....
+====
+
+// AI: Pick DEMODB_SEGMENTS_B_03: Read the other foreign-key role of the segment identifier.
+// AI: Copied from EXERCISES.asciidoc:3141, anchor DEMODB_SEGMENTS_B_03; retain the permanent ID when revising.
+// AI: Registry: section=SEGMENTS; tier=Basic; sql=src/test/sql-exercises/segments/01_basic.sql; test=Segments_Exercises_01_Basic_PersistenceIT.DEMODB_SEGMENTS_B_03_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SEGMENTS_B_03]]
+==== DEMODB_SEGMENTS_B_03: the segments of the flight 1
+
+Find the segments whose `flight_id` is `1`: the passengers of that flight.
+Show the whole rows, ordered by `ticket_no`.
+
+.`segments/01_basic.sql`, DEMODB_SEGMENTS_B_03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM segments
+WHERE flight_id = 1
+ORDER BY ticket_no
+----
+
+....
+   ticket_no   | flight_id | fare_conditions |  price   
+---------------+-----------+-----------------+----------
+ 0005432037091 |         1 | Economy         |  5000.00
+ 0005432099637 |         1 | Economy         |  5000.00
+ 0005432115850 |         1 | Economy         |  5000.00
+ 0005432175472 |         1 | Economy         |  5000.00
+ 0005432206213 |         1 | Economy         |  5000.00
+ 0005432206220 |         1 | Business        | 10000.00
+ 0005432229264 |         1 | Economy         |  5000.00
+ 0005432261838 |         1 | Economy         |  5000.00
+ 0005432301833 |         1 | Economy         |  5000.00
+ 0005432330445 |         1 | Economy         |  5000.00
+... 48 rows in all.
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 2 of 3 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_SEGMENTS_I_04.
+
+// AI: Pick DEMODB_SEGMENTS_I_01: MIN, AVG, and MAX over a monetary attribute.
+// AI: Copied from EXERCISES.asciidoc:3177, anchor DEMODB_SEGMENTS_I_01; retain the permanent ID when revising.
+// AI: Registry: section=SEGMENTS; tier=Intermediate; sql=src/test/sql-exercises/segments/02_intermediate.sql; test=Segments_Exercises_02_Intermediate_PersistenceIT.DEMODB_SEGMENTS_I_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SEGMENTS_I_01]]
+==== DEMODB_SEGMENTS_I_01: the prices of each fare conditions
+
+For each `fare_conditions`, find the smallest, the average, rounded to two decimals, and the largest `price`.
+Show the fare conditions and the three values, ordered by fare conditions.
+
+.`segments/02_intermediate.sql`, DEMODB_SEGMENTS_I_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT fare_conditions, MIN(price) AS cheapest, ROUND(AVG(price), 2) AS average, MAX(price) AS dearest
+FROM segments
+GROUP BY fare_conditions
+ORDER BY fare_conditions
+----
+
+....
+ fare_conditions | cheapest | average  |  dearest  
+-----------------+----------+----------+-----------
+ Business        |  3500.00 | 11826.86 | 119500.00
+ Comfort         |  2275.00 |  6422.43 |  65325.00
+ Economy         |  1750.00 |  5492.63 |  59750.00
+(3 rows)
+....
+====
+
+// AI: Pick DEMODB_SEGMENTS_I_02: Group by flight and apply a deterministic revenue limit.
+// AI: Copied from EXERCISES.asciidoc:3204, anchor DEMODB_SEGMENTS_I_02; retain the permanent ID when revising.
+// AI: Registry: section=SEGMENTS; tier=Intermediate; sql=src/test/sql-exercises/segments/02_intermediate.sql; test=Segments_Exercises_02_Intermediate_PersistenceIT.DEMODB_SEGMENTS_I_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SEGMENTS_I_02]]
+==== DEMODB_SEGMENTS_I_02: the five flights that earned the most
+
+Sum the prices of the segments of each flight, and keep the five flights with the largest sum; flights with the same sum are ordered by `flight_id`.
+Show the flight, the sum and how many segments it sums.
+
+.`segments/02_intermediate.sql`, DEMODB_SEGMENTS_I_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT flight_id, SUM(price) AS revenue, COUNT(*) AS passengers
+FROM segments
+GROUP BY flight_id
+ORDER BY revenue DESC, flight_id
+LIMIT 5
+----
+
+....
+ flight_id |   revenue   | passengers 
+-----------+-------------+------------
+     16679 | 22532100.00 |        404
+     17927 | 18808575.00 |        338
+     11358 | 15918200.00 |        404
+     11889 | 15918200.00 |        404
+     12608 | 15918200.00 |        404
+(5 rows)
+....
+====
+
+=== Advanced
+
+// AI: Advanced: selected 0 of 2 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_SEGMENTS_A_01, DEMODB_SEGMENTS_A_02.
+// AI: No pick: the available exercises add peripheral SQL, fragile assumptions, audits, or repeat lessons selected elsewhere.
+
+== boarding_passes
+
+The `boarding_passes` table, mapped by `MappedBoardingPass`: a passenger checked in to a segment, with the seat and, once boarded, the boarding number and time.
+
+=== Basic
+
+// AI: Basic: selected 2 of 3 reviewed candidates in this original scope.
+// AI: Selection boundary: Skipped boarding numbers are not necessarily missing passengers; avoid sequence-gap puzzles.
+// AI: Not selected: DEMODB_BOARDING_PASSES_B_02.
+
+// AI: Pick DEMODB_BOARDING_PASSES_B_01: Order the composite-key boarding-pass entity with explicit NULL placement.
+// AI: Copied from EXERCISES.asciidoc:3336, anchor DEMODB_BOARDING_PASSES_B_01; retain the permanent ID when revising.
+// AI: Registry: section=BOARDING_PASSES; tier=Basic; sql=src/test/sql-exercises/boarding_passes/01_basic.sql; test=BoardingPasses_Exercises_01_Basic_PersistenceIT.DEMODB_BOARDING_PASSES_B_01_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_BOARDING_PASSES_B_01]]
+==== DEMODB_BOARDING_PASSES_B_01: the boarding passes of the flight 1, in boarding order
+
+Find the boarding passes whose `flight_id` is `1`.
+Show the whole rows, ordered by `boarding_no`; a pass with no boarding number, a passenger checked in but not boarded, comes last.
+
+.`boarding_passes/01_basic.sql`, DEMODB_BOARDING_PASSES_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM boarding_passes
+WHERE flight_id = 1
+ORDER BY boarding_no NULLS LAST, ticket_no
+----
+
+....
+   ticket_no   | flight_id | seat_no | boarding_no |         boarding_time         
+---------------+-----------+---------+-------------+-------------------------------
+ 0005432486526 |         1 | 24A     |           1 | 2025-09-30 23:32:30.846267+00
+ 0005432803911 |         1 | 13C     |           2 | 2025-09-30 23:33:02.37625+00
+ 0005432498784 |         1 | 14B     |           3 | 2025-09-30 23:33:33.290931+00
+ 0005432803924 |         1 | 20A     |           4 | 2025-09-30 23:34:21.750622+00
+ 0005432533210 |         1 | 29D     |           5 | 2025-09-30 23:34:23.70731+00
+ 0005432821450 |         1 | 24D     |           6 | 2025-09-30 23:34:34.584991+00
+ 0005432099637 |         1 | 28D     |           7 | 2025-09-30 23:34:38.218385+00
+ 0005432175472 |         1 | 9B      |           8 | 2025-09-30 23:34:48.710511+00
+ 0005432928358 |         1 | 20E     |           9 | 2025-09-30 23:35:28.204127+00
+ 0005432229264 |         1 | 27B     |          10 | 2025-09-30 23:35:53.553426+00
+... 48 rows in all.
+....
+====
+
+// AI: Pick DEMODB_BOARDING_PASSES_B_03: Read boarding passes through the ticket role.
+// AI: Copied from EXERCISES.asciidoc:3393, anchor DEMODB_BOARDING_PASSES_B_03; retain the permanent ID when revising.
+// AI: Registry: section=BOARDING_PASSES; tier=Basic; sql=src/test/sql-exercises/boarding_passes/01_basic.sql; test=BoardingPasses_Exercises_01_Basic_PersistenceIT.DEMODB_BOARDING_PASSES_B_03_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_BOARDING_PASSES_B_03]]
+==== DEMODB_BOARDING_PASSES_B_03: the boarding passes of the ticket 0005432000000
+
+Find the boarding passes whose `ticket_no` is `0005432000000`.
+Show the whole rows, ordered by `flight_id`.
+
+.`boarding_passes/01_basic.sql`, DEMODB_BOARDING_PASSES_B_03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM boarding_passes
+WHERE ticket_no = '0005432000000'
+ORDER BY flight_id
+----
+
+....
+   ticket_no   | flight_id | seat_no | boarding_no |         boarding_time         
+---------------+-----------+---------+-------------+-------------------------------
+ 0005432000000 |       108 | 39F     |         343 | 2025-10-01 14:35:05.617326+00
+(1 row)
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 2 of 4 reviewed candidates in this original scope.
+// AI: Selection boundary: Skipped boarding numbers are not necessarily missing passengers; avoid sequence-gap puzzles.
+// AI: Not selected: DEMODB_BOARDING_PASSES_I_01, DEMODB_BOARDING_PASSES_I_03.
+
+// AI: Pick DEMODB_BOARDING_PASSES_I_02: An outer join tests the optional composite-key boarding-pass association.
+// AI: Copied from EXERCISES.asciidoc:3450, anchor DEMODB_BOARDING_PASSES_I_02; retain the permanent ID when revising.
+// AI: Registry: section=BOARDING_PASSES; tier=Intermediate; sql=src/test/sql-exercises/boarding_passes/02_intermediate.sql; test=BoardingPasses_Exercises_02_Intermediate_PersistenceIT.DEMODB_BOARDING_PASSES_I_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_BOARDING_PASSES_I_02]]
+==== DEMODB_BOARDING_PASSES_I_02: how many segments have no boarding pass
+
+Count the segments with no boarding pass: the passengers who did not check in, or whose flight has not departed.
+A `LEFT JOIN` on the two key columns, keeping the rows with no match.
+
+.`boarding_passes/02_intermediate.sql`, DEMODB_BOARDING_PASSES_I_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS segments
+FROM segments s
+         LEFT JOIN boarding_passes bp ON bp.ticket_no = s.ticket_no AND bp.flight_id = s.flight_id
+WHERE bp.ticket_no IS NULL
+----
+
+....
+ segments 
+----------
+  1477417
+(1 row)
+....
+====
+
+// AI: Pick DEMODB_BOARDING_PASSES_I_04: COUNT of a nullable attribute distinguishes checked-in from boarded passengers.
+// AI: Copied from EXERCISES.asciidoc:3503, anchor DEMODB_BOARDING_PASSES_I_04; retain the permanent ID when revising.
+// AI: Registry: section=BOARDING_PASSES; tier=Intermediate; sql=src/test/sql-exercises/boarding_passes/02_intermediate.sql; test=BoardingPasses_Exercises_02_Intermediate_PersistenceIT.DEMODB_BOARDING_PASSES_I_04_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_BOARDING_PASSES_I_04]]
+==== DEMODB_BOARDING_PASSES_I_04: the five arrived flights with the most passengers checked in but not boarded
+
+A boarding pass whose `boarding_no` is `NULL` is a passenger who checked in and did not board.
+For the flights that arrived, count the passes, the passengers boarded and the difference, and keep the five flights with the most left behind; flights with as many are ordered by `flight_id`.
+`COUNT(*)` counts the rows, `COUNT(column)` only those where the column is not `NULL`.
+
+.`boarding_passes/02_intermediate.sql`, DEMODB_BOARDING_PASSES_I_04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT bp.flight_id,
+       COUNT(*)                         AS checked_in,
+       COUNT(bp.boarding_no)            AS boarded,
+       COUNT(*) - COUNT(bp.boarding_no) AS not_boarded
+FROM boarding_passes bp
+         JOIN flights f ON f.flight_id = bp.flight_id
+WHERE f.status = 'Arrived'
+GROUP BY bp.flight_id
+HAVING COUNT(*) > COUNT(bp.boarding_no)
+ORDER BY not_boarded DESC, bp.flight_id
+LIMIT 5
+----
+
+....
+ flight_id | checked_in | boarded | not_boarded 
+-----------+------------+---------+-------------
+      8953 |        247 |      65 |         182
+      9761 |        404 |     248 |         156
+      1607 |        200 |      87 |         113
+     10471 |        257 |     183 |          74
+      8988 |        371 |     318 |          53
+(5 rows)
+....
+====
+
+=== Advanced
+
+// AI: Advanced: selected 0 of 2 reviewed candidates in this original scope.
+// AI: Selection boundary: Skipped boarding numbers are not necessarily missing passengers; avoid sequence-gap puzzles.
+// AI: Not selected: DEMODB_BOARDING_PASSES_A_01, DEMODB_BOARDING_PASSES_A_02.
+// AI: No pick: the available exercises add peripheral SQL, fragile assumptions, audits, or repeat lessons selected elsewhere.
+
+== The schema
+
+Exercises on the schema as a whole, not on a single table.
+
+=== Basic
+
+// AI: Basic: selected 1 of 6 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_SCHEMA_B_01, DEMODB_SCHEMA_B_02, DEMODB_SCHEMA_B_03, DEMODB_SCHEMA_B_04, DEMODB_SCHEMA_B_05.
+
+// AI: Pick DEMODB_SCHEMA_B_06: Join segments to their flight and filter by status.
+// AI: Copied from EXERCISES.asciidoc:3772, anchor DEMODB_SCHEMA_B_06; retain the permanent ID when revising.
+// AI: Registry: section=SCHEMA; tier=Basic; sql=src/test/sql-exercises/__/01_basic.sql; test=___Exercises_01_Basic_PersistenceIT.DEMODB_SCHEMA_B_06_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SCHEMA_B_06]]
+==== DEMODB_SCHEMA_B_06: the sold segments of the cancelled flights
+
+Count the sold segments, the seats sold to a passenger, of the flights whose status is `Cancelled`.
+
+.`__/01_basic.sql`, DEMODB_SCHEMA_B_06
+[%collapsible]
+====
+[source,sql]
+----
+SELECT COUNT(*) AS affected_segments
+FROM segments s
+         JOIN flights f ON f.flight_id = s.flight_id
+WHERE f.status = 'Cancelled'
+----
+
+....
+ affected_segments 
+-------------------
+                 0
+(1 row)
+....
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 3 of 10 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_SCHEMA_I_01, DEMODB_SCHEMA_I_04, DEMODB_SCHEMA_I_05, DEMODB_SCHEMA_I_06, DEMODB_SCHEMA_I_07, DEMODB_SCHEMA_I_08, DEMODB_SCHEMA_I_09.
+
+// AI: Pick DEMODB_SCHEMA_I_02: Navigate from boarding passes through flights and routes to airports.
+// AI: Copied from EXERCISES.asciidoc:3830, anchor DEMODB_SCHEMA_I_02; retain the permanent ID when revising.
+// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_02_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SCHEMA_I_02]]
+==== DEMODB_SCHEMA_I_02: the ten airports with the most passengers boarded in the first week
+
+For the flights scheduled in the first seven days from 2025-10-01, count the passengers boarded, the boarding passes with a boarding number, by the departure airport of the flight's route, and keep the ten airports with the most.
+Show the code, the name and the count, the most first; airports with the same count are ordered by code.
+Four tables: `boarding_passes`, `flights`, `routes` on a range containment, and the `airports` view for the name.
+
+.`__/02_intermediate.sql`, DEMODB_SCHEMA_I_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.airport_code, a.airport_name, COUNT(*) AS boarded
+FROM boarding_passes bp
+         JOIN flights f ON f.flight_id = bp.flight_id
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+         JOIN airports a ON a.airport_code = r.departure_airport
+WHERE f.scheduled_departure >= TIMESTAMPTZ '2025-10-01 00:00:00+00'
+  AND f.scheduled_departure < TIMESTAMPTZ '2025-10-08 00:00:00+00'
+  AND bp.boarding_no IS NOT NULL
+GROUP BY a.airport_code, a.airport_name
+ORDER BY boarded DESC, a.airport_code
+LIMIT 10
+----
+
+....
+ airport_code |    airport_name     | boarded 
+--------------+---------------------+---------
+ PVG          | Pudong              |   11468
+ ATL          | Hartsfield-Jackson  |   10666
+ DEL          | Indira Gandhi       |    9578
+ BOM          | Chhatrapati Shivaji |    8977
+ SHA          | Hongqiao            |    7979
+ SZX          | Bao'an              |    7743
+ TFU          | Tianfu              |    7653
+ FRA          | Frankfurt am Main   |    6932
+ HND          | Haneda              |    6743
+ CAN          | Baiyun              |    6668
+(10 rows)
+....
+====
+
+// AI: Pick DEMODB_SCHEMA_I_03: Aggregate revenue across the mapped flight-route-airplane chain.
+// AI: Copied from EXERCISES.asciidoc:3872, anchor DEMODB_SCHEMA_I_03; retain the permanent ID when revising.
+// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_03_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SCHEMA_I_03]]
+==== DEMODB_SCHEMA_I_03: the money each airplane model took
+
+Join the segments to their flights, each flight to its route's row valid at the scheduled departure, and that to the airplane; sum the prices per airplane.
+Show the code, the model and the sum, the most first; airplanes with the same sum are ordered by code.
+
+.`__/02_intermediate.sql`, DEMODB_SCHEMA_I_03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT a.airplane_code, a.model, SUM(s.price) AS revenue
+FROM segments s
+         JOIN flights f ON f.flight_id = s.flight_id
+         JOIN routes r ON r.route_no = f.route_no AND r.validity @> f.scheduled_departure
+         JOIN airplanes a ON a.airplane_code = r.airplane_code
+GROUP BY a.airplane_code, a.model
+ORDER BY revenue DESC, a.airplane_code
+----
+
+....
+ airplane_code |          model          |    revenue    
+---------------+-------------------------+---------------
+ 77W           | Boeing 777-300ER        | 7669794850.00
+ 789           | Boeing 787-9 Dreamliner | 5208898700.00
+ 7M7           | Boeing 737 MAX 7        | 3421118000.00
+ 351           | Airbus A350-1000        | 3288182250.00
+ 339           | Airbus A330-900neo      | 2231027150.00
+ E70           | Embraer E170            | 1303822500.00
+ CR7           | Bombardier CRJ700       |  814050375.00
+ 32N           | Airbus A320neo          |  637037750.00
+(8 rows)
+....
+====
+
+// AI: Pick DEMODB_SCHEMA_I_10: Match the outbound and return roles through booking and ticket entities.
+// AI: Copied from EXERCISES.asciidoc:4122, anchor DEMODB_SCHEMA_I_10; retain the permanent ID when revising.
+// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_10_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SCHEMA_I_10]]
+==== DEMODB_SCHEMA_I_10: the outbound and return tickets of one passenger in one booking
+
+A booking may hold, for one passenger, an outbound and a return ticket.
+List the passengers with both in the same booking: the booking, its date, the `passenger_id` and the two ticket numbers, ordered by booking and `passenger_id`.
+
+.`__/02_intermediate.sql`, DEMODB_SCHEMA_I_10
+[%collapsible]
+====
+[source,sql]
+----
+SELECT b.book_ref,
+       b.book_date,
+       o.passenger_id,
+       o.ticket_no AS outbound_ticket,
+       i.ticket_no AS return_ticket
+FROM bookings b
+         JOIN tickets o ON o.book_ref = b.book_ref AND o.outbound
+         JOIN tickets i ON i.book_ref = o.book_ref AND i.passenger_id = o.passenger_id AND NOT i.outbound
+ORDER BY b.book_ref, o.passenger_id
+----
+
+....
+ book_ref |           book_date           |   passenger_id   | outbound_ticket | return_ticket 
+----------+-------------------------------+------------------+-----------------+---------------
+ 0000EG   | 2025-11-16 21:21:48.411495+00 | CA 1985281597520 | 0005434564147   | 0005434564152
+ 00040W   | 2025-10-13 09:50:50.314587+00 | IN 2849974177127 | 0005433488169   | 0005433488174
+ 000562   | 2025-09-11 10:21:54.084444+00 | CN 8124086130640 | 0005432379163   | 0005432379166
+ 000562   | 2025-09-11 10:21:54.084444+00 | CN 8278780386895 | 0005432379152   | 0005432379162
+ 000AB9   | 2025-09-14 09:38:24.862062+00 | FR 9136453193331 | 0005432484130   | 0005432484139
+ 000CTL   | 2025-09-12 03:00:50.050639+00 | CA 1858375121919 | 0005432403569   | 0005432403579
+ 000CTL   | 2025-09-12 03:00:50.050639+00 | CA 4214750109906 | 0005432403583   | 0005432403584
+ 000FHR   | 2025-09-20 01:23:24.977241+00 | US 6852803198732 | 0005432684628   | 0005432684637
+ 000J03   | 2025-09-21 10:36:16.247585+00 | DE 5115949846908 | 0005432733791   | 0005432733800
+ 000J03   | 2025-09-21 10:36:16.247585+00 | DE 9841850206654 | 0005432733806   | 0005432733808
+... 1168851 rows in all.
+....
+====
+
+=== Advanced
+
+// AI: Advanced: selected 1 of 6 reviewed candidates in this original scope.
+// AI: Not selected: DEMODB_SCHEMA_A_01, DEMODB_SCHEMA_A_02, DEMODB_SCHEMA_A_03, DEMODB_SCHEMA_A_04, DEMODB_SCHEMA_A_05.
+
+// AI: Pick DEMODB_SCHEMA_A_06: A LEFT JOIN over the composite key identifies passengers still to board.
+// AI: Copied from EXERCISES.asciidoc:4348, anchor DEMODB_SCHEMA_A_06; retain the permanent ID when revising.
+// AI: Registry: section=SCHEMA; tier=Advanced; sql=src/test/sql-exercises/__/03_advanced.sql; test=___Exercises_03_Advanced_PersistenceIT.DEMODB_SCHEMA_A_06_Test.
+// AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
+[[DEMODB_SCHEMA_A_06]]
+==== DEMODB_SCHEMA_A_06: the passengers still to board the flights now boarding
+
+For the flights whose status is `Boarding`, list the sold segments whose passenger has no boarding time yet, those with no boarding pass included.
+Show the flight, the ticket, the passenger's name, the seat and the boarding number, ordered by flight and ticket.
+
+.`__/03_advanced.sql`, DEMODB_SCHEMA_A_06
+[%collapsible]
+====
+[source,sql]
+----
+SELECT f.flight_id, s.ticket_no, t.passenger_name, bp.seat_no, bp.boarding_no
+FROM flights f
+         JOIN segments s ON s.flight_id = f.flight_id
+         JOIN tickets t ON t.ticket_no = s.ticket_no
+         LEFT JOIN boarding_passes bp ON bp.ticket_no = s.ticket_no AND bp.flight_id = s.flight_id
+WHERE f.status = 'Boarding'
+  AND bp.boarding_time IS NULL
+ORDER BY f.flight_id, s.ticket_no
+----
+
+....
+ flight_id |   ticket_no   |    passenger_name    | seat_no | boarding_no 
+-----------+---------------+----------------------+---------+-------------
+     11048 | 0005433234672 | Kamla Reddy          | 15F     |            
+     11048 | 0005433296114 | Amrita Verma         | 50D     |            
+     11048 | 0005433317257 | Laxmi Gupta          | 19K     |            
+     11048 | 0005433325245 | Sheetal Kumar        | 15D     |            
+     11048 | 0005433337233 | Rajakumari Saha      | 34K     |            
+     11048 | 0005433337242 | Ramesh Padhi         | 46J     |            
+     11048 | 0005433337249 | Chhotelal Bahadur    | 12G     |            
+     11048 | 0005433339085 | Reshma Basumatary    | 46C     |            
+     11048 | 0005433354525 | Manisha Mondal       | 30D     |            
+     11048 | 0005433354539 | Ramdas Bairagi       | 46K     |            
+... 240 rows in all.
+....
+====
+
