@@ -57,24 +57,28 @@ public class Route
 
     /**
      * Creates a new instance with the specified identifier, from the specified airport of departure
-     * to the specified airport of arrival.
+     * to the specified airport of arrival, flown by the specified airplane.
      * <p>
-     * This is the only way to set the two airports from outside the package. A route number names
-     * the way between two airports, and neither changes; another way takes another route. The
-     * airplane may change, and is set with {@link #setAirplaneData(AirplaneData)}.
+     * This is the only way to set the two airports and the airplane from outside the package. A
+     * route number names the way between two airports, and neither changes; another way takes
+     * another route. The airplane of a route number does change, from one period of validity to
+     * the next, but as another row, of another period: a row is what was valid for its period, and
+     * the flights of the period, and their seats, are the airplane's.
      *
      * @param id                   a value for the identifier.
      * @param departureAirportData a value for the departureAirportData.
      * @param arrivalAirportData   a value for the arrivalAirportData.
-     * @return a new instance of {@code id}, {@code departureAirportData} and
-     *         {@code arrivalAirportData}.
+     * @param airplaneData         a value for the airplaneData.
+     * @return a new instance of {@code id}, {@code departureAirportData},
+     *         {@code arrivalAirportData} and {@code airplaneData}.
      */
     public static Route of(final RouteId id, final AirportData departureAirportData,
-                           final AirportData arrivalAirportData) {
+                           final AirportData arrivalAirportData, final AirplaneData airplaneData) {
         final var instance = new Route();
         instance.setId(id);
         instance.setDepartureAirportData(departureAirportData);
         instance.setArrivalAirportData(arrivalAirportData);
+        instance.setAirplaneData(airplaneData);
         return instance;
     }
 
@@ -107,8 +111,8 @@ public class Route
      * @param departureAirportData new value for the departureAirportData; {@code null} clears the
      *                             code too.
      * @apiNote This method is package-private;
-     *         {@link #of(RouteId, AirportData, AirportData)} sets the departureAirportData from
-     *         outside the package.
+     *         {@link #of(RouteId, AirportData, AirportData, AirplaneData)} sets the
+     *         departureAirportData from outside the package.
      */
     void setDepartureAirportData(final AirportData departureAirportData) {
         this.departureAirportData = departureAirportData;
@@ -139,8 +143,8 @@ public class Route
      * @param arrivalAirportData new value for the arrivalAirportData; {@code null} clears the code
      *                           too.
      * @apiNote This method is package-private;
-     *         {@link #of(RouteId, AirportData, AirportData)} sets the arrivalAirportData from
-     *         outside the package.
+     *         {@link #of(RouteId, AirportData, AirportData, AirplaneData)} sets the
+     *         arrivalAirportData from outside the package.
      */
     void setArrivalAirportData(final AirportData arrivalAirportData) {
         this.arrivalAirportData = arrivalAirportData;
@@ -165,13 +169,13 @@ public class Route
      * Replaces the airplaneData with the specified value, and the inherited, read-only attribute
      * over the {@value MappedRoute#COLUMN_NAME_AIRPLANE_CODE} column with its airplane code, which
      * is what this association writes.
-     * <p>
-     * The airplane may change, as another airplane comes to fly the route; this is why the setter
-     * is public.
      *
      * @param airplaneData new value for the airplaneData; {@code null} clears the code too.
+     * @apiNote This method is package-private;
+     *         {@link #of(RouteId, AirportData, AirportData, AirplaneData)} sets the airplaneData
+     *         from outside the package.
      */
-    public void setAirplaneData(final AirplaneData airplaneData) {
+    void setAirplaneData(final AirplaneData airplaneData) {
         this.airplaneData = airplaneData;
         setAirplaneCode(
                 Optional.ofNullable(airplaneData)
@@ -195,6 +199,6 @@ public class Route
     // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = COLUMN_NAME_AIRPLANE_CODE, nullable = false, insertable = true,
-                updatable = true)
+                updatable = false)
     private AirplaneData airplaneData;
 }

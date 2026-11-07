@@ -50,16 +50,16 @@ class Route_Test
     // ---------------------------------------------------------------------------------------------
 
     /**
-     * Tests {@link Route#of(RouteId, AirportData, AirportData)}.
+     * Tests {@link Route#of(RouteId, AirportData, AirportData, AirplaneData)}.
      */
-    @DisplayName("of(id, departureAirportData, arrivalAirportData)")
+    @DisplayName("of(id, departureAirportData, arrivalAirportData, airplaneData)")
     @Nested
     class OfTest {
 
         /**
-         * Verifies that {@link Route#of(RouteId, AirportData, AirportData) of} returns an instance
-         * whose airports are the very instances it was given, whose read-only codes are theirs, and
-         * whose airplane is left {@code null}.
+         * Verifies that {@link Route#of(RouteId, AirportData, AirportData, AirplaneData) of}
+         * returns an instance whose airports and airplane are the very instances it was given, and
+         * whose read-only codes are theirs.
          */
         @Test
         void __() {
@@ -68,15 +68,17 @@ class Route_Test
             doReturn("DME").when(departure).getAirportCode();
             final var arrival = mock(AirportData.class);
             doReturn("LED").when(arrival).getAirportCode();
-            final var instance = Route.of(id, departure, arrival);
+            final var airplane = mock(AirplaneData.class);
+            doReturn("773").when(airplane).getAirplaneCode();
+            final var instance = Route.of(id, departure, arrival, airplane);
             assertThat(instance).isNotNull().satisfies(v -> {
                 assertThat(v.getId()).isSameAs(id);
                 assertThat(v.getDepartureAirportData()).isSameAs(departure);
                 assertThat(v.getDepartureAirport()).isEqualTo("DME");
                 assertThat(v.getArrivalAirportData()).isSameAs(arrival);
                 assertThat(v.getArrivalAirport()).isEqualTo("LED");
-                assertThat(v.getAirplaneData()).isNull();
-                assertThat(v.getAirplaneCode()).isNull();
+                assertThat(v.getAirplaneData()).isSameAs(airplane);
+                assertThat(v.getAirplaneCode()).isEqualTo("773");
             });
         }
     }
