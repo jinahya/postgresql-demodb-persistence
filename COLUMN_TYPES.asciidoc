@@ -1,0 +1,254 @@
+= Column Types
+:docs: https://www.postgresql.org/docs/18
+:data-types: {docs}/datatype.html
+
+////
+AI: how this file is made -- as oracle-sample-schemas-persistence's COLUMN_TYPES.asciidoc says, for PostgreSQL.
+
+* Scope: every column of every table of the schema `bookings` of the database `demo`; a view adds no type of its
+  own, and is covered by the last section, Views.
+* Sections: those of the chapter Data Types of the PostgreSQL 18 documentation, in its order (Numeric, Character,
+  Date/Time, Boolean, Geometric, JSON, Arrays, Range, ...), one per type used; each section links its page.
+* Each declared type is listed as the catalog reports it (`format_type` of `pg_attribute`), length and all
+  (`character(3)`, `numeric(10,2)`), with its identity (`GENERATED ALWAYS AS IDENTITY`). One row per declared type
+  and Java type, linked to its page.
+* Columns: Declared as | Java type | Count | Columns; each column as `table.column`; the counts add up to the
+  columns stated in the introduction.
+* Java type: the type of the attribute which maps the column in the `Mapped*` classes, including the `Mapped*Id`
+  classes of the composite keys: `java.time` for the date/time types, a wrapper type, never a primitive.
+* Take the types from the live database's catalog, never from memory.
+* Name the types of the reference which no column uses, in the introduction.
+* End the file with two newlines.
+////
+
+Every column type the tables of `bookings` declare, grouped by the sections of link:{data-types}[Data Types] in the
+PostgreSQL 18 documentation. Each type is listed as the catalog (`pg_attribute`, `format_type`) reports it, and each
+column as `table.column`; 45 columns of 9 tables in all. The views are left out; see <<views>>.
+
+The Java type is the type of the attribute which maps the column in the `Mapped*` classes, the wrapper types, never
+a primitive, and `java.time` for the date/time types. A column whose type is not the usual one for its declared
+type is named in the section's notes; each foreign-key column has its key's type.
+
+No column is `smallint`, `bigint`, `real`, `double precision`, a `serial`, `money`, `character varying`, `bytea`,
+`date`, `timestamp without time zone`, `time with time zone`, an enumerated type, a geometric type other than
+`point`, a network address type, a bit string, a text search type, `uuid`, `xml`, `json`, a composite type, a range
+type other than `tstzrange`, a multirange or a domain.
+
+== Numeric Types
+
+See link:{docs}/datatype-numeric.html[Numeric Types].
+
+`integer` is an `Integer`, and `numeric` a `BigDecimal`. `flights.flight_id` is an identity column,
+`GENERATED ALWAYS`; `MappedFlight.flightId` is `@GeneratedValue(strategy = IDENTITY)`.
+
+[cols="2,2,1,6",options="header"]
+|===
+| Declared as | Java type | Count | Columns
+
+| link:{docs}/datatype-numeric.html#DATATYPE-INT[`integer`]
+| `Integer`
+| 5
+| `airplanes_data.range`, `airplanes_data.speed`, `boarding_passes.flight_id`, `boarding_passes.boarding_no`, `segments.flight_id`
+
+| link:{docs}/datatype-numeric.html#DATATYPE-INT[`integer GENERATED ALWAYS AS IDENTITY`]
+| `Integer`
+| 1
+| `flights.flight_id`
+
+| link:{docs}/datatype-numeric.html#DATATYPE-NUMERIC-DECIMAL[`numeric(10,2)`]
+| `BigDecimal`
+| 2
+| `bookings.total_amount`, `segments.price`
+
+|===
+
+== Character Types
+
+See link:{docs}/datatype-character.html[Character Types].
+
+`character(n)` is blank-padded to its length, but every code here fills it: the airport and airplane codes are
+three characters, and a booking's `book_ref` six. `text` has no length.
+
+Four `text` columns are other types through converters: `flights.status` a `MappedFlight.FlightStatus`,
+`seats.fare_conditions` and `segments.fare_conditions` a `MappedSeat.FareConditions`, each checked against a list of
+values (see link:ATTRIBUTE_MAPPINGS.asciidoc#enums[Enums]), and `airports_data.timezone` a `ZoneId`.
+
+[cols="2,2,1,6",options="header"]
+|===
+| Declared as | Java type | Count | Columns
+
+| link:{docs}/datatype-character.html[`character(3)`]
+| `String`
+| 6
+| `airplanes_data.airplane_code`, `airports_data.airport_code`, `routes.departure_airport`, `routes.arrival_airport`, `routes.airplane_code`, `seats.airplane_code`
+
+| link:{docs}/datatype-character.html[`character(6)`]
+| `String`
+| 2
+| `bookings.book_ref`, `tickets.book_ref`
+
+| link:{docs}/datatype-character.html[`text`]
+| `FareConditions`
+| 2
+| `seats.fare_conditions`, `segments.fare_conditions`
+
+| link:{docs}/datatype-character.html[`text`]
+| `FlightStatus`
+| 1
+| `flights.status`
+
+| link:{docs}/datatype-character.html[`text`]
+| `String`
+| 9
+| `boarding_passes.ticket_no`, `boarding_passes.seat_no`, `flights.route_no`, `routes.route_no`, `seats.seat_no`, `segments.ticket_no`, `tickets.ticket_no`, `tickets.passenger_id`, `tickets.passenger_name`
+
+| link:{docs}/datatype-character.html[`text`]
+| `ZoneId`
+| 1
+| `airports_data.timezone`
+
+|===
+
+== Date/Time Types
+
+See link:{docs}/datatype-datetime.html[Date/Time Types].
+
+`timestamp with time zone` holds an instant, which the server prints in the session's time zone, and is an
+`Instant`. `time without time zone` is a `LocalTime`. `interval` is a `Duration`, which Hibernate ORM binds and reads
+as an interval for its `@JdbcTypeCode(SqlTypes.INTERVAL_SECOND)`; a `Duration` has no months, and
+`routes.duration` holds hours and minutes.
+
+[cols="2,2,1,6",options="header"]
+|===
+| Declared as | Java type | Count | Columns
+
+| link:{docs}/datatype-datetime.html[`timestamp with time zone`]
+| `Instant`
+| 6
+| `boarding_passes.boarding_time`, `bookings.book_date`, `flights.scheduled_departure`, `flights.scheduled_arrival`, `flights.actual_departure`, `flights.actual_arrival`
+
+| link:{docs}/datatype-datetime.html[`time without time zone`]
+| `LocalTime`
+| 1
+| `routes.scheduled_time`
+
+| link:{docs}/datatype-datetime.html#DATATYPE-INTERVAL-INPUT[`interval`]
+| `Duration`
+| 1
+| `routes.duration`
+
+|===
+
+== Boolean Type
+
+See link:{docs}/datatype-boolean.html[Boolean Type].
+
+[cols="2,2,1,6",options="header"]
+|===
+| Declared as | Java type | Count | Columns
+
+| link:{docs}/datatype-boolean.html[`boolean`]
+| `Boolean`
+| 1
+| `tickets.outbound`
+
+|===
+
+== Geometric Types
+
+See link:{docs}/datatype-geometric.html[Geometric Types].
+
+`point` holds two `float8` coordinates with no SRID; `airports_data.coordinates` is a geolocation, the longitude as
+`x` and the latitude as `y`. It is a `List<Double>`, `[x, y]`, through `PointAttributeConverter`, which reads and
+writes the text `(x,y)`.
+
+[cols="2,2,1,6",options="header"]
+|===
+| Declared as | Java type | Count | Columns
+
+| link:{docs}/datatype-geometric.html#DATATYPE-GEOMETRIC-POINTS[`point`]
+| `List<Double>`
+| 1
+| `airports_data.coordinates`
+
+|===
+
+== JSON Types
+
+See link:{docs}/datatype-json.html[JSON Types].
+
+Every `jsonb` column holds a name per language, an object keyed by language (`{"en": "Anaa", "ru": "Анаа"}`), and
+each is read through `jinahya-persistence-more`'s `JsonpAttributeConverter.OfString.OfJsonObject`, directly or
+inside a converter of the module; the same shape is three Java types. See
+link:ATTRIBUTE_MAPPINGS.asciidoc#json[JSON].
+
+[cols="2,2,1,6",options="header"]
+|===
+| Declared as | Java type | Count | Columns
+
+| link:{docs}/datatype-json.html[`jsonb`]
+| `JsonObject`
+| 2
+| `airplanes_data.model`, `airports_data.airport_name`
+
+| link:{docs}/datatype-json.html[`jsonb`]
+| `List<LocaleName>`
+| 1
+| `airports_data.country`
+
+| link:{docs}/datatype-json.html[`jsonb`]
+| `Map<Locale, String>`
+| 1
+| `airports_data.city`
+
+|===
+
+== Arrays
+
+See link:{docs}/arrays.html[Arrays].
+
+`routes.days_of_week` is an `integer[]`, the days of the week a route flies (1 to 7, Monday first), mapped as a
+`List<Integer>` which Hibernate ORM binds and reads as an array for its `@JdbcTypeCode(SqlTypes.ARRAY)`.
+
+[cols="2,2,1,6",options="header"]
+|===
+| Declared as | Java type | Count | Columns
+
+| link:{docs}/arrays.html[`integer[]`]
+| `List<Integer>`
+| 1
+| `routes.days_of_week`
+
+|===
+
+== Range Types
+
+See link:{docs}/rangetypes.html[Range Types].
+
+`routes.validity` is the period a route is valid, `[lower,upper)`; with `route_no` it is the key of `routes`, which
+has no primary key but the exclusion constraint `routes_route_no_validity_excl`. It is an `Instant[]` of its two
+bounds through `MappedRouteId.ValidityConverter`, which reads and writes the range's text.
+
+[cols="2,2,1,6",options="header"]
+|===
+| Declared as | Java type | Count | Columns
+
+| link:{docs}/rangetypes.html#RANGETYPES-BUILTIN[`tstzrange`]
+| `Instant[]`
+| 1
+| `routes.validity`
+
+|===
+
+[[views]]
+== Views
+
+A view's columns take the types of the expressions which select them:
+
+* `airplanes.model`, and `airports.airport_name`, `city` and `country`, are `text`: each is the name in the
+  language of `bookings.lang()` (`jsonb ->> lang()`), which the session setting `bookings.lang` chooses (`en` by
+  default).
+* `timetable`'s four `*_local` columns are `timestamp without time zone`, the instants `AT TIME ZONE` the airport's
+  `timezone`; they are `LocalDateTime`s.
+* Every other view column is a table column, and has its type.
+

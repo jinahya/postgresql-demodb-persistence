@@ -1,0 +1,289 @@
+= Attribute Mappings
+:docs: https://www.postgresql.org/docs/18
+:data-types: {docs}/datatype.html
+
+////
+AI: how this file is made -- as oracle-sample-schemas-persistence's ATTRIBUTE_MAPPINGS.asciidoc says, for
+PostgreSQL.
+
+* Scope: every attribute which maps a column -- each field carrying `@Column` in the main `Mapped*` classes,
+  including the `Mapped*Id` classes of the composite keys, which a subclass makes `@Embeddable` -- over every table
+  and view of the schema `bookings`. `MappedBoardingPassId` extends `MappedSegmentId`, and maps the same columns of
+  `boarding_passes`.
+* Column type: `INFORMATION_SCHEMA.COLUMNS.DATA_TYPE` of the live database, never from memory, without the length;
+  an array as its element type with `[]` (`integer[]`), a user-defined type by its name (`point`, `tstzrange`).
+* Attribute type: the field's declared type, without its type-use annotations. Converter: `@Convert(<converter>)`,
+  `@Enumerated(<type>)`, `@Lob`, or `-`.
+* One row per distinct (column type, attribute type, converter), with the count and every attribute as
+  `table.column`; the counts add up to all the attributes.
+* Resolve a column name through the constants, including one defined as another class's constant
+  (`MappedRoute.COLUMN_NAME_VALIDITY`).
+* Check the coverage: every column of every mapped table and view has an attribute; report what has none, and the
+  tables and views not mapped at all.
+* Note each row: what the columns are, and anything inconsistent (a column whose attribute type differs from the
+  others of its kind, a foreign key whose type is not its key's). Report an inconsistency here; do not change the
+  code.
+* Link each column type to the PostgreSQL documentation; see COLUMN_TYPES.asciidoc.
+* The sections after the table describe the rows which are more than a basic attribute.
+* End the file with two newlines.
+////
+
+Every attribute of `bookings` which maps a column, grouped by its column type, its attribute type and its
+converter: 69 attributes over the 9 tables and 3 views mapped (45 of tables, 24 of views). The column type is
+`INFORMATION_SCHEMA.COLUMNS`', without the length; for the declared types, see
+link:COLUMN_TYPES.asciidoc[Column Types]. Every table and view of `bookings` is mapped, and every column of each has
+exactly one attribute.
+
+No column is `bytea`, `uuid`, `xml`, `json`, an enumerated type or a domain, and no attribute is `@Lob` or
+`@Enumerated`.
+
+Each foreign-key column has an attribute of its key's type. `flights.route_no` refers to `routes` by no foreign
+key: `routes` has no primary key, and a flight's route is the row whose `validity` holds its
+`scheduled_departure`, as `timetable` joins them.
+
+== Mapping kinds
+
+[cols="2,2,3,1,4,6",options="header"]
+|===
+| Column type | Attribute type | Converter | Count | Note | Attributes
+
+| link:{docs}/datatype-numeric.html#DATATYPE-INT[`integer`]
+| `Integer`
+| -
+| 9
+| `flights.flight_id`, an identity column, its copies, and `range`, `speed`, `boarding_no`.
+| `airplanes.range`, `airplanes.speed`, `airplanes_data.range`, `airplanes_data.speed`, `boarding_passes.boarding_no`, `boarding_passes.flight_id`, `flights.flight_id`, `segments.flight_id`, `timetable.flight_id`
+
+| link:{docs}/datatype-numeric.html#DATATYPE-NUMERIC-DECIMAL[`numeric`]
+| `BigDecimal`
+| -
+| 2
+| `numeric(10,2)`.
+| `bookings.total_amount`, `segments.price`
+
+| link:{docs}/datatype-character.html[`character`]
+| `String`
+| -
+| 13
+| `character(3)` codes and `character(6)` booking references, which fill the length.
+| `airplanes.airplane_code`, `airplanes_data.airplane_code`, `airports.airport_code`, `airports_data.airport_code`, `bookings.book_ref`, `routes.airplane_code`, `routes.arrival_airport`, `routes.departure_airport`, `seats.airplane_code`, `tickets.book_ref`, `timetable.airplane_code`, `timetable.arrival_airport`, `timetable.departure_airport`
+
+| link:{docs}/datatype-character.html[`text`]
+| `String`
+| -
+| 14
+| The views' names (`jsonb ->> lang()`) are `text`.
+| `airplanes.model`, `airports.airport_name`, `airports.city`, `airports.country`, `boarding_passes.seat_no`, `boarding_passes.ticket_no`, `flights.route_no`, `routes.route_no`, `seats.seat_no`, `segments.ticket_no`, `tickets.passenger_id`, `tickets.passenger_name`, `tickets.ticket_no`, `timetable.route_no`
+
+| link:{docs}/datatype-character.html[`text`]
+| `FareConditions`
+| `@Convert(FareConditionsConverter)`
+| 2
+| A nested `@Converter` of `MappedSeat`, which `MappedSegment` uses too; see <<enums>>.
+| `seats.fare_conditions`, `segments.fare_conditions`
+
+| link:{docs}/datatype-character.html[`text`]
+| `FlightStatus`
+| `@Convert(FlightStatusConverter)`
+| 2
+| See <<enums>>.
+| `flights.status`, `timetable.status`
+
+| link:{docs}/datatype-character.html[`text`]
+| `ZoneId`
+| `@Convert(ZoneIdStringAttributeConverter)`
+| 2
+| See <<converters>>.
+| `airports.timezone`, `airports_data.timezone`
+
+| link:{docs}/datatype-datetime.html[`timestamp with time zone`]
+| `Instant`
+| -
+| 10
+|
+| `boarding_passes.boarding_time`, `bookings.book_date`, `flights.actual_arrival`, `flights.actual_departure`, `flights.scheduled_arrival`, `flights.scheduled_departure`, `timetable.actual_arrival`, `timetable.actual_departure`, `timetable.scheduled_arrival`, `timetable.scheduled_departure`
+
+| link:{docs}/datatype-datetime.html[`timestamp without time zone`]
+| `LocalDateTime`
+| -
+| 4
+| `timetable`'s `*_local`, `AT TIME ZONE` the airport's time zone.
+| `timetable.actual_arrival_local`, `timetable.actual_departure_local`, `timetable.scheduled_arrival_local`, `timetable.scheduled_departure_local`
+
+| link:{docs}/datatype-datetime.html[`time without time zone`]
+| `LocalTime`
+| -
+| 1
+|
+| `routes.scheduled_time`
+
+| link:{docs}/datatype-datetime.html#DATATYPE-INTERVAL-INPUT[`interval`]
+| `Duration`
+| -
+| 1
+| Hibernate ORM's `@JdbcTypeCode(SqlTypes.INTERVAL_SECOND)`.
+| `routes.duration`
+
+| link:{docs}/datatype-boolean.html[`boolean`]
+| `Boolean`
+| -
+| 1
+|
+| `tickets.outbound`
+
+| link:{docs}/datatype-geometric.html#DATATYPE-GEOMETRIC-POINTS[`point`]
+| `List<Double>`
+| `@Convert(PointAttributeConverter)`
+| 2
+| See <<converters>>.
+| `airports.coordinates`, `airports_data.coordinates`
+
+| link:{docs}/datatype-json.html[`jsonb`]
+| `JsonObject`
+| `@Convert(OfJsonObject)`
+| 2
+| `JsonpAttributeConverter.OfString.OfJsonObject`; see <<json>>.
+| `airplanes_data.model`, `airports_data.airport_name`
+
+| link:{docs}/datatype-json.html[`jsonb`]
+| `List<LocaleName>`
+| `@Convert(LocaleNameListAttributeConverter)`
+| 1
+| See <<json>>.
+| `airports_data.country`
+
+| link:{docs}/datatype-json.html[`jsonb`]
+| `Map<Locale, String>`
+| `@Convert(LocaleStringMapAttributeConverter)`
+| 1
+| See <<json>>.
+| `airports_data.city`
+
+| link:{docs}/arrays.html[`integer[]`]
+| `List<Integer>`
+| -
+| 1
+| Hibernate ORM's `@JdbcTypeCode(SqlTypes.ARRAY)`.
+| `routes.days_of_week`
+
+| link:{docs}/rangetypes.html#RANGETYPES-BUILTIN[`tstzrange`]
+| `Instant[]`
+| `@Convert(ValidityConverter)`
+| 1
+| An attribute of the `@EmbeddedId`; see <<converters>>.
+| `routes.validity`
+
+|===
+
+The `jsonb` rows are inconsistent: `airports_data.airport_name`, `city` and `country`, and `airplanes_data.model`,
+hold the same shape, a name per language, but are three Java types; see <<json>>.
+
+[[composite-keys]]
+== Composite keys
+
+The four tables of composite keys map them in `@EmbeddedId`s of a type variable, `T`, which a subclass of the
+`Mapped*Id` class binds; their attributes are among the rows above.
+
+[cols="2,3,5",options="header"]
+|===
+| Table | Key class | Columns
+
+| `routes` | `MappedRouteId` | `route_no`, `validity`
+| `seats` | `MappedSeatId` | `airplane_code`, `seat_no`
+| `segments` | `MappedSegmentId` | `ticket_no`, `flight_id`
+| `boarding_passes` | `MappedBoardingPassId`, which extends `MappedSegmentId` | `ticket_no`, `flight_id`
+
+|===
+
+The specification has neither an attribute of a type variable nor `@Convert` on an attribute of an identifier, so
+`MappedRoute` and `MappedRouteId`'s `validity` are not portable; the module's javadoc says Hibernate ORM maps both.
+
+[[json]]
+== JSON
+
+`airplanes_data.model` and `airports_data.airport_name`, `city` and `country` are `jsonb` objects of a name per
+language, `en` and `ru` (`{"en": "Airbus A320neo", "ru": "Аэробус A320neo"}`). Each is read through
+`jinahya-persistence-more`'s `JsonpAttributeConverter.OfString.OfJsonObject`, which reads one JSON object, but to
+three types:
+
+[cols="3,2,5",options="header"]
+|===
+| Columns | Java type | Mapping
+
+| `airplanes_data.model`, `airports_data.airport_name`
+| `JsonObject`
+| `@Convert(converter = JsonpAttributeConverter.OfString.OfJsonObject.class)`, the object as it is.
+
+| `airports_data.city`
+| `Map<Locale, String>`
+| `@Convert(converter = LocaleStringMapAttributeConverter.class)`; each key a `Locale` of its language, through
+`LocaleStringAttributeConverter.OfLanguage`.
+
+| `airports_data.country`
+| `List<LocaleName>`
+| `@Convert(converter = LocaleNameListAttributeConverter.class)`; a `LocaleName` per language, in the order of the
+converter's `ORDER`, so that the same names read twice are equal lists.
+
+|===
+
+The views `airplanes` and `airports` read the same columns as `text`, the name in the session's language
+(`bookings.lang()`), and map them as `String`s. `stringtype=unspecified` on the JDBC URL of the `it` unit sends the
+text a converter writes untyped, so that the server casts it to `jsonb`, `point` or `tstzrange`.
+
+[[enums]]
+== Enums
+
+[cols="3,2,3,4",options="header"]
+|===
+| Column | Java type | Mapping | Note
+
+| `flights.status`, `timetable.status`
+| `MappedFlight.FlightStatus`
+| `@Convert(converter = FlightStatusConverter.class)`
+| `text`; `flight_status_check` allows `Scheduled`, `On Time`, `Delayed`, `Boarding`, `Departed`, `Arrived` and
+`Cancelled`. `On Time` is not a Java identifier, and none is a constant's name in upper case, so `@Enumerated`
+cannot read them. The enum is an `AttributeEnum.OfString` whose attribute value is the text (`ON_TIME` is
+`On Time`), and the converter, nested in `MappedFlight`, an `AttributeEnumConverter.OfString`, of
+`jinahya-persistence-more`. `timetable`'s is the view's copy, which carries no check.
+
+| `seats.fare_conditions`, `segments.fare_conditions`
+| `MappedSeat.FareConditions`
+| `@Convert(converter = FareConditionsConverter.class)`
+| `text`; `seat_fare_conditions_check` and `segments_fare_conditions_check` allow `Economy`, `Comfort` and
+`Business`. As `FlightStatus`; one enum, nested in `MappedSeat`, serves both tables.
+
+|===
+
+[[converters]]
+== Converters
+
+Every converter which is not an enum's, nor a `jsonb` column's (see <<json>>), with the attributes it converts:
+
+[cols="3,2,4,4",options="header"]
+|===
+| Converter | Java type | Columns | Note
+
+| `ZoneIdStringAttributeConverter`
+| `ZoneId`
+| `airports.timezone`, `airports_data.timezone`
+| `jinahya-persistence-more`'s; `text` holding a region id (`Europe/Moscow`), read with `ZoneId.of`.
+
+| `PointAttributeConverter`
+| `List<Double>`
+| `airports.coordinates`, `airports_data.coordinates`
+| The module's; `point`, through its text `(x,y)`, as `[x, y]`: the longitude and the latitude. No provider maps a
+native `point`: Hibernate Spatial needs PostGIS `geometry`, which the database has not.
+
+| `MappedRouteId.ValidityConverter`
+| `Instant[]`
+| `routes.validity`
+| The module's; `tstzrange`, through its text, as `[lower, upper]`. Only a range with both bounds, the lower
+inclusive and the upper exclusive, is converted, the shape of every period the database holds; any other is
+rejected. An attribute of the `@EmbeddedId`; see <<composite-keys>>.
+
+|===
+
+`routes.days_of_week` and `routes.duration` need no converter, but Hibernate ORM's `@JdbcTypeCode`
+(`SqlTypes.ARRAY`, `SqlTypes.INTERVAL_SECOND`); Jakarta Persistence has no mapping of an array or an interval of its
+own.
+
