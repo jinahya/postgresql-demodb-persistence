@@ -9,8 +9,11 @@ Guidance for working in this module.
   provider's profile. Hibernate ORM's own features are welcome where Jakarta Persistence falls short, such as
   `Flight.route`'s `@JoinColumnsOrFormulas` and `MappedRoute`'s `@JdbcTypeCode`; prefer the standard where it does
   the job, and say in the javadoc where a mapping is Hibernate ORM's.
-- **No H2.** The tests that touch a database run on PostgreSQL, the demo database itself; no in-memory database.
-- **ITs only.** There is one persistence unit, `it`. A test that needs the database is a `*_PersistenceIT` class, run by
-  failsafe (`-Pfailsafe`); there is no `test` unit and no `*_PersistenceTest`. The `*_Test` classes are plain unit
-  tests that need no database.
+- **Two persistence units, `test` and `it`.**
+  - `test` is H2, in memory, in PostgreSQL mode, with the schema generated from the mappings (`create-drop`); the
+    `*_PersistenceTest` classes run on it, under surefire. What H2 cannot do is `@Disabled` there, with the reason:
+    `Flight.route`'s join formula, whose `@>` H2 does not parse, and the views, into which nothing is inserted.
+  - `it` is the demo database itself, on PostgreSQL; the `*_PersistenceIT` classes run on it, under failsafe
+    (`-Pfailsafe`), and cover what `test` cannot.
+  - The `*_Test` classes are plain unit tests that need no database.
 
