@@ -26,26 +26,20 @@ import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * The identifier of the {@value MappedSeat#TABLE_NAME} table -- the pair of the
  * {@value MappedSeat#COLUMN_NAME_AIRPLANE_CODE} and {@value MappedSeat#COLUMN_NAME_SEAT_NO}
- * columns; {@link Serializable} and {@link Embeddable}, as an
+ * columns; {@link Embeddable}, as the type of an
  * {@link jakarta.persistence.EmbeddedId @EmbeddedId} has to be.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see MappedSeat
  */
 @Embeddable
-public class SeatId
-        implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class SeatId {
 
     // ---------------------------------------------------------------------------------------------
 

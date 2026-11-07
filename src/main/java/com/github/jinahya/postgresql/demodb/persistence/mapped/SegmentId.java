@@ -25,15 +25,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * The identifier of the {@value MappedSegment#TABLE_NAME} table -- the pair of the
  * {@value MappedSegment#COLUMN_NAME_TICKET_NO} and {@value MappedSegment#COLUMN_NAME_FLIGHT_ID}
- * columns; {@link Serializable} and {@link Embeddable}, as an
+ * columns; {@link Embeddable}, as the type of an
  * {@link jakarta.persistence.EmbeddedId @EmbeddedId} has to be.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -41,11 +39,7 @@ import java.util.Optional;
  * @see MappedBoardingPass
  */
 @Embeddable
-public class SegmentId
-        implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class SegmentId {
 
     // ---------------------------------------------------------------------------------------------
 

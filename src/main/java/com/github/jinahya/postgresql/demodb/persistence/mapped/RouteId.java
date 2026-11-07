@@ -30,8 +30,6 @@ import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -47,8 +45,8 @@ import java.util.regex.Pattern;
 /**
  * An identifier of the {@value MappedRoute#TABLE_NAME} table -- the pair of the
  * {@value MappedRoute#COLUMN_NAME_ROUTE_NO} and {@value MappedRoute#COLUMN_NAME_VALIDITY} columns;
- * {@link Serializable} and {@link Embeddable}, as an
- * {@link jakarta.persistence.EmbeddedId @EmbeddedId} has to be.
+ * {@link Embeddable}, as the type of an {@link jakarta.persistence.EmbeddedId @EmbeddedId} has to
+ * be.
  * <p>
  * The table has no primary key; the pair is what its {@code routes_route_no_validity_excl}
  * exclusion constraint keeps apart, so it is the identifier an extending entity can take. The
@@ -64,11 +62,7 @@ import java.util.regex.Pattern;
  * @see MappedRoute
  */
 @Embeddable
-public class RouteId
-        implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class RouteId {
 
     /**
      * Converts between the {@value #ATTRIBUTE_NAME_VALIDITY} attribute, an array of two
