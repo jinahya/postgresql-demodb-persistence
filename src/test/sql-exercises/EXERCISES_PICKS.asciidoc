@@ -45,7 +45,7 @@ The `airplanes_data` table, mapped by `MappedAirplaneData`: the ten airplane mod
 
 // AI: Pick DEMODB_AIRPLANES_DATA_B_01: Load the entity and its mapped JSON model without hand-parsing SQL output.
 // AI: Copied from EXERCISES.asciidoc:23, anchor DEMODB_AIRPLANES_DATA_B_01; retain the permanent ID when revising.
-// AI: Registry: section=AIRPLANES_DATA; tier=Basic; sql=src/test/sql-exercises/airplanes_data/01_basic.sql; test=AirplanesData_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_DATA_B_01_Test.
+// AI: Registry: section=AIRPLANES_DATA; tier=Basic; sql=src/test/sql-exercises/airplanes_data/01_basic.sql; test=demodb.airplanes_data.DEMODB_AIRPLANES_DATA_B_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_AIRPLANES_DATA_B_01]]
 ==== DEMODB_AIRPLANES_DATA_B_01: every airplane, by code
@@ -83,7 +83,7 @@ ORDER BY airplane_code
 
 // AI: Pick DEMODB_AIRPLANES_DATA_B_02: A simple numeric range predicate and deterministic ordering.
 // AI: Copied from EXERCISES.asciidoc:57, anchor DEMODB_AIRPLANES_DATA_B_02; retain the permanent ID when revising.
-// AI: Registry: section=AIRPLANES_DATA; tier=Basic; sql=src/test/sql-exercises/airplanes_data/01_basic.sql; test=AirplanesData_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_DATA_B_02_Test.
+// AI: Registry: section=AIRPLANES_DATA; tier=Basic; sql=src/test/sql-exercises/airplanes_data/01_basic.sql; test=demodb.airplanes_data.DEMODB_AIRPLANES_DATA_B_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_AIRPLANES_DATA_B_02]]
 ==== DEMODB_AIRPLANES_DATA_B_02: the airplanes with a range of 10000 km or more, the longest first
@@ -121,7 +121,7 @@ ORDER BY range DESC, airplane_code
 
 // AI: Pick DEMODB_AIRPLANES_DATA_I_01: A bounded example of querying a PostgreSQL jsonb attribute.
 // AI: Copied from EXERCISES.asciidoc:111, anchor DEMODB_AIRPLANES_DATA_I_01; retain the permanent ID when revising.
-// AI: Registry: section=AIRPLANES_DATA; tier=Intermediate; sql=src/test/sql-exercises/airplanes_data/02_intermediate.sql; test=AirplanesData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPLANES_DATA_I_01_Test.
+// AI: Registry: section=AIRPLANES_DATA; tier=Intermediate; sql=src/test/sql-exercises/airplanes_data/02_intermediate.sql; test=demodb.airplanes_data.DEMODB_AIRPLANES_DATA_I_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_AIRPLANES_DATA_I_01]]
 ==== DEMODB_AIRPLANES_DATA_I_01: the English name of each airplane
@@ -163,7 +163,7 @@ ORDER BY airplane_code
 
 // AI: Pick DEMODB_AIRPLANES_DATA_A_01: NOT EXISTS across the airplane-to-route relationship.
 // AI: Copied from EXERCISES.asciidoc:205, anchor DEMODB_AIRPLANES_DATA_A_01; retain the permanent ID when revising.
-// AI: Registry: section=AIRPLANES_DATA; tier=Advanced; sql=src/test/sql-exercises/airplanes_data/03_advanced.sql; test=AirplanesData_Exercises_03_Advanced_PersistenceIT.DEMODB_AIRPLANES_DATA_A_01_Test.
+// AI: Registry: section=AIRPLANES_DATA; tier=Advanced; sql=src/test/sql-exercises/airplanes_data/03_advanced.sql; test=demodb.airplanes_data.DEMODB_AIRPLANES_DATA_A_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_AIRPLANES_DATA_A_01]]
 ==== DEMODB_AIRPLANES_DATA_A_01: the airplanes that fly no route
@@ -203,7 +203,7 @@ The `airplanes` view, mapped by `MappedAirplane`: `airplanes_data` with the mode
 
 // AI: Pick DEMODB_AIRPLANES_B_01: Read the localized view and compare its mapped shape with the base table.
 // AI: Copied from EXERCISES.asciidoc:275, anchor DEMODB_AIRPLANES_B_01; retain the permanent ID when revising.
-// AI: Registry: section=AIRPLANES; tier=Basic; sql=src/test/sql-exercises/airplanes/01_basic.sql; test=Airplanes_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_B_01_Test.
+// AI: Registry: section=AIRPLANES; tier=Basic; sql=src/test/sql-exercises/airplanes/01_basic.sql; test=demodb.airplanes.DEMODB_AIRPLANES_B_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_AIRPLANES_B_01]]
 ==== DEMODB_AIRPLANES_B_01: every airplane of the view, by code
@@ -240,7 +240,7 @@ ORDER BY airplane_code
 
 // AI: Pick DEMODB_AIRPLANES_B_02: A straightforward LIKE predicate over the view's text model.
 // AI: Copied from EXERCISES.asciidoc:308, anchor DEMODB_AIRPLANES_B_02; retain the permanent ID when revising.
-// AI: Registry: section=AIRPLANES; tier=Basic; sql=src/test/sql-exercises/airplanes/01_basic.sql; test=Airplanes_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPLANES_B_02_Test.
+// AI: Registry: section=AIRPLANES; tier=Basic; sql=src/test/sql-exercises/airplanes/01_basic.sql; test=demodb.airplanes.DEMODB_AIRPLANES_B_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_AIRPLANES_B_02]]
 ==== DEMODB_AIRPLANES_B_02: the Boeings
@@ -297,7 +297,7 @@ The `airports_data` table, mapped by `MappedAirportData`: the airports, each wit
 
 // AI: Pick DEMODB_AIRPORTS_DATA_B_01: Filter a time-zone string while loading mapped JSON attributes.
 // AI: Copied from EXERCISES.asciidoc:414, anchor DEMODB_AIRPORTS_DATA_B_01; retain the permanent ID when revising.
-// AI: Registry: section=AIRPORTS_DATA; tier=Basic; sql=src/test/sql-exercises/airports_data/01_basic.sql; test=AirportsData_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPORTS_DATA_B_01_Test.
+// AI: Registry: section=AIRPORTS_DATA; tier=Basic; sql=src/test/sql-exercises/airports_data/01_basic.sql; test=demodb.airports_data.DEMODB_AIRPORTS_DATA_B_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_AIRPORTS_DATA_B_01]]
 ==== DEMODB_AIRPORTS_DATA_B_01: the airports in the Europe/Moscow time zone
@@ -342,7 +342,7 @@ ORDER BY airport_code
 
 // AI: Pick DEMODB_AIRPORTS_DATA_I_01: A concrete multilingual JSON lookup rather than JSON-key enumeration.
 // AI: Copied from EXERCISES.asciidoc:474, anchor DEMODB_AIRPORTS_DATA_I_01; retain the permanent ID when revising.
-// AI: Registry: section=AIRPORTS_DATA; tier=Intermediate; sql=src/test/sql-exercises/airports_data/02_intermediate.sql; test=AirportsData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_DATA_I_01_Test.
+// AI: Registry: section=AIRPORTS_DATA; tier=Intermediate; sql=src/test/sql-exercises/airports_data/02_intermediate.sql; test=demodb.airports_data.DEMODB_AIRPORTS_DATA_I_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_AIRPORTS_DATA_I_01]]
 ==== DEMODB_AIRPORTS_DATA_I_01: the airports of Finland, in English
@@ -381,7 +381,7 @@ ORDER BY airport_code
 
 // AI: Pick DEMODB_AIRPORTS_DATA_I_02: Top-n aggregation of ordinary mapped attributes.
 // AI: Copied from EXERCISES.asciidoc:509, anchor DEMODB_AIRPORTS_DATA_I_02; retain the permanent ID when revising.
-// AI: Registry: section=AIRPORTS_DATA; tier=Intermediate; sql=src/test/sql-exercises/airports_data/02_intermediate.sql; test=AirportsData_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_DATA_I_02_Test.
+// AI: Registry: section=AIRPORTS_DATA; tier=Intermediate; sql=src/test/sql-exercises/airports_data/02_intermediate.sql; test=demodb.airports_data.DEMODB_AIRPORTS_DATA_I_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_AIRPORTS_DATA_I_02]]
 ==== DEMODB_AIRPORTS_DATA_I_02: the ten time zones with the most airports
@@ -436,7 +436,7 @@ The `airports` view, mapped by `MappedAirport`: `airports_data` with the names i
 
 // AI: Pick DEMODB_AIRPORTS_B_01: Filter a localized airport view by country.
 // AI: Copied from EXERCISES.asciidoc:681, anchor DEMODB_AIRPORTS_B_01; retain the permanent ID when revising.
-// AI: Registry: section=AIRPORTS; tier=Basic; sql=src/test/sql-exercises/airports/01_basic.sql; test=Airports_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPORTS_B_01_Test.
+// AI: Registry: section=AIRPORTS; tier=Basic; sql=src/test/sql-exercises/airports/01_basic.sql; test=demodb.airports.DEMODB_AIRPORTS_B_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_AIRPORTS_B_01]]
 ==== DEMODB_AIRPORTS_B_01: the airports of Norway
@@ -475,7 +475,7 @@ ORDER BY airport_code
 
 // AI: Pick DEMODB_AIRPORTS_B_02: Filter a localized airport view by city.
 // AI: Copied from EXERCISES.asciidoc:716, anchor DEMODB_AIRPORTS_B_02; retain the permanent ID when revising.
-// AI: Registry: section=AIRPORTS; tier=Basic; sql=src/test/sql-exercises/airports/01_basic.sql; test=Airports_Exercises_01_Basic_PersistenceIT.DEMODB_AIRPORTS_B_02_Test.
+// AI: Registry: section=AIRPORTS; tier=Basic; sql=src/test/sql-exercises/airports/01_basic.sql; test=demodb.airports.DEMODB_AIRPORTS_B_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_AIRPORTS_B_02]]
 ==== DEMODB_AIRPORTS_B_02: the airports of Moscow
@@ -514,7 +514,7 @@ ORDER BY airport_code
 
 // AI: Pick DEMODB_AIRPORTS_I_01: Group view rows and apply deterministic pagination.
 // AI: Copied from EXERCISES.asciidoc:747, anchor DEMODB_AIRPORTS_I_01; retain the permanent ID when revising.
-// AI: Registry: section=AIRPORTS; tier=Intermediate; sql=src/test/sql-exercises/airports/02_intermediate.sql; test=Airports_Exercises_02_Intermediate_PersistenceIT.DEMODB_AIRPORTS_I_01_Test.
+// AI: Registry: section=AIRPORTS; tier=Intermediate; sql=src/test/sql-exercises/airports/02_intermediate.sql; test=demodb.airports.DEMODB_AIRPORTS_I_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_AIRPORTS_I_01]]
 ==== DEMODB_AIRPORTS_I_01: the ten countries with the most airports
@@ -570,7 +570,7 @@ The `routes` table, mapped by `MappedRoute`: a route number, its two airports, i
 
 // AI: Pick DEMODB_ROUTES_B_01: Filter routes by a departure role and order by their composite key.
 // AI: Copied from EXERCISES.asciidoc:909, anchor DEMODB_ROUTES_B_01; retain the permanent ID when revising.
-// AI: Registry: section=ROUTES; tier=Basic; sql=src/test/sql-exercises/routes/01_basic.sql; test=Routes_Exercises_01_Basic_PersistenceIT.DEMODB_ROUTES_B_01_Test.
+// AI: Registry: section=ROUTES; tier=Basic; sql=src/test/sql-exercises/routes/01_basic.sql; test=demodb.routes.DEMODB_ROUTES_B_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_ROUTES_B_01]]
 ==== DEMODB_ROUTES_B_01: the routes from Sheremetyevo
@@ -609,7 +609,7 @@ ORDER BY route_no, validity
 
 // AI: Pick DEMODB_ROUTES_B_04: A PostgreSQL interval attribute with a direct business meaning.
 // AI: Copied from EXERCISES.asciidoc:1002, anchor DEMODB_ROUTES_B_04; retain the permanent ID when revising.
-// AI: Registry: section=ROUTES; tier=Basic; sql=src/test/sql-exercises/routes/01_basic.sql; test=Routes_Exercises_01_Basic_PersistenceIT.DEMODB_ROUTES_B_04_Test.
+// AI: Registry: section=ROUTES; tier=Basic; sql=src/test/sql-exercises/routes/01_basic.sql; test=demodb.routes.DEMODB_ROUTES_B_04_PersistenceIT.
 // AI: Check the actual JPQL/Criteria solution: source SQL uses database-specific syntax or analytics; do not call that SQL portable JPQL.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_ROUTES_B_04]]
@@ -655,7 +655,7 @@ ORDER BY duration DESC, route_no, validity
 
 // AI: Pick DEMODB_ROUTES_I_01: Inspect the period component of the composite route identifier.
 // AI: Copied from EXERCISES.asciidoc:1039, anchor DEMODB_ROUTES_I_01; retain the permanent ID when revising.
-// AI: Registry: section=ROUTES; tier=Intermediate; sql=src/test/sql-exercises/routes/02_intermediate.sql; test=Routes_Exercises_02_Intermediate_PersistenceIT.DEMODB_ROUTES_I_01_Test.
+// AI: Registry: section=ROUTES; tier=Intermediate; sql=src/test/sql-exercises/routes/02_intermediate.sql; test=demodb.routes.DEMODB_ROUTES_I_01_PersistenceIT.
 // AI: Check the actual JPQL/Criteria solution: source SQL uses database-specific syntax or analytics; do not call that SQL portable JPQL.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_ROUTES_I_01]]
@@ -687,7 +687,7 @@ ORDER BY validity
 
 // AI: Pick DEMODB_ROUTES_I_02: A route number alone is not a row identifier; count its periods.
 // AI: Copied from EXERCISES.asciidoc:1066, anchor DEMODB_ROUTES_I_02; retain the permanent ID when revising.
-// AI: Registry: section=ROUTES; tier=Intermediate; sql=src/test/sql-exercises/routes/02_intermediate.sql; test=Routes_Exercises_02_Intermediate_PersistenceIT.DEMODB_ROUTES_I_02_Test.
+// AI: Registry: section=ROUTES; tier=Intermediate; sql=src/test/sql-exercises/routes/02_intermediate.sql; test=demodb.routes.DEMODB_ROUTES_I_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_ROUTES_I_02]]
 ==== DEMODB_ROUTES_I_02: the five route numbers with the most periods
@@ -737,7 +737,7 @@ The `flights` table, mapped by `MappedFlight`: a flight of a route on a day, wit
 
 // AI: Pick DEMODB_FLIGHTS_B_01: A half-open UTC timestamp interval and route predicate.
 // AI: Copied from EXERCISES.asciidoc:1413, anchor DEMODB_FLIGHTS_B_01; retain the permanent ID when revising.
-// AI: Registry: section=FLIGHTS; tier=Basic; sql=src/test/sql-exercises/flights/01_basic.sql; test=Flights_Exercises_01_Basic_PersistenceIT.DEMODB_FLIGHTS_B_01_Test.
+// AI: Registry: section=FLIGHTS; tier=Basic; sql=src/test/sql-exercises/flights/01_basic.sql; test=demodb.flights.DEMODB_FLIGHTS_B_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_FLIGHTS_B_01]]
 ==== DEMODB_FLIGHTS_B_01: the flights of the route PG0001 in October 2025
@@ -778,7 +778,7 @@ ORDER BY scheduled_departure
 
 // AI: Pick DEMODB_FLIGHTS_B_02: Group by the flight-status attribute.
 // AI: Copied from EXERCISES.asciidoc:1450, anchor DEMODB_FLIGHTS_B_02; retain the permanent ID when revising.
-// AI: Registry: section=FLIGHTS; tier=Basic; sql=src/test/sql-exercises/flights/01_basic.sql; test=Flights_Exercises_01_Basic_PersistenceIT.DEMODB_FLIGHTS_B_02_Test.
+// AI: Registry: section=FLIGHTS; tier=Basic; sql=src/test/sql-exercises/flights/01_basic.sql; test=demodb.flights.DEMODB_FLIGHTS_B_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_FLIGHTS_B_02]]
 ==== DEMODB_FLIGHTS_B_02: how many flights of each status
@@ -813,7 +813,7 @@ ORDER BY status
 
 // AI: Pick DEMODB_FLIGHTS_B_05: Use NULL predicates on optional actual arrival/departure values.
 // AI: Copied from EXERCISES.asciidoc:1550, anchor DEMODB_FLIGHTS_B_05; retain the permanent ID when revising.
-// AI: Registry: section=FLIGHTS; tier=Basic; sql=src/test/sql-exercises/flights/01_basic.sql; test=Flights_Exercises_01_Basic_PersistenceIT.DEMODB_FLIGHTS_B_05_Test.
+// AI: Registry: section=FLIGHTS; tier=Basic; sql=src/test/sql-exercises/flights/01_basic.sql; test=demodb.flights.DEMODB_FLIGHTS_B_05_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_FLIGHTS_B_05]]
 ==== DEMODB_FLIGHTS_B_05: the flights in the air
@@ -859,7 +859,7 @@ ORDER BY actual_departure, flight_id
 
 // AI: Pick DEMODB_FLIGHTS_I_04: Exercise the validity-dependent flight-to-route mapping.
 // AI: Copied from EXERCISES.asciidoc:1682, anchor DEMODB_FLIGHTS_I_04; retain the permanent ID when revising.
-// AI: Registry: section=FLIGHTS; tier=Intermediate; sql=src/test/sql-exercises/flights/02_intermediate.sql; test=Flights_Exercises_02_Intermediate_PersistenceIT.DEMODB_FLIGHTS_I_04_Test.
+// AI: Registry: section=FLIGHTS; tier=Intermediate; sql=src/test/sql-exercises/flights/02_intermediate.sql; test=demodb.flights.DEMODB_FLIGHTS_I_04_PersistenceIT.
 // AI: Check the actual JPQL/Criteria solution: source SQL uses database-specific syntax or analytics; do not call that SQL portable JPQL.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_FLIGHTS_I_04]]
@@ -917,7 +917,7 @@ The `timetable` view, mapped by `MappedTimetable`: each flight with its route's 
 
 // AI: Pick DEMODB_TIMETABLE_B_01: Query a reporting view using the demo database's clock.
 // AI: Copied from EXERCISES.asciidoc:1903, anchor DEMODB_TIMETABLE_B_01; retain the permanent ID when revising.
-// AI: Registry: section=TIMETABLE; tier=Basic; sql=src/test/sql-exercises/timetable/01_basic.sql; test=Timetable_Exercises_01_Basic_PersistenceIT.DEMODB_TIMETABLE_B_01_Test.
+// AI: Registry: section=TIMETABLE; tier=Basic; sql=src/test/sql-exercises/timetable/01_basic.sql; test=demodb.timetable.DEMODB_TIMETABLE_B_01_PersistenceIT.
 // AI: Check the actual JPQL/Criteria solution: source SQL uses database-specific syntax or analytics; do not call that SQL portable JPQL.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_TIMETABLE_B_01]]
@@ -954,7 +954,7 @@ ORDER BY scheduled_departure, flight_id
 
 // AI: Pick DEMODB_TIMETABLE_B_02: Make UTC and local timestamp attributes visible side by side.
 // AI: Copied from EXERCISES.asciidoc:1935, anchor DEMODB_TIMETABLE_B_02; retain the permanent ID when revising.
-// AI: Registry: section=TIMETABLE; tier=Basic; sql=src/test/sql-exercises/timetable/01_basic.sql; test=Timetable_Exercises_01_Basic_PersistenceIT.DEMODB_TIMETABLE_B_02_Test.
+// AI: Registry: section=TIMETABLE; tier=Basic; sql=src/test/sql-exercises/timetable/01_basic.sql; test=demodb.timetable.DEMODB_TIMETABLE_B_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_TIMETABLE_B_02]]
 ==== DEMODB_TIMETABLE_B_02: the flights of the route PG0078 on the first day, in local time
@@ -996,7 +996,7 @@ ORDER BY scheduled_departure
 
 // AI: Pick DEMODB_TIMETABLE_I_02: Group by the two airport roles with deterministic top-n ordering.
 // AI: Copied from EXERCISES.asciidoc:2024, anchor DEMODB_TIMETABLE_I_02; retain the permanent ID when revising.
-// AI: Registry: section=TIMETABLE; tier=Intermediate; sql=src/test/sql-exercises/timetable/02_intermediate.sql; test=Timetable_Exercises_02_Intermediate_PersistenceIT.DEMODB_TIMETABLE_I_02_Test.
+// AI: Registry: section=TIMETABLE; tier=Intermediate; sql=src/test/sql-exercises/timetable/02_intermediate.sql; test=demodb.timetable.DEMODB_TIMETABLE_I_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_TIMETABLE_I_02]]
 ==== DEMODB_TIMETABLE_I_02: the five airport pairs with the most flights
@@ -1035,7 +1035,7 @@ LIMIT 5
 
 // AI: Pick DEMODB_TIMETABLE_A_02: A self-join expresses a concrete connection interval.
 // AI: Copied from EXERCISES.asciidoc:2191, anchor DEMODB_TIMETABLE_A_02; retain the permanent ID when revising.
-// AI: Registry: section=TIMETABLE; tier=Advanced; sql=src/test/sql-exercises/timetable/03_advanced.sql; test=Timetable_Exercises_03_Advanced_PersistenceIT.DEMODB_TIMETABLE_A_02_Test.
+// AI: Registry: section=TIMETABLE; tier=Advanced; sql=src/test/sql-exercises/timetable/03_advanced.sql; test=demodb.timetable.DEMODB_TIMETABLE_A_02_PersistenceIT.
 // AI: Check the actual JPQL/Criteria solution: source SQL uses database-specific syntax or analytics; do not call that SQL portable JPQL.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_TIMETABLE_A_02]]
@@ -1085,7 +1085,7 @@ The `seats` table, mapped by `MappedSeat`: the seats of each airplane, each with
 
 // AI: Pick DEMODB_SEATS_B_01: Filter the composite-key seat entity by airplane and fare class.
 // AI: Copied from EXERCISES.asciidoc:2232, anchor DEMODB_SEATS_B_01; retain the permanent ID when revising.
-// AI: Registry: section=SEATS; tier=Basic; sql=src/test/sql-exercises/seats/01_basic.sql; test=Seats_Exercises_01_Basic_PersistenceIT.DEMODB_SEATS_B_01_Test.
+// AI: Registry: section=SEATS; tier=Basic; sql=src/test/sql-exercises/seats/01_basic.sql; test=demodb.seats.DEMODB_SEATS_B_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SEATS_B_01]]
 ==== DEMODB_SEATS_B_01: the Business seats of the Airbus A320neo
@@ -1125,7 +1125,7 @@ ORDER BY seat_no
 
 // AI: Pick DEMODB_SEATS_B_02: Group seats by airplane.
 // AI: Copied from EXERCISES.asciidoc:2268, anchor DEMODB_SEATS_B_02; retain the permanent ID when revising.
-// AI: Registry: section=SEATS; tier=Basic; sql=src/test/sql-exercises/seats/01_basic.sql; test=Seats_Exercises_01_Basic_PersistenceIT.DEMODB_SEATS_B_02_Test.
+// AI: Registry: section=SEATS; tier=Basic; sql=src/test/sql-exercises/seats/01_basic.sql; test=demodb.seats.DEMODB_SEATS_B_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SEATS_B_02]]
 ==== DEMODB_SEATS_B_02: how many seats each airplane has
@@ -1173,7 +1173,7 @@ ORDER BY airplane_code
 
 // AI: Pick DEMODB_SEATS_A_01: A correlated NOT EXISTS finds available seats for a flight.
 // AI: Copied from EXERCISES.asciidoc:2468, anchor DEMODB_SEATS_A_01; retain the permanent ID when revising.
-// AI: Registry: section=SEATS; tier=Advanced; sql=src/test/sql-exercises/seats/03_advanced.sql; test=Seats_Exercises_03_Advanced_PersistenceIT.DEMODB_SEATS_A_01_Test.
+// AI: Registry: section=SEATS; tier=Advanced; sql=src/test/sql-exercises/seats/03_advanced.sql; test=demodb.seats.DEMODB_SEATS_A_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SEATS_A_01]]
 ==== DEMODB_SEATS_A_01: the empty seats of the flight 1
@@ -1227,7 +1227,7 @@ The `bookings` table, mapped by `MappedBooking`: a booking, when it was made and
 
 // AI: Pick DEMODB_BOOKINGS_B_01: A small half-open UTC timestamp interval.
 // AI: Copied from EXERCISES.asciidoc:2514, anchor DEMODB_BOOKINGS_B_01; retain the permanent ID when revising.
-// AI: Registry: section=BOOKINGS; tier=Basic; sql=src/test/sql-exercises/bookings/01_basic.sql; test=Bookings_Exercises_01_Basic_PersistenceIT.DEMODB_BOOKINGS_B_01_Test.
+// AI: Registry: section=BOOKINGS; tier=Basic; sql=src/test/sql-exercises/bookings/01_basic.sql; test=demodb.bookings.DEMODB_BOOKINGS_B_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_BOOKINGS_B_01]]
 ==== DEMODB_BOOKINGS_B_01: the bookings of the first minute
@@ -1266,7 +1266,7 @@ ORDER BY book_date, book_ref
 
 // AI: Pick DEMODB_BOOKINGS_B_03: Filter and order a monetary attribute.
 // AI: Copied from EXERCISES.asciidoc:2572, anchor DEMODB_BOOKINGS_B_03; retain the permanent ID when revising.
-// AI: Registry: section=BOOKINGS; tier=Basic; sql=src/test/sql-exercises/bookings/01_basic.sql; test=Bookings_Exercises_01_Basic_PersistenceIT.DEMODB_BOOKINGS_B_03_Test.
+// AI: Registry: section=BOOKINGS; tier=Basic; sql=src/test/sql-exercises/bookings/01_basic.sql; test=demodb.bookings.DEMODB_BOOKINGS_B_03_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_BOOKINGS_B_03]]
 ==== DEMODB_BOOKINGS_B_03: the bookings of 700000 or more
@@ -1297,7 +1297,7 @@ ORDER BY total_amount DESC, book_ref
 
 // AI: Pick DEMODB_BOOKINGS_B_04: A deterministic second page over timestamp and booking identifier.
 // AI: Copied from EXERCISES.asciidoc:2599, anchor DEMODB_BOOKINGS_B_04; retain the permanent ID when revising.
-// AI: Registry: section=BOOKINGS; tier=Basic; sql=src/test/sql-exercises/bookings/01_basic.sql; test=Bookings_Exercises_01_Basic_PersistenceIT.DEMODB_BOOKINGS_B_04_Test.
+// AI: Registry: section=BOOKINGS; tier=Basic; sql=src/test/sql-exercises/bookings/01_basic.sql; test=demodb.bookings.DEMODB_BOOKINGS_B_04_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_BOOKINGS_B_04]]
 ==== DEMODB_BOOKINGS_B_04: the second page of the bookings of 2025-10-01
@@ -1350,7 +1350,7 @@ LIMIT 20 OFFSET 20
 
 // AI: Pick DEMODB_BOOKINGS_A_02: Count the ticket association and limit a booking ranking.
 // AI: Copied from EXERCISES.asciidoc:2750, anchor DEMODB_BOOKINGS_A_02; retain the permanent ID when revising.
-// AI: Registry: section=BOOKINGS; tier=Advanced; sql=src/test/sql-exercises/bookings/03_advanced.sql; test=Bookings_Exercises_03_Advanced_PersistenceIT.DEMODB_BOOKINGS_A_02_Test.
+// AI: Registry: section=BOOKINGS; tier=Advanced; sql=src/test/sql-exercises/bookings/03_advanced.sql; test=demodb.bookings.DEMODB_BOOKINGS_A_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_BOOKINGS_A_02]]
 ==== DEMODB_BOOKINGS_A_02: the five bookings with the most tickets
@@ -1394,7 +1394,7 @@ The `tickets` table, mapped by `MappedTicket`: a passenger's ticket in a booking
 
 // AI: Pick DEMODB_TICKETS_B_01: Filter tickets by their booking association.
 // AI: Copied from EXERCISES.asciidoc:2826, anchor DEMODB_TICKETS_B_01; retain the permanent ID when revising.
-// AI: Registry: section=TICKETS; tier=Basic; sql=src/test/sql-exercises/tickets/01_basic.sql; test=Tickets_Exercises_01_Basic_PersistenceIT.DEMODB_TICKETS_B_01_Test.
+// AI: Registry: section=TICKETS; tier=Basic; sql=src/test/sql-exercises/tickets/01_basic.sql; test=demodb.tickets.DEMODB_TICKETS_B_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_TICKETS_B_01]]
 ==== DEMODB_TICKETS_B_01: the tickets of the booking 0000EG
@@ -1424,7 +1424,7 @@ ORDER BY ticket_no
 
 // AI: Pick DEMODB_TICKETS_B_02: Group by the mapped outbound boolean.
 // AI: Copied from EXERCISES.asciidoc:2852, anchor DEMODB_TICKETS_B_02; retain the permanent ID when revising.
-// AI: Registry: section=TICKETS; tier=Basic; sql=src/test/sql-exercises/tickets/01_basic.sql; test=Tickets_Exercises_01_Basic_PersistenceIT.DEMODB_TICKETS_B_02_Test.
+// AI: Registry: section=TICKETS; tier=Basic; sql=src/test/sql-exercises/tickets/01_basic.sql; test=demodb.tickets.DEMODB_TICKETS_B_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_TICKETS_B_02]]
 ==== DEMODB_TICKETS_B_02: how many tickets, outbound and return
@@ -1460,7 +1460,7 @@ ORDER BY outbound
 
 // AI: Pick DEMODB_TICKETS_I_01: Group passenger identifiers and apply a stable top-n limit.
 // AI: Copied from EXERCISES.asciidoc:2880, anchor DEMODB_TICKETS_I_01; retain the permanent ID when revising.
-// AI: Registry: section=TICKETS; tier=Intermediate; sql=src/test/sql-exercises/tickets/02_intermediate.sql; test=Tickets_Exercises_02_Intermediate_PersistenceIT.DEMODB_TICKETS_I_01_Test.
+// AI: Registry: section=TICKETS; tier=Intermediate; sql=src/test/sql-exercises/tickets/02_intermediate.sql; test=demodb.tickets.DEMODB_TICKETS_I_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_TICKETS_I_01]]
 ==== DEMODB_TICKETS_I_01: the five passengers with the most tickets
@@ -1494,7 +1494,7 @@ LIMIT 5
 
 // AI: Pick DEMODB_TICKETS_I_03: NOT EXISTS on the ticket-to-segment relationship.
 // AI: Copied from EXERCISES.asciidoc:2945, anchor DEMODB_TICKETS_I_03; retain the permanent ID when revising.
-// AI: Registry: section=TICKETS; tier=Intermediate; sql=src/test/sql-exercises/tickets/02_intermediate.sql; test=Tickets_Exercises_02_Intermediate_PersistenceIT.DEMODB_TICKETS_I_03_Test.
+// AI: Registry: section=TICKETS; tier=Intermediate; sql=src/test/sql-exercises/tickets/02_intermediate.sql; test=demodb.tickets.DEMODB_TICKETS_I_03_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_TICKETS_I_03]]
 ==== DEMODB_TICKETS_I_03: how many tickets have no segment
@@ -1528,7 +1528,7 @@ WHERE NOT EXISTS (SELECT 1 FROM segments s WHERE s.ticket_no = t.ticket_no)
 
 // AI: Pick DEMODB_TICKETS_A_01: A self-join matches outbound and return ticket roles within one booking.
 // AI: Copied from EXERCISES.asciidoc:3027, anchor DEMODB_TICKETS_A_01; retain the permanent ID when revising.
-// AI: Registry: section=TICKETS; tier=Advanced; sql=src/test/sql-exercises/tickets/03_advanced.sql; test=Tickets_Exercises_03_Advanced_PersistenceIT.DEMODB_TICKETS_A_01_Test.
+// AI: Registry: section=TICKETS; tier=Advanced; sql=src/test/sql-exercises/tickets/03_advanced.sql; test=demodb.tickets.DEMODB_TICKETS_A_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_TICKETS_A_01]]
 ==== DEMODB_TICKETS_A_01: how many passengers booked a return
@@ -1566,7 +1566,7 @@ The `segments` table, mapped by `MappedSegment`: a ticket's flight, with the far
 
 // AI: Pick DEMODB_SEGMENTS_B_01: Read the composite-key segment entity through its ticket association.
 // AI: Copied from EXERCISES.asciidoc:3089, anchor DEMODB_SEGMENTS_B_01; retain the permanent ID when revising.
-// AI: Registry: section=SEGMENTS; tier=Basic; sql=src/test/sql-exercises/segments/01_basic.sql; test=Segments_Exercises_01_Basic_PersistenceIT.DEMODB_SEGMENTS_B_01_Test.
+// AI: Registry: section=SEGMENTS; tier=Basic; sql=src/test/sql-exercises/segments/01_basic.sql; test=demodb.segments.DEMODB_SEGMENTS_B_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SEGMENTS_B_01]]
 ==== DEMODB_SEGMENTS_B_01: the segments of the ticket 0005432000000
@@ -1595,7 +1595,7 @@ ORDER BY flight_id
 
 // AI: Pick DEMODB_SEGMENTS_B_02: Group by the mapped fare class.
 // AI: Copied from EXERCISES.asciidoc:3114, anchor DEMODB_SEGMENTS_B_02; retain the permanent ID when revising.
-// AI: Registry: section=SEGMENTS; tier=Basic; sql=src/test/sql-exercises/segments/01_basic.sql; test=Segments_Exercises_01_Basic_PersistenceIT.DEMODB_SEGMENTS_B_02_Test.
+// AI: Registry: section=SEGMENTS; tier=Basic; sql=src/test/sql-exercises/segments/01_basic.sql; test=demodb.segments.DEMODB_SEGMENTS_B_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SEGMENTS_B_02]]
 ==== DEMODB_SEGMENTS_B_02: how many segments of each fare conditions
@@ -1626,7 +1626,7 @@ ORDER BY fare_conditions
 
 // AI: Pick DEMODB_SEGMENTS_B_03: Read the other foreign-key role of the segment identifier.
 // AI: Copied from EXERCISES.asciidoc:3141, anchor DEMODB_SEGMENTS_B_03; retain the permanent ID when revising.
-// AI: Registry: section=SEGMENTS; tier=Basic; sql=src/test/sql-exercises/segments/01_basic.sql; test=Segments_Exercises_01_Basic_PersistenceIT.DEMODB_SEGMENTS_B_03_Test.
+// AI: Registry: section=SEGMENTS; tier=Basic; sql=src/test/sql-exercises/segments/01_basic.sql; test=demodb.segments.DEMODB_SEGMENTS_B_03_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SEGMENTS_B_03]]
 ==== DEMODB_SEGMENTS_B_03: the segments of the flight 1
@@ -1669,7 +1669,7 @@ ORDER BY ticket_no
 
 // AI: Pick DEMODB_SEGMENTS_I_01: MIN, AVG, and MAX over a monetary attribute.
 // AI: Copied from EXERCISES.asciidoc:3177, anchor DEMODB_SEGMENTS_I_01; retain the permanent ID when revising.
-// AI: Registry: section=SEGMENTS; tier=Intermediate; sql=src/test/sql-exercises/segments/02_intermediate.sql; test=Segments_Exercises_02_Intermediate_PersistenceIT.DEMODB_SEGMENTS_I_01_Test.
+// AI: Registry: section=SEGMENTS; tier=Intermediate; sql=src/test/sql-exercises/segments/02_intermediate.sql; test=demodb.segments.DEMODB_SEGMENTS_I_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SEGMENTS_I_01]]
 ==== DEMODB_SEGMENTS_I_01: the prices of each fare conditions
@@ -1700,7 +1700,7 @@ ORDER BY fare_conditions
 
 // AI: Pick DEMODB_SEGMENTS_I_02: Group by flight and apply a deterministic revenue limit.
 // AI: Copied from EXERCISES.asciidoc:3204, anchor DEMODB_SEGMENTS_I_02; retain the permanent ID when revising.
-// AI: Registry: section=SEGMENTS; tier=Intermediate; sql=src/test/sql-exercises/segments/02_intermediate.sql; test=Segments_Exercises_02_Intermediate_PersistenceIT.DEMODB_SEGMENTS_I_02_Test.
+// AI: Registry: section=SEGMENTS; tier=Intermediate; sql=src/test/sql-exercises/segments/02_intermediate.sql; test=demodb.segments.DEMODB_SEGMENTS_I_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SEGMENTS_I_02]]
 ==== DEMODB_SEGMENTS_I_02: the five flights that earned the most
@@ -1750,7 +1750,7 @@ The `boarding_passes` table, mapped by `MappedBoardingPass`: a passenger checked
 
 // AI: Pick DEMODB_BOARDING_PASSES_B_01: Order the composite-key boarding-pass entity with explicit NULL placement.
 // AI: Copied from EXERCISES.asciidoc:3336, anchor DEMODB_BOARDING_PASSES_B_01; retain the permanent ID when revising.
-// AI: Registry: section=BOARDING_PASSES; tier=Basic; sql=src/test/sql-exercises/boarding_passes/01_basic.sql; test=BoardingPasses_Exercises_01_Basic_PersistenceIT.DEMODB_BOARDING_PASSES_B_01_Test.
+// AI: Registry: section=BOARDING_PASSES; tier=Basic; sql=src/test/sql-exercises/boarding_passes/01_basic.sql; test=demodb.boarding_passes.DEMODB_BOARDING_PASSES_B_01_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_BOARDING_PASSES_B_01]]
 ==== DEMODB_BOARDING_PASSES_B_01: the boarding passes of the flight 1, in boarding order
@@ -1788,7 +1788,7 @@ ORDER BY boarding_no NULLS LAST, ticket_no
 
 // AI: Pick DEMODB_BOARDING_PASSES_B_03: Read boarding passes through the ticket role.
 // AI: Copied from EXERCISES.asciidoc:3393, anchor DEMODB_BOARDING_PASSES_B_03; retain the permanent ID when revising.
-// AI: Registry: section=BOARDING_PASSES; tier=Basic; sql=src/test/sql-exercises/boarding_passes/01_basic.sql; test=BoardingPasses_Exercises_01_Basic_PersistenceIT.DEMODB_BOARDING_PASSES_B_03_Test.
+// AI: Registry: section=BOARDING_PASSES; tier=Basic; sql=src/test/sql-exercises/boarding_passes/01_basic.sql; test=demodb.boarding_passes.DEMODB_BOARDING_PASSES_B_03_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_BOARDING_PASSES_B_03]]
 ==== DEMODB_BOARDING_PASSES_B_03: the boarding passes of the ticket 0005432000000
@@ -1823,7 +1823,7 @@ ORDER BY flight_id
 
 // AI: Pick DEMODB_BOARDING_PASSES_I_02: An outer join tests the optional composite-key boarding-pass association.
 // AI: Copied from EXERCISES.asciidoc:3450, anchor DEMODB_BOARDING_PASSES_I_02; retain the permanent ID when revising.
-// AI: Registry: section=BOARDING_PASSES; tier=Intermediate; sql=src/test/sql-exercises/boarding_passes/02_intermediate.sql; test=BoardingPasses_Exercises_02_Intermediate_PersistenceIT.DEMODB_BOARDING_PASSES_I_02_Test.
+// AI: Registry: section=BOARDING_PASSES; tier=Intermediate; sql=src/test/sql-exercises/boarding_passes/02_intermediate.sql; test=demodb.boarding_passes.DEMODB_BOARDING_PASSES_I_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_BOARDING_PASSES_I_02]]
 ==== DEMODB_BOARDING_PASSES_I_02: how many segments have no boarding pass
@@ -1852,7 +1852,7 @@ WHERE bp.ticket_no IS NULL
 
 // AI: Pick DEMODB_BOARDING_PASSES_I_04: COUNT of a nullable attribute distinguishes checked-in from boarded passengers.
 // AI: Copied from EXERCISES.asciidoc:3503, anchor DEMODB_BOARDING_PASSES_I_04; retain the permanent ID when revising.
-// AI: Registry: section=BOARDING_PASSES; tier=Intermediate; sql=src/test/sql-exercises/boarding_passes/02_intermediate.sql; test=BoardingPasses_Exercises_02_Intermediate_PersistenceIT.DEMODB_BOARDING_PASSES_I_04_Test.
+// AI: Registry: section=BOARDING_PASSES; tier=Intermediate; sql=src/test/sql-exercises/boarding_passes/02_intermediate.sql; test=demodb.boarding_passes.DEMODB_BOARDING_PASSES_I_04_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_BOARDING_PASSES_I_04]]
 ==== DEMODB_BOARDING_PASSES_I_04: the five arrived flights with the most passengers checked in but not boarded
@@ -1909,7 +1909,7 @@ Exercises on the schema as a whole, not on a single table.
 
 // AI: Pick DEMODB_SCHEMA_B_06: Join segments to their flight and filter by status.
 // AI: Copied from EXERCISES.asciidoc:3772, anchor DEMODB_SCHEMA_B_06; retain the permanent ID when revising.
-// AI: Registry: section=SCHEMA; tier=Basic; sql=src/test/sql-exercises/__/01_basic.sql; test=___Exercises_01_Basic_PersistenceIT.DEMODB_SCHEMA_B_06_Test.
+// AI: Registry: section=SCHEMA; tier=Basic; sql=src/test/sql-exercises/__/01_basic.sql; test=demodb.schema.DEMODB_SCHEMA_B_06_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SCHEMA_B_06]]
 ==== DEMODB_SCHEMA_B_06: the sold segments of the cancelled flights
@@ -1942,7 +1942,7 @@ WHERE f.status = 'Cancelled'
 
 // AI: Pick DEMODB_SCHEMA_I_02: Navigate from boarding passes through flights and routes to airports.
 // AI: Copied from EXERCISES.asciidoc:3830, anchor DEMODB_SCHEMA_I_02; retain the permanent ID when revising.
-// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_02_Test.
+// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=demodb.schema.DEMODB_SCHEMA_I_02_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SCHEMA_I_02]]
 ==== DEMODB_SCHEMA_I_02: the ten airports with the most passengers boarded in the first week
@@ -1988,7 +1988,7 @@ LIMIT 10
 
 // AI: Pick DEMODB_SCHEMA_I_03: Aggregate revenue across the mapped flight-route-airplane chain.
 // AI: Copied from EXERCISES.asciidoc:3872, anchor DEMODB_SCHEMA_I_03; retain the permanent ID when revising.
-// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_03_Test.
+// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=demodb.schema.DEMODB_SCHEMA_I_03_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SCHEMA_I_03]]
 ==== DEMODB_SCHEMA_I_03: the money each airplane model took
@@ -2027,7 +2027,7 @@ ORDER BY revenue DESC, a.airplane_code
 
 // AI: Pick DEMODB_SCHEMA_I_10: Match the outbound and return roles through booking and ticket entities.
 // AI: Copied from EXERCISES.asciidoc:4122, anchor DEMODB_SCHEMA_I_10; retain the permanent ID when revising.
-// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=___Exercises_02_Intermediate_PersistenceIT.DEMODB_SCHEMA_I_10_Test.
+// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=demodb.schema.DEMODB_SCHEMA_I_10_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SCHEMA_I_10]]
 ==== DEMODB_SCHEMA_I_10: the outbound and return tickets of one passenger in one booking
@@ -2075,7 +2075,7 @@ ORDER BY b.book_ref, o.passenger_id
 
 // AI: Pick DEMODB_SCHEMA_A_06: A LEFT JOIN over the composite key identifies passengers still to board.
 // AI: Copied from EXERCISES.asciidoc:4348, anchor DEMODB_SCHEMA_A_06; retain the permanent ID when revising.
-// AI: Registry: section=SCHEMA; tier=Advanced; sql=src/test/sql-exercises/__/03_advanced.sql; test=___Exercises_03_Advanced_PersistenceIT.DEMODB_SCHEMA_A_06_Test.
+// AI: Registry: section=SCHEMA; tier=Advanced; sql=src/test/sql-exercises/__/03_advanced.sql; test=demodb.schema.DEMODB_SCHEMA_A_06_PersistenceIT.
 // AI: Use the documented demo clock/language and explicit UTC bounds; validate against PostgreSQL, not a substitute database.
 [[DEMODB_SCHEMA_A_06]]
 ==== DEMODB_SCHEMA_A_06: the passengers still to board the flights now boarding
