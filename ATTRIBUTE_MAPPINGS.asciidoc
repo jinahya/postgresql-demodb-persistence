@@ -7,9 +7,8 @@ AI: how this file is made -- as oracle-sample-schemas-persistence's ATTRIBUTE_MA
 PostgreSQL.
 
 * Scope: every attribute which maps a column -- each field carrying `@Column` in the main `Mapped*` classes,
-  including the `Mapped*Id` classes of the composite keys, which a subclass makes `@Embeddable` -- over every table
-  and view of the schema `bookings`. `MappedBoardingPassId` extends `MappedSegmentId`, and maps the same columns of
-  `boarding_passes`.
+  including the `@Embeddable` `*Id` classes of the composite keys -- over every table and view of the schema
+  `bookings`. `SegmentId` maps the same columns of `boarding_passes` too, whose key is its segment's.
 * Column type: `INFORMATION_SCHEMA.COLUMNS.DATA_TYPE` of the live database, never from memory, without the length;
   an array as its element type with `[]` (`integer[]`), a user-defined type by its name (`point`, `tstzrange`).
 * Attribute type: the field's declared type, without its type-use annotations. Converter: `@Convert(<converter>)`,
@@ -181,22 +180,22 @@ hold the same shape, a name per language, but are three Java types; see <<json>>
 [[composite-keys]]
 == Composite keys
 
-The four tables of composite keys map them in `@EmbeddedId`s of a type variable, `T`, which a subclass of the
-`Mapped*Id` class binds; their attributes are among the rows above.
+The four tables of composite keys map them in `@EmbeddedId`s of a type variable, `T`, bound to the `@Embeddable`
+`*Id` class, which a subclass names; their attributes are among the rows above.
 
 [cols="2,3,5",options="header"]
 |===
 | Table | Key class | Columns
 
-| `routes` | `MappedRouteId` | `route_no`, `validity`
-| `seats` | `MappedSeatId` | `airplane_code`, `seat_no`
-| `segments` | `MappedSegmentId` | `ticket_no`, `flight_id`
-| `boarding_passes` | `MappedBoardingPassId`, which extends `MappedSegmentId` | `ticket_no`, `flight_id`
+| `routes` | `RouteId` | `route_no`, `validity`
+| `seats` | `SeatId` | `airplane_code`, `seat_no`
+| `segments` | `SegmentId` | `ticket_no`, `flight_id`
+| `boarding_passes` | `SegmentId`, the key of the segment it references | `ticket_no`, `flight_id`
 
 |===
 
 The specification has neither an attribute of a type variable nor `@Convert` on an attribute of an identifier, so
-`MappedRoute` and `MappedRouteId`'s `validity` are not portable; the module's javadoc says Hibernate ORM maps both.
+`MappedRoute` and `RouteId`'s `validity` are not portable; the module's javadoc says Hibernate ORM maps both.
 
 [[json]]
 == JSON
@@ -274,7 +273,7 @@ Every converter which is not an enum's, nor a `jsonb` column's (see <<json>>), w
 | The module's; `point`, through its text `(x,y)`, as `[x, y]`: the longitude and the latitude. No provider maps a
 native `point`: Hibernate Spatial needs PostGIS `geometry`, which the database has not.
 
-| `MappedRouteId.ValidityConverter`
+| `RouteId.ValidityConverter`
 | `Instant[]`
 | `routes.validity`
 | The module's; `tstzrange`, through its text, as `[lower, upper]`. Only a range with both bounds, the lower

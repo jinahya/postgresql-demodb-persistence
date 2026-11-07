@@ -227,7 +227,7 @@ See link:{docs}/rangetypes.html[Range Types].
 
 `routes.validity` is the period a route is valid, `[lower,upper)`; with `route_no` it is the key of `routes`, which
 has no primary key but the exclusion constraint `routes_route_no_validity_excl`. It is an `Instant[]` of its two
-bounds through `MappedRouteId.ValidityConverter`, which reads and writes the range's text.
+bounds through `RouteId.ValidityConverter`, which reads and writes the range's text.
 
 [cols="2,2,1,6",options="header"]
 |===
