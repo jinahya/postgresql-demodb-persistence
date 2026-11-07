@@ -195,7 +195,7 @@ are among the rows above.
 |===
 
 The specification does not have `@Convert` on an attribute of an identifier, so `RouteId`'s `validity` is not
-portable; the module's javadoc says Hibernate ORM maps it.
+portable; Hibernate ORM, which the module targets, maps it.
 
 [[json]]
 == JSON

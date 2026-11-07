@@ -14,8 +14,8 @@ AI: how this file is made -- as oracle-sample-schemas-persistence's COLUMN_TYPES
   and Java type, linked to its page.
 * Columns: Declared as | Java type | Count | Columns; each column as `table.column`; the counts add up to the
   columns stated in the introduction.
-* Java type: the type of the attribute which maps the column in the `Mapped*` classes, including the `Mapped*Id`
-  classes of the composite keys: `java.time` for the date/time types, a wrapper type, never a primitive.
+* Java type: the type of the attribute which maps the column in the `Mapped*` classes, including the `@Embeddable`
+  `*Id` classes of the composite keys: `java.time` for the date/time types, a wrapper type, never a primitive.
 * Take the types from the live database's catalog, never from memory.
 * Name the types of the reference which no column uses, in the introduction.
 * End the file with two newlines.
