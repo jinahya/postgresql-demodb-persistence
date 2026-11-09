@@ -24,9 +24,13 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 
+import java.util.Collection;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.WeakHashMap;
+import java.util.regex.Pattern;
 
 /**
  * Utilities for names kept in a {@code jsonb} column as a JSON object keyed by language,
@@ -38,7 +42,19 @@ import java.util.Optional;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-final class LanguageNameUtils {
+final class LocalizedNameUtils {
+
+    /**
+     * The regular expression which a language matches: an ISO 639-1 code, two letters in lower
+     * case, as {@link java.util.Locale#getLanguage()} returns it for a language which has one. The
+     * value is {@value}.
+     */
+    static final String REGEXP_LANGUAGE = "[a-z]{2}";
+
+    /**
+     * A pre-compiled pattern of the {@link #REGEXP_LANGUAGE}.
+     */
+    static final Pattern PATTERN_LANGUAGE = Pattern.compile(REGEXP_LANGUAGE);
 
     /**
      * Returns the language of the specified locale, the key of a name.
@@ -127,9 +143,56 @@ final class LanguageNameUtils {
         return names == null ? Json.createObjectBuilder() : Json.createObjectBuilder(names);
     }
 
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the specified language, if it matches {@link #REGEXP_LANGUAGE}.
+     *
+     * @param language the language.
+     * @return {@code language}.
+     * @throws NullPointerException     if {@code language} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link #REGEXP_LANGUAGE}.
+     */
+    static String requireValidLanguage(final String language) {
+        Objects.requireNonNull(language, "language is null");
+        if (!PATTERN_LANGUAGE.matcher(language).matches()) {
+            throw new IllegalArgumentException("invalid language " + language);
+        }
+        return language;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    private static final Map<Object, Map<String, LocalizedName>> C = new WeakHashMap<>();
+
+    /**
+     * Returns the name, in the specified names of the specified owner, in the specified language.
+     *
+     * @param owner    the owner of {@code names}, such as an entity; not used yet.
+     * @param names    the names; may be {@code null}.
+     * @param language the language of the name.
+     * @return the name in {@code language}; {@code null} if there is none.
+     * @throws NullPointerException     if {@code language} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link #REGEXP_LANGUAGE}.
+     */
+    public static String getName(final Object owner,
+                                 final Collection<? extends LocalizedName> names,
+                                 final String language) {
+        Objects.requireNonNull(owner, "owner is null");
+        Objects.requireNonNull(names, "names is null");
+        Objects.requireNonNull(language, "language is null");
+        requireValidLanguage(language);
+        return names.stream()
+                .filter(n -> n.getLanguage().equals(language))
+                .map(LocalizedName::getName)
+                .findFirst()
+                .orElse(null);
+    }
+
     // -------------------------------------------------------------------------------- CONSTRUCTORS
 
-    private LanguageNameUtils() {
+    private LocalizedNameUtils() {
         throw new AssertionError("instantiation is not allowed");
     }
 }

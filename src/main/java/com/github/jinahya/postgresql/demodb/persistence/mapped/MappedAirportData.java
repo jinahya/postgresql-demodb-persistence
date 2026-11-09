@@ -29,15 +29,15 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.time.ZoneId;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -51,13 +51,11 @@ import java.util.function.Supplier;
  * {@value MappedAirportData#COLUMN_NAME_CITY} and {@value MappedAirportData#COLUMN_NAME_COUNTRY}
  * columns are {@code jsonb}, an object of one name per language, keyed {@code en}, {@code ru}, ...;
  * {@value MappedAirportData#COLUMN_NAME_AIRPORT_NAME} is mapped as a {@link JsonObject}, through a
- * {@link JsonpAttributeConverter.OfString.OfJsonObject},
- * {@value MappedAirportData#COLUMN_NAME_CITY} as a {@link LocaleNameWrapper}, as JSON, with
- * Hibernate ORM's {@link JdbcTypeCode @JdbcTypeCode}{@code (}{@link SqlTypes#JSON}{@code )} and no
- * converter, and
- * {@value MappedAirportData#COLUMN_NAME_COUNTRY} as a list of {@link LocaleName}s, one per
- * language, through a {@link LocaleNameListAttributeConverter}; each has package-private
- * accessors, and is read and written a name at a time, by the language of a {@link Locale}. The
+ * {@link JsonpAttributeConverter.OfString.OfJsonObject}, and
+ * {@value MappedAirportData#COLUMN_NAME_CITY} and {@value MappedAirportData#COLUMN_NAME_COUNTRY}
+ * each as a map keyed by language, through a {@link LocalizedNameMapAttributeConverter}; each has
+ * package-private accessors, and is read and written a name at a time, by the language of a
+ * {@link Locale}. The
  * {@code airports} view, see {@link MappedAirport}, picks the session's language out of them.
  * <p>
  * The {@value MappedAirportData#COLUMN_NAME_COORDINATES} column is a {@code point}, which has no
@@ -338,7 +336,7 @@ public abstract class MappedAirportData {
      * @throws IllegalArgumentException if {@code locale} has no language.
      */
     public String getAirportName(final Locale locale) {
-        return LanguageNameUtils.get(getAirportName(), locale);
+        return LocalizedNameUtils.get(getAirportName(), locale);
     }
 
     /**
@@ -355,7 +353,7 @@ public abstract class MappedAirportData {
      * @see #removeAirportName(Locale)
      */
     public void setAirportName(final Locale locale, final String name) {
-        setAirportName(LanguageNameUtils.with(getAirportName(), locale, name));
+        setAirportName(LocalizedNameUtils.with(getAirportName(), locale, name));
     }
 
     /**
@@ -372,7 +370,7 @@ public abstract class MappedAirportData {
     public String removeAirportName(final Locale locale) {
         final var removed = getAirportName(locale);
         if (removed != null) {
-            setAirportName(LanguageNameUtils.without(getAirportName(), locale));
+            setAirportName(LocalizedNameUtils.without(getAirportName(), locale));
         }
         return removed;
     }
@@ -381,13 +379,13 @@ public abstract class MappedAirportData {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_CITY} attribute -- a {@code jsonb} column,
-     * mapped as JSON, with Hibernate ORM's {@link JdbcTypeCode @JdbcTypeCode}{@code (}{@link
-     * SqlTypes#JSON}{@code )}, as a {@link LocaleNameWrapper} of the names it holds.
+     * mapped, through a {@link LocalizedNameMapAttributeConverter}, as the names it holds, keyed by
+     * language.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_CITY} attribute.
      * @see #getCityName(Locale)
      */
-    LocaleNameWrapper getCity() {
+    Map<String, String> getCity() {
         return city;
     }
 
@@ -395,11 +393,11 @@ public abstract class MappedAirportData {
      * Replaces current value of {@value #ATTRIBUTE_NAME_CITY} attribute with the specified value.
      *
      * @param city new value for {@value #ATTRIBUTE_NAME_CITY} attribute.
-     * @implNote The names are replaced with a new wrapper, not changed in place, so that the
+     * @implNote The names are replaced with a new map, not changed in place, so that the
      *         change is seen as a change of the attribute.
      * @see #setCityName(Locale, String)
      */
-    void setCity(final LocaleNameWrapper city) {
+    void setCity(final Map<String, String> city) {
         this.city = city;
     }
 
@@ -413,13 +411,8 @@ public abstract class MappedAirportData {
      * @throws IllegalArgumentException if {@code locale} has no language.
      */
     public String getCityName(final Locale locale) {
-        final var language = new Locale(LanguageNameUtils.language(locale));
-        return Optional.ofNullable(getCity()).map(LocaleNameWrapper::getEntries).stream()
-                .flatMap(List::stream)
-                .filter(n -> n.getLocale().equals(language))
-                .map(LocaleName::getValue)
-                .findFirst()
-                .orElse(null);
+        final var language = LocalizedNameUtils.language(locale);
+        return Optional.ofNullable(getCity()).map(v -> v.get(language)).orElse(null);
     }
 
     /**
@@ -431,20 +424,14 @@ public abstract class MappedAirportData {
      * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
      *                                  blank.
-     * @implNote The names are replaced with a new wrapper, not changed in place, so that the
+     * @implNote The names are replaced with a new map, not changed in place, so that the
      *         change is seen as a change of the attribute.
      * @see #removeCityName(Locale)
      */
     public void setCityName(final Locale locale, final String name) {
-        final var element = new LocaleName(locale, name);
-        final var entries = new ArrayList<>(Optional.ofNullable(getCity())
-                                                    .map(LocaleNameWrapper::getEntries)
-                                                    .orElse(List.of()));
-        entries.removeIf(n -> n.getLocale().equals(element.getLocale())); // one per language
-        entries.add(element);
-        entries.sort(LocaleNameListAttributeConverter.ORDER);
-        final var city = new LocaleNameWrapper();
-        city.setEntries(entries);
+        final var language = LocalizedNameUtils.language(locale);
+        final var city = new HashMap<>(Optional.ofNullable(getCity()).orElse(Map.of()));
+        city.put(language, LocalizedNameUtils.name(name));
         setCity(city);
     }
 
@@ -455,18 +442,15 @@ public abstract class MappedAirportData {
      * @return the name removed; {@code null} if there was none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language.
-     * @implNote The names are replaced with a new wrapper, not changed in place, so that the
+     * @implNote The names are replaced with a new map, not changed in place, so that the
      *         change is seen as a change of the attribute; nothing is replaced when there was no
      *         name.
      */
     public String removeCityName(final Locale locale) {
         final var removed = getCityName(locale);
         if (removed != null) {
-            final var language = new Locale(LanguageNameUtils.language(locale));
-            final var entries = new ArrayList<>(getCity().getEntries());
-            entries.removeIf(n -> n.getLocale().equals(language));
-            final var city = new LocaleNameWrapper();
-            city.setEntries(entries);
+            final var city = new HashMap<>(getCity());
+            city.remove(LocalizedNameUtils.language(locale));
             setCity(city);
         }
         return removed;
@@ -476,13 +460,13 @@ public abstract class MappedAirportData {
 
     /**
      * Returns current value of {@value #ATTRIBUTE_NAME_COUNTRY} attribute -- a {@code jsonb}
-     * column, mapped, through a {@link LocaleNameListAttributeConverter}, as the names it holds,
-     * one per language, in the order of their languages.
+     * column, mapped, through a {@link LocalizedNameMapAttributeConverter}, as the names it holds,
+     * keyed by language.
      *
      * @return current value of {@value #ATTRIBUTE_NAME_COUNTRY} attribute.
      * @see #getCountryName(Locale)
      */
-    List<LocaleName> getCountry() {
+    Map<String, String> getCountry() {
         return country;
     }
 
@@ -491,11 +475,11 @@ public abstract class MappedAirportData {
      * value.
      *
      * @param country new value for {@value #ATTRIBUTE_NAME_COUNTRY} attribute.
-     * @implNote The names are replaced with a new list, not changed in place, so that the change
-     *         is seen as a change of the attribute.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute.
      * @see #setCountryName(Locale, String)
      */
-    void setCountry(final List<LocaleName> country) {
+    void setCountry(final Map<String, String> country) {
         this.country = country;
     }
 
@@ -509,13 +493,8 @@ public abstract class MappedAirportData {
      * @throws IllegalArgumentException if {@code locale} has no language.
      */
     public String getCountryName(final Locale locale) {
-        final var language = new Locale(LanguageNameUtils.language(locale));
-        return Optional.ofNullable(getCountry()).stream()
-                .flatMap(List::stream)
-                .filter(n -> n.getLocale().equals(language))
-                .map(LocaleName::getValue)
-                .findFirst()
-                .orElse(null);
+        final var language = LocalizedNameUtils.language(locale);
+        return Optional.ofNullable(getCountry()).map(v -> v.get(language)).orElse(null);
     }
 
     /**
@@ -527,16 +506,14 @@ public abstract class MappedAirportData {
      * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
      *                                  blank.
-     * @implNote The names are replaced with new ones, not changed in place, so that the change is
-     *         seen as a change of the attribute.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute.
      * @see #removeCountryName(Locale)
      */
     public void setCountryName(final Locale locale, final String name) {
-        final var element = new LocaleName(locale, name);
-        final var country = new ArrayList<>(Optional.ofNullable(getCountry()).orElse(List.of()));
-        country.removeIf(n -> n.getLocale().equals(element.getLocale())); // one per language
-        country.add(element);
-        country.sort(LocaleNameListAttributeConverter.ORDER);
+        final var language = LocalizedNameUtils.language(locale);
+        final var country = new HashMap<>(Optional.ofNullable(getCountry()).orElse(Map.of()));
+        country.put(language, LocalizedNameUtils.name(name));
         setCountry(country);
     }
 
@@ -547,15 +524,15 @@ public abstract class MappedAirportData {
      * @return the name removed; {@code null} if there was none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
      * @throws IllegalArgumentException if {@code locale} has no language.
-     * @implNote The names are replaced with new ones, not changed in place, so that the change is
-     *         seen as a change of the attribute; nothing is replaced when there was no name.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute; nothing is replaced when there was no
+     *         name.
      */
     public String removeCountryName(final Locale locale) {
         final var removed = getCountryName(locale);
         if (removed != null) {
-            final var language = new Locale(LanguageNameUtils.language(locale));
-            final var country = new ArrayList<>(getCountry());
-            country.removeIf(n -> n.getLocale().equals(language));
+            final var country = new HashMap<>(getCountry());
+            country.remove(LocalizedNameUtils.language(locale));
             setCountry(country);
         }
         return removed;
@@ -651,17 +628,17 @@ public abstract class MappedAirportData {
 
     // ---------------------------------------------------------------------------------------------
     @NotNull
-    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = LocalizedNameMapAttributeConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_CITY, nullable = false, insertable = true, updatable = true)
-    private LocaleNameWrapper city;
+    private Map<@NotBlank String, @NotBlank String> city;
 
     // ---------------------------------------------------------------------------------------------
     @NotNull
-    @Convert(converter = LocaleNameListAttributeConverter.class)
+    @Convert(converter = LocalizedNameMapAttributeConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_COUNTRY, nullable = false, insertable = true, updatable = true)
-    private List<@NotNull LocaleName> country;
+    private Map<@NotBlank String, @NotBlank String> country;
 
     // ---------------------------------------------------------------------------------------------
     @Size(min = 2, max = 2)
