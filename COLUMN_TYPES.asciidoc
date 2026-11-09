@@ -179,7 +179,7 @@ See link:{docs}/datatype-json.html[JSON Types].
 
 Every `jsonb` column holds a name per language, an object keyed by language (`{"en": "Anaa", "ru": "Анаа"}`), and
 each is read through `jinahya-persistence-more`'s `JsonpAttributeConverter.OfString.OfJsonObject`, directly or
-inside a converter of the module; the same shape is three Java types. See
+inside a converter of the module; the same shape is two Java types. See
 link:ATTRIBUTE_MAPPINGS.asciidoc#json[JSON].
 
 [cols="2,2,1,6",options="header"]
@@ -192,14 +192,9 @@ link:ATTRIBUTE_MAPPINGS.asciidoc#json[JSON].
 | `airplanes_data.model`, `airports_data.airport_name`
 
 | link:{docs}/datatype-json.html[`jsonb`]
-| `List<LocaleName>`
-| 1
-| `airports_data.country`
-
-| link:{docs}/datatype-json.html[`jsonb`]
-| `Map<Locale, String>`
-| 1
-| `airports_data.city`
+| `Map<String, String>`
+| 2
+| `airports_data.city`, `airports_data.country`
 
 |===
 

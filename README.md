@@ -67,8 +67,7 @@ with what maps it best there: Hibernate's own types, or a converter.
 | `tstzrange` | `routes.validity` | `Instant[]`, the lower and the upper bound | `RouteId.ValidityConverter`, through the text `["lower","upper")` |
 | `point` | `airports_data.coordinates`, the `airports` view's | `List<Double>`, the longitude and the latitude | `PointAttributeConverter`, through the text `(x,y)` |
 | `jsonb` | `airplanes_data.model`, `airports_data.airport_name` | `JsonObject` | `JsonpAttributeConverter.OfString.OfJsonObject`, through the JSON text |
-| `jsonb` | `airports_data.city` | `Map<Locale, String>`, keyed by language | `LocaleStringMapAttributeConverter`, through a `JsonObject` |
-| `jsonb` | `airports_data.country` | `List<LocaleName>`, one per language, in the order of the languages | `LocaleNameListAttributeConverter`, through a `JsonObject` |
+| `jsonb` | `airports_data.city`, `airports_data.country` | `Map<String, String>`, keyed by language | `LocalizedNameMapAttributeConverter`, through a `JsonObject` |
 
 What Hibernate does with each of the five, mapped by a plain `@Column` and no converter, measured against the database
 above with Hibernate ORM 7.4.12.Final and PostgreSQL JDBC 42.7.14, a row read and the column updated and rolled back;
@@ -124,14 +123,12 @@ What else this module does:
   text as the server does. No provider maps a native `point`: Hibernate Spatial and geolatte need PostGIS `geometry`,
   which the database does not have.
 - Each `jsonb` column is an object of one name per language. `airplanes_data.model` and `airports_data.airport_name`
-  are mapped as a JSON-P `JsonObject` through `JsonpAttributeConverter.OfString.OfJsonObject`; `airports_data.city` as a
-  `Map<Locale, String>` through `LocaleStringMapAttributeConverter`, which reads the column as a `JsonObject` and each
-  key as a language with `LocaleStringAttributeConverter.OfLanguage`; and `airports_data.country` as a
-  `List<LocaleName>`, one per language, through `LocaleNameListAttributeConverter`, which reads and writes the
-  column as a `JsonObject` with `JsonpAttributeConverter.OfString.OfJsonObject`, and returns the list in the order of
-  the languages.
-  The attributes have package-private accessors, and are read and written a name at a time, by the language of a
-  `Locale`, through public `get…Name`, `set…Name` and `remove…Name` methods. `JsonpAttributeConverter`, from
+  are mapped as a JSON-P `JsonObject` through `JsonpAttributeConverter.OfString.OfJsonObject`; `airports_data.city` and
+  `airports_data.country` as a `Map<String, String>`, keyed by language, through `LocalizedNameMapAttributeConverter`,
+  which reads and writes the column as a `JsonObject` with `JsonpAttributeConverter.OfString.OfJsonObject`.
+  The attributes have package-private accessors, and are read and written a name at a time, through public
+  `get…Name`, `set…Name` and `remove…Name` methods, by a language, which must match
+  `LocalizedNameUtils.REGEXP_LANGUAGE` (`[a-z]{2}`), or by the language of a `Locale`. `JsonpAttributeConverter`, from
   `jinahya-persistence-more`, has a converter for each JSON-P type, over a text column (`OfString`) or a binary one
   (`OfBytes`), `OfJsonValue`, `OfJsonStructure`, `OfJsonObject`, `OfJsonArray`, `OfJsonString` and `OfJsonNumber`;
   each reads one JSON value, rejects anything after it, and rejects a value of another type.
@@ -208,7 +205,7 @@ columns' objects have no fixed keys and values, so they stay text, which a conve
 
 The mappings are measured with Hibernate ORM only, and two things in them depend on it.
 
-An attribute declared as a `Map`, `airports_data.city`, is `@Basic` with `@Convert`, and the specification points
+An attribute declared as a `Map`, `airports_data.city` or `country`, is `@Basic` with `@Convert`, and the specification points
 two ways on it. "A converted attribute is considered a basic attribute", and no `Map` is among the attributes it does
 not convert (3.9); but the basic types end with "any other serializable type", which an interface `Map` is not
 ([`Basic`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/Basic.html)),
@@ -216,24 +213,19 @@ a `Map` is collection-valued (2.2), and a converter on "a `Map` collection attri
 named by `attributeName`
 ([`Convert`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/Convert.html)).
 Hibernate takes the map, with a converter, as a basic value; what another provider does is not measured. A
-`JsonObject`, which is a `Map<String, JsonValue>`, is the same case.
-
-An attribute declared as a `List`, `airports_data.country`, is the plainer case against it: a converter on "a
-collection attribute of any type other than `Map`" is applied to "the elements of the collection", and a `List` is
-no basic type either. Hibernate takes the list, with a converter, as a basic value too. The portable form would be a
-`Serializable` value type of the module's own, which is neither a `Map` nor a `Collection`, with a converter.
+`JsonObject`, which is a `Map<String, JsonValue>`, is the same case. The portable form would be a `Serializable`
+value type of the module's own, which is neither a `Map` nor a `Collection`, with a converter.
 
 The specification does not say how a provider sees a change of a converted attribute. Hibernate keeps a copy of the
 value, through the converter, and compares it with `equals` at a flush; a provider may as well compare the reference
 only. So a value is never changed in place, but replaced with a new one, which every provider sees, and which is
 unequal to the old one when the names differ:
 
-- `city`'s `setCityName` and `removeCityName` build a new map, and a `Map`'s equality takes in its values, so a
-  rename in a language the city has is seen.
-- `country`'s `setCountryName` and `removeCountryName` build a new list and assign it, and a `LocaleName` is equal
-  to another of the same language and the same value, so a rename is seen. A `List`'s equality takes in the order,
-  so the list is kept in the order of the languages, as the converter reads it and as `setCountryName` sorts it;
-  the same names read back are then an equal list, and no update is written for them.
+- `city`'s and `country`'s `set…Name` and `remove…Name` build a new map, and a `Map`'s equality takes in its
+  values, so a rename in a language the attribute has is seen; a `Map`'s equality ignores the order, so the same
+  names read back are an equal map, and no update is written for them.
+- `model`'s and `airport_name`'s `set…Name` and `remove…Name` build a new `JsonObject`, which cannot be changed in
+  place anyway.
 
 ## Building
 

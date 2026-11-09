@@ -145,18 +145,11 @@ key: `routes` has no primary key, and a flight's route is the row whose `validit
 | `airplanes_data.model`, `airports_data.airport_name`
 
 | link:{docs}/datatype-json.html[`jsonb`]
-| `List<LocaleName>`
-| `@Convert(LocaleNameListAttributeConverter)`
-| 1
+| `Map<String, String>`
+| `@Convert(LocalizedNameMapAttributeConverter)`
+| 2
 | See <<json>>.
-| `airports_data.country`
-
-| link:{docs}/datatype-json.html[`jsonb`]
-| `Map<Locale, String>`
-| `@Convert(LocaleStringMapAttributeConverter)`
-| 1
-| See <<json>>.
-| `airports_data.city`
+| `airports_data.city`, `airports_data.country`
 
 | link:{docs}/arrays.html[`integer[]`]
 | `List<Integer>`
@@ -175,7 +168,7 @@ key: `routes` has no primary key, and a flight's route is the row whose `validit
 |===
 
 The `jsonb` rows are inconsistent: `airports_data.airport_name`, `city` and `country`, and `airplanes_data.model`,
-hold the same shape, a name per language, but are three Java types; see <<json>>.
+hold the same shape, a name per language, but are two Java types; see <<json>>.
 
 [[composite-keys]]
 == Composite keys
@@ -203,7 +196,7 @@ portable; Hibernate ORM, which the module targets, maps it.
 `airplanes_data.model` and `airports_data.airport_name`, `city` and `country` are `jsonb` objects of a name per
 language, `en` and `ru` (`{"en": "Airbus A320neo", "ru": "Аэробус A320neo"}`). Each is read through
 `jinahya-persistence-more`'s `JsonpAttributeConverter.OfString.OfJsonObject`, which reads one JSON object, but to
-three types:
+two types:
 
 [cols="3,2,5",options="header"]
 |===
@@ -213,17 +206,16 @@ three types:
 | `JsonObject`
 | `@Convert(converter = JsonpAttributeConverter.OfString.OfJsonObject.class)`, the object as it is.
 
-| `airports_data.city`
-| `Map<Locale, String>`
-| `@Convert(converter = LocaleStringMapAttributeConverter.class)`; each key a `Locale` of its language, through
-`LocaleStringAttributeConverter.OfLanguage`.
-
-| `airports_data.country`
-| `List<LocaleName>`
-| `@Convert(converter = LocaleNameListAttributeConverter.class)`; a `LocaleName` per language, in the order of the
-converter's `ORDER`, so that the same names read twice are equal lists.
+| `airports_data.city`, `airports_data.country`
+| `Map<String, String>`
+| `@Convert(converter = LocalizedNameMapAttributeConverter.class)`, the module's; each key the language as it is.
 
 |===
+
+Each of the four is read and written a name at a time, through public `get…Name`, `set…Name` and `remove…Name`
+methods, by a language (`String`), which `LocalizedNameUtils.requireValidLanguage` checks against
+`LocalizedNameUtils.REGEXP_LANGUAGE` (`[a-z]{2}`, an ISO 639-1 code), or by the language of a `Locale`, which the
+`Locale` methods pass to the `String` ones. The attributes' own accessors are package-private.
 
 The views `airplanes` and `airports` read the same columns as `text`, the name in the session's language
 (`bookings.lang()`), and map them as `String`s. `stringtype=unspecified` on the JDBC URL of the `it` unit sends the
