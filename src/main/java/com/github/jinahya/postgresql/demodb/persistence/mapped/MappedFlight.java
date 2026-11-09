@@ -20,18 +20,18 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.persistence.more.AttributeEnum;
-import com.github.jinahya.persistence.more.converter.AttributeEnumConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Converter;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumeratedValue;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Duration;
@@ -64,12 +64,11 @@ public abstract class MappedFlight {
 
     /**
      * The status of a flight, the value of a {@code flights.status} column, and of the
-     * {@code timetable} view's; the values the {@code flight_status_check} constraint allows.
-     *
-     * @see FlightStatusConverter
+     * {@code timetable} view's; the values the {@code flight_status_check} constraint allows. The
+     * column value is not a constant's {@link Enum#name() name}, so each constant carries it as an
+     * {@link EnumeratedValue @EnumeratedValue}.
      */
-    public enum FlightStatus
-            implements AttributeEnum.OfString<FlightStatus> {
+    public enum FlightStatus {
 
         /**
          * {@code Scheduled}.
@@ -106,9 +105,31 @@ public abstract class MappedFlight {
          */
         CANCELLED("Cancelled");
 
-        FlightStatus(final String attributeValue) {
-            this.attributeValue = attributeValue;
+        // -----------------------------------------------------------------------------------------
+
+        /**
+         * Returns the constant whose {@link #columnValue() column value} is the specified value.
+         *
+         * @param columnValue the column value to match.
+         * @return the constant whose column value is {@code columnValue}.
+         * @throws IllegalArgumentException if no constant has {@code columnValue} as its column
+         *                                  value.
+         */
+        public static FlightStatus valueOfColumnValue(final String columnValue) {
+            for (final var value : values()) {
+                if (value.columnValue().equals(columnValue)) {
+                    return value;
+                }
+            }
+            throw new IllegalArgumentException("no flight status for '" + columnValue + "'");
         }
+
+        // -----------------------------------------------------------------------------------------
+        FlightStatus(final String columnValue) {
+            this.columnValue = Objects.requireNonNull(columnValue, "columnValue is null");
+        }
+
+        // -----------------------------------------------------------------------------------------
 
         /**
          * Returns the column value of this constant, the text the column holds; not its
@@ -116,32 +137,14 @@ public abstract class MappedFlight {
          *
          * @return the column value of this constant.
          */
-        @Override
-        public String attributeValue() {
-            return attributeValue;
+        public String columnValue() {
+            return columnValue;
         }
 
-        private final String attributeValue;
-    }
-
-    /**
-     * Converts between a {@link FlightStatus} and its column value, its
-     * {@link FlightStatus#attributeValue() attributeValue()}, through
-     * {@link AttributeEnumConverter.OfString}, which looks a constant up by its value.
-     * <p>
-     * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
-     * {@link jakarta.persistence.Convert @Convert}.
-     */
-    @Converter(autoApply = false)
-    public static class FlightStatusConverter
-            extends AttributeEnumConverter.OfString<FlightStatus> {
-
-        /**
-         * Creates a new instance.
-         */
-        public FlightStatusConverter() {
-            super(FlightStatus.class);
-        }
+        // -----------------------------------------------------------------------------------------
+        @NotBlank
+        @EnumeratedValue
+        private final String columnValue;
     }
 
     /**
@@ -565,7 +568,11 @@ public abstract class MappedFlight {
     private String routeNo;
 
     // ---------------------------------------------------------------------------------------------
-    @Convert(converter = FlightStatusConverter.class)
+    // the specification infers STRING from the enum's @EnumeratedValue String field, without
+    // @Enumerated; Hibernate ORM 7 does not, and takes it as ORDINAL
+    // https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2#a14719
+    // https://hibernate.atlassian.net/browse/HHH-20410
+    @Enumerated(EnumType.STRING)
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_STATUS, nullable = false, insertable = true, updatable = true)

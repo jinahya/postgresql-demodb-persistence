@@ -20,15 +20,15 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  * #L%
  */
 
-import com.github.jinahya.persistence.more.AttributeEnum;
-import com.github.jinahya.persistence.more.converter.AttributeEnumConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Converter;
 import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumeratedValue;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
@@ -57,12 +57,10 @@ public abstract class MappedSeat {
      * The fare conditions, the travel class, the value of a {@code seats.fare_conditions} column
      * and of a {@code segments.fare_conditions} column; the values the
      * {@code seat_fare_conditions_check} and {@code segments_fare_conditions_check} constraints
-     * allow.
-     *
-     * @see FareConditionsConverter
+     * allow. The column value is not a constant's {@link Enum#name() name}, so each constant
+     * carries it as an {@link EnumeratedValue @EnumeratedValue}.
      */
-    public enum FareConditions
-            implements AttributeEnum.OfString<FareConditions> {
+    public enum FareConditions {
 
         /**
          * {@code Economy}.
@@ -79,9 +77,31 @@ public abstract class MappedSeat {
          */
         BUSINESS("Business");
 
-        FareConditions(final String text) {
-            this.text = text;
+        // -----------------------------------------------------------------------------------------
+
+        /**
+         * Returns the constant whose {@link #columnValue() column value} is the specified value.
+         *
+         * @param columnValue the column value to match.
+         * @return the constant whose column value is {@code columnValue}.
+         * @throws IllegalArgumentException if no constant has {@code columnValue} as its column
+         *                                  value.
+         */
+        public static FareConditions valueOfColumnValue(final String columnValue) {
+            for (final var value : values()) {
+                if (value.columnValue().equals(columnValue)) {
+                    return value;
+                }
+            }
+            throw new IllegalArgumentException("no fare conditions for '" + columnValue + "'");
         }
+
+        // -----------------------------------------------------------------------------------------
+        FareConditions(final String columnValue) {
+            this.columnValue = Objects.requireNonNull(columnValue, "columnValue is null");
+        }
+
+        // -----------------------------------------------------------------------------------------
 
         /**
          * Returns the column value of this constant, the text the column holds; not its
@@ -89,32 +109,14 @@ public abstract class MappedSeat {
          *
          * @return the column value of this constant.
          */
-        @Override
-        public String attributeValue() {
-            return text;
+        public String columnValue() {
+            return columnValue;
         }
 
-        private final String text;
-    }
-
-    /**
-     * Converts between a {@link FareConditions} and its column value, its
-     * {@link FareConditions#attributeValue() attributeValue()}, through
-     * {@link AttributeEnumConverter.OfString}, which looks a constant up by its value.
-     * <p>
-     * The converter is not {@link Converter#autoApply() auto-applied}; an attribute names it with
-     * {@link jakarta.persistence.Convert @Convert}.
-     */
-    @Converter(autoApply = false)
-    public static class FareConditionsConverter
-            extends AttributeEnumConverter.OfString<FareConditions> {
-
-        /**
-         * Creates a new instance.
-         */
-        public FareConditionsConverter() {
-            super(FareConditions.class);
-        }
+        // -----------------------------------------------------------------------------------------
+        @NotBlank
+        @EnumeratedValue
+        private final String columnValue;
     }
 
     /**
@@ -336,7 +338,11 @@ public abstract class MappedSeat {
     private SeatId id;
 
     // ---------------------------------------------------------------------------------------------
-    @Convert(converter = FareConditionsConverter.class)
+    // the specification infers STRING from the enum's @EnumeratedValue String field, without
+    // @Enumerated; Hibernate ORM 7 does not, and takes it as ORDINAL
+    // https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2#a14719
+    // https://hibernate.atlassian.net/browse/HHH-20410
+    @Enumerated(EnumType.STRING)
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_FARE_CONDITIONS, nullable = false, insertable = true,

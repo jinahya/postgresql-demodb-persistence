@@ -134,13 +134,13 @@ What else this module does:
   each reads one JSON value, rejects anything after it, and rejects a value of another type.
 - Writing a `point` or a `jsonb`, as text through its converter, needs `stringtype=unspecified` on the JDBC URL.
   Reading needs nothing.
-- Three `text` columns go through converters too, for a type the text has no room for: `flights.status`, and the
-  `timetable` view's, as a `MappedFlight.FlightStatus` (`On Time` is no Java identifier, which is why `@Enumerated`
-  cannot map it), `seats.fare_conditions` and `segments.fare_conditions` as a `MappedSeat.FareConditions`, both enums
-  of the values the check constraints allow, and `airports_data.timezone`, and the `airports` view's, as a `ZoneId`,
-  through `MappedFlight.FlightStatusConverter`, `MappedSeat.FareConditionsConverter` and
-  `ZoneIdStringAttributeConverter`, from `jinahya-persistence-more`. An enum and its converter, specific to a column,
-  are nested in the mapped class of the column's table.
+- Three `text` columns hold a value of a few: `flights.status`, and the `timetable` view's, as a
+  `MappedFlight.FlightStatus`, and `seats.fare_conditions` and `segments.fare_conditions` as a
+  `MappedSeat.FareConditions`, both enums of the values the check constraints allow. `On Time` is no Java
+  identifier, so each constant carries its text in an `@EnumeratedValue` `String` field, and the attribute is
+  `@Enumerated(EnumType.STRING)`, which the specification would infer but Hibernate ORM 7 does not (HHH-20410).
+  An enum, specific to a column, is nested in the mapped class of the column's table. `airports_data.timezone`, and
+  the `airports` view's, go through `ZoneIdStringAttributeConverter`, from `jinahya-persistence-more`, as a `ZoneId`.
 - Each `timestamptz` column -- the four of `flights`, `bookings.book_date`, `boarding_passes.boarding_time` and the
   `timetable` view's four -- is mapped as an `Instant`, a basic type since Jakarta Persistence 3.2. The column holds a
   moment and no offset; an `OffsetDateTime` would carry an offset the database never stored. A local time is the

@@ -69,9 +69,9 @@ See link:{docs}/datatype-character.html[Character Types].
 `character(n)` is blank-padded to its length, but every code here fills it: the airport and airplane codes are
 three characters, and a booking's `book_ref` six. `text` has no length.
 
-Four `text` columns are other types through converters: `flights.status` a `MappedFlight.FlightStatus`,
-`seats.fare_conditions` and `segments.fare_conditions` a `MappedSeat.FareConditions`, each checked against a list of
-values (see link:ATTRIBUTE_MAPPINGS.asciidoc#enums[Enums]), and `airports_data.timezone` a `ZoneId`.
+Four `text` columns are other types: `flights.status` a `MappedFlight.FlightStatus`, `seats.fare_conditions` and
+`segments.fare_conditions` a `MappedSeat.FareConditions`, enums of the values each is checked against (see
+link:ATTRIBUTE_MAPPINGS.asciidoc#enums[Enums]), and `airports_data.timezone` a `ZoneId`, through a converter.
 
 [cols="2,2,1,6",options="header"]
 |===

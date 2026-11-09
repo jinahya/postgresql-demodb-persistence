@@ -31,8 +31,6 @@
     <class>com.github.jinahya.persistence.more.converter.jakartajson.JsonpAttributeConverter$OfString$OfJsonObject</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.PointAttributeConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.RouteId$ValidityConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
     <class>com.github.jinahya.persistence.more.converter.javatime.ZoneIdStringAttributeConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirplaneData</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirportData</class>
@@ -77,8 +75,6 @@
     <class>com.github.jinahya.persistence.more.converter.jakartajson.JsonpAttributeConverter$OfString$OfJsonObject</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.PointAttributeConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.mapped.RouteId$ValidityConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat$FareConditionsConverter</class>
-    <class>com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight$FlightStatusConverter</class>
     <class>com.github.jinahya.persistence.more.converter.javatime.ZoneIdStringAttributeConverter</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirplaneData</class>
     <class>com.github.jinahya.postgresql.demodb.persistence.AirportData</class>

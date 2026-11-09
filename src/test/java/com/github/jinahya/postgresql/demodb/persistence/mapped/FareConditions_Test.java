@@ -21,9 +21,6 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat.FareConditions;
-import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat.FareConditionsConverter;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -32,43 +29,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * A class for testing {@link FareConditionsConverter}.
+ * A class for testing {@link FareConditions}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-@Slf4j
-class FareConditionsConverter_Test {
+class FareConditions_Test {
 
     /**
      * Verifies that every value the check constraint allows has a constant.
      */
     @ParameterizedTest
     @ValueSource(strings = {"Economy", "Comfort", "Business"})
-    void convertToEntityAttribute_Constant_ConstraintValue(final String text) {
-        assertThat(new FareConditionsConverter().convertToEntityAttribute(text).attributeValue())
-                .isEqualTo(text);
+    void valueOfColumnValue_Constant_ConstraintValue(final String columnValue) {
+        assertThat(FareConditions.valueOfColumnValue(columnValue).columnValue())
+                .isEqualTo(columnValue);
     }
 
     @ParameterizedTest
     @EnumSource(FareConditions.class)
-    void convertToEntityAttribute_SameConstant_RoundTrip(final FareConditions constant) {
-        final var converter = new FareConditionsConverter();
-        assertThat(converter.convertToEntityAttribute(converter.convertToDatabaseColumn(constant)))
-                .isSameAs(constant);
+    void valueOfColumnValue_Same_ColumnValue(final FareConditions constant) {
+        assertThat(FareConditions.valueOfColumnValue(constant.columnValue())).isSameAs(constant);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"economy", "ECONOMY", "First", ""})
-    void convertToEntityAttribute_IllegalArgumentException_Unknown(final String text) {
-        assertThatThrownBy(() -> new FareConditionsConverter().convertToEntityAttribute(text))
+    void valueOfColumnValue_IllegalArgumentException_Unknown(final String columnValue) {
+        assertThatThrownBy(() -> FareConditions.valueOfColumnValue(columnValue))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
-    @Test
-    void convertBoth_Null_Null() {
-        final var converter = new FareConditionsConverter();
-        assertThat(converter.convertToDatabaseColumn(null)).isNull();
-        assertThat(converter.convertToEntityAttribute(null)).isNull();
-    }
 }
-

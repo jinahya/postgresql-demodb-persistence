@@ -76,14 +76,14 @@ key: `routes` has no primary key, and a flight's route is the row whose `validit
 
 | link:{docs}/datatype-character.html[`text`]
 | `FareConditions`
-| `@Convert(FareConditionsConverter)`
+| `@Enumerated(STRING)`
 | 2
-| A nested `@Converter` of `MappedSeat`, which `MappedSegment` uses too; see <<enums>>.
+| An enum nested in `MappedSeat`, which `MappedSegment` uses too; see <<enums>>.
 | `seats.fare_conditions`, `segments.fare_conditions`
 
 | link:{docs}/datatype-character.html[`text`]
 | `FlightStatus`
-| `@Convert(FlightStatusConverter)`
+| `@Enumerated(STRING)`
 | 2
 | See <<enums>>.
 | `flights.status`, `timetable.status`
@@ -230,16 +230,17 @@ text a converter writes untyped, so that the server casts it to `jsonb`, `point`
 
 | `flights.status`, `timetable.status`
 | `MappedFlight.FlightStatus`
-| `@Convert(converter = FlightStatusConverter.class)`
+| `@Enumerated(EnumType.STRING)`
 | `text`; `flight_status_check` allows `Scheduled`, `On Time`, `Delayed`, `Boarding`, `Departed`, `Arrived` and
-`Cancelled`. `On Time` is not a Java identifier, and none is a constant's name in upper case, so `@Enumerated`
-cannot read them. The enum is an `AttributeEnum.OfString` whose attribute value is the text (`ON_TIME` is
-`On Time`), and the converter, nested in `MappedFlight`, an `AttributeEnumConverter.OfString`, of
-`jinahya-persistence-more`. `timetable`'s is the view's copy, which carries no check.
+`Cancelled`. `On Time` is not a Java identifier, and none is a constant's name, so each constant carries its text in
+an `@EnumeratedValue` `String` field, `columnValue` (`ON_TIME` is `On Time`), with `valueOfColumnValue(String)` for
+the reverse. The specification infers `STRING` from that field without `@Enumerated`; Hibernate ORM 7 does not
+(HHH-20410), so `@Enumerated(EnumType.STRING)` is stated. No converter. `timetable`'s is the view's copy, which
+carries no check.
 
 | `seats.fare_conditions`, `segments.fare_conditions`
 | `MappedSeat.FareConditions`
-| `@Convert(converter = FareConditionsConverter.class)`
+| `@Enumerated(EnumType.STRING)`
 | `text`; `seat_fare_conditions_check` and `segments_fare_conditions_check` allow `Economy`, `Comfort` and
 `Business`. As `FlightStatus`; one enum, nested in `MappedSeat`, serves both tables.
 

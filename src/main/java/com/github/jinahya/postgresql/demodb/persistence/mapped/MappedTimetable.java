@@ -21,10 +21,10 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight.FlightStatus;
-import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedFlight.FlightStatusConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.Size;
@@ -594,7 +594,11 @@ public abstract class MappedTimetable {
     private String arrivalAirport;
 
     // ---------------------------------------------------------------------------------------------
-    @Convert(converter = FlightStatusConverter.class)
+    // the specification infers STRING from the enum's @EnumeratedValue String field, without
+    // @Enumerated; Hibernate ORM 7 does not, and takes it as ORDINAL
+    // https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2#a14719
+    // https://hibernate.atlassian.net/browse/HHH-20410
+    @Enumerated(EnumType.STRING)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_STATUS, nullable = true, insertable = false, updatable = false)
     private FlightStatus status;

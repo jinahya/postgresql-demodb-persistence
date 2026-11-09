@@ -21,11 +21,11 @@ package com.github.jinahya.postgresql.demodb.persistence.mapped;
  */
 
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat.FareConditions;
-import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedSeat.FareConditionsConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
@@ -336,7 +336,11 @@ public abstract class MappedSegment {
     private SegmentId id;
 
     // ---------------------------------------------------------------------------------------------
-    @Convert(converter = FareConditionsConverter.class)
+    // the specification infers STRING from the enum's @EnumeratedValue String field, without
+    // @Enumerated; Hibernate ORM 7 does not, and takes it as ORDINAL
+    // https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2#a14719
+    // https://hibernate.atlassian.net/browse/HHH-20410
+    @Enumerated(EnumType.STRING)
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_FARE_CONDITIONS, nullable = false, insertable = true,
