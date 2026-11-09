@@ -198,8 +198,11 @@ data, which is why Hibernate asks for such columns to be `oid`
 Hibernate's `@JdbcTypeCode(SqlTypes.JSON)` would bind `jsonb` as itself, with no `stringtype=unspecified`
 ([Thorben Janssen](https://thorben-janssen.com/?p=3224),
 [Hibernate javadoc](https://docs.hibernate.org/orm/6.6/javadocs/org/hibernate/dialect/PostgreSQLJsonPGObjectJsonbType.html)),
-but it serializes a value through Jackson or JSON-B into a type whose shape it fixes, a record or a `Map`; the
-columns' objects have no fixed keys and values, so they stay text, which a converter parses.
+and its `Map` would take the objects' open keys, as `city` and `country`'s `Map<String, String>` do; but it serializes
+the value through a format mapper, Jackson or JSON-B, which has to be there at run time, and the mapping is Hibernate
+ORM's. The four columns stay text, which a plain `AttributeConverter` parses with JSON-P, and the writes need
+`stringtype=unspecified` for `point` and `tstzrange` anyway. `806a4c7` and `dbc424f` mapped `city` this way, through
+Jackson 3, and `e6d3772` took it back to a converter.
 
 ### Portability
 

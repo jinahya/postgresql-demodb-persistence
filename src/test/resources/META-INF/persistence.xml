@@ -104,7 +104,7 @@
       <!-- stringtype=unspecified: a String bound for a tstzrange, point or jsonb column is sent untyped, so that the -->
       <!-- server casts it; see README.md, "The column types" -->
       <!-- options=-c bookings.lang=...: the language the views read their names in, bookings.lang(); the -->
-      <!-- lang-en (default) and lang-ru profiles in pom.xml choose it -->
+      <!-- bookings-lang-en (default) and bookings-lang-ru profiles in pom.xml choose it -->
       <property name="jakarta.persistence.jdbc.url"
                 value="jdbc:postgresql://localhost:5432/demo?stringtype=unspecified&amp;options=-c%20bookings.lang=${bookings.lang}"/>
       <property name="jakarta.persistence.jdbc.user" value="postgres"/>
