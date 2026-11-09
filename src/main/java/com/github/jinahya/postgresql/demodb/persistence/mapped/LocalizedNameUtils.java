@@ -24,21 +24,24 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 
-import java.util.Collection;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
 /**
- * Utilities for names kept in a {@code jsonb} column as a JSON object keyed by language,
- * {@code {"en": "...", "ru": "..."}}, and mapped as a {@link JsonObject}.
+ * Utilities for localized names, a name per language, kept in a {@code jsonb} column as a JSON
+ * object keyed by language, {@code {"en": "...", "ru": "..."}}.
  * <p>
- * A name is looked up by the {@link Locale#getLanguage() language} of a {@link Locale}. A
- * {@link JsonObject} cannot be changed, so the methods which change names return a new one, which
- * the attribute is replaced with, so that the change is seen as a change of the attribute.
+ * A language is an ISO 639-1 code, {@link #REGEXP_LANGUAGE}, checked by
+ * {@link #requireValidLanguage(String)}, and taken from a {@link Locale} by
+ * {@link #language(Locale)}; a name is a text which is not blank, checked by
+ * {@link #requireValidName(String)}.
+ * <p>
+ * For names mapped as a {@link JsonObject}, {@link #get(JsonObject, String)} reads a name, and
+ * {@link #set(JsonObject, String, String)} and {@link #remove(JsonObject, String)} change one. A
+ * {@link JsonObject} cannot be changed, so these return a new one, which the attribute is replaced
+ * with, so that the change is seen as a change of the attribute.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -46,102 +49,15 @@ final class LocalizedNameUtils {
 
     /**
      * The regular expression which a language matches: an ISO 639-1 code, two letters in lower
-     * case, as {@link java.util.Locale#getLanguage()} returns it for a language which has one. The
-     * value is {@value}.
+     * case, as {@link Locale#getLanguage()} returns it for a language which has one. The value is
+     * {@value}.
      */
     static final String REGEXP_LANGUAGE = "[a-z]{2}";
 
     /**
-     * A pre-compiled pattern of the {@link #REGEXP_LANGUAGE}.
+     * The compiled pattern of {@link #REGEXP_LANGUAGE}.
      */
     static final Pattern PATTERN_LANGUAGE = Pattern.compile(REGEXP_LANGUAGE);
-
-    /**
-     * Returns the language of the specified locale, the key of a name.
-     *
-     * @param locale the locale.
-     * @return the {@link Locale#getLanguage() language} of {@code locale}.
-     * @throws NullPointerException     if {@code locale} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language.
-     */
-    static String language(final Locale locale) {
-        Objects.requireNonNull(locale, "locale is null");
-        final var language = locale.getLanguage();
-        if (language.isEmpty()) {
-            throw new IllegalArgumentException("no language in " + locale);
-        }
-        return language;
-    }
-
-    /**
-     * Returns the specified name, if it is a name: not blank.
-     *
-     * @param name the name.
-     * @return {@code name}.
-     * @throws NullPointerException     if {@code name} is {@code null}.
-     * @throws IllegalArgumentException if {@code name} is blank.
-     */
-    static String name(final String name) {
-        Objects.requireNonNull(name, "name is null");
-        if (name.isBlank()) {
-            throw new IllegalArgumentException("name is blank");
-        }
-        return name;
-    }
-
-    /**
-     * Returns the name, in the specified names, in the language of the specified locale.
-     *
-     * @param names  the names; may be {@code null}.
-     * @param locale the locale whose language names the name.
-     * @return the name in the language of {@code locale}; {@code null} if there is none, or it is
-     *         not a JSON string.
-     * @throws NullPointerException     if {@code locale} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language.
-     */
-    static String get(final JsonObject names, final Locale locale) {
-        final var language = language(locale);
-        return Optional.ofNullable(names).map(v -> v.getString(language, null)).orElse(null);
-    }
-
-    /**
-     * Returns a new object of the specified names, with the name in the language of the specified
-     * locale replaced with the specified value.
-     *
-     * @param names  the names; may be {@code null}.
-     * @param locale the locale whose language names the name.
-     * @param name   the new name in the language of {@code locale}.
-     * @return a new object of {@code names} with {@code name} in the language of {@code locale}.
-     * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
-     *                                  blank.
-     */
-    static JsonObject with(final JsonObject names, final Locale locale, final String name) {
-        final var language = language(locale);
-        return builder(names).add(language, name(name)).build();
-    }
-
-    /**
-     * Returns a new object of the specified names, without the name in the language of the
-     * specified locale.
-     *
-     * @param names  the names; may be {@code null}.
-     * @param locale the locale whose language names the name.
-     * @return a new object of {@code names} without the name in the language of {@code locale}.
-     * @throws NullPointerException     if {@code locale} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language.
-     */
-    static JsonObject without(final JsonObject names, final Locale locale) {
-        final var language = language(locale);
-        return builder(names).remove(language).build();
-    }
-
-    /**
-     * Returns a new builder of the specified names, or of none.
-     */
-    private static JsonObjectBuilder builder(final JsonObject names) {
-        return names == null ? Json.createObjectBuilder() : Json.createObjectBuilder(names);
-    }
 
     // ---------------------------------------------------------------------------------------------
 
@@ -163,31 +79,96 @@ final class LocalizedNameUtils {
     }
 
     // ---------------------------------------------------------------------------------------------
-    private static final Map<Object, Map<String, LocalizedName>> C = new WeakHashMap<>();
 
     /**
-     * Returns the name, in the specified names of the specified owner, in the specified language.
+     * Returns the language of the specified locale, the key of a name, if it matches
+     * {@link #REGEXP_LANGUAGE}.
      *
-     * @param owner    the owner of {@code names}, such as an entity; not used yet.
-     * @param names    the names; may be {@code null}.
+     * @param locale the locale.
+     * @return the {@link Locale#getLanguage() language} of {@code locale}.
+     * @throws NullPointerException     if {@code locale} is {@code null}.
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link #REGEXP_LANGUAGE}.
+     * @see #requireValidLanguage(String)
+     */
+    static String language(final Locale locale) {
+        Objects.requireNonNull(locale, "locale is null");
+        return requireValidLanguage(locale.getLanguage());
+    }
+
+    /**
+     * Returns the specified name, if it is not blank.
+     *
+     * @param name the name.
+     * @return {@code name}.
+     * @throws NullPointerException     if {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code name} is blank.
+     */
+    static String requireValidName(final String name) {
+        Objects.requireNonNull(name, "name is null");
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("name is blank");
+        }
+        return name;
+    }
+
+    /**
+     * Returns the name, in the specified names, in the specified language.
+     *
+     * @param names    the names; may be {@code null}, for none.
      * @param language the language of the name.
-     * @return the name in {@code language}; {@code null} if there is none.
+     * @return the name in {@code language}; {@code null} if there is none, or it is not a JSON
+     *         string.
      * @throws NullPointerException     if {@code language} is {@code null}.
      * @throws IllegalArgumentException if {@code language} does not match
      *                                  {@link #REGEXP_LANGUAGE}.
      */
-    public static String getName(final Object owner,
-                                 final Collection<? extends LocalizedName> names,
-                                 final String language) {
-        Objects.requireNonNull(owner, "owner is null");
-        Objects.requireNonNull(names, "names is null");
-        Objects.requireNonNull(language, "language is null");
+    static String get(final JsonObject names, final String language) {
         requireValidLanguage(language);
-        return names.stream()
-                .filter(n -> n.getLanguage().equals(language))
-                .map(LocalizedName::getName)
-                .findFirst()
-                .orElse(null);
+        return Optional.ofNullable(names).map(v -> v.getString(language, null)).orElse(null);
+    }
+
+    /**
+     * Returns a new object of the specified names, with the name in the specified language
+     * replaced with, or added as, the specified value; {@code names} itself is not changed.
+     *
+     * @param names    the names; may be {@code null}, for none.
+     * @param language the language of the name.
+     * @param name     the new name in {@code language}.
+     * @return a new object of {@code names}, with {@code name} in {@code language}.
+     * @throws NullPointerException     if {@code language} or {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link #REGEXP_LANGUAGE}, or {@code name} is blank.
+     */
+    static JsonObject set(final JsonObject names, final String language, final String name) {
+        requireValidLanguage(language);
+        return builder(names).add(language, requireValidName(name)).build();
+    }
+
+    /**
+     * Returns a new object of the specified names, without the name in the specified language;
+     * {@code names} itself is not changed.
+     *
+     * @param names    the names; may be {@code null}, for none.
+     * @param language the language of the name.
+     * @return a new object of {@code names}, without the name in {@code language}.
+     * @throws NullPointerException     if {@code language} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link #REGEXP_LANGUAGE}.
+     */
+    static JsonObject remove(final JsonObject names, final String language) {
+        requireValidLanguage(language);
+        return builder(names).remove(language).build();
+    }
+
+    /**
+     * Returns a new builder of the specified names, or of none.
+     *
+     * @param names the names; may be {@code null}, for none.
+     * @return a new builder of {@code names}.
+     */
+    private static JsonObjectBuilder builder(final JsonObject names) {
+        return names == null ? Json.createObjectBuilder() : Json.createObjectBuilder(names);
     }
 
     // -------------------------------------------------------------------------------- CONSTRUCTORS

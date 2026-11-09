@@ -247,16 +247,48 @@ public abstract class MappedAirplaneData {
     }
 
     /**
+     * Returns the name of the model in the specified language.
+     *
+     * @param language the language of the name.
+     * @return the name of the model in {@code language}; {@code null} if there is none.
+     * @throws NullPointerException     if {@code language} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     */
+    public String getModelName(final String language) {
+        return LocalizedNameUtils.get(getModel(), language);
+    }
+
+    /**
      * Returns the name of the model in the language of the specified locale.
      *
      * @param locale the locale whose {@link Locale#getLanguage() language} names the model.
      * @return the name of the model in the language of {@code locale}; {@code null} if there is
      *         none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language.
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     * @see #getModelName(String)
      */
     public String getModelName(final Locale locale) {
-        return LocalizedNameUtils.get(getModel(), locale);
+        return getModelName(LocalizedNameUtils.language(locale));
+    }
+
+    /**
+     * Replaces the name of the model in the specified language with the specified value.
+     *
+     * @param language the language of the name.
+     * @param name     the new name of the model in {@code language}.
+     * @throws NullPointerException     if {@code language} or {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}, or {@code name}
+     *                                  is blank.
+     * @implNote The names are replaced with a new object, not changed in place, so that the
+     *         change is seen as a change of the attribute.
+     * @see #removeModelName(String)
+     */
+    public void setModelName(final String language, final String name) {
+        setModel(LocalizedNameUtils.set(getModel(), language, name));
     }
 
     /**
@@ -266,14 +298,33 @@ public abstract class MappedAirplaneData {
      * @param locale the locale whose {@link Locale#getLanguage() language} names the model.
      * @param name   the new name of the model in the language of {@code locale}.
      * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
-     *                                  blank.
-     * @implNote The names are replaced with a new object, not changed in place, so that the
-     *         change is seen as a change of the attribute.
-     * @see #removeModelName(Locale)
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}, or {@code name}
+     *                                  is blank.
+     * @see #setModelName(String, String)
      */
     public void setModelName(final Locale locale, final String name) {
-        setModel(LocalizedNameUtils.with(getModel(), locale, name));
+        setModelName(LocalizedNameUtils.language(locale), name);
+    }
+
+    /**
+     * Removes the name of the model in the specified language.
+     *
+     * @param language the language of the name.
+     * @return the name removed; {@code null} if there was none.
+     * @throws NullPointerException     if {@code language} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     * @implNote The names are replaced with a new object, not changed in place, so that the
+     *         change is seen as a change of the attribute; nothing is replaced when there was no
+     *         name.
+     */
+    public String removeModelName(final String language) {
+        final var removed = getModelName(language);
+        if (removed != null) {
+            setModel(LocalizedNameUtils.remove(getModel(), language));
+        }
+        return removed;
     }
 
     /**
@@ -282,17 +333,12 @@ public abstract class MappedAirplaneData {
      * @param locale the locale whose {@link Locale#getLanguage() language} names the model.
      * @return the name removed; {@code null} if there was none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language.
-     * @implNote The names are replaced with a new object, not changed in place, so that the
-     *         change is seen as a change of the attribute; nothing is replaced when there was no
-     *         name.
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     * @see #removeModelName(String)
      */
     public String removeModelName(final Locale locale) {
-        final var removed = getModelName(locale);
-        if (removed != null) {
-            setModel(LocalizedNameUtils.without(getModel(), locale));
-        }
-        return removed;
+        return removeModelName(LocalizedNameUtils.language(locale));
     }
 
     // --------------------------------------------------------------------------------------- range

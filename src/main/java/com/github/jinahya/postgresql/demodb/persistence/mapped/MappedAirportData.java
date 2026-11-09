@@ -327,16 +327,48 @@ public abstract class MappedAirportData {
     }
 
     /**
+     * Returns the name of the airport in the specified language.
+     *
+     * @param language the language of the name.
+     * @return the name of the airport in {@code language}; {@code null} if there is none.
+     * @throws NullPointerException     if {@code language} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     */
+    public String getAirportName(final String language) {
+        return LocalizedNameUtils.get(getAirportName(), language);
+    }
+
+    /**
      * Returns the name of the airport in the language of the specified locale.
      *
      * @param locale the locale whose {@link Locale#getLanguage() language} names the airport.
      * @return the name of the airport in the language of {@code locale}; {@code null} if there is
      *         none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language.
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     * @see #getAirportName(String)
      */
     public String getAirportName(final Locale locale) {
-        return LocalizedNameUtils.get(getAirportName(), locale);
+        return getAirportName(LocalizedNameUtils.language(locale));
+    }
+
+    /**
+     * Replaces the name of the airport in the specified language with the specified value.
+     *
+     * @param language the language of the name.
+     * @param name     the new name of the airport in {@code language}.
+     * @throws NullPointerException     if {@code language} or {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}, or {@code name}
+     *                                  is blank.
+     * @implNote The names are replaced with a new object, not changed in place, so that the
+     *         change is seen as a change of the attribute.
+     * @see #removeAirportName(String)
+     */
+    public void setAirportName(final String language, final String name) {
+        setAirportName(LocalizedNameUtils.set(getAirportName(), language, name));
     }
 
     /**
@@ -346,14 +378,33 @@ public abstract class MappedAirportData {
      * @param locale the locale whose {@link Locale#getLanguage() language} names the airport.
      * @param name   the new name of the airport in the language of {@code locale}.
      * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
-     *                                  blank.
-     * @implNote The names are replaced with a new object, not changed in place, so that the
-     *         change is seen as a change of the attribute.
-     * @see #removeAirportName(Locale)
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}, or {@code name}
+     *                                  is blank.
+     * @see #setAirportName(String, String)
      */
     public void setAirportName(final Locale locale, final String name) {
-        setAirportName(LocalizedNameUtils.with(getAirportName(), locale, name));
+        setAirportName(LocalizedNameUtils.language(locale), name);
+    }
+
+    /**
+     * Removes the name of the airport in the specified language.
+     *
+     * @param language the language of the name.
+     * @return the name removed; {@code null} if there was none.
+     * @throws NullPointerException     if {@code language} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     * @implNote The names are replaced with a new object, not changed in place, so that the
+     *         change is seen as a change of the attribute; nothing is replaced when there was no
+     *         name.
+     */
+    public String removeAirportName(final String language) {
+        final var removed = getAirportName(language);
+        if (removed != null) {
+            setAirportName(LocalizedNameUtils.remove(getAirportName(), language));
+        }
+        return removed;
     }
 
     /**
@@ -362,17 +413,12 @@ public abstract class MappedAirportData {
      * @param locale the locale whose {@link Locale#getLanguage() language} names the airport.
      * @return the name removed; {@code null} if there was none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language.
-     * @implNote The names are replaced with a new object, not changed in place, so that the
-     *         change is seen as a change of the attribute; nothing is replaced when there was no
-     *         name.
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     * @see #removeAirportName(String)
      */
     public String removeAirportName(final Locale locale) {
-        final var removed = getAirportName(locale);
-        if (removed != null) {
-            setAirportName(LocalizedNameUtils.without(getAirportName(), locale));
-        }
-        return removed;
+        return removeAirportName(LocalizedNameUtils.language(locale));
     }
 
     // ---------------------------------------------------------------------------------------- city
@@ -402,17 +448,52 @@ public abstract class MappedAirportData {
     }
 
     /**
+     * Returns the name of the city in the specified language.
+     *
+     * @param language the language of the name.
+     * @return the name of the city in {@code language}; {@code null} if there is none.
+     * @throws NullPointerException     if {@code language} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     */
+    public String getCityName(final String language) {
+        LocalizedNameUtils.requireValidLanguage(language);
+        return Optional.ofNullable(getCity()).map(v -> v.get(language)).orElse(null);
+    }
+
+    /**
      * Returns the name of the city in the language of the specified locale.
      *
      * @param locale the locale whose {@link Locale#getLanguage() language} names the city.
      * @return the name of the city in the language of {@code locale}; {@code null} if there is
      *         none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language.
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     * @see #getCityName(String)
      */
     public String getCityName(final Locale locale) {
-        final var language = LocalizedNameUtils.language(locale);
-        return Optional.ofNullable(getCity()).map(v -> v.get(language)).orElse(null);
+        return getCityName(LocalizedNameUtils.language(locale));
+    }
+
+    /**
+     * Replaces the name of the city in the specified language with the specified value.
+     *
+     * @param language the language of the name.
+     * @param name     the new name of the city in {@code language}.
+     * @throws NullPointerException     if {@code language} or {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}, or {@code name}
+     *                                  is blank.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute.
+     * @see #removeCityName(String)
+     */
+    public void setCityName(final String language, final String name) {
+        LocalizedNameUtils.requireValidLanguage(language);
+        final var city = new HashMap<>(Optional.ofNullable(getCity()).orElse(Map.of()));
+        city.put(language, LocalizedNameUtils.requireValidName(name));
+        setCity(city);
     }
 
     /**
@@ -422,17 +503,35 @@ public abstract class MappedAirportData {
      * @param locale the locale whose {@link Locale#getLanguage() language} names the city.
      * @param name   the new name of the city in the language of {@code locale}.
      * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
-     *                                  blank.
-     * @implNote The names are replaced with a new map, not changed in place, so that the
-     *         change is seen as a change of the attribute.
-     * @see #removeCityName(Locale)
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}, or {@code name}
+     *                                  is blank.
+     * @see #setCityName(String, String)
      */
     public void setCityName(final Locale locale, final String name) {
-        final var language = LocalizedNameUtils.language(locale);
-        final var city = new HashMap<>(Optional.ofNullable(getCity()).orElse(Map.of()));
-        city.put(language, LocalizedNameUtils.name(name));
-        setCity(city);
+        setCityName(LocalizedNameUtils.language(locale), name);
+    }
+
+    /**
+     * Removes the name of the city in the specified language.
+     *
+     * @param language the language of the name.
+     * @return the name removed; {@code null} if there was none.
+     * @throws NullPointerException     if {@code language} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute; nothing is replaced when there was no
+     *         name.
+     */
+    public String removeCityName(final String language) {
+        final var removed = getCityName(language);
+        if (removed != null) {
+            final var city = new HashMap<>(getCity());
+            city.remove(language);
+            setCity(city);
+        }
+        return removed;
     }
 
     /**
@@ -441,19 +540,12 @@ public abstract class MappedAirportData {
      * @param locale the locale whose {@link Locale#getLanguage() language} names the city.
      * @return the name removed; {@code null} if there was none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language.
-     * @implNote The names are replaced with a new map, not changed in place, so that the
-     *         change is seen as a change of the attribute; nothing is replaced when there was no
-     *         name.
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     * @see #removeCityName(String)
      */
     public String removeCityName(final Locale locale) {
-        final var removed = getCityName(locale);
-        if (removed != null) {
-            final var city = new HashMap<>(getCity());
-            city.remove(LocalizedNameUtils.language(locale));
-            setCity(city);
-        }
-        return removed;
+        return removeCityName(LocalizedNameUtils.language(locale));
     }
 
     // ------------------------------------------------------------------------------------- country
@@ -484,17 +576,52 @@ public abstract class MappedAirportData {
     }
 
     /**
+     * Returns the name of the country in the specified language.
+     *
+     * @param language the language of the name.
+     * @return the name of the country in {@code language}; {@code null} if there is none.
+     * @throws NullPointerException     if {@code language} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     */
+    public String getCountryName(final String language) {
+        LocalizedNameUtils.requireValidLanguage(language);
+        return Optional.ofNullable(getCountry()).map(v -> v.get(language)).orElse(null);
+    }
+
+    /**
      * Returns the name of the country in the language of the specified locale.
      *
      * @param locale the locale whose {@link Locale#getLanguage() language} names the country.
      * @return the name of the country in the language of {@code locale}; {@code null} if there is
      *         none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language.
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     * @see #getCountryName(String)
      */
     public String getCountryName(final Locale locale) {
-        final var language = LocalizedNameUtils.language(locale);
-        return Optional.ofNullable(getCountry()).map(v -> v.get(language)).orElse(null);
+        return getCountryName(LocalizedNameUtils.language(locale));
+    }
+
+    /**
+     * Replaces the name of the country in the specified language with the specified value.
+     *
+     * @param language the language of the name.
+     * @param name     the new name of the country in {@code language}.
+     * @throws NullPointerException     if {@code language} or {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}, or {@code name}
+     *                                  is blank.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute.
+     * @see #removeCountryName(String)
+     */
+    public void setCountryName(final String language, final String name) {
+        LocalizedNameUtils.requireValidLanguage(language);
+        final var country = new HashMap<>(Optional.ofNullable(getCountry()).orElse(Map.of()));
+        country.put(language, LocalizedNameUtils.requireValidName(name));
+        setCountry(country);
     }
 
     /**
@@ -504,17 +631,35 @@ public abstract class MappedAirportData {
      * @param locale the locale whose {@link Locale#getLanguage() language} names the country.
      * @param name   the new name of the country in the language of {@code locale}.
      * @throws NullPointerException     if {@code locale} or {@code name} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language, or {@code name} is
-     *                                  blank.
-     * @implNote The names are replaced with a new map, not changed in place, so that the
-     *         change is seen as a change of the attribute.
-     * @see #removeCountryName(Locale)
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}, or {@code name}
+     *                                  is blank.
+     * @see #setCountryName(String, String)
      */
     public void setCountryName(final Locale locale, final String name) {
-        final var language = LocalizedNameUtils.language(locale);
-        final var country = new HashMap<>(Optional.ofNullable(getCountry()).orElse(Map.of()));
-        country.put(language, LocalizedNameUtils.name(name));
-        setCountry(country);
+        setCountryName(LocalizedNameUtils.language(locale), name);
+    }
+
+    /**
+     * Removes the name of the country in the specified language.
+     *
+     * @param language the language of the name.
+     * @return the name removed; {@code null} if there was none.
+     * @throws NullPointerException     if {@code language} is {@code null}.
+     * @throws IllegalArgumentException if {@code language} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     * @implNote The names are replaced with a new map, not changed in place, so that the
+     *         change is seen as a change of the attribute; nothing is replaced when there was no
+     *         name.
+     */
+    public String removeCountryName(final String language) {
+        final var removed = getCountryName(language);
+        if (removed != null) {
+            final var country = new HashMap<>(getCountry());
+            country.remove(language);
+            setCountry(country);
+        }
+        return removed;
     }
 
     /**
@@ -523,19 +668,12 @@ public abstract class MappedAirportData {
      * @param locale the locale whose {@link Locale#getLanguage() language} names the country.
      * @return the name removed; {@code null} if there was none.
      * @throws NullPointerException     if {@code locale} is {@code null}.
-     * @throws IllegalArgumentException if {@code locale} has no language.
-     * @implNote The names are replaced with a new map, not changed in place, so that the
-     *         change is seen as a change of the attribute; nothing is replaced when there was no
-     *         name.
+     * @throws IllegalArgumentException if the language of {@code locale} does not match
+     *                                  {@link LocalizedNameUtils#REGEXP_LANGUAGE}.
+     * @see #removeCountryName(String)
      */
     public String removeCountryName(final Locale locale) {
-        final var removed = getCountryName(locale);
-        if (removed != null) {
-            final var country = new HashMap<>(getCountry());
-            country.remove(LocalizedNameUtils.language(locale));
-            setCountry(country);
-        }
-        return removed;
+        return removeCountryName(LocalizedNameUtils.language(locale));
     }
 
     // --------------------------------------------------------------------------------- coordinates
