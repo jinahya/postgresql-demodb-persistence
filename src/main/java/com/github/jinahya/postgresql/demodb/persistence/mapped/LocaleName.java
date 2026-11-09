@@ -55,7 +55,7 @@ final class LocaleName {
         this.value = LanguageNameUtils.name(value);
     }
 
-    // ------------------------------------------------------------------------------------ Object
+    // ---------------------------------------------------------------------------- java.lang.Object
 
     @Override
     public String toString() {

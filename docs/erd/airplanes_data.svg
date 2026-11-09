@@ -5,84 +5,84 @@
  -->
 <!-- Title: erd Pages: 1 -->
 <!-- demo.airplanes_data: the table, the tables it references and the tables referencing it -->
-<svg width="265pt" height="273pt"
- viewBox="0.00 0.00 265.00 273.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(7.2 265.95)">
+<svg width="230pt" height="230pt"
+ viewBox="0.00 0.00 230.00 230.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(7.2 222.57)">
 <title>erd</title>
 <!-- airplanes_data -->
 <g id="node1" class="node">
 <title>airplanes_data</title>
-<polygon fill="#1f4e79" stroke="none" points="154.75,-128.5 154.75,-154 250.75,-154 250.75,-128.5 154.75,-128.5"/>
-<polygon fill="none" stroke="#000000" points="154.75,-128.5 154.75,-154 250.75,-154 250.75,-128.5 154.75,-128.5"/>
-<text xml:space="preserve" text-anchor="start" x="169" y="-140.45" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#ffffff">airplanes_data</text>
-<polygon fill="none" stroke="#000000" points="154.75,-103 154.75,-128.5 226.75,-128.5 226.75,-103 154.75,-103"/>
-<text xml:space="preserve" text-anchor="start" x="160.75" y="-114.95" font-family="Noto Sans KR" text-decoration="underline" font-size="9.00">airplane_code</text>
-<polygon fill="none" stroke="#000000" points="226.75,-103 226.75,-128.5 250.75,-128.5 250.75,-103 226.75,-103"/>
-<text xml:space="preserve" text-anchor="start" x="232.75" y="-112" font-family="Noto Sans KR" font-size="9.00" fill="#555555">PK</text>
+<polygon fill="#1f4e79" stroke="none" points="135.5,-107.25 135.5,-128 216,-128 216,-107.25 135.5,-107.25"/>
+<polygon fill="none" stroke="#000000" points="135.5,-107.25 135.5,-128 216,-128 216,-107.25 135.5,-107.25"/>
+<text xml:space="preserve" text-anchor="start" x="146.88" y="-117.4" font-family="Noto Sans KR" font-weight="bold" font-size="8.00" fill="#ffffff">airplanes_data</text>
+<polygon fill="none" stroke="#000000" points="135.5,-86.5 135.5,-107.25 197.5,-107.25 197.5,-86.5 135.5,-86.5"/>
+<text xml:space="preserve" text-anchor="start" x="139.5" y="-96.65" font-family="Noto Sans KR" text-decoration="underline" font-size="8.00">airplane_code</text>
+<polygon fill="none" stroke="#000000" points="197.5,-86.5 197.5,-107.25 216,-107.25 216,-86.5 197.5,-86.5"/>
+<text xml:space="preserve" text-anchor="start" x="201.5" y="-93.5" font-family="Noto Sans KR" font-size="8.00" fill="#555555">PK</text>
 </g>
 <!-- seats -->
 <g id="node2" class="node">
 <title>seats</title>
-<polygon fill="#d9e2ec" stroke="none" points="1.12,-233.25 1.12,-258.75 110.62,-258.75 110.62,-233.25 1.12,-233.25"/>
-<polygon fill="none" stroke="#000000" points="1.12,-233.25 1.12,-258.75 110.62,-258.75 110.62,-233.25 1.12,-233.25"/>
-<text xml:space="preserve" text-anchor="start" x="44.25" y="-245.2" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#000000">seats</text>
-<polygon fill="none" stroke="#000000" points="1.12,-207.75 1.12,-233.25 73.12,-233.25 73.12,-207.75 1.12,-207.75"/>
-<text xml:space="preserve" text-anchor="start" x="7.12" y="-219.7" font-family="Noto Sans KR" text-decoration="underline" font-size="9.00">airplane_code</text>
-<polygon fill="none" stroke="#000000" points="73.12,-207.75 73.12,-233.25 110.62,-233.25 110.62,-207.75 73.12,-207.75"/>
-<text xml:space="preserve" text-anchor="start" x="79.12" y="-216.75" font-family="Noto Sans KR" font-size="9.00" fill="#555555">PK,FK</text>
-<polygon fill="none" stroke="#000000" points="1.12,-182.25 1.12,-207.75 73.12,-207.75 73.12,-182.25 1.12,-182.25"/>
-<text xml:space="preserve" text-anchor="start" x="7.12" y="-194.2" font-family="Noto Sans KR" text-decoration="underline" font-size="9.00">seat_no</text>
-<polygon fill="none" stroke="#000000" points="73.12,-182.25 73.12,-207.75 110.62,-207.75 110.62,-182.25 73.12,-182.25"/>
-<text xml:space="preserve" text-anchor="start" x="79.12" y="-191.25" font-family="Noto Sans KR" font-size="9.00" fill="#555555">PK</text>
+<polygon fill="#d9e2ec" stroke="none" points="0,-194.62 0,-215.38 92.5,-215.38 92.5,-194.62 0,-194.62"/>
+<polygon fill="none" stroke="#000000" points="0,-194.62 0,-215.38 92.5,-215.38 92.5,-194.62 0,-194.62"/>
+<text xml:space="preserve" text-anchor="start" x="36.5" y="-204.78" font-family="Noto Sans KR" font-weight="bold" font-size="8.00" fill="#000000">seats</text>
+<polygon fill="none" stroke="#000000" points="0,-173.88 0,-194.62 62,-194.62 62,-173.88 0,-173.88"/>
+<text xml:space="preserve" text-anchor="start" x="4" y="-184.03" font-family="Noto Sans KR" text-decoration="underline" font-size="8.00">airplane_code</text>
+<polygon fill="none" stroke="#000000" points="62,-173.88 62,-194.62 92.5,-194.62 92.5,-173.88 62,-173.88"/>
+<text xml:space="preserve" text-anchor="start" x="66" y="-180.88" font-family="Noto Sans KR" font-size="8.00" fill="#555555">PK,FK</text>
+<polygon fill="none" stroke="#000000" points="0,-153.12 0,-173.88 62,-173.88 62,-153.12 0,-153.12"/>
+<text xml:space="preserve" text-anchor="start" x="4" y="-163.28" font-family="Noto Sans KR" text-decoration="underline" font-size="8.00">seat_no</text>
+<polygon fill="none" stroke="#000000" points="62,-153.12 62,-173.88 92.5,-173.88 92.5,-153.12 62,-153.12"/>
+<text xml:space="preserve" text-anchor="start" x="66" y="-160.12" font-family="Noto Sans KR" font-size="8.00" fill="#555555">PK</text>
 </g>
 <!-- seats&#45;&gt;airplanes_data -->
 <g id="edge1" class="edge">
 <title>seats:e&#45;&gt;airplanes_data:w</title>
-<path fill="none" stroke="#8a8a8a" stroke-width="1.2" d="M126.78,-215.16C146.82,-195.23 115.94,-125.87 147.11,-116.74"/>
-<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="119.55,-217.71 110.81,-216.97 115.4,-219.17 112.38,-220.23 112.38,-220.23 112.38,-220.23 115.4,-219.17 113.2,-223.76 119.55,-217.71"/>
-<ellipse fill="none" stroke="#8a8a8a" stroke-width="1.2" cx="124.51" cy="-215.96" rx="3.2" ry="3.2"/>
-<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="153.44,-111.89 154.47,-119.82 152.89,-120.03 151.85,-112.09 153.44,-111.89"/>
-<polyline fill="none" stroke="#8a8a8a" stroke-width="1.2" points="154.75,-115.75 150.78,-116.27"/>
-<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="149.47,-112.4 150.51,-120.34 148.92,-120.54 147.89,-112.61 149.47,-112.4"/>
-<polyline fill="none" stroke="#8a8a8a" stroke-width="1.2" points="150.78,-116.27 146.82,-116.78"/>
+<path fill="none" stroke="#8a8a8a" stroke-width="1.2" d="M107.33,-178.24C122.68,-160.12 102.96,-106.7 127.73,-98.06"/>
+<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="100.29,-181.1 91.52,-180.76 96.21,-182.75 93.24,-183.95 93.24,-183.95 93.24,-183.95 96.21,-182.75 94.22,-187.44 100.29,-181.1"/>
+<ellipse fill="none" stroke="#8a8a8a" stroke-width="1.2" cx="105.16" cy="-179.12" rx="3.2" ry="3.2"/>
+<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="134.1,-93.04 135.31,-100.95 133.73,-101.19 132.52,-93.28 134.1,-93.04"/>
+<polyline fill="none" stroke="#8a8a8a" stroke-width="1.2" points="135.5,-96.88 131.55,-97.48"/>
+<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="130.15,-93.65 131.36,-101.55 129.78,-101.8 128.57,-93.89 130.15,-93.65"/>
+<polyline fill="none" stroke="#8a8a8a" stroke-width="1.2" points="131.55,-97.48 127.59,-98.08"/>
 </g>
 <!-- routes -->
 <g id="node3" class="node">
 <title>routes</title>
-<polygon fill="#d9e2ec" stroke="none" points="0,-127.5 0,-153 111.75,-153 111.75,-127.5 0,-127.5"/>
-<polygon fill="none" stroke="#000000" points="0,-127.5 0,-153 111.75,-153 111.75,-127.5 0,-127.5"/>
-<text xml:space="preserve" text-anchor="start" x="41.25" y="-139.45" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#000000">routes</text>
-<polygon fill="none" stroke="#000000" points="0,-102 0,-127.5 88.5,-127.5 88.5,-102 0,-102"/>
-<text xml:space="preserve" text-anchor="start" x="6" y="-111" font-family="Noto Sans KR" font-size="9.00">route_no</text>
-<polygon fill="none" stroke="#000000" points="88.5,-102 88.5,-127.5 111.75,-127.5 111.75,-102 88.5,-102"/>
-<text xml:space="preserve" text-anchor="start" x="94.5" y="-111" font-family="Noto Sans KR" font-size="9.00" fill="#555555">AK</text>
-<polygon fill="none" stroke="#000000" points="0,-76.5 0,-102 88.5,-102 88.5,-76.5 0,-76.5"/>
-<text xml:space="preserve" text-anchor="start" x="6" y="-85.5" font-family="Noto Sans KR" font-size="9.00">validity</text>
-<polygon fill="none" stroke="#000000" points="88.5,-76.5 88.5,-102 111.75,-102 111.75,-76.5 88.5,-76.5"/>
-<text xml:space="preserve" text-anchor="start" x="94.5" y="-85.5" font-family="Noto Sans KR" font-size="9.00" fill="#555555">AK</text>
-<polygon fill="none" stroke="#000000" points="0,-51 0,-76.5 88.5,-76.5 88.5,-51 0,-51"/>
-<text xml:space="preserve" text-anchor="start" x="6" y="-60" font-family="Noto Sans KR" font-size="9.00">departure_airport</text>
-<polygon fill="none" stroke="#000000" points="88.5,-51 88.5,-76.5 111.75,-76.5 111.75,-51 88.5,-51"/>
-<text xml:space="preserve" text-anchor="start" x="94.5" y="-60" font-family="Noto Sans KR" font-size="9.00" fill="#555555">FK</text>
-<polygon fill="none" stroke="#000000" points="0,-25.5 0,-51 88.5,-51 88.5,-25.5 0,-25.5"/>
-<text xml:space="preserve" text-anchor="start" x="6" y="-34.5" font-family="Noto Sans KR" font-size="9.00">arrival_airport</text>
-<polygon fill="none" stroke="#000000" points="88.5,-25.5 88.5,-51 111.75,-51 111.75,-25.5 88.5,-25.5"/>
-<text xml:space="preserve" text-anchor="start" x="94.5" y="-34.5" font-family="Noto Sans KR" font-size="9.00" fill="#555555">FK</text>
-<polygon fill="none" stroke="#000000" points="0,0 0,-25.5 88.5,-25.5 88.5,0 0,0"/>
-<text xml:space="preserve" text-anchor="start" x="6" y="-9" font-family="Noto Sans KR" font-size="9.00">airplane_code</text>
-<polygon fill="none" stroke="#000000" points="88.5,0 88.5,-25.5 111.75,-25.5 111.75,0 88.5,0"/>
-<text xml:space="preserve" text-anchor="start" x="94.5" y="-9" font-family="Noto Sans KR" font-size="9.00" fill="#555555">FK</text>
+<polygon fill="#d9e2ec" stroke="none" points="0,-103.75 0,-124.5 92.5,-124.5 92.5,-103.75 0,-103.75"/>
+<polygon fill="none" stroke="#000000" points="0,-103.75 0,-124.5 92.5,-124.5 92.5,-103.75 0,-103.75"/>
+<text xml:space="preserve" text-anchor="start" x="33.88" y="-113.9" font-family="Noto Sans KR" font-weight="bold" font-size="8.00" fill="#000000">routes</text>
+<polygon fill="none" stroke="#000000" points="0,-83 0,-103.75 74.75,-103.75 74.75,-83 0,-83"/>
+<text xml:space="preserve" text-anchor="start" x="4" y="-90" font-family="Noto Sans KR" font-size="8.00">route_no</text>
+<polygon fill="none" stroke="#000000" points="74.75,-83 74.75,-103.75 92.5,-103.75 92.5,-83 74.75,-83"/>
+<text xml:space="preserve" text-anchor="start" x="78.75" y="-90" font-family="Noto Sans KR" font-size="8.00" fill="#555555">AK</text>
+<polygon fill="none" stroke="#000000" points="0,-62.25 0,-83 74.75,-83 74.75,-62.25 0,-62.25"/>
+<text xml:space="preserve" text-anchor="start" x="4" y="-69.25" font-family="Noto Sans KR" font-size="8.00">validity</text>
+<polygon fill="none" stroke="#000000" points="74.75,-62.25 74.75,-83 92.5,-83 92.5,-62.25 74.75,-62.25"/>
+<text xml:space="preserve" text-anchor="start" x="78.75" y="-69.25" font-family="Noto Sans KR" font-size="8.00" fill="#555555">AK</text>
+<polygon fill="none" stroke="#000000" points="0,-41.5 0,-62.25 74.75,-62.25 74.75,-41.5 0,-41.5"/>
+<text xml:space="preserve" text-anchor="start" x="4" y="-48.5" font-family="Noto Sans KR" font-size="8.00">departure_airport</text>
+<polygon fill="none" stroke="#000000" points="74.75,-41.5 74.75,-62.25 92.5,-62.25 92.5,-41.5 74.75,-41.5"/>
+<text xml:space="preserve" text-anchor="start" x="78.75" y="-48.5" font-family="Noto Sans KR" font-size="8.00" fill="#555555">FK</text>
+<polygon fill="none" stroke="#000000" points="0,-20.75 0,-41.5 74.75,-41.5 74.75,-20.75 0,-20.75"/>
+<text xml:space="preserve" text-anchor="start" x="4" y="-27.75" font-family="Noto Sans KR" font-size="8.00">arrival_airport</text>
+<polygon fill="none" stroke="#000000" points="74.75,-20.75 74.75,-41.5 92.5,-41.5 92.5,-20.75 74.75,-20.75"/>
+<text xml:space="preserve" text-anchor="start" x="78.75" y="-27.75" font-family="Noto Sans KR" font-size="8.00" fill="#555555">FK</text>
+<polygon fill="none" stroke="#000000" points="0,0 0,-20.75 74.75,-20.75 74.75,0 0,0"/>
+<text xml:space="preserve" text-anchor="start" x="4" y="-7" font-family="Noto Sans KR" font-size="8.00">airplane_code</text>
+<polygon fill="none" stroke="#000000" points="74.75,0 74.75,-20.75 92.5,-20.75 92.5,0 74.75,0"/>
+<text xml:space="preserve" text-anchor="start" x="78.75" y="-7" font-family="Noto Sans KR" font-size="8.00" fill="#555555">FK</text>
 </g>
 <!-- routes&#45;&gt;airplanes_data -->
 <g id="edge2" class="edge">
 <title>routes:e&#45;&gt;airplanes_data:w</title>
-<path fill="none" stroke="#8a8a8a" stroke-width="1.2" d="M126.7,-18C146.47,-37.51 116.71,-105.23 146.84,-114.66"/>
-<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="119.68,-15.53 113.32,-9.49 115.52,-14.07 112.51,-13.02 112.51,-13.02 112.51,-13.02 115.52,-14.07 110.94,-16.28 119.68,-15.53"/>
-<ellipse fill="none" stroke="#8a8a8a" stroke-width="1.2" cx="124.64" cy="-17.28" rx="3.2" ry="3.2"/>
-<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="154.5,-111.68 153.41,-119.6 151.83,-119.38 152.92,-111.46 154.5,-111.68"/>
-<polyline fill="none" stroke="#8a8a8a" stroke-width="1.2" points="154.75,-115.75 150.79,-115.2"/>
-<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="150.54,-111.13 149.45,-119.06 147.86,-118.84 148.96,-110.91 150.54,-111.13"/>
-<polyline fill="none" stroke="#8a8a8a" stroke-width="1.2" points="150.79,-115.2 146.83,-114.66"/>
+<path fill="none" stroke="#8a8a8a" stroke-width="1.2" d="M107.23,-16.32C122.54,-34.26 103.18,-87.14 127.79,-95.7"/>
+<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="100.29,-13.52 94.22,-7.19 96.21,-11.87 93.24,-10.68 93.24,-10.68 93.24,-10.68 96.21,-11.87 91.52,-13.86 100.29,-13.52"/>
+<ellipse fill="none" stroke="#8a8a8a" stroke-width="1.2" cx="105.17" cy="-15.49" rx="3.2" ry="3.2"/>
+<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="135.31,-92.8 134.11,-100.71 132.52,-100.47 133.73,-92.56 135.31,-92.8"/>
+<polyline fill="none" stroke="#8a8a8a" stroke-width="1.2" points="135.5,-96.88 131.55,-96.27"/>
+<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="131.36,-92.2 130.15,-100.11 128.57,-99.86 129.78,-91.96 131.36,-92.2"/>
+<polyline fill="none" stroke="#8a8a8a" stroke-width="1.2" points="131.55,-96.27 127.59,-95.67"/>
 </g>
 </g>
 </svg>

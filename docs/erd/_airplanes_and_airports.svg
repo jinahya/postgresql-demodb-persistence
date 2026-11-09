@@ -5,57 +5,57 @@
  -->
 <!-- Title: erd Pages: 1 -->
 <!-- demo, 기재와 공항: airplanes_data, seats, airports_data; the foreign keys among them only -->
-<svg width="244pt" height="185pt"
- viewBox="0.00 0.00 244.00 185.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(7.2 177.7)">
+<svg width="211pt" height="161pt"
+ viewBox="0.00 0.00 211.00 161.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(7.2 153.95)">
 <title>erd</title>
 <!-- airplanes_data -->
 <g id="node1" class="node">
 <title>airplanes_data</title>
-<polygon fill="#d9e2ec" stroke="none" points="108.75,-25.5 108.75,-51 204.75,-51 204.75,-25.5 108.75,-25.5"/>
-<polygon fill="none" stroke="#000000" points="108.75,-25.5 108.75,-51 204.75,-51 204.75,-25.5 108.75,-25.5"/>
-<text xml:space="preserve" text-anchor="start" x="123" y="-37.45" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#000000">airplanes_data</text>
-<polygon fill="none" stroke="#000000" points="108.75,0 108.75,-25.5 180.75,-25.5 180.75,0 108.75,0"/>
-<text xml:space="preserve" text-anchor="start" x="114.75" y="-11.95" font-family="Noto Sans KR" text-decoration="underline" font-size="9.00">airplane_code</text>
-<polygon fill="none" stroke="#000000" points="180.75,0 180.75,-25.5 204.75,-25.5 204.75,0 180.75,0"/>
-<text xml:space="preserve" text-anchor="start" x="186.75" y="-9" font-family="Noto Sans KR" font-size="9.00" fill="#555555">PK</text>
+<polygon fill="#d9e2ec" stroke="none" points="92,-20.75 92,-41.5 172.5,-41.5 172.5,-20.75 92,-20.75"/>
+<polygon fill="none" stroke="#000000" points="92,-20.75 92,-41.5 172.5,-41.5 172.5,-20.75 92,-20.75"/>
+<text xml:space="preserve" text-anchor="start" x="103.38" y="-30.9" font-family="Noto Sans KR" font-weight="bold" font-size="8.00" fill="#000000">airplanes_data</text>
+<polygon fill="none" stroke="#000000" points="92,0 92,-20.75 154,-20.75 154,0 92,0"/>
+<text xml:space="preserve" text-anchor="start" x="96" y="-10.15" font-family="Noto Sans KR" text-decoration="underline" font-size="8.00">airplane_code</text>
+<polygon fill="none" stroke="#000000" points="154,0 154,-20.75 172.5,-20.75 172.5,0 154,0"/>
+<text xml:space="preserve" text-anchor="start" x="158" y="-7" font-family="Noto Sans KR" font-size="8.00" fill="#555555">PK</text>
 </g>
 <!-- seats -->
 <g id="node2" class="node">
 <title>seats</title>
-<polygon fill="#d9e2ec" stroke="none" points="0,-145 0,-170.5 109.5,-170.5 109.5,-145 0,-145"/>
-<polygon fill="none" stroke="#000000" points="0,-145 0,-170.5 109.5,-170.5 109.5,-145 0,-145"/>
-<text xml:space="preserve" text-anchor="start" x="43.12" y="-156.95" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#000000">seats</text>
-<polygon fill="none" stroke="#000000" points="0,-119.5 0,-145 72,-145 72,-119.5 0,-119.5"/>
-<text xml:space="preserve" text-anchor="start" x="6" y="-131.45" font-family="Noto Sans KR" text-decoration="underline" font-size="9.00">airplane_code</text>
-<polygon fill="none" stroke="#000000" points="72,-119.5 72,-145 109.5,-145 109.5,-119.5 72,-119.5"/>
-<text xml:space="preserve" text-anchor="start" x="78" y="-128.5" font-family="Noto Sans KR" font-size="9.00" fill="#555555">PK,FK</text>
-<polygon fill="none" stroke="#000000" points="0,-94 0,-119.5 72,-119.5 72,-94 0,-94"/>
-<text xml:space="preserve" text-anchor="start" x="6" y="-105.95" font-family="Noto Sans KR" text-decoration="underline" font-size="9.00">seat_no</text>
-<polygon fill="none" stroke="#000000" points="72,-94 72,-119.5 109.5,-119.5 109.5,-94 72,-94"/>
-<text xml:space="preserve" text-anchor="start" x="78" y="-103" font-family="Noto Sans KR" font-size="9.00" fill="#555555">PK</text>
+<polygon fill="#d9e2ec" stroke="none" points="0,-126 0,-146.75 92.5,-146.75 92.5,-126 0,-126"/>
+<polygon fill="none" stroke="#000000" points="0,-126 0,-146.75 92.5,-146.75 92.5,-126 0,-126"/>
+<text xml:space="preserve" text-anchor="start" x="36.5" y="-136.15" font-family="Noto Sans KR" font-weight="bold" font-size="8.00" fill="#000000">seats</text>
+<polygon fill="none" stroke="#000000" points="0,-105.25 0,-126 62,-126 62,-105.25 0,-105.25"/>
+<text xml:space="preserve" text-anchor="start" x="4" y="-115.4" font-family="Noto Sans KR" text-decoration="underline" font-size="8.00">airplane_code</text>
+<polygon fill="none" stroke="#000000" points="62,-105.25 62,-126 92.5,-126 92.5,-105.25 62,-105.25"/>
+<text xml:space="preserve" text-anchor="start" x="66" y="-112.25" font-family="Noto Sans KR" font-size="8.00" fill="#555555">PK,FK</text>
+<polygon fill="none" stroke="#000000" points="0,-84.5 0,-105.25 62,-105.25 62,-84.5 0,-84.5"/>
+<text xml:space="preserve" text-anchor="start" x="4" y="-94.65" font-family="Noto Sans KR" text-decoration="underline" font-size="8.00">seat_no</text>
+<polygon fill="none" stroke="#000000" points="62,-84.5 62,-105.25 92.5,-105.25 92.5,-84.5 62,-84.5"/>
+<text xml:space="preserve" text-anchor="start" x="66" y="-91.5" font-family="Noto Sans KR" font-size="8.00" fill="#555555">PK</text>
 </g>
 <!-- seats&#45;&gt;airplanes_data -->
 <g id="edge1" class="edge">
 <title>seats:e&#45;&gt;airplanes_data:w</title>
-<path fill="none" stroke="#8a8a8a" stroke-width="1.2" d="M117.84,-118.07C117,-91.12 95.15,-33.69 101.56,-17.24"/>
-<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="114.36,-124.79 107.49,-130.24 112.34,-128.7 110.87,-131.54 110.87,-131.54 110.87,-131.54 112.34,-128.7 113.88,-133.55 114.36,-124.79"/>
-<ellipse fill="none" stroke="#8a8a8a" stroke-width="1.2" cx="116.78" cy="-120.12" rx="3.2" ry="3.2"/>
-<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="104.75,-9.98 109.45,-16.46 108.16,-17.4 103.46,-10.92 104.75,-9.98"/>
-<polyline fill="none" stroke="#8a8a8a" stroke-width="1.2" points="107.75,-12.75 104.51,-15.1"/>
-<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="101.52,-12.33 106.21,-18.81 104.92,-19.75 100.22,-13.27 101.52,-12.33"/>
-<polyline fill="none" stroke="#8a8a8a" stroke-width="1.2" points="104.51,-15.1 101.28,-17.45"/>
+<path fill="none" stroke="#8a8a8a" stroke-width="1.2" d="M106.59,-106.28C109.55,-82.74 62.16,-22.1 83.16,-11.86"/>
+<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="100.34,-110.75 91.74,-112.46 96.76,-113.3 94.15,-115.16 94.15,-115.16 94.15,-115.16 96.76,-113.3 95.92,-118.32 100.34,-110.75"/>
+<ellipse fill="none" stroke="#8a8a8a" stroke-width="1.2" cx="104.62" cy="-107.69" rx="3.2" ry="3.2"/>
+<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="89.47,-6.59 90.96,-14.45 89.38,-14.75 87.9,-6.89 89.47,-6.59"/>
+<polyline fill="none" stroke="#8a8a8a" stroke-width="1.2" points="91,-10.38 87.07,-11.12"/>
+<polygon fill="#8a8a8a" stroke="#8a8a8a" stroke-width="1.2" points="85.54,-7.34 87.03,-15.2 85.45,-15.49 83.97,-7.63 85.54,-7.34"/>
+<polyline fill="none" stroke="#8a8a8a" stroke-width="1.2" points="87.07,-11.12 83.14,-11.86"/>
 </g>
 <!-- airports_data -->
 <g id="node3" class="node">
 <title>airports_data</title>
-<polygon fill="#d9e2ec" stroke="none" points="138.38,-132.25 138.38,-157.75 229.12,-157.75 229.12,-132.25 138.38,-132.25"/>
-<polygon fill="none" stroke="#000000" points="138.38,-132.25 138.38,-157.75 229.12,-157.75 229.12,-132.25 138.38,-132.25"/>
-<text xml:space="preserve" text-anchor="start" x="153" y="-144.2" font-family="Noto Sans KR" font-weight="bold" font-size="9.00" fill="#000000">airports_data</text>
-<polygon fill="none" stroke="#000000" points="138.38,-106.75 138.38,-132.25 205.12,-132.25 205.12,-106.75 138.38,-106.75"/>
-<text xml:space="preserve" text-anchor="start" x="144.38" y="-118.7" font-family="Noto Sans KR" text-decoration="underline" font-size="9.00">airport_code</text>
-<polygon fill="none" stroke="#000000" points="205.12,-106.75 205.12,-132.25 229.12,-132.25 229.12,-106.75 205.12,-106.75"/>
-<text xml:space="preserve" text-anchor="start" x="211.12" y="-115.75" font-family="Noto Sans KR" font-size="9.00" fill="#555555">PK</text>
+<polygon fill="#d9e2ec" stroke="none" points="122,-115.62 122,-136.38 196.5,-136.38 196.5,-115.62 122,-115.62"/>
+<polygon fill="none" stroke="#000000" points="122,-115.62 122,-136.38 196.5,-136.38 196.5,-115.62 122,-115.62"/>
+<text xml:space="preserve" text-anchor="start" x="132.62" y="-125.78" font-family="Noto Sans KR" font-weight="bold" font-size="8.00" fill="#000000">airports_data</text>
+<polygon fill="none" stroke="#000000" points="122,-94.88 122,-115.62 178,-115.62 178,-94.88 122,-94.88"/>
+<text xml:space="preserve" text-anchor="start" x="126" y="-105.03" font-family="Noto Sans KR" text-decoration="underline" font-size="8.00">airport_code</text>
+<polygon fill="none" stroke="#000000" points="178,-94.88 178,-115.62 196.5,-115.62 196.5,-94.88 178,-94.88"/>
+<text xml:space="preserve" text-anchor="start" x="182" y="-101.88" font-family="Noto Sans KR" font-size="8.00" fill="#555555">PK</text>
 </g>
 </g>
 </svg>
