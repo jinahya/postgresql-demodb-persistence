@@ -24,7 +24,6 @@ import com.github.jinahya.postgresql.demodb.persistence.Timetable;
 import com.github.jinahya.postgresql.demodb.persistence.__Exercises_TestUtils;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedTimetable_;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -82,7 +81,8 @@ class DEMODB_TIMETABLE_A_02_PersistenceIT {
     @Test
     void __CriteriaApi() {
         final var list = __Exercises_TestUtils.apply(em -> {
-            final var cb = (HibernateCriteriaBuilder) em.getCriteriaBuilder();
+            final var cb =
+                    (org.hibernate.query.criteria.HibernateCriteriaBuilder) em.getCriteriaBuilder();
             final var cq = cb.createQuery(Object[].class);
             final var a = cq.from(Timetable.class);
             final var d = a.join(Timetable.class);

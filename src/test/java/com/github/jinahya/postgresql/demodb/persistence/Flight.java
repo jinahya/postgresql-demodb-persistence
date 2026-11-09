@@ -30,9 +30,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.annotations.JoinFormula;
 
 /**
  * An entity which maps the {@value MappedFlight#TABLE_NAME} table, extending {@link MappedFlight}
@@ -103,17 +100,18 @@ public class Flight
 
     // ---------------------------------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumnsOrFormulas({
-            @JoinColumnOrFormula(column = @JoinColumn(
+    @org.hibernate.annotations.JoinColumnsOrFormulas({
+            @org.hibernate.annotations.JoinColumnOrFormula(column = @JoinColumn(
                     name = MappedFlight.COLUMN_NAME_ROUTE_NO,
                     referencedColumnName = MappedRoute.COLUMN_NAME_ROUTE_NO,
                     insertable = false,
                     updatable = false)),
-            @JoinColumnOrFormula(formula = @JoinFormula(
-                    value = "(SELECT r.validity FROM routes r"
-                            + " WHERE r.route_no = route_no"
-                            + " AND r.validity @> scheduled_departure)",
-                    referencedColumnName = MappedRoute.COLUMN_NAME_VALIDITY))
+            @org.hibernate.annotations.JoinColumnOrFormula(
+                    formula = @org.hibernate.annotations.JoinFormula(
+                            value = "(SELECT r.validity FROM routes r"
+                                    + " WHERE r.route_no = route_no"
+                                    + " AND r.validity @> scheduled_departure)",
+                            referencedColumnName = MappedRoute.COLUMN_NAME_VALIDITY))
     })
     private Route route;
 }

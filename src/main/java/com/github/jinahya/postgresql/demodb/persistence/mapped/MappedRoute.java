@@ -29,8 +29,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -90,8 +88,9 @@ import java.util.stream.Collectors;
  * of {@link Integer}, which Hibernate ORM binds and reads as an array; the
  * {@value #COLUMN_NAME_DURATION} column is an {@code interval}, mapped as a {@link Duration}, which
  * Hibernate ORM binds and reads as an interval for
- * {@link JdbcTypeCode @JdbcTypeCode}{@code (}{@link SqlTypes#INTERVAL_SECOND}{@code )}, and as a
- * number without it. A {@link Duration} has no months; the column's values are hours and minutes.
+ * {@link org.hibernate.annotations.JdbcTypeCode @JdbcTypeCode}{@code (}{@link
+ * org.hibernate.type.SqlTypes#INTERVAL_SECOND}{@code )}, and as a number without it. A
+ * {@link Duration} has no months; the column's values are hours and minutes.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -616,7 +615,7 @@ public abstract class MappedRoute {
 
     // ---------------------------------------------------------------------------------------------
     @NotNull
-    @JdbcTypeCode(SqlTypes.ARRAY)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.ARRAY)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_DAYS_OF_WEEK, nullable = false, insertable = true, updatable = true)
     private List<@Positive @NotNull Integer> daysOfWeek;
@@ -630,7 +629,7 @@ public abstract class MappedRoute {
 
     // ---------------------------------------------------------------------------------------------
     @NotNull
-    @JdbcTypeCode(SqlTypes.INTERVAL_SECOND)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.INTERVAL_SECOND)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_DURATION, nullable = false, insertable = true, updatable = true)
     private Duration duration;
