@@ -168,6 +168,18 @@ public abstract class MappedAirportData {
      */
     public static final String ATTRIBUTE_NAME_COORDINATES = "coordinates";
 
+    /**
+     * The minimum size of the {@value #ATTRIBUTE_NAME_COORDINATES} attribute. The value is
+     * {@value}.
+     */
+    public static final int SIZE_MIN_COORDINATES = PointAttributeConverter.SIZE;
+
+    /**
+     * The maximum size of the {@value #ATTRIBUTE_NAME_COORDINATES} attribute. The value is
+     * {@value}.
+     */
+    public static final int SIZE_MAX_COORDINATES = PointAttributeConverter.SIZE;
+
     // ------------------------------------------------------------------------------------ timezone
 
     /**
@@ -271,8 +283,8 @@ public abstract class MappedAirportData {
      */
     protected boolean isCoordinatesInRange() {
         final var coordinates = getCoordinates();
-        if (coordinates == null || coordinates.size() < 2 || coordinates.get(0) == null
-            || coordinates.get(1) == null) {
+        if (coordinates == null || coordinates.size() < SIZE_MIN_COORDINATES
+            || coordinates.get(0) == null || coordinates.get(1) == null) {
             return true;
         }
         final double longitude = coordinates.get(0);
@@ -779,7 +791,7 @@ public abstract class MappedAirportData {
     private Map<@NotBlank String, @NotBlank String> country;
 
     // ---------------------------------------------------------------------------------------------
-    @Size(min = 2, max = 2)
+    @Size(min = SIZE_MIN_COORDINATES, max = SIZE_MAX_COORDINATES)
     @NotNull
     @Convert(converter = PointAttributeConverter.class)
     @Basic(optional = false)

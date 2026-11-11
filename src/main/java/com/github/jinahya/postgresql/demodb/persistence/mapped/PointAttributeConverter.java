@@ -49,6 +49,11 @@ import java.util.regex.Pattern;
 public class PointAttributeConverter
         implements AttributeConverter<List<Double>, String> {
 
+    /**
+     * The number of coordinates of a point, {@code x} and {@code y}. The value is {@value}.
+     */
+    public static final int SIZE = 2;
+
     // (x,y), each a float8 as the server prints it, NaN and [-]Infinity included; the parentheses
     // and the spaces optional, as the server reads a point
     private static final Pattern PATTERN = Pattern.compile(
@@ -74,7 +79,7 @@ public class PointAttributeConverter
         if (attribute == null) {
             return null;
         }
-        if (attribute.size() != 2 || attribute.get(0) == null || attribute.get(1) == null) {
+        if (attribute.size() != SIZE || attribute.get(0) == null || attribute.get(1) == null) {
             throw new IllegalArgumentException("not two coordinates: " + attribute);
         }
         return "(" + attribute.get(0) + "," + attribute.get(1) + ")";
