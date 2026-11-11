@@ -24,6 +24,7 @@ import com.github.jinahya.postgresql.demodb.persistence.Airplane;
 import com.github.jinahya.postgresql.demodb.persistence.__Exercises_TestUtils;
 import com.github.jinahya.postgresql.demodb.persistence.mapped.MappedAirplane_;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -37,6 +38,11 @@ import static org.assertj.core.api.Assertions.tuple;
 @DisplayName("DEMODB_AIRPLANES_B_02: the Boeings")
 @Slf4j
 class DEMODB_AIRPLANES_B_02_PersistenceIT {
+
+    @BeforeAll
+    static void assumeLang() {
+        __Exercises_TestUtils.assumeLang();
+    }
 
     @Test
     void __QueryLanguage() {

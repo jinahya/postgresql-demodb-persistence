@@ -21,6 +21,7 @@ package com.github.jinahya.postgresql.demodb.persistence;
  */
 
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.Assumptions;
 
 import java.time.Instant;
 import java.util.function.Function;
@@ -59,6 +60,38 @@ public final class __Exercises_TestUtils {
     public static Instant now(final EntityManager entityManager) {
         return (Instant) entityManager.createNativeQuery("SELECT bookings.now()", Instant.class)
                 .getSingleResult();
+    }
+
+    /**
+     * The language the exercises state their answers in, {@value}: the names the views read for
+     * {@code bookings.lang()}.
+     */
+    public static final String LANG = "en";
+
+    /**
+     * Returns the session's language, {@code bookings.lang()}, through the specified entity
+     * manager; the {@code bookings-lang-*} profile of {@code pom.xml} sets it on the unit's JDBC
+     * URL.
+     *
+     * @param entityManager the entity manager.
+     * @return the session's language.
+     */
+    public static String lang(final EntityManager entityManager) {
+        return (String) entityManager.createNativeQuery("SELECT bookings.lang()", String.class)
+                .getSingleResult();
+    }
+
+    /**
+     * Assumes that the session reads the views' names in {@value #LANG}, for an exercise whose
+     * answer is a name the {@code airplanes} or {@code airports} view reads in the session's
+     * language. Under another language, such as {@code bookings-lang-ru}'s, the exercise is skipped
+     * rather than failed.
+     */
+    public static void assumeLang() {
+        final var lang = apply(__Exercises_TestUtils::lang);
+        Assumptions.assumeTrue(
+                LANG.equals(lang),
+                () -> "the answer is stated in the names of " + LANG + "; the session reads " + lang);
     }
 
     // ---------------------------------------------------------------------------------------------

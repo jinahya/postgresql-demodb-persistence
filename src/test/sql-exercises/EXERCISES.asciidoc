@@ -5,6 +5,7 @@
 The exercises on the installed `demo` database, the PostgreSQL demonstration database (https://postgrespro.com/community/demodb[Airlines]), in its `bookings` schema: a section for each table and view, with a section for each level, and, at the end, a section for the schema as a whole.
 Each exercise poses a problem; its answer, and what the installed data gives back, are in the `.sql` file.
 The data is the `3m` edition, three months of flights from 2025-10-01, and the database's today, `bookings.now()`, is 2025-12-01; the views read the names in the language `bookings.lang()` returns, `en`.
+Under another language, `bookings-lang-ru`'s, the tests of the exercises whose answers are such names (`DEMODB_AIRPLANES_B_01`, `DEMODB_AIRPLANES_B_02`, `DEMODB_AIRPORTS_B_01`, `DEMODB_AIRPORTS_B_02`, `DEMODB_AIRPORTS_I_01`) are skipped.
 A day or a month is a UTC one, unless an exercise says it is an airport's local one: a bound on a `timestamptz` is written `TIMESTAMPTZ '2025-10-01 00:00:00+00'`, and a day or a month is taken `AT TIME ZONE 'UTC'`, so that the answer does not depend on the session's time zone, which psql and a JDBC connection set differently.
 
 Run a file as a whole:
